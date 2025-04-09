@@ -8,9 +8,9 @@ import (
 )
 
 func main() {
-	tui := flag.Bool("tui", false, "")
-	spell := flag.String("s", "", "Searches Spells")
-	monster := flag.String("m", "", "Searches Monsters")
+	tui := flag.Bool("tui", false, "Use TUI instead of CLI")
+	spell := flag.String("s", "", "Search Spells, use l or list as an argument to return all spells")
+	monster := flag.String("m", "", "Search Monsters, use l or list as an argument to return all monsters")
 
 	flag.Parse()
 
