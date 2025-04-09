@@ -1,5 +1,6 @@
 # Flags 
 ---
+to return a list of all spells/monsters/etc, pass l or list as an argument
 
 -s for spells (ex. dndgo -s "acid arrow" -or- dndgo -s acid-arrow)
 
