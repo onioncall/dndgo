@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/api"
+	"github.com/onioncall/dndgo/cli"
 )
 
 func main() {
@@ -28,12 +29,12 @@ func main() {
 		if !r.IsList() {
 			s := r.GetSingle()
 			if !*tui {
-				r.PrintSingle(s)		
+				cli.PrintSpellSingle(s)		
 			}
 		} else {
 			s := r.GetList()
 			if !*tui {
-				r.PrintList(s)
+				cli.PrintSpellList(s)
 			}
 		}
 	case *monster != "":
@@ -41,12 +42,12 @@ func main() {
 		if !r.IsList() {
 			m := r.GetSingle()
 			if !*tui {
-				r.PrintSingle(m)		
+				cli.PrintMonsterSingle(m)		
 			}
 		} else {
 			m := r.GetList()
 			if !*tui {
-				r.PrintList(m)
+				cli.PrintMonsterList(m)
 			}
 		}
 	}
