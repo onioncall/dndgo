@@ -10,20 +10,15 @@ import (
 
 var url = "https://www.dnd5eapi.co/api/2014"
 
-type pathType string
+type PathType string
 
 type BaseRequest struct {
 	Name     string
-    PathType pathType
+    PathType PathType
 }
 
-const (
-	MonsterType 	pathType = "monsters"
-	SpellType	 	pathType = "spells"
-)
-
-func ExecuteGetRequest[T any](path pathType, criteria string) (T, error) {
-	resp, err := http.Get(fmt.Sprintf("%s/%s/%s", url, path, criteria))
+func ExecuteGetRequest[T any](p PathType, criteria string) (T, error) {
+	resp, err := http.Get(fmt.Sprintf("%s/%s/%s", url, p, criteria))
 	if err != nil {
 		fmt.Println("Request Failed")
 		panic(err)
@@ -46,7 +41,7 @@ func ExecuteGetRequest[T any](path pathType, criteria string) (T, error) {
 	return obj, nil
 }
 
-func RequestFactory[T any](args string, request T, p pathType) T {
+func RequestFactory[T any](args string, request T, p PathType) T {
     v := reflect.ValueOf(&request).Elem()
     
     v.FieldByName("PathType").Set(reflect.ValueOf(p))

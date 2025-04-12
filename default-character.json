@@ -1,0 +1,183 @@
+{
+  "path": "",
+  "name": "",
+  "level": 0,
+  "class": "",
+  "race": "",
+  "background": "",
+  "feats": [
+    {
+      "name": "",
+      "desc": ""
+    }
+  ],
+  "languages": [
+    "Common",
+  ],
+  "proficiency": 0,
+  "passive-reception": 0,
+  "passive-insight": 0,
+  "ac": 0,
+  "initiative": 0,
+  "speed": 0,
+  "hit-dice": "",
+  "proficiencies": {
+    "strength": {
+      "base": 8,
+      "saving-throw-proficient": false
+    },
+    "dexterity": {
+      "base": 14,
+      "saving-throw-proficient": true
+    },
+    "constitution": {
+      "base": 10,
+      "saving-throw-proficient": false
+    },
+    "intelligence": {
+      "base": 10,
+      "saving-throw-proficient": false
+    },
+    "wisdom": {
+      "base": 16,
+      "saving-throw-proficient": true
+    },
+    "charisma": {
+      "base": 18,
+      "saving-throw-proficient": true
+    }
+  },
+  "skills": [
+    {
+      "proficiencies": "Strength",
+      "skill": "Athletics",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Dexterity",
+      "skill": "Acrobatics",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Dexterity",
+      "skill": "Slight of Hand",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Dexterity",
+      "skill": "Stealth",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Intelligence",
+      "skill": "Arcana",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Intelligence",
+      "skill": "History",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Intelligence",
+      "skill": "Investigation",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Intelligence",
+      "skill": "Nature",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Intelligence",
+      "skill": "Religion",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Wisdom",
+      "skill": "Animal Handling",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Wisdom",
+      "skill": "Insight",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Wisdom",
+      "skill": "Medicine",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Wisdom",
+      "skill": "Perception",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Wisdom",
+      "skill": "Survival",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Charisma",
+      "skill": "Deception",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Charisma",
+      "skill": "Intimidation",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Charisma",
+      "skill": "Performance",
+      "proficient": false
+    },
+    {
+      "proficiencies": "Charisma",
+      "skill": "Persuasion",
+      "proficient": false
+    }
+  ],
+  "spells": [
+    {
+      "is-caltrop": false,
+      "slot-level": 0,
+      "ritual": false,
+      "name": ""
+    },
+  ],
+  "spell-slots": {
+    "level1": 0,
+    "level2": 0,
+    "level3": 0,
+    "level4": 0,
+    "level5": 0,
+    "level6": 0,
+    "level7": 0,
+    "level8": 0,
+    "level9": 0
+  },
+  "weapons": [
+    {
+      "name": "",
+      "bonus": 0,
+      "damage": "",
+      "type": ""
+    },
+  ],
+  "body-equipment": {
+    "head": "",
+    "amulet": "",
+    "cloak": "",
+    "armour": "",
+    "hands-arms": "",
+    "ring": "",
+    "ring2": "",
+    "belt": "",
+    "boots": ""
+  },
+  "backpack": [
+    "",
+  ]
+}

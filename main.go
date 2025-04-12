@@ -4,14 +4,14 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/onioncall/dndgo/api"
-	"github.com/onioncall/dndgo/cli"
+	"github.com/onioncall/dndgo/handlers"
 )
 
 func main() {
 	tui := flag.Bool("tui", false, "Use TUI instead of CLI")
 	spell := flag.String("s", "", "Search Spells, use l or list as an argument to return all spells")
 	monster := flag.String("m", "", "Search Monsters, use l or list as an argument to return all monsters")
+	character := flag.String("c", "", "Create or Update Character Markdown")
 
 	flag.Parse()
 
@@ -21,34 +21,12 @@ func main() {
 		return
 	}
 	
-	// Once I have a third one of these, I'll abstract this logic into a generic function
-	// Leaving it for now...
 	switch {
 	case *spell != "":
-		r := api.RequestFactory(*spell, api.SpellRequest{}, api.SpellType)
-		if !r.IsList() {
-			s := r.GetSingle()
-			if !*tui {
-				cli.PrintSpellSingle(s)		
-			}
-		} else {
-			s := r.GetList()
-			if !*tui {
-				cli.PrintSpellList(s)
-			}
-		}
+		handlers.HandleSpellRequest(*spell)
 	case *monster != "":
-		r := api.RequestFactory(*monster, api.MonsterRequest{}, api.MonsterType)
-		if !r.IsList() {
-			m := r.GetSingle()
-			if !*tui {
-				cli.PrintMonsterSingle(m)		
-			}
-		} else {
-			m := r.GetList()
-			if !*tui {
-				cli.PrintMonsterList(m)
-			}
-		}
+		handlers.HandleMonsterRequest(*monster)
+	case *character != "":
+		handlers.HandleCharacter(*character)
 	}
 }
