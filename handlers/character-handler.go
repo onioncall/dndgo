@@ -11,22 +11,30 @@ import (
 )
 
 const (
-	create string = "create"
-	update string = "update"
+	create 	string = "create"
+	update 	string = "update"
+	add		string = "add"
+	remove	string = "remove"
+	backpack string = "backpack"
 )
 
 func HandleCharacter(query string) {
-	switch query {
+	splitQuery := strings.Split(query, " ")
+
+	c, err := LoadCharacter()
+	if err != nil {
+		panic(err)
+	}
+
+	switch splitQuery[0] {
 	case create: 
 	case update:
-		c, err := LoadCharacter()
-		if err != nil {
-			panic(err)
-		}
 		calculateCharacterStats(c)
 		res := buildCharacter(c)
 		saveCharacter(res, c.Path)
-	}	
+	case add:
+		// addToCharacter(splitQuery[1:])
+	}
 }
 
 func LoadCharacter() (*models.Character, error) {
@@ -56,27 +64,34 @@ func LoadCharacter() (*models.Character, error) {
 	return &character, nil
 }
 
+// func addToCharacter(args []string, c *models.Character) {
+// 	quantity := args[len(args)-1]
+// 	switch args[0] {
+// 		case backpack:
+// 			c.AddItemToPack(args[1:len(args)-1],)
+// 	}
+// }
 
 func calculateCharacterStats(c *models.Character) {
 	calculateProficiencyBonusByLevel(c)	
 	calculateProficienciesFromBase(c)
+	calculateSkillBonusFromBase(c)
 }
 
 func calculateProficienciesFromBase(c *models.Character) {
 	for i, prof := range c.Proficiencies {
-		c.Proficiencies[i].Adjusted = prof.Base
+		c.Proficiencies[i].Bonus = (prof.Base - 10) / 2
+	}
+}
 
-		if prof.Proficient {
-			c.Proficiencies[i].Adjusted += c.Proficiency
+func calculateSkillBonusFromBase(c *models.Character) {
+	for i, skill := range c.Skills {
+		// if this is too slow, I'll refactor this to use a map with the proficiency name as the key
+		for _, prof := range c.Proficiencies {
+			if skill.Proficiency == prof.Name {
+				c.Skills[i].Bonus = prof.Bonus 
+			}
 		}
-
-		bonus := (c.Proficiencies[i].Adjusted - 10) / 2
-		sign := ""
-		if bonus > 0 {
-			sign = "+"
-		}
-
-		c.Proficiencies[i].Bonus = fmt.Sprintf("%s%d", sign, bonus) 
 	}
 }
 
@@ -97,88 +112,74 @@ func calculateProficiencyBonusByLevel(c *models.Character) {
 
 func buildCharacter(c *models.Character) string {
 	var builder strings.Builder	
-	nl := "\n" 
+	nl := "\n"
 
-	// Header
-	header := fmt.Sprintf("#DnD Character\n")
-	builder.WriteString(header)
-	builder.WriteString(nl)
-
-	nameLine := fmt.Sprintf("**Name: %s**\n", c.Name)
-	builder.WriteString(nameLine)
-	builder.WriteString(nl)
-
-	// Character Info
-	levelLine 		:= fmt.Sprintf("Level: %d\n", c.Level)
-	classLine 		:= fmt.Sprintf("Class: %s\n", c.Class)
-	raceLine 		:= fmt.Sprintf("Race: %s\n", c.Race)
-	backgroundLine 	:= fmt.Sprintf("Background: %s\n", c.Background)
-	builder.WriteString(levelLine)
-	builder.WriteString(classLine)
-	builder.WriteString(raceLine)
-	builder.WriteString(backgroundLine)
-	builder.WriteString(nl)
-
-	// Feats
-	featsLine			:= fmt.Sprintf("- Feats:\n")
-	builder.WriteString(featsLine)
-	for _, feat := range c.Feats {
-		featRow := fmt.Sprintf(" - %s: %s\n", feat.Name, feat.Desc)
-		builder.WriteString(featRow)
+	header := c.BuildHeader()
+	for i := range header {
+		builder.WriteString(header[i])	
 	}
 	builder.WriteString(nl)
 
-	// Languages
-	languagesLine		:= fmt.Sprintf("- Languages:\n")
-	builder.WriteString(languagesLine)
-	for _, lang := range c.Languages {
-		languageRow := fmt.Sprintf(" - %s\n", lang)
-		builder.WriteString(languageRow)
-	}
-
-	builder.WriteString(nl)
-
-	profBonusLine	:= fmt.Sprintf("Proficincy Bonus: +%d\n", c.Proficiency)
-	passReception	:= fmt.Sprintf("Passive Reception: %d\n", c.PassiveReception)
-	passInsight		:= fmt.Sprintf("Passive Insight: %d\n", c.PassiveInsight)
-	builder.WriteString(profBonusLine)
-	builder.WriteString(passReception)
-	builder.WriteString(passInsight)
-	builder.WriteString(nl)
-
-	acLine 			:= fmt.Sprintf("AC: %d\n", c.AC)
-	initiativeLine 	:= fmt.Sprintf("Initiative: %d\n", c.Initiative)
-	speedLine 		:= fmt.Sprintf("Speed: %d\n", c.Speed)
-	// hpMaxLine 		:= fmt.Sprintf("HP Max: %d", c.HPMax)
-	hitDiceLine 	:= fmt.Sprintf("Hit Dice: %s\n", c.HitDice)
-	builder.WriteString(acLine)
-	builder.WriteString(initiativeLine)
-	builder.WriteString(speedLine)
-	// builder.WriteString(hpMaxLine)
-	builder.WriteString(hitDiceLine)
-	builder.WriteString(nl)
-
-	// Proficiencies
-	profHeader		:= fmt.Sprintf("*Proficiencies*\n")
-	builder.WriteString(profHeader)
-	builder.WriteString(nl)
-
-
-	profTopRow 		:= fmt.Sprintf("| Proficiency  | Base  | Bonus | Saving Throws | ST Prof |\n") 
-	profSpacer		:= fmt.Sprintf("| --- | --- | --- | --- | --- |\n")
-	builder.WriteString(profTopRow)
-	builder.WriteString(profSpacer)
-	for _, prof := range c.Proficiencies {
-		stProf := " "
-		if prof.Proficient {
-			stProf = "*"
-		}
-
-		profRow := fmt.Sprintf("| %s | %d | %s | %s |\n", prof.Name, prof.Adjusted, prof.Bonus, stProf)
-		builder.WriteString(profRow)
+	characterInfo := c.BuildCharacterInfo()
+	for i := range characterInfo {
+		builder.WriteString(characterInfo[i])	
 	}
 	builder.WriteString(nl)
-		
+
+	feats := c.BuildFeats()
+	for i := range feats {
+		builder.WriteString(feats[i])
+	}
+	builder.WriteString(nl)
+
+	languages := c.BuildLanguages()
+	for i := range languages {
+		builder.WriteString(languages[i])
+	}
+	builder.WriteString(nl)
+
+	generalStats := c.BuildGeneralStats()
+	for i := range generalStats {
+		builder.WriteString(generalStats[i])
+	}
+	builder.WriteString(nl)
+	
+	proficiencies := c.BuildProficiencies()
+	for i := range proficiencies {
+		builder.WriteString(proficiencies[i])
+	}
+	builder.WriteString(nl)
+
+	skills := c.BuildSkills()
+	for i := range skills {
+		builder.WriteString(skills[i])
+	}
+	builder.WriteString(nl)
+
+	spells := c.BuildSpells() 
+	for i := range spells {
+		builder.WriteString(spells[i]) 
+	}
+	builder.WriteString(nl)
+	
+	weapons := c.BuildWeapons()
+	for i := range weapons {
+		builder.WriteString(weapons[i]) 
+	}
+	builder.WriteString(nl)
+
+	equipment := c.BuildEquipment()
+	for i := range equipment {
+		builder.WriteString(equipment[i]) 
+	}
+	builder.WriteString(nl)
+
+	backpack := c.BuildBackpack()
+	for i := range backpack {
+		builder.WriteString(backpack[i]) 
+	}
+	builder.WriteString(nl)
+
     result := builder.String()
 	return result
 }
