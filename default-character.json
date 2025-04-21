@@ -18,124 +18,133 @@
   "passive-reception": 0,
   "passive-insight": 0,
   "ac": 0,
+  "spell-save-dc": 0,
+  "hp-current": 0,
+  "hp-max": 0,
   "initiative": 0,
   "speed": 0,
   "hit-dice": "",
-  "proficiencies": {
-    "strength": {
-      "base": 8,
-      "saving-throw-proficient": false
+  "proficiencies": [
+    {
+      "name": "Strength",
+      "base": 0,
+      "saving-throws-proficient": false
     },
-    "dexterity": {
-      "base": 14,
-      "saving-throw-proficient": true
+    {
+      "name": "Dexterity",
+      "base": 0,
+      "saving-throws-proficient": false
     },
-    "constitution": {
-      "base": 10,
-      "saving-throw-proficient": false
+    {
+      "name": "Constitution",
+      "base": 0,
+      "saving-throws-proficient": false
     },
-    "intelligence": {
-      "base": 10,
-      "saving-throw-proficient": false
+    {
+      "name": "Intelligence",
+      "base": 0,
+      "saving-throws-proficient": false
     },
-    "wisdom": {
-      "base": 16,
-      "saving-throw-proficient": true
+    {
+      "name": "Wisdom",
+      "base": 0,
+      "saving-throws-proficient": false
     },
-    "charisma": {
-      "base": 18,
-      "saving-throw-proficient": true
+    {
+      "name": "Charisma",
+      "base": 0,
+      "saving-throws-proficient": false
     }
-  },
+  ],
   "skills": [
     {
-      "proficiencies": "Strength",
-      "skill": "Athletics",
+      "proficiency": "Strength",
+      "name": "Athletics",
       "proficient": false
     },
     {
-      "proficiencies": "Dexterity",
-      "skill": "Acrobatics",
+      "proficiency": "Dexterity",
+      "name": "Acrobatics",
       "proficient": false
     },
     {
-      "proficiencies": "Dexterity",
-      "skill": "Slight of Hand",
+      "proficiency": "Dexterity",
+      "name": "Slight of Hand",
       "proficient": false
     },
     {
-      "proficiencies": "Dexterity",
-      "skill": "Stealth",
+      "proficiency": "Dexterity",
+      "name": "Stealth",
       "proficient": false
     },
     {
-      "proficiencies": "Intelligence",
-      "skill": "Arcana",
+      "proficiency": "Intelligence",
+      "name": "Arcana",
       "proficient": false
     },
     {
-      "proficiencies": "Intelligence",
-      "skill": "History",
+      "proficiency": "Intelligence",
+      "name": "History",
       "proficient": false
     },
     {
-      "proficiencies": "Intelligence",
-      "skill": "Investigation",
+      "proficiency": "Intelligence",
+      "name": "Investigation",
       "proficient": false
     },
     {
-      "proficiencies": "Intelligence",
-      "skill": "Nature",
+      "proficiency": "Intelligence",
+      "name": "Nature",
       "proficient": false
     },
     {
-      "proficiencies": "Intelligence",
-      "skill": "Religion",
+      "proficiency": "Intelligence",
+      "name": "Religion",
       "proficient": false
     },
     {
-      "proficiencies": "Wisdom",
-      "skill": "Animal Handling",
+      "proficiency": "Wisdom",
+      "name": "Animal Handling",
       "proficient": false
     },
     {
-      "proficiencies": "Wisdom",
-      "skill": "Insight",
+      "proficiency": "Wisdom",
+      "name": "Insight",
       "proficient": false
     },
     {
-      "proficiencies": "Wisdom",
-      "skill": "Medicine",
+      "proficiency": "Wisdom",
+      "name": "Medicine",
       "proficient": false
     },
     {
-      "proficiencies": "Wisdom",
-      "skill": "Perception",
+      "proficiency": "Wisdom",
+      "name": "Perception",
       "proficient": false
     },
     {
-      "proficiencies": "Wisdom",
-      "skill": "Survival",
+      "proficiency": "Wisdom",
+      "name": "Survival",
       "proficient": false
     },
     {
-      "proficiencies": "Charisma",
-      "skill": "Deception",
+      "proficiency": "Charisma",
+      "name": "Deception",
       "proficient": false
     },
     {
-      "proficiencies": "Charisma",
-      "skill": "Intimidation",
+      "proficiency": "Charisma",
+      "name": "Intimidation",
       "proficient": false
     },
     {
-      "proficiencies": "Charisma",
-      "skill": "Performance",
+      "proficiency": "Charisma",
+      "name": "Performance",
       "proficient": false
     },
     {
-      "proficiencies": "Charisma",
-      "skill": "Persuasion",
+      "proficiency": "Charisma",
+      "name": "Persuasion",
       "proficient": false
     }
   ],
@@ -163,7 +172,8 @@
       "name": "",
       "bonus": 0,
       "damage": "",
-      "type": ""
+      "type": "",
+      "properties": ""
     },
   ],
   "body-equipment": {
@@ -178,6 +188,9 @@
     "boots": ""
   },
   "backpack": [
-    "",
+    {
+      "name": "Gold",
+      "quantity": 0
+    },
   ]
 }

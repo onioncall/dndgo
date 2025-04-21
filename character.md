@@ -13,13 +13,17 @@ Background: Artisan
 - Languages:
 	- Common
 	- Elvish
+	- Orcish
 
 Proficincy Bonus: +2
 Passive Reception: 15
 Passive Insight: 15
-nlAC: 13
+
+AC: 13
+Spell Save DC: 14
 Initiative: 12
 Speed: 30
+HP: 12/16
 Hit Dice: 2d8
 
 *Proficiencies*
@@ -69,15 +73,15 @@ Hit Dice: 2d8
 | S | 1 |   | Tasha's  Hideous Laughter |
 
 - Spell Slots
-		- Level 1: 3
-		- Level 2: 0
-		- Level 3: 0
-		- Level 4: 0
-		- Level 5: 0
-		- Level 6: 0
-		- Level 7: 0
-		- Level 8: 0
-		- Level 9: 0
+    - Level 1: 3
+    - Level 2: 0
+    - Level 3: 0
+    - Level 4: 0
+    - Level 5: 0
+    - Level 6: 0
+    - Level 7: 0
+    - Level 8: 0
+    - Level 9: 0
 
 *Weapons*
 
@@ -89,15 +93,15 @@ Hit Dice: 2d8
 *Equipment*
 
 - Body Equipment
- - Head: 
- - Amulet: 
- - Cloak: Cloak of Billowing
- - Armor: Leather Armor
- - Hands: 
- - Ring: 
- - Ring: 
- - Belt: 
- - Boots: 
+	- Head: 
+	- Amulet: 
+	- Cloak: Cloak of Billowing
+	- Armor: Leather Armor
+	- Hands: 
+	- Ring: 
+	- Ring: 
+	- Belt: 
+	- Boots: 
 
 *Backpack*
 

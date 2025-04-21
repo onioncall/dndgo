@@ -1,6 +1,9 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Character struct {
 	Path              string           `json:"path"`
@@ -15,7 +18,9 @@ type Character struct {
 	PassiveReception  int              `json:"passive-reception"`
 	PassiveInsight    int              `json:"passive-insight"`
 	AC                int              `json:"ac"`
-	// HPMax			  int			   `json:"hp-max"`
+	SpellSaveDC       int              `json:"spell-save-dc"`
+	HPCurrent		  int			   `json:"hp-current"`
+	HPMax			  int			   `json:"hp-max"`
 	Initiative        int              `json:"initiative"`
 	Speed             int              `json:"speed"`
 	HitDice           string           `json:"hit-dice"`
@@ -92,6 +97,133 @@ type BodyEquipment struct {
 	Boots     string `json:"boots"`
 }
 
+const (
+	Head      string = "head:"
+	Amulet    string = "amulet:"
+	Cloak     string = "cloak:"
+	Armour    string = "armor:"
+	HandsArms string = "hands-arms:"
+	Ring      string = "ring:"
+	Ring2     string = "ring2:"
+	Belt      string = "belt:"
+	Boots     string = "boots:"
+)
+
+// Load Character Details
+
+func (c *Character) CalculateCharacterStats() {
+	c.calculateProficiencyBonusByLevel()	
+	c.calculateProficienciesFromBase()
+	c.calculateSkillBonusFromBase()
+}
+
+func (c *Character) calculateProficienciesFromBase() {
+	for i, prof := range c.Proficiencies {
+		c.Proficiencies[i].Bonus = (prof.Base - 10) / 2
+	}
+}
+
+func (c *Character) calculateSkillBonusFromBase() {
+	for i, skill := range c.Skills {
+		// if this is too slow, I'll refactor this to use a map with the proficiency name as the key
+		for _, prof := range c.Proficiencies {
+			if skill.Proficiency == prof.Name {
+				c.Skills[i].Bonus = prof.Bonus 
+			}
+		}
+	}
+}
+
+func (c *Character) calculateProficiencyBonusByLevel() {
+	if c.Level <= 4 {
+		c.Proficiency = 2	
+	} else if c.Level > 4 && c.Level <= 8 {
+		c.Proficiency = 3	
+	} else if c.Level > 8 && c.Level <= 12 {
+		c.Proficiency = 4	
+	} else if c.Level > 12 && c.Level <= 16 {
+		c.Proficiency = 5	
+	} else if c.Level > 16 && c.Level <= 20 {
+		c.Proficiency = 6	
+	}
+}
+
+func (c *Character) BuildCharacter() string {
+	var builder strings.Builder	
+	nl := "\n"
+
+	header := c.BuildHeader()
+	for i := range header {
+		builder.WriteString(header[i])	
+	}
+	builder.WriteString(nl)
+
+	characterInfo := c.BuildCharacterInfo()
+	for i := range characterInfo {
+		builder.WriteString(characterInfo[i])	
+	}
+	builder.WriteString(nl)
+
+	feats := c.BuildFeats()
+	for i := range feats {
+		builder.WriteString(feats[i])
+	}
+	builder.WriteString(nl)
+
+	languages := c.BuildLanguages()
+	for i := range languages {
+		builder.WriteString(languages[i])
+	}
+	builder.WriteString(nl)
+
+	generalStats := c.BuildGeneralStats()
+	for i := range generalStats {
+		builder.WriteString(generalStats[i])
+	}
+	builder.WriteString(nl)
+	
+	proficiencies := c.BuildProficiencies()
+	for i := range proficiencies {
+		builder.WriteString(proficiencies[i])
+	}
+	builder.WriteString(nl)
+
+	skills := c.BuildSkills()
+	for i := range skills {
+		builder.WriteString(skills[i])
+	}
+	builder.WriteString(nl)
+
+	spells := c.BuildSpells() 
+	for i := range spells {
+		builder.WriteString(spells[i]) 
+	}
+	builder.WriteString(nl)
+	
+	weapons := c.BuildWeapons()
+	for i := range weapons {
+		builder.WriteString(weapons[i]) 
+	}
+	builder.WriteString(nl)
+
+	equipment := c.BuildEquipment()
+	for i := range equipment {
+		builder.WriteString(equipment[i]) 
+	}
+	builder.WriteString(nl)
+
+	backpack := c.BuildBackpack()
+	for i := range backpack {
+		builder.WriteString(backpack[i]) 
+	}
+	builder.WriteString(nl)
+
+    result := builder.String()
+	return result
+}
+
+// Format Markdown
+
 func (c *Character) BuildHeader() []string {
 	header 		:= fmt.Sprintf("# DnD Character\n\n")
 	nameLine 	:= fmt.Sprintf("**Name: %s**\n", c.Name)
@@ -143,15 +275,16 @@ func (c *Character) BuildLanguages() []string {
 }
 
 func (c *Character) BuildGeneralStats() []string {
-	nl := "nl"
+	nl := "\n"
 	profBonusLine	:= fmt.Sprintf("Proficincy Bonus: +%d\n", c.Proficiency)
 	passReception	:= fmt.Sprintf("Passive Reception: %d\n", c.PassiveReception)
 	passInsight		:= fmt.Sprintf("Passive Insight: %d\n", c.PassiveInsight)
 
 	acLine 			:= fmt.Sprintf("AC: %d\n", c.AC)
+	ssdcLine 		:= fmt.Sprintf("Spell Save DC: %d\n", c.SpellSaveDC)
 	initiativeLine 	:= fmt.Sprintf("Initiative: %d\n", c.Initiative)
 	speedLine 		:= fmt.Sprintf("Speed: %d\n", c.Speed)
-	// hpMaxLine 		:= fmt.Sprintf("HP Max: %d", c.HPMax)
+	hpMaxLine 		:= fmt.Sprintf("HP: %d/%d\n", c.HPCurrent, c.HPMax)
 	hitDiceLine 	:= fmt.Sprintf("Hit Dice: %s\n", c.HitDice)
 
 	s := []string{
@@ -160,9 +293,10 @@ func (c *Character) BuildGeneralStats() []string {
 		passInsight,
 		nl,
 		acLine,
+		ssdcLine,
 		initiativeLine,
 		speedLine,
-		// hpMaxLine,
+		hpMaxLine,
 		hitDiceLine,
 	}
 
@@ -260,16 +394,16 @@ func (c *Character) BuildSpells() []string {
 	}	
 	s = append(s, nl)
 
-	spellSlots := fmt.Sprintf("- Spell Slots\n")
-	spellSlot1 := fmt.Sprintf("		- Level 1: %d\n", c.SpellSlots.Level1)
-	spellSlot2 := fmt.Sprintf("		- Level 2: %d\n", c.SpellSlots.Level2)
-	spellSlot3 := fmt.Sprintf("		- Level 3: %d\n", c.SpellSlots.Level3)
-	spellSlot4 := fmt.Sprintf("		- Level 4: %d\n", c.SpellSlots.Level4)
-	spellSlot5 := fmt.Sprintf("		- Level 5: %d\n", c.SpellSlots.Level5)
-	spellSlot6 := fmt.Sprintf("		- Level 6: %d\n", c.SpellSlots.Level6)
-	spellSlot7 := fmt.Sprintf("		- Level 7: %d\n", c.SpellSlots.Level7)
-	spellSlot8 := fmt.Sprintf("		- Level 8: %d\n", c.SpellSlots.Level8)
-	spellSlot9 := fmt.Sprintf("		- Level 9: %d\n", c.SpellSlots.Level9)
+	spellSlots 		:= fmt.Sprintf("- Spell Slots\n")
+	spellSlot1 := fmt.Sprintf("    - Level 1: %d\n", c.SpellSlots.Level1)
+	spellSlot2 := fmt.Sprintf("    - Level 2: %d\n", c.SpellSlots.Level2)
+	spellSlot3 := fmt.Sprintf("    - Level 3: %d\n", c.SpellSlots.Level3)
+	spellSlot4 := fmt.Sprintf("    - Level 4: %d\n", c.SpellSlots.Level4)
+	spellSlot5 := fmt.Sprintf("    - Level 5: %d\n", c.SpellSlots.Level5)
+	spellSlot6 := fmt.Sprintf("    - Level 6: %d\n", c.SpellSlots.Level6)
+	spellSlot7 := fmt.Sprintf("    - Level 7: %d\n", c.SpellSlots.Level7)
+	spellSlot8 := fmt.Sprintf("    - Level 8: %d\n", c.SpellSlots.Level8)
+	spellSlot9 := fmt.Sprintf("    - Level 9: %d\n", c.SpellSlots.Level9)
 	s = append(s, spellSlots)
 	s = append(s, spellSlot1)
 	s = append(s, spellSlot2)
@@ -318,15 +452,15 @@ func (c *Character) BuildEquipment() []string {
 	equipmentHeader := fmt.Sprintf("*Equipment*\n\n")
 
 	bodyEquipment 	:= fmt.Sprintf("- Body Equipment\n")
-	head 		:= fmt.Sprintf(" - Head: %s\n", c.BodyEquipment.Head)
-	amulet 		:= fmt.Sprintf(" - Amulet: %s\n", c.BodyEquipment.Amulet)
-	cloak 		:= fmt.Sprintf(" - Cloak: %s\n", c.BodyEquipment.Cloak)
-	armor 		:= fmt.Sprintf(" - Armor: %s\n", c.BodyEquipment.Armour)
-	hands 		:= fmt.Sprintf(" - Hands: %s\n", c.BodyEquipment.HandsArms)
-	ring 		:= fmt.Sprintf(" - Ring: %s\n", c.BodyEquipment.Ring)
-	ring2 		:= fmt.Sprintf(" - Ring: %s\n", c.BodyEquipment.Ring2)
-	belt 		:= fmt.Sprintf(" - Belt: %s\n", c.BodyEquipment.Belt)
-	boots 		:= fmt.Sprintf(" - Boots: %s\n", c.BodyEquipment.Boots)
+	head 		:= fmt.Sprintf("	- Head: %s\n", c.BodyEquipment.Head)
+	amulet 		:= fmt.Sprintf("	- Amulet: %s\n", c.BodyEquipment.Amulet)
+	cloak 		:= fmt.Sprintf("	- Cloak: %s\n", c.BodyEquipment.Cloak)
+	armor 		:= fmt.Sprintf("	- Armor: %s\n", c.BodyEquipment.Armour)
+	hands 		:= fmt.Sprintf("	- Hands: %s\n", c.BodyEquipment.HandsArms)
+	ring 		:= fmt.Sprintf("	- Ring: %s\n", c.BodyEquipment.Ring)
+	ring2 		:= fmt.Sprintf("	- Ring: %s\n", c.BodyEquipment.Ring2)
+	belt 		:= fmt.Sprintf("	- Belt: %s\n", c.BodyEquipment.Belt)
+	boots 		:= fmt.Sprintf("	- Boots: %s\n", c.BodyEquipment.Boots)
 
 	s := []string {
 		equipmentHeader,
@@ -363,7 +497,10 @@ func (c *Character) BuildBackpack() []string {
 	return s
 }
 
+// CLI Actions
+
 func (c *Character) AddItemToPack(item string, quantity int) {
+	fmt.Println("Add Item called")
 	for i, packItem := range c.Backpack {
 		if packItem.Name == item {
 			c.Backpack[i].Quantity += quantity
@@ -379,7 +516,7 @@ func (c *Character) AddItemToPack(item string, quantity int) {
 	c.Backpack = append(c.Backpack, newItem)
 }
 
-func (c *Character) RemoveItemToPack(item string, quantity int) {
+func (c *Character) RemoveItemFromPack(item string, quantity int) {
 	for i, packItem := range c.Backpack {
 		if packItem.Name == item {
 			if packItem.Quantity < quantity {
@@ -390,5 +527,55 @@ func (c *Character) RemoveItemToPack(item string, quantity int) {
 			c.Backpack[i].Quantity -= quantity
 			return
 		}
+	}
+}
+
+func (c *Character) AddLanguage(language string) {
+	c.Languages = append(c.Languages, language)
+}
+
+func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
+	switch equipmentType {
+		case Head:
+			c.BodyEquipment.Head = equipmentName
+		case Amulet:
+			c.BodyEquipment.Amulet = equipmentName
+		case Cloak:
+			c.BodyEquipment.Cloak = equipmentName
+		case Armour:
+			c.BodyEquipment.Armour = equipmentName
+		case HandsArms:
+			c.BodyEquipment.HandsArms = equipmentName
+		case Ring:
+			c.BodyEquipment.Ring = equipmentName
+		case Ring2:
+			c.BodyEquipment.Ring2 = equipmentName
+		case Belt:
+			c.BodyEquipment.Belt = equipmentName
+		case Boots:
+			c.BodyEquipment.Boots = equipmentName
+		default:
+			err := fmt.Sprintf("Invalid Equipment Type: %s", equipmentType)
+			panic(err)
+	}
+}
+
+func (c *Character) AddLevel() {
+	c.Level += 1
+}
+
+func (c *Character) HealCharacter(hpInc int) {
+	c.HPCurrent += hpInc
+
+	if c.HPCurrent > c.HPMax {
+		c.HPCurrent = c.HPMax
+	}
+}
+
+func (c *Character) DamageCharacter(hpDecr int) {
+	c.HPCurrent -= hpDecr
+
+	if c.HPCurrent < 0 {
+		c.HPCurrent = 0
 	}
 }
