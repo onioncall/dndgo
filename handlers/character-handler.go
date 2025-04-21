@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/onioncall/dndgo/models"
 )
@@ -18,23 +17,38 @@ const (
 	backpack string = "backpack"
 )
 
-func HandleCharacter(query string) {
-	splitQuery := strings.Split(query, " ")
+func HandleCharacter(c *models.Character) {
+	c.CalculateCharacterStats()
+	res := c.BuildCharacter()
+	SaveCharacterMarkdown(res, c.Path)
+}
 
-	c, err := LoadCharacter()
+func SaveCharacterJson(c *models.Character) error {
+	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("error getting home directory: %w", err)
 	}
 
-	switch splitQuery[0] {
-	case create: 
-	case update:
-		calculateCharacterStats(c)
-		res := buildCharacter(c)
-		saveCharacter(res, c.Path)
-	case add:
-		// addToCharacter(splitQuery[1:])
+	configDir := filepath.Join(homeDir, ".config", "dndgo")
+	err = os.MkdirAll(configDir, 0755)
+	if err != nil {
+		return fmt.Errorf("error creating config directory: %w", err)
 	}
+
+	filePath := filepath.Join(configDir, "character.json")
+
+	characterJSON, err := json.MarshalIndent(c, "", "  ")
+	if err != nil {
+		return fmt.Errorf("error marshaling character to JSON: %w", err)
+	}
+
+	err = os.WriteFile(filePath, characterJSON, 0644)
+	if err != nil {
+		return fmt.Errorf("error writing character to file: %w", err)
+	}
+
+	fmt.Printf("Character json saved at: %s\n", filePath)
+	return nil
 }
 
 func LoadCharacter() (*models.Character, error) {
@@ -64,127 +78,7 @@ func LoadCharacter() (*models.Character, error) {
 	return &character, nil
 }
 
-// func addToCharacter(args []string, c *models.Character) {
-// 	quantity := args[len(args)-1]
-// 	switch args[0] {
-// 		case backpack:
-// 			c.AddItemToPack(args[1:len(args)-1],)
-// 	}
-// }
-
-func calculateCharacterStats(c *models.Character) {
-	calculateProficiencyBonusByLevel(c)	
-	calculateProficienciesFromBase(c)
-	calculateSkillBonusFromBase(c)
-}
-
-func calculateProficienciesFromBase(c *models.Character) {
-	for i, prof := range c.Proficiencies {
-		c.Proficiencies[i].Bonus = (prof.Base - 10) / 2
-	}
-}
-
-func calculateSkillBonusFromBase(c *models.Character) {
-	for i, skill := range c.Skills {
-		// if this is too slow, I'll refactor this to use a map with the proficiency name as the key
-		for _, prof := range c.Proficiencies {
-			if skill.Proficiency == prof.Name {
-				c.Skills[i].Bonus = prof.Bonus 
-			}
-		}
-	}
-}
-
-func calculateProficiencyBonusByLevel(c *models.Character) {
-	// Proficiency Bonus
-	if c.Level <= 4 {
-		c.Proficiency = 2	
-	} else if c.Level > 4 && c.Level <= 8 {
-		c.Proficiency = 3	
-	} else if c.Level > 8 && c.Level <= 12 {
-		c.Proficiency = 4	
-	} else if c.Level > 12 && c.Level <= 16 {
-		c.Proficiency = 5	
-	} else if c.Level > 16 && c.Level <= 20 {
-		c.Proficiency = 6	
-	}
-}
-
-func buildCharacter(c *models.Character) string {
-	var builder strings.Builder	
-	nl := "\n"
-
-	header := c.BuildHeader()
-	for i := range header {
-		builder.WriteString(header[i])	
-	}
-	builder.WriteString(nl)
-
-	characterInfo := c.BuildCharacterInfo()
-	for i := range characterInfo {
-		builder.WriteString(characterInfo[i])	
-	}
-	builder.WriteString(nl)
-
-	feats := c.BuildFeats()
-	for i := range feats {
-		builder.WriteString(feats[i])
-	}
-	builder.WriteString(nl)
-
-	languages := c.BuildLanguages()
-	for i := range languages {
-		builder.WriteString(languages[i])
-	}
-	builder.WriteString(nl)
-
-	generalStats := c.BuildGeneralStats()
-	for i := range generalStats {
-		builder.WriteString(generalStats[i])
-	}
-	builder.WriteString(nl)
-	
-	proficiencies := c.BuildProficiencies()
-	for i := range proficiencies {
-		builder.WriteString(proficiencies[i])
-	}
-	builder.WriteString(nl)
-
-	skills := c.BuildSkills()
-	for i := range skills {
-		builder.WriteString(skills[i])
-	}
-	builder.WriteString(nl)
-
-	spells := c.BuildSpells() 
-	for i := range spells {
-		builder.WriteString(spells[i]) 
-	}
-	builder.WriteString(nl)
-	
-	weapons := c.BuildWeapons()
-	for i := range weapons {
-		builder.WriteString(weapons[i]) 
-	}
-	builder.WriteString(nl)
-
-	equipment := c.BuildEquipment()
-	for i := range equipment {
-		builder.WriteString(equipment[i]) 
-	}
-	builder.WriteString(nl)
-
-	backpack := c.BuildBackpack()
-	for i := range backpack {
-		builder.WriteString(backpack[i]) 
-	}
-	builder.WriteString(nl)
-
-    result := builder.String()
-	return result
-}
-
-func saveCharacter(res string, path string) {
+func SaveCharacterMarkdown(res string, path string) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		panic(fmt.Sprintf("Error getting home directory: %v", err))
@@ -206,6 +100,8 @@ func saveCharacter(res string, path string) {
 	if err != nil {
 		panic(fmt.Sprintf("Error writing file: %v", err))
 	}
+
+	fmt.Printf("Character markdown saved at: %s\n", filePath)
 }
 
 func ClearFile(filePath string) error {
