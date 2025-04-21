@@ -135,7 +135,6 @@ func (c *Character) calculateSkillBonusFromBase() {
 }
 
 func (c *Character) calculateProficiencyBonusByLevel() {
-	// Proficiency Bonus
 	if c.Level <= 4 {
 		c.Proficiency = 2	
 	} else if c.Level > 4 && c.Level <= 8 {
