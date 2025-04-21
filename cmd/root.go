@@ -24,16 +24,13 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
 func Execute() error {
 	return rootCmd.Execute()
 }
 
 func init() {
-	// Add direct flags to root command
 	rootCmd.Flags().StringVarP(&spellName, "spell", "s", "", "Name of the spell to look up")
 	rootCmd.Flags().StringVarP(&monsterName, "monster", "m", "", "Name of the monster to look up")
 	
-	// Add subcommands to the root command
 	rootCmd.AddCommand(characterCmd)
 }

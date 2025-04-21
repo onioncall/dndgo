@@ -11,7 +11,6 @@ import (
 
 var spell string
 
-// spellCmd represents the spell command
 var spellCmd = &cobra.Command{
 	Use:   "spell",
 	Short: "Get helpful data on DnD 5e Spells",
@@ -23,7 +22,5 @@ var spellCmd = &cobra.Command{
 }
 
 func init() {
-	// rootCmd.AddCommand(spellCmd)
 	spellCmd.Flags().StringVarP(&spell, "spell", "s", "", "Name of the spell to look up")
-	// spellCmd.MarkFlagRequired("spell")
 }

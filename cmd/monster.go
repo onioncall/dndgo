@@ -18,7 +18,5 @@ var monsterCmd = &cobra.Command{
 }
 
 func init() {
-	// rootCmd.AddCommand(monsterCmd)
 	monsterCmd.Flags().StringVarP(&monster, "monster", "m", "", "Name of the monster to look up")
-	// monsterCmd.MarkFlagRequired("monster")
 }
