@@ -8,6 +8,7 @@ import (
 var (
 	spellName   string
 	monsterName string
+	weaponName 	string
 	charAction  string
 )
 
@@ -29,8 +30,10 @@ func Execute() error {
 }
 
 func init() {
+	// these might go under a search command in a future update
 	rootCmd.Flags().StringVarP(&spellName, "spell", "s", "", "Name of the spell to look up")
 	rootCmd.Flags().StringVarP(&monsterName, "monster", "m", "", "Name of the monster to look up")
+	rootCmd.Flags().StringVarP(&weaponName, "weapon", "w", "", "Name of the weapon to look up")
 	
 	rootCmd.AddCommand(characterCmd)
 }
