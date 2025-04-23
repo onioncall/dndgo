@@ -27,7 +27,7 @@ type Character struct {
 	Proficiencies     []ProficiencyStat`json:"proficiencies"`
 	Skills            []Skill          `json:"skills"`
 	Spells            []CharacterSpell `json:"spells"`
-	SpellSlots        SpellSlots       `json:"spell-slots"`
+	SpellSlots        []SpellSlot       `json:"spell-slots"`
 	Weapons           []Weapon         `json:"weapons"`
 	BodyEquipment     BodyEquipment    `json:"body-equipment"`
 	Backpack          []BackpackItem   `json:"backpack"`
@@ -65,16 +65,10 @@ type CharacterSpell struct {
 	Name      string `json:"name"`
 }
 
-type SpellSlots struct {
-	Level1 int `json:"level1"`
-	Level2 int `json:"level2"`
-	Level3 int `json:"level3"`
-	Level4 int `json:"level4"`
-	Level5 int `json:"level5"`
-	Level6 int `json:"level6"`
-	Level7 int `json:"level7"`
-	Level8 int `json:"level8"`
-	Level9 int `json:"level9"`
+type SpellSlot struct {
+	Level		int	`json:"level"`
+	Slot		int `json:"slot"`
+	Available	int `json:"available"`
 }
 
 type Weapon struct {
@@ -147,6 +141,8 @@ func (c *Character) calculateProficiencyBonusByLevel() {
 		c.Proficiency = 6	
 	}
 }
+
+// Format Markdown
 
 func (c *Character) BuildCharacter() string {
 	var builder strings.Builder	
@@ -221,8 +217,6 @@ func (c *Character) BuildCharacter() string {
     result := builder.String()
 	return result
 }
-
-// Format Markdown
 
 func (c *Character) BuildHeader() []string {
 	header 		:= fmt.Sprintf("# DnD Character\n\n")
@@ -368,7 +362,7 @@ func (c *Character) BuildSkills() []string {
 }
 
 func (c *Character) BuildSpells() []string {
-	s := make([]string, 0, len(c.Spells) + 10)
+	s := make([]string, 0, len(c.Spells) + 20)
 	nl := "\n"
 	spellHeader		:= fmt.Sprintf("*Spells*\n\n")
 	s = append(s, spellHeader)
@@ -395,25 +389,12 @@ func (c *Character) BuildSpells() []string {
 	s = append(s, nl)
 
 	spellSlots 		:= fmt.Sprintf("- Spell Slots\n")
-	spellSlot1 := fmt.Sprintf("    - Level 1: %d\n", c.SpellSlots.Level1)
-	spellSlot2 := fmt.Sprintf("    - Level 2: %d\n", c.SpellSlots.Level2)
-	spellSlot3 := fmt.Sprintf("    - Level 3: %d\n", c.SpellSlots.Level3)
-	spellSlot4 := fmt.Sprintf("    - Level 4: %d\n", c.SpellSlots.Level4)
-	spellSlot5 := fmt.Sprintf("    - Level 5: %d\n", c.SpellSlots.Level5)
-	spellSlot6 := fmt.Sprintf("    - Level 6: %d\n", c.SpellSlots.Level6)
-	spellSlot7 := fmt.Sprintf("    - Level 7: %d\n", c.SpellSlots.Level7)
-	spellSlot8 := fmt.Sprintf("    - Level 8: %d\n", c.SpellSlots.Level8)
-	spellSlot9 := fmt.Sprintf("    - Level 9: %d\n", c.SpellSlots.Level9)
 	s = append(s, spellSlots)
-	s = append(s, spellSlot1)
-	s = append(s, spellSlot2)
-	s = append(s, spellSlot3)
-	s = append(s, spellSlot4)
-	s = append(s, spellSlot5)
-	s = append(s, spellSlot6)
-	s = append(s, spellSlot7)
-	s = append(s, spellSlot8)
-	s = append(s, spellSlot9)
+
+	for _, spellSlot := range c.SpellSlots {
+		slotRow := fmt.Sprintf("	- Level %d: %d/%d\n", spellSlot.Level, spellSlot.Available, spellSlot.Slot)
+		s = append(s, slotRow)
+	}
 
 	return s
 }
@@ -500,7 +481,6 @@ func (c *Character) BuildBackpack() []string {
 // CLI Actions
 
 func (c *Character) AddItemToPack(item string, quantity int) {
-	fmt.Println("Add Item called")
 	for i, packItem := range c.Backpack {
 		if packItem.Name == item {
 			c.Backpack[i].Quantity += quantity
@@ -577,5 +557,33 @@ func (c *Character) DamageCharacter(hpDecr int) {
 
 	if c.HPCurrent < 0 {
 		c.HPCurrent = 0
+	}
+}
+
+func (c *Character) UseSpellSlot(level int) {
+	for i := range c.SpellSlots {
+		if c.SpellSlots[i].Level == level {
+			if c.SpellSlots[i].Available > 0 {
+				c.SpellSlots[i].Available--
+			}
+
+			return
+		}
+	}
+
+	panic("invalid level, must be 1-9") 
+}
+
+func (c *Character) RecoverSpellSlots() {
+	for i := range c.SpellSlots {
+		c.SpellSlots[i].Available = c.SpellSlots[i].Slot
+	}
+}
+
+func (c *Character) Recover() {
+	c.HPCurrent = c.HPMax
+
+	for i := range c.SpellSlots {
+		c.SpellSlots[i].Available = c.SpellSlots[i].Slot
 	}
 }
