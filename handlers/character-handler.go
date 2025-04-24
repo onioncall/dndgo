@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 
 	"github.com/onioncall/dndgo/models"
 )
@@ -21,6 +22,33 @@ func HandleCharacter(c *models.Character) {
 	c.CalculateCharacterStats()
 	res := c.BuildCharacter()
 	SaveCharacterMarkdown(res, c.Path)
+}
+
+func AddSpell(c *models.Character, spellQuery string) {
+	r := SpellRequest {
+		Name: spellQuery,
+		PathType: SpellType,
+	}
+
+	s := r.GetSingle()
+	caltrop := false
+
+	if s.Level == 0 {
+		caltrop = true
+	}
+
+	cs := models.CharacterSpell {
+		IsCaltrop: caltrop,
+		SlotLevel: s.Level,
+		IsRitual: s.Ritual,
+		Name: s.Name,
+	}
+
+	c.Spells = append(c.Spells, cs)
+
+	sort.Slice(c.Spells, func(i, j int) bool {
+		return c.Spells[i].SlotLevel < c.Spells[j].SlotLevel
+	})
 }
 
 func SaveCharacterJson(c *models.Character) error {
