@@ -23,8 +23,8 @@ var (
 			backpack, _ := cmd.Flags().GetString("backpack")
 			increaseLevel, _ := cmd.Flags().GetBool("level")
 			equipment, _ := cmd.Flags().GetString("equipment")
-			s, _ := cmd.Flags().GetInt("spell-slots")
-			hp, _ := cmd.Flags().GetInt("hitpoints")
+			s, _ := cmd.Flags().GetString("spell")
+			ss, _ := cmd.Flags().GetInt("spell-slots")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -45,11 +45,11 @@ var (
 			if increaseLevel {
 				// c.AddLevel()				
 			}
-			if hp > 0 {
-				c.HealCharacter(hp)
-			}
-			if s > 0 {
-				c.RecoverSpellSlots()
+			if ss > 0 {
+				// add spell slot for level
+			} 
+			if s != "" {
+				handlers.AddSpell(c, s)
 			}
 			
 			handlers.SaveCharacterJson(c)
@@ -68,12 +68,13 @@ var (
 			if err != nil {
 				panic(err)
 			}
+
 			if hp > 0 {
 				c.DamageCharacter(hp)
-			}
-			if u > 0 {
+			} else if u > 0 {
 				c.UseSpellSlot(u);
 			} 
+
 			handlers.SaveCharacterJson(c)
 			handlers.HandleCharacter(c)
 		},
@@ -107,9 +108,7 @@ var (
 			if bp != "" {
 				arg, quantity := getArgumentAndQuantity(bp)
 				c.RemoveItemFromPack(arg, quantity)
-			}
-
-			if s > 0 {
+			} else if s > 0 {
 				c.UseSpellSlot(s);
 			}
 
@@ -120,14 +119,25 @@ var (
 
 	recoverCmd = &cobra.Command{
 		Use:   "recover",
-		Short: "Recover all health and spell slots",
+		Short: "Recover health and spell slot usage",
 		Run: func(cmd *cobra.Command, args []string) {
+			a, _ := cmd.Flags().GetBool("all")
+			ss, _ := cmd.Flags().GetInt("spell-slots")
+			hp, _ := cmd.Flags().GetInt("hitpoints")
+
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				panic(err)
 			}
 
-			c.Recover()
+			if a {
+				c.Recover()
+			} else if ss > 0 {
+				c.RecoverSpellSlots(ss)	
+			} else if hp > 0 {
+				c.HealCharacter(hp)
+			}
+
 			handlers.SaveCharacterJson(c)
 			handlers.HandleCharacter(c)
 		},
@@ -137,21 +147,24 @@ var (
 func init() {
 	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd)
 
-
 	addCmd.Flags().StringP("equipment", "e", "", "Equipment to add")
 	addCmd.Flags().StringP("language", "l", "", "Language to add")
 	addCmd.Flags().StringP("weapon", "w", "", "Weapon to add")
-	addCmd.Flags().IntP("hitpoints", "p", 0, "Include or modify hitpoints")
-	addCmd.Flags().IntP("spell-slots", "s", 0, "Use spell-slot by level")
-	addCmd.Flags().StringP("backpack", "b", "", "Item to remove from backpack")
+	addCmd.Flags().IntP("spell-slots", "x", 0, "Increase spell-slot by level")
+	addCmd.Flags().StringP("spell", "s", "", "Add spell to list of character spells")
+	addCmd.Flags().StringP("backpack", "b", "", "Item to add to backpack")
 
 	removeCmd.Flags().StringP("language", "l", "", "Language to remove")
 	removeCmd.Flags().StringP("weapon", "w", "", "Weapon to remove")
 	removeCmd.Flags().StringP("backpack", "b", "", "Item to remove from backpack")
 	removeCmd.Flags().IntP("hitpoints", "p", 0, "Include or modify hitpoints")
 
-	useCmd.Flags().IntP("spell-slots", "s", 0, "Use spell-slot by level")
+	useCmd.Flags().IntP("spell-slots", "x", 0, "Use spell-slot by level")
 	useCmd.Flags().StringP("backpack", "b", "", "Use item from backpack")
+
+	recoverCmd.Flags().IntP("spell-slots", "x", 0, "Use spell-slot by level")
+	recoverCmd.Flags().BoolP("all", "a", false, "Use spell-slot by level")
+	recoverCmd.Flags().IntP("hitpoints", "p", 0, "Include or modify hitpoints")
 }
 
 func getArgumentAndQuantity(input string) (string, int) {

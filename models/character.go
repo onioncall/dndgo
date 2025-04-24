@@ -61,7 +61,7 @@ type Skill struct {
 type CharacterSpell struct {
 	IsCaltrop bool   `json:"is-caltrop"`
 	SlotLevel int    `json:"slot-level"`
-	Ritual    bool   `json:"ritual"`
+	IsRitual    bool   `json:"ritual"`
 	Name      string `json:"name"`
 }
 
@@ -379,7 +379,7 @@ func (c *Character) BuildSpells() []string {
 		}
 
 		rString := " "
-		if spell.Ritual {
+		if spell.IsRitual {
 			rString = "*"
 		}
 
@@ -574,9 +574,11 @@ func (c *Character) UseSpellSlot(level int) {
 	panic("invalid level, must be 1-9") 
 }
 
-func (c *Character) RecoverSpellSlots() {
+func (c *Character) RecoverSpellSlots(level int) {
 	for i := range c.SpellSlots {
-		c.SpellSlots[i].Available = c.SpellSlots[i].Slot
+		if c.SpellSlots[i].Level == level {
+			c.SpellSlots[i].Available = c.SpellSlots[i].Slot
+		}
 	}
 }
 
