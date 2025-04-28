@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/onioncall/dndgo/handlers"
 	"github.com/spf13/cobra"
 )
 
@@ -17,11 +16,6 @@ var rootCmd = &cobra.Command{
 	Short: "A D&D helper CLI application",
 	Long:  `A CLI application to help with D&D spells, monsters, and character management.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if spellName != "" {
-			handlers.HandleSpellRequest(spellName)
-		} else if monsterName != "" {
-			handlers.HandleMonsterRequest(monsterName)
-		}
 	},
 }
 
@@ -30,10 +24,6 @@ func Execute() error {
 }
 
 func init() {
-	// these might go under a search command in a future update
-	rootCmd.Flags().StringVarP(&spellName, "spell", "s", "", "Name of the spell to look up")
-	rootCmd.Flags().StringVarP(&monsterName, "monster", "m", "", "Name of the monster to look up")
-	rootCmd.Flags().StringVarP(&weaponName, "weapon", "w", "", "Name of the weapon to look up")
-	
 	rootCmd.AddCommand(characterCmd)
+	rootCmd.AddCommand(searchCmd)
 }

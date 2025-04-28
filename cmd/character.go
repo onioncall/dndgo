@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"strconv"
-	"strings"
-
 	"github.com/onioncall/dndgo/handlers"
 	"github.com/spf13/cobra"
 )
@@ -13,36 +10,44 @@ var (
 		Use:     "character",
 		Short:   "Manage character information",
 		Aliases: []string{"ctr"},
-}
+	}
 
 	addCmd = &cobra.Command{
 		Use:   "add",
 		Short: "Add character attributes",
 		Run: func(cmd *cobra.Command, args []string) {
-			language, _ := cmd.Flags().GetString("language")
-			backpack, _ := cmd.Flags().GetString("backpack")
-			increaseLevel, _ := cmd.Flags().GetBool("level")
-			equipment, _ := cmd.Flags().GetString("equipment")
+			l, _ := cmd.Flags().GetString("language")
+			bp, _ := cmd.Flags().GetString("backpack")
+			il, _ := cmd.Flags().GetBool("level")
+			e, _ := cmd.Flags().GetString("equipment")
 			s, _ := cmd.Flags().GetString("spell")
 			ss, _ := cmd.Flags().GetInt("spell-slots")
+			q, _ := cmd.Flags().GetInt("quantity")
+			n, _ := cmd.Flags().GetString("name")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				panic(err)
 			}
 			
-			if language != "" {
-				c.AddLanguage(language)
+			if l != "" {
+				c.AddLanguage(l)
 			}
-			if equipment != "" {
-				equipmentArgs := strings.Split(equipment, " ")
-				c.AddEquipment(equipmentArgs[0], strings.Join(equipmentArgs[1:], " ")) 
+			if e != "" {
+				if n == "" {
+					panic("Name of equipment can not be left empty")
+				}
+
+				c.AddEquipment(e, n) 
 			}
-			if backpack != "" {
-				arg, quantity := getArgumentAndQuantity(backpack)
-				c.AddItemToPack(arg, quantity)
+			if bp != "" {
+				if q <= 0 {
+					panic("Must pass a positive quantity to add")
+				}
+
+				c.AddItemToPack(bp, q)
 			}
-			if increaseLevel {
+			if il {
 				// c.AddLevel()				
 			}
 			if ss > 0 {
@@ -99,6 +104,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			s, _ := cmd.Flags().GetInt("spell-slots")
 			bp, _ := cmd.Flags().GetString("backpack")
+			q, _ := cmd.Flags().GetInt("quantity")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -106,8 +112,11 @@ var (
 			}
 
 			if bp != "" {
-				arg, quantity := getArgumentAndQuantity(bp)
-				c.RemoveItemFromPack(arg, quantity)
+				if q <= 0 {
+					panic("Must pass a positive quantity to use")
+				}
+
+				c.RemoveItemFromPack(bp, q)
 			} else if s > 0 {
 				c.UseSpellSlot(s);
 			}
@@ -153,6 +162,8 @@ func init() {
 	addCmd.Flags().IntP("spell-slots", "x", 0, "Increase spell-slot by level")
 	addCmd.Flags().StringP("spell", "s", "", "Add spell to list of character spells")
 	addCmd.Flags().StringP("backpack", "b", "", "Item to add to backpack")
+	addCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
+	addCmd.Flags().StringP("name", "n", "", "Name of equipment to add") 
 
 	removeCmd.Flags().StringP("language", "l", "", "Language to remove")
 	removeCmd.Flags().StringP("weapon", "w", "", "Weapon to remove")
@@ -161,24 +172,9 @@ func init() {
 
 	useCmd.Flags().IntP("spell-slots", "x", 0, "Use spell-slot by level")
 	useCmd.Flags().StringP("backpack", "b", "", "Use item from backpack")
+	useCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
 
 	recoverCmd.Flags().IntP("spell-slots", "x", 0, "Use spell-slot by level")
 	recoverCmd.Flags().BoolP("all", "a", false, "Use spell-slot by level")
 	recoverCmd.Flags().IntP("hitpoints", "p", 0, "Include or modify hitpoints")
-}
-
-func getArgumentAndQuantity(input string) (string, int) {
-	args := strings.Split(input, " ")
-	quantityString := string(args[len(args)-1])
-	args = args[:len(args)-1] 
-	quantity := 1
-
-	parsedQty, err := strconv.Atoi(quantityString)
-	if err == nil {
-		quantity = parsedQty
-	}
-
-	arg := strings.Join(args, " ")
-
-	return arg, quantity
 }

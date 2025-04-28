@@ -92,15 +92,15 @@ type BodyEquipment struct {
 }
 
 const (
-	Head      string = "head:"
-	Amulet    string = "amulet:"
-	Cloak     string = "cloak:"
-	Armour    string = "armor:"
-	HandsArms string = "hands-arms:"
-	Ring      string = "ring:"
-	Ring2     string = "ring2:"
-	Belt      string = "belt:"
-	Boots     string = "boots:"
+	Head      string = "head"
+	Amulet    string = "amulet"
+	Cloak     string = "cloak"
+	Armour    string = "armor"
+	HandsArms string = "hands-arms"
+	Ring      string = "ring"
+	Ring2     string = "ring2"
+	Belt      string = "belt"
+	Boots     string = "boots"
 )
 
 // Load Character Details
@@ -515,6 +515,7 @@ func (c *Character) AddLanguage(language string) {
 }
 
 func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
+	equipmentName = strings.ToLower(equipmentName)
 	switch equipmentType {
 		case Head:
 			c.BodyEquipment.Head = equipmentName

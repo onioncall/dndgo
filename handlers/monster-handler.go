@@ -12,24 +12,23 @@ type MonsterRequest api.BaseRequest
 const MonsterType api.PathType = "monsters"
 
 func HandleMonsterRequest(monsterQuery string) {
-	isList := false
-	if monsterQuery == "list" || monsterQuery == "l" {
-		isList = true
-		monsterQuery = ""
-	}
-
 	r := MonsterRequest {
 		Name: monsterQuery,
 		PathType: MonsterType,
 	}		
 	
-	if isList {
-		ml := r.GetList()	
-		cli.PrintMonsterList(ml)
-	} else {
-		m := r.GetSingle()
-		cli.PrintMonsterSingle(m)
-	}
+	m := r.GetSingle()
+	cli.PrintMonsterSingle(m)
+}
+
+func HandleMonsterListRequest() {
+	r := MonsterRequest {
+		Name: "",
+		PathType: MonsterType,
+	}		
+
+	ml := r.GetList()	
+	cli.PrintMonsterList(ml)
 }
 
 func (m *MonsterRequest) GetList() models.MonsterList {

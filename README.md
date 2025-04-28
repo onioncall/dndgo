@@ -1,19 +1,22 @@
-# Flags 
+# README 
 ---
 to return a list of all spells/monsters/etc, pass l or list as an argument
 
--s for spells (ex. dndgo -s "acid arrow" -or- dndgo -s acid-arrow)
+-s for spells (ex. dndgo search -s "acid arrow" -or- dndgo -s acid-arrow)
 
--m for monsters (ex. dndgo -m "adult black dragon" -or- dndgo -s adult-black-dragon)
+-m for monsters (ex. dndgo search -m "adult black dragon" -or- dndgo -s adult-black-dragon)
+
+-e for equipment (ex. dndgo search -e "soap" -or- dndgo -e soap)
 
 ctr for character actions
 
-dndgo ctr add -l "Elvish" (Add Language)
-dndgo ctr add -b "Gold 17" (Add 17 gold)
-dndgo ctr remove -b "Gold 2" (remove 2 gold)
-dndgo ctr add -e "cloak: Cloak of Billowing" (adds Cloak of Billowing as a cloak to body equipment)
+dndgo ctr add -l "Elvish" (add Language)
+dndgo ctr add -b Gold -q 17 (add 17 gold)
+dndgo ctr remove -b Gold -q 2 (remove 2 gold)
+dndgo ctr add -e cloak -n "Cloak of Billowing" (adds Cloak of Billowing as a cloak to body equipment)
 dndgo ctr add -lvl (increase level)
-dndgo ctr add -p 12 (heal 12 hp)
+dndgo ctr recover -p 12 (heal 12 hp)
+dndgo ctr use -s 1 (uses level one spell slot)
 dndgo ctr remove -p 12 (damage 12 hp)
 dndgo ctr update (update markdown from existing character.json)
 
