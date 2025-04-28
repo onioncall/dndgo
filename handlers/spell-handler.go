@@ -12,24 +12,23 @@ type SpellRequest api.BaseRequest
 const SpellType	api.PathType = "spells"
 
 func HandleSpellRequest(spellQuery string) {
-	isList := false
-	if spellQuery == "list" || spellQuery == "l" {
-		isList = true
-		spellQuery = ""
-	}
-
 	r := SpellRequest {
 		Name: spellQuery,
 		PathType: SpellType,
 	}		
 	
-	if isList {
-		sl := r.GetList()	
-		cli.PrintSpellList(sl)
-	} else {
-		s := r.GetSingle()
-		cli.PrintSpellSingle(s)
-	}
+	s := r.GetSingle()
+	cli.PrintSpellSingle(s)
+}
+
+func HandleSpellListRequest() {
+	r := SpellRequest {
+		Name: "",
+		PathType: SpellType,
+	}		
+
+	sl := r.GetList()	
+	cli.PrintSpellList(sl)
 }
 
 func (s *SpellRequest) GetList() models.SpellList {
@@ -39,14 +38,6 @@ func (s *SpellRequest) GetList() models.SpellList {
 	}
 
 	return spellList
-}
-
-func (s *SpellRequest) IsList() bool {
-    if s.Name == "list" || s.Name == "l" {
-		return true
-	}
-
-	return false
 }
 
 func (s *SpellRequest) GetSingle() models.Spell {
