@@ -95,7 +95,7 @@ type LegendaryAction struct {
 
 type SubAction struct {
 	ActionName string `json:"action_name"`
-	Count      int    `json:"count"`
+	Count      string `json:"count"`
 	Type       string `json:"type"`
 }
 
