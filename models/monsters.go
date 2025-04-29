@@ -38,13 +38,7 @@ type Monster struct {
 }
 
 type MonsterList struct {
-	ListItems []MonsterListItem `json:"results"`
-}
-
-type MonsterListItem struct {
-	Index 	string	`json:"index"`
-	Name	string	`json:"name"`
-	Url		string	`json:"url"`
+	ListItems []Reference `json:"results"`
 }
 
 type ArmorClass struct {

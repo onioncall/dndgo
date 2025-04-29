@@ -40,11 +40,11 @@ func (s *EquipmentRequest) GetList() models.EquipmentList {
 	return equipmentList
 }
 
-func (s *EquipmentRequest) GetSingle() models.Equipment {
-	s.Name = strings.ReplaceAll(s.Name, " ", "-")
+func (e *EquipmentRequest) GetSingle() models.Equipment {
+	e.Name = strings.ReplaceAll(e.Name, " ", "-")
 
 	equipment := models.Equipment{}
-	equipment, err := api.ExecuteGetRequest[models.Equipment](EquipmentType, s.Name)
+	equipment, err := api.ExecuteGetRequest[models.Equipment](EquipmentType, e.Name)
 	if err != nil {
 		panic(err)
 	}

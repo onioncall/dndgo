@@ -16,8 +16,8 @@ type Spell struct {
 	Concentration bool        `json:"concentration"`
 	CastingTime   string      `json:"casting_time"`
 	Level         int         `json:"level"`
-	AreaOfEffect  AreaOfEffect `json:"area_of_effect"`
-	School        School      `json:"school"`
+	AreaOfEffect  AreaOfEffect`json:"area_of_effect"`
+	School        Reference   `json:"school"`
 	Classes       []Reference `json:"classes"`
 	Subclasses    []Reference `json:"subclasses"`
 	URL           string      `json:"url"`
@@ -41,20 +41,7 @@ type AreaOfEffect struct {
 	Size int    `json:"size"`
 }
 
-type School struct {
-	Index string `json:"index"`
-	Name  string `json:"name"`
-	URL   string `json:"url"`
-}
-
-type Reference struct {
-	Index string `json:"index"`
-	Name  string `json:"name"`
-	URL   string `json:"url"`
-}
-
 type SpellDamage struct {
 	DamageType        Reference          `json:"damage_type"`
 	DamageAtSlotLevel map[int]string `json:"damage_at_slot_level"`
 }
-
