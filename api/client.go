@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"reflect"
 )
 
 var url = "https://www.dnd5eapi.co/api/2014"
@@ -25,6 +24,10 @@ func ExecuteGetRequest[T any](p PathType, criteria string) (T, error) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		panic(resp.Status)
+	}
+
     body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Read Response Failed")
@@ -39,13 +42,4 @@ func ExecuteGetRequest[T any](p PathType, criteria string) (T, error) {
 	}
 
 	return obj, nil
-}
-
-func RequestFactory[T any](args string, request T, p PathType) T {
-    v := reflect.ValueOf(&request).Elem()
-    
-    v.FieldByName("PathType").Set(reflect.ValueOf(p))
-	v.FieldByName("Name").SetString(args)
-    
-    return request
 }

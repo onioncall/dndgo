@@ -7,8 +7,8 @@ type Equipment struct {
     Special           []string          `json:"special"`
     Index             string            `json:"index"`
     Name              string            `json:"name"`
-    EquipmentCategory *Category			`json:"equipment_category,omitempty"`
-    GearCategory      *Category	    	`json:"gear_category,omitempty"`
+    EquipmentCategory *Reference		`json:"equipment_category,omitempty"`
+    GearCategory      *Reference	   	`json:"gear_category,omitempty"`
     WeaponCategory    string         	`json:"weapon_category,omitempty"`
     WeaponRange       string            `json:"weapon_range,omitempty"`
     CategoryRange     string            `json:"category_range,omitempty"`
@@ -16,16 +16,10 @@ type Equipment struct {
     Damage            *Damage           `json:"damage,omitempty"`
     Range             *Range            `json:"range,omitempty"`
     Weight            float64           `json:"weight"`
-    Properties        []Property        `json:"properties"`
+    Properties        []Reference        `json:"properties"`
     URL               string            `json:"url"`
     UpdatedAt         time.Time         `json:"updated_at"`
     Contents          []any			    `json:"contents"`
-}
-
-type Category struct {
-    Index string `json:"index"`
-    Name  string `json:"name"`
-    URL   string `json:"url"`
 }
 
 type Cost struct {
@@ -35,13 +29,7 @@ type Cost struct {
 
 type Damage struct {
     DamageDice string     `json:"damage_dice"`
-    DamageType DamageType `json:"damage_type"`
-}
-
-type DamageType struct {
-    Index string `json:"index"`
-    Name  string `json:"name"`
-    URL   string `json:"url"`
+    DamageType Reference  `json:"damage_type"`
 }
 
 type Range struct {
@@ -49,18 +37,6 @@ type Range struct {
     Long   int `json:"long,omitempty"`
 }
 
-type Property struct {
-    Index string `json:"index"`
-    Name  string `json:"name"`
-    URL   string `json:"url"`
-}
-
 type EquipmentList struct {
-	ListItems []EquipmentListItem `json:"results"`
-}
-
-type EquipmentListItem struct {
-	Index 	string	`json:"index"`
-	Name	string	`json:"name"`
-	Url		string	`json:"url"`
+	ListItems []Reference `json:"results"`
 }
