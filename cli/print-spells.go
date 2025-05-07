@@ -23,9 +23,13 @@ func PrintSpellSingle(spell models.Spell) {
 
 	if spell.Damage != nil {
 		fmt.Println()
-		fmt.Printf("Damage By Slot Level: \n\n")
-		// Because maps aren't sortable, we have to do this to print the damage by slot level nicely
-		printDamageBySlotLevel(spell.Damage.DamageAtSlotLevel)
+		fmt.Printf("Damage Type: %s\n", spell.Damage.DamageType.Name)
+
+		if spell.Damage.DamageAtSlotLevel != nil {
+			fmt.Printf("Damage By Slot Level: \n\n")
+			// Because maps aren't sortable, we have to do this to print the damage by slot level nicely
+			printDamageBySlotLevel(spell.Damage.DamageAtSlotLevel)
+		}
 	}
 }
 
