@@ -15,7 +15,7 @@ type Character struct {
 	Feats             []Feat           `json:"feats"`
 	Languages         []string         `json:"languages"`
 	Proficiency       int              `json:"proficiency"`
-	PassiveReception  int              `json:"passive-reception"`
+	PassivePerception int              `json:"passive-perception"`
 	PassiveInsight    int              `json:"passive-insight"`
 	AC                int              `json:"ac"`
 	SpellSaveDC       int              `json:"spell-save-dc"`
@@ -271,7 +271,7 @@ func (c *Character) BuildLanguages() []string {
 func (c *Character) BuildGeneralStats() []string {
 	nl := "\n"
 	profBonusLine	:= fmt.Sprintf("Proficincy Bonus: +%d\n", c.Proficiency)
-	passReception	:= fmt.Sprintf("Passive Reception: %d\n", c.PassiveReception)
+	passPerception	:= fmt.Sprintf("Passive Perception: %d\n", c.PassivePerception)
 	passInsight		:= fmt.Sprintf("Passive Insight: %d\n", c.PassiveInsight)
 
 	acLine 			:= fmt.Sprintf("AC: %d\n", c.AC)
@@ -283,7 +283,7 @@ func (c *Character) BuildGeneralStats() []string {
 
 	s := []string{
 		profBonusLine,
-		passReception,
+		passPerception,
 		passInsight,
 		nl,
 		acLine,
