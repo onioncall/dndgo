@@ -425,7 +425,9 @@ func (c *Character) BuildSpells() []string {
 	s = append(s, spellSlots)
 
 	for _, spellSlot := range c.SpellSlots {
-		slotRow := fmt.Sprintf("	- Level %d: %d/%d\n", spellSlot.Level, spellSlot.Available, spellSlot.Slot)
+		fullCircle := strings.Repeat("● ", spellSlot.Available)
+		hollowCircle := strings.Repeat("○ ", (spellSlot.Slot - spellSlot.Available))
+		slotRow := fmt.Sprintf("	- Level %d: %s%s\n", spellSlot.Level, fullCircle, hollowCircle)
 		s = append(s, slotRow)
 	}
 
@@ -513,10 +515,14 @@ func (c *Character) BuildBackpack() []string {
 
 func (c *Character) BuildClassSlots() []string {
 	s := make([]string, 0, len(c.ClassDetails.Slots) + 10)
+
 	classSlotHeader := fmt.Sprintf("%s Specific Slots\n", c.ClassName)
 	s = append(s, classSlotHeader)
+
 	for _, slot := range c.ClassDetails.Slots {
-		slot := fmt.Sprintf("%s - %d/%d\n", slot.Name, slot.Available, slot.Slot)	
+		fullCircle := strings.Repeat("● ", slot.Available)
+		hollowCircle := strings.Repeat("○ ", (slot.Slot - slot.Available))
+		slot := fmt.Sprintf("%s - %s%s\n", slot.Name, fullCircle, hollowCircle)	
 		s = append(s, slot)
 	}
 
