@@ -182,7 +182,7 @@ func init() {
 	useCmd.Flags().StringP("class-detail-slots", "d", "", "Use class-detail-slot by slot name")
 
 	recoverCmd.Flags().IntP("spell-slots", "x", 0, "Recover spell-slot by level")
-	recoverCmd.Flags().BoolP("all", "a", false, "Recover spell-slot by level")
+	recoverCmd.Flags().BoolP("all", "a", false, "Recover all health and slots")
 	recoverCmd.Flags().IntP("hitpoints", "p", 0, "Recover hitpoints")
 	recoverCmd.Flags().StringP("class-detail-slots", "d", "", "Recover class-detail-slot by slot name")
 }

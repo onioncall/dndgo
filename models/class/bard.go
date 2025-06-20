@@ -83,7 +83,16 @@ func (b *Bard) JackOfAllTrades(c *models.Character) {
 }
 
 func (b *Bard) PrintOtherFeatures() []string {
+	if b.College.Name == "" {
+		return nil
+	}
+
 	s := make([]string, 0, 100)	
+	header := fmt.Sprintf("Sub-Class Details\n")
+	spacer := fmt.Sprintf("---\n")
+	s = append(s, header)
+	s = append(s, spacer)
+
 	collegeHeader := fmt.Sprintf("*%s*\n\n", b.College.Name)
 	s = append(s, collegeHeader)
 
