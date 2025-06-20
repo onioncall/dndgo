@@ -6,31 +6,40 @@ import (
 )
 
 type Character struct {
-	Path              string           `json:"path"`
-	Name              string           `json:"name"`
-	Level             int              `json:"level"`
-	Class             string           `json:"class"`
-	Race              string           `json:"race"`
-	Background        string           `json:"background"`
-	Feats             []Feat           `json:"feats"`
-	Languages         []string         `json:"languages"`
-	Proficiency       int              `json:"proficiency"`
-	PassivePerception int              `json:"passive-perception"`
-	PassiveInsight    int              `json:"passive-insight"`
-	AC                int              `json:"ac"`
-	SpellSaveDC       int              `json:"spell-save-dc"`
-	HPCurrent		  int			   `json:"hp-current"`
-	HPMax			  int			   `json:"hp-max"`
-	Initiative        int              `json:"initiative"`
-	Speed             int              `json:"speed"`
-	HitDice           string           `json:"hit-dice"`
-	Proficiencies     []ProficiencyStat`json:"proficiencies"`
-	Skills            []Skill          `json:"skills"`
-	Spells            []CharacterSpell `json:"spells"`
+	Path              string           	`json:"path"`
+	Name              string           	`json:"name"`
+	Level             int              	`json:"level"`
+	ClassName         string           	`json:"class-name"`
+	Race              string           	`json:"race"`
+	Background        string           	`json:"background"`
+	Feats             []Feat           	`json:"feats"`
+	Languages         []string         	`json:"languages"`
+	Proficiency       int              	`json:"proficiency"`
+	PassivePerception int              	`json:"passive-perception"`
+	PassiveInsight    int              	`json:"passive-insight"`
+	AC                int              	`json:"ac"`
+	SpellSaveDC       int              	`json:"spell-save-dc"`
+	HPCurrent		  int			   	`json:"hp-current"`
+	HPMax			  int			   	`json:"hp-max"`
+	Initiative        int              	`json:"initiative"`
+	Speed             int              	`json:"speed"`
+	HitDice           string           	`json:"hit-dice"`
+	Proficiencies     []ProficiencyStat	`json:"proficiencies"`
+	Skills            []Skill          	`json:"skills"`
+	Spells            []CharacterSpell 	`json:"spells"`
 	SpellSlots        []SpellSlot       `json:"spell-slots"`
-	Weapons           []Weapon         `json:"weapons"`
-	BodyEquipment     BodyEquipment    `json:"body-equipment"`
-	Backpack          []BackpackItem   `json:"backpack"`
+	Weapons           []Weapon         	`json:"weapons"`
+	BodyEquipment     BodyEquipment    	`json:"body-equipment"`
+	Backpack          []BackpackItem   	`json:"backpack"`
+	ClassDetails	  ClassDetails	   	`json:"class-details"`
+	Class			  IClass			`json:"-"`	
+}
+
+type IClass interface {
+	LoadMethods()
+	ExecutePostCalculateMethods(c *Character)
+	ExecutePreCalculateMethods(c *Character)
+	PrintOtherFeatures() []string
 }
 
 type Feat struct {
@@ -63,6 +72,16 @@ type CharacterSpell struct {
 	SlotLevel int    `json:"slot-level"`
 	IsRitual    bool   `json:"ritual"`
 	Name      string `json:"name"`
+}
+
+type ClassDetails struct {
+	Slots []ClassSlot `json:"slots"`
+}
+
+type ClassSlot struct {
+	Name 		string `json:"name"`
+	Slot 		int	`json:"slot"`
+	Available	int `json:"available"`
 }
 
 type SpellSlot struct {
@@ -214,6 +233,20 @@ func (c *Character) BuildCharacter() string {
 	}
 	builder.WriteString(nl)
 
+	classSlots := c.BuildClassSlots()
+	for i := range classSlots {
+		builder.WriteString(classSlots[i]) 
+	}
+	builder.WriteString(nl)
+	
+	if c.Class != nil {
+		otherClassFeatures := c.Class.PrintOtherFeatures()
+		for i := range otherClassFeatures {
+			builder.WriteString(otherClassFeatures[i]) 
+		}
+		builder.WriteString(nl)
+	}
+
     result := builder.String()
 	return result
 }
@@ -228,7 +261,7 @@ func (c *Character) BuildHeader() []string {
 
 func (c *Character) BuildCharacterInfo() []string {
 	levelLine 		:= fmt.Sprintf("Level: %d\n", c.Level)
-	classLine 		:= fmt.Sprintf("Class: %s\n", c.Class)
+	classLine 		:= fmt.Sprintf("Class: %s\n", c.ClassName)
 	raceLine 		:= fmt.Sprintf("Race: %s\n", c.Race)
 	backgroundLine 	:= fmt.Sprintf("Background: %s\n", c.Background)
 
@@ -478,6 +511,18 @@ func (c *Character) BuildBackpack() []string {
 	return s
 }
 
+func (c *Character) BuildClassSlots() []string {
+	s := make([]string, 0, len(c.ClassDetails.Slots) + 10)
+	classSlotHeader := fmt.Sprintf("%s Specific Slots\n", c.ClassName)
+	s = append(s, classSlotHeader)
+	for _, slot := range c.ClassDetails.Slots {
+		slot := fmt.Sprintf("%s - %d/%d\n", slot.Name, slot.Available, slot.Slot)	
+		s = append(s, slot)
+	}
+
+	return s
+}
+
 // CLI Actions
 
 func (c *Character) AddItemToPack(item string, quantity int) {
@@ -583,10 +628,32 @@ func (c *Character) RecoverSpellSlots(level int) {
 	}
 }
 
+func (c *Character) RecoverClassDetailSlots(name string) {
+	name = strings.ToLower(name)
+	for i, slot := range c.ClassDetails.Slots {
+		if strings.ToLower(slot.Name) == name {
+			c.ClassDetails.Slots[i].Available = c.ClassDetails.Slots[i].Slot
+		}
+	}
+}
+
 func (c *Character) Recover() {
 	c.HPCurrent = c.HPMax
 
 	for i := range c.SpellSlots {
 		c.SpellSlots[i].Available = c.SpellSlots[i].Slot
+	}
+
+	for i := range c.ClassDetails.Slots {
+		c.ClassDetails.Slots[i].Available = c.ClassDetails.Slots[i].Slot
+	}
+}
+
+func (c *Character) UseClassSlots(name string) {
+	name = strings.ToLower(name)
+	for i, slot := range c.ClassDetails.Slots {
+		if strings.ToLower(slot.Name) == name && slot.Available > 0 {
+			c.ClassDetails.Slots[i].Available--
+		}	
 	}
 }

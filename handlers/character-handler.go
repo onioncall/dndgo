@@ -19,7 +19,16 @@ const (
 )
 
 func HandleCharacter(c *models.Character) {
+	if c.Class != nil {
+		c.Class.ExecutePreCalculateMethods(c)
+	}
+
 	c.CalculateCharacterStats()
+
+	if c.Class != nil {
+		c.Class.ExecutePostCalculateMethods(c)
+	}
+
 	res := c.BuildCharacter()
 	SaveCharacterMarkdown(res, c.Path)
 }
@@ -102,6 +111,14 @@ func LoadCharacter() (*models.Character, error) {
 		fmt.Println(err)
 		return nil, fmt.Errorf("failed to parse character data: %w", err)
 	}
+
+	class, err := LoadClass(character.ClassName)
+	if err != nil {
+		fmt.Println(err)
+		return nil, fmt.Errorf("failed to load class file: %w", err)
+	}
+	
+	character.Class = class
 
 	return &character, nil
 }
