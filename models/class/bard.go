@@ -42,8 +42,8 @@ func (b *Bard) LoadMethods() {
 }
 
 func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
-	preBuildMethods = append(preBuildMethods, b.JackOfAllTrades)
-	preBuildMethods = append(preBuildMethods, b.Expertise)
+	preBuildMethods = append(preBuildMethods, b.jackOfAllTrades)
+	preBuildMethods = append(preBuildMethods, b.expertise)
 	for _, m := range preBuildMethods {
 		m(c)
 	}
@@ -56,28 +56,48 @@ func (b *Bard) TestPrint() {
 	fmt.Println("success")
 }
 
-func (b *Bard) Expertise(c *models.Character) {
+// At level 3, bards can pick two skills they are proficient in, and double the modifier. 
+// They select two more at level 10
+func (b *Bard) expertise(c *models.Character) {
 	if c.Level < 3 {
 		return
 	}
+	
+	if c.Level < 10 && len(b.SkillProficienciesToDouble) > 2 {
+		// We'll allow the user to specify more, but only the first two get taken for it to be legal
+		b.SkillProficienciesToDouble = b.SkillProficienciesToDouble[:2]
+	} 
 
+	if c.Level > 10 && len(b.SkillProficienciesToDouble) > 4 {
+		// We'll allow the user to specify more, but only the first four get taken for it to be legal
+		b.SkillProficienciesToDouble = b.SkillProficienciesToDouble[:2]
+	}
+
+	seen := make(map[string]bool)
 	for _, profToDouble := range b.SkillProficienciesToDouble {
+		if seen[profToDouble] == true {
+			panic("Bard Config Error - Expertise can not have dupliate proficiencies")
+		}
+		seen[profToDouble] = true
+
 		for i, cs := range c.Skills {
 			if strings.ToLower(cs.Name) == strings.ToLower(profToDouble) {
-				c.Skills[i].Bonus += c.Proficiency
+				c.Skills[i].SkillModifier += c.Skills[i].SkillModifier
 			}
 		}
 	}
 }
 
-func (b *Bard) JackOfAllTrades(c *models.Character) {
+// At level 2, bards can add half their proficiency bonus (rounded down) to any ability check 
+// that doesn't already use their proficiency bonus.
+func (b *Bard) jackOfAllTrades(c *models.Character) {
 	if (c.Level < 2) {
 		return
 	}
 
 	for i, skill := range c.Skills {
 		if !skill.Proficient {
-			c.Skills[i].Bonus += int(math.Floor(float64(c.Proficiency / 2)))	
+			c.Skills[i].SkillModifier += int(math.Floor(float64(c.Proficiency / 2)))	
 		} 
 	}
 }
@@ -92,6 +112,14 @@ func (b *Bard) PrintOtherFeatures() []string {
 	spacer := fmt.Sprintf("---\n")
 	s = append(s, header)
 	s = append(s, spacer)
+
+	expertiseHeader := fmt.Sprintf("Expertise\n")
+	s = append(s, expertiseHeader)
+	for _, exp := range b.SkillProficienciesToDouble {
+		expLine := fmt.Sprintf("- %s\n", exp)
+		s = append(s, expLine)
+	}
+	s = append(s, "\n")
 
 	collegeHeader := fmt.Sprintf("*%s*\n\n", b.College.Name)
 	s = append(s, collegeHeader)
