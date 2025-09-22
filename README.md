@@ -33,3 +33,14 @@ upcoming TODOs:
     - implement add spell and add weapon by using the 5e API. in theory, like dndgo ctr add -s "acid-arrow" or dndgo ctr add -w "Rapier" 
 
 When in doubt, don't use caps. I haven't done the conversion everywhere to lower case everywhere, so it may cause problems
+
+Search Example
+
+https://github.com/user-attachments/assets/d7c95bd0-3388-4514-ae1c-aa1fadc10b02
+
+Character Markdown Example
+
+https://github.com/user-attachments/assets/730cd6f4-2f8b-4afa-a784-067a18f9bf3f
+
+
+
