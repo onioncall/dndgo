@@ -82,7 +82,7 @@ func (b *Bard) expertise(c *models.Character) {
 
 		for i, cs := range c.Skills {
 			if strings.ToLower(cs.Name) == strings.ToLower(profToDouble) {
-				c.Skills[i].SkillModifier += c.Skills[i].SkillModifier
+				c.Skills[i].SkillModifier += c.Proficiency
 			}
 		}
 	}
