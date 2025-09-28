@@ -1,6 +1,7 @@
 package class
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/onioncall/dndgo/models"
@@ -17,6 +18,7 @@ func TestBard_expertise(t *testing.T) {
 			name: "Below Level Requirement",
 			character: &models.Character {
 				Level: 2,
+				Proficiency: 2,
 				Skills: []models.Skill {
 					{Name: "dexterity", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
@@ -39,6 +41,7 @@ func TestBard_expertise(t *testing.T) {
 			name: "Level 3 - Two Skill Proficiencies Doubled",
 			character: &models.Character {
 				Level: 3,
+				Proficiency: 2,
 				Skills: []models.Skill {
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
@@ -53,14 +56,15 @@ func TestBard_expertise(t *testing.T) {
 			},
 			expectedSKills: []models.Skill {
 				{Name: "nature", SkillModifier: 5, Proficient: false},
-				{Name: "persuasion", SkillModifier: 8, Proficient: false},
-				{Name: "deception", SkillModifier: 6, Proficient: false},
+				{Name: "persuasion", SkillModifier: 6, Proficient: false},
+				{Name: "deception", SkillModifier: 5, Proficient: false},
 			},
 		},
 		{
 			name: "Level 3 - Two Skill Proficiencies Doubled, One Removed",
 			character: &models.Character {
 				Level: 3,
+				Proficiency: 2,
 				Skills: []models.Skill {
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
@@ -76,14 +80,15 @@ func TestBard_expertise(t *testing.T) {
 			},
 			expectedSKills: []models.Skill {
 				{Name: "nature", SkillModifier: 5, Proficient: false},
-				{Name: "persuasion", SkillModifier: 8, Proficient: false},
-				{Name: "deception", SkillModifier: 6, Proficient: false},
+				{Name: "persuasion", SkillModifier: 6, Proficient: false},
+				{Name: "deception", SkillModifier: 5, Proficient: false},
 			},
 		},
 		{
 			name: "Level 10 - Four Skill Proficiencies Doubled",
 			character: &models.Character {
 				Level: 10,
+				Proficiency: 4,
 				Skills: []models.Skill {
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
@@ -101,10 +106,10 @@ func TestBard_expertise(t *testing.T) {
 				},
 			},
 			expectedSKills: []models.Skill {
-				{Name: "nature", SkillModifier: 10, Proficient: false},
+				{Name: "nature", SkillModifier: 9, Proficient: false},
 				{Name: "persuasion", SkillModifier: 8, Proficient: false},
-				{Name: "deception", SkillModifier: 6, Proficient: false},
-				{Name: "religion", SkillModifier: 4, Proficient: false},
+				{Name: "deception", SkillModifier: 7, Proficient: false},
+				{Name: "religion", SkillModifier: 6, Proficient: false},
 				{Name: "survival", SkillModifier: 4, Proficient: false},
 			},
 		},
@@ -121,6 +126,7 @@ func TestBard_expertise(t *testing.T) {
 			}
 			copy(testChar.Skills, test.character.Skills)
 
+			fmt.Println(test.name)
 			test.bard.expertise(testChar)
 
 			for i, skill := range testChar.Skills {
