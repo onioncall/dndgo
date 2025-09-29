@@ -7,7 +7,7 @@ import (
 	"github.com/onioncall/wrapt"
 )
 
-func PrintMonsterSingle(monster models.Monster) {
+func PrintMonsterSingle(monster models.Monster, termWidth int) {
 
 	fmt.Printf("%s\n\n", monster.Name)
 	fmt.Printf("Hit Points: %d\n", monster.HitPoints)
@@ -20,7 +20,7 @@ func PrintMonsterSingle(monster models.Monster) {
 	fmt.Println()
 
 	if len(monster.SpecialAbilities) > 0 {
-		printSpecialAbilities(monster.SpecialAbilities)
+		printSpecialAbilities(monster.SpecialAbilities, termWidth)
 	}
 }
 
@@ -31,14 +31,14 @@ func PrintMonsterList(monsterList models.MonsterList) {
 	}
 }
 
-func printSpecialAbilities(abilities []models.SpecialAbility) {
+func printSpecialAbilities(abilities []models.SpecialAbility, termWidth int) {
 	fmt.Print("Special Abilities:\n")
 	
 	for _, ability := range abilities {
 		tab := "    "
 		fmt.Println()
 		fmt.Printf("%s%s\n", tab, ability.Name)
-		for _, s := range wrapt.WrapArray(ability.Desc, len(tab)) {
+		for _, s := range wrapt.WrapArray(ability.Desc, len(tab), termWidth) {
 			fmt.Printf("%s%s\n", tab, s)
 		}
 		if ability.Usage != nil {

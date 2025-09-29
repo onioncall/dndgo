@@ -1,8 +1,12 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/onioncall/dndgo/handlers"
 	"github.com/spf13/cobra"
+	"golang.org/x/term"
 )
 
 var (
@@ -14,15 +18,21 @@ var (
 			e, _ := cmd.Flags().GetString("equipment")
 			m, _ := cmd.Flags().GetString("monster")
 			f, _ := cmd.Flags().GetString("feature")
-			
+
+			w, _, err := term.GetSize(int(os.Stdout.Fd()))
+			if err != nil {
+				msg := fmt.Sprintf("Failed to get terminal size: %s", err)
+				panic(msg)
+			}
+
 			if s != "" {
-				handlers.HandleSpellRequest(s)
+				handlers.HandleSpellRequest(s, w)
 			} else if e != "" {
-				handlers.HandleEquipmentRequest(e)
+				handlers.HandleEquipmentRequest(e, w)
 			} else if m != "" {
-				handlers.HandleMonsterRequest(m)
+				handlers.HandleMonsterRequest(m, w)
 			} else if f != "" {
-				handlers.HandleFeatureRequest(f)
+				handlers.HandleFeatureRequest(f, w)
 			}
 		},
 	}

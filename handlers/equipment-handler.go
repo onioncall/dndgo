@@ -11,14 +11,14 @@ import (
 type EquipmentRequest api.BaseRequest
 const EquipmentType api.PathType = "equipment"
 
-func HandleEquipmentRequest(equipmentQuery string) {
+func HandleEquipmentRequest(equipmentQuery string, termWidth int) {
 	r := EquipmentRequest {
 		Name: equipmentQuery,
 		PathType: EquipmentType,
 	}		
 
 	e := r.GetSingle()
-	cli.PrintEquipmentSingle(e)
+	cli.PrintEquipmentSingle(e, termWidth)
 }
 
 func HandleEquipmentListRequest() {

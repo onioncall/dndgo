@@ -7,11 +7,11 @@ import (
 	"github.com/onioncall/wrapt"
 )
 
-func PrintFeatureSingle(feature models.Feature) {
+func PrintFeatureSingle(feature models.Feature, termWidth int) {
 	fmt.Printf("%s\n\n", feature.Name)
 	fmt.Printf("Class: %s\n\n", feature.Class.Name)
 	for _, description := range feature.Desc {
-		fmt.Printf("%s\n\n", wrapt.Wrap(description))	
+		fmt.Printf("%s\n\n", wrapt.Wrap(description, termWidth))	
 	}
 }
 

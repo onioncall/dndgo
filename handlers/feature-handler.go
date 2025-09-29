@@ -11,14 +11,14 @@ import (
 type FeatureRequest api.BaseRequest
 const FeatureType api.PathType = "features"
 
-func HandleFeatureRequest(featureQuery string) {
+func HandleFeatureRequest(featureQuery string, termWidth int) {
 	r := FeatureRequest {
 		Name: featureQuery,
 		PathType: FeatureType,
 	}		
 
 	f := r.GetSingle()
-	cli.PrintFeatureSingle(f)
+	cli.PrintFeatureSingle(f, termWidth)
 }
 
 func HandleFeatureListRequest() {
