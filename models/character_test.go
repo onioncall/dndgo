@@ -1,6 +1,7 @@
 package models
 
 import (
+	"os"
 	"testing"
 )
 
@@ -164,6 +165,11 @@ func TestCharacter_UseClassSlots(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// Prevent from writing to terminal during tests
+			original := os.Stdout
+			os.Stdout, _ = os.Open(os.DevNull)
+			defer func() { os.Stdout = original }()
+
 			tt.character.UseClassSlots(tt.slotName)	
 
 			if len(tt.character.ClassDetails.Slots) != len(tt.expected) {
@@ -362,6 +368,11 @@ func TestCharacter_UseSpellSlot(t *testing.T) {
 	
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// Prevent from writing to terminal during tests
+			original := os.Stdout
+			os.Stdout, _ = os.Open(os.DevNull)
+			defer func() { os.Stdout = original }()
+
 			tt.character.UseSpellSlot(tt.level)
 
 			for i, e := range tt.expected {
@@ -369,6 +380,339 @@ func TestCharacter_UseSpellSlot(t *testing.T) {
 
 				if e != result {
 					t.Errorf("Spell Slot Level %d- Expected: %d, Result: %d", e.Level, e.Available, result.Available)
+				}
+			}
+		})
+	}
+}
+
+func TestCharacter_RecoverSpellSlots(t *testing.T) {
+	tests := []struct {
+		name		string
+		character	*Character
+		level		int
+		expected	[]SpellSlot
+	}{
+		{
+			name: "Recover Level 1 Slot",
+			level: 1,
+			character: &Character {
+				SpellSlots: []SpellSlot {
+					{Level: 1, Slot: 6, Available: 3},
+					{Level: 2, Slot: 3, Available: 3},
+				},
+			},
+			expected: []SpellSlot {
+				{Level: 1, Slot: 6, Available: 6},
+				{Level: 2, Slot: 3, Available: 3},
+			},
+		},
+	}
+	
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.character.RecoverSpellSlots(tt.level)
+
+			for i, e := range tt.expected {
+				result := tt.character.SpellSlots[i]
+
+				if e != result {
+					t.Errorf("Spell Slot Level %d- Expected: %d, Result: %d", e.Level, e.Available, result.Available)
+				}
+			}
+		})
+	}
+}
+
+func TestCharacter_DamageCharacter(t *testing.T) {
+	tests := []struct {
+		name		string
+		damage		int
+		character	*Character
+		expected	Character
+	}{
+		{
+			name: "Some Damage",
+			damage: 5,
+			character: &Character {
+				HPCurrent: 16,
+				HPMax: 16,
+			},
+			expected: Character {
+				HPCurrent: 11,
+				HPMax: 16,
+			},
+		},
+		{
+			name: "Damage Below Zero",
+			damage: 16,
+			character: &Character {
+				HPCurrent: 11,
+				HPMax: 16,
+			},
+			expected: Character {
+				HPCurrent: 0,
+				HPMax: 16,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Prevent from writing to terminal during tests
+			original := os.Stdout
+			os.Stdout, _ = os.Open(os.DevNull)
+			defer func() { os.Stdout = original }()
+
+			tt.character.DamageCharacter(tt.damage)
+
+			e := tt.expected
+			result := tt.character
+			if e.HPCurrent != result.HPCurrent {
+				t.Errorf("HPCurrent- Expected: %d, Result: %d", e.HPCurrent, result.HPCurrent)
+			}
+
+			// We should never mutate the max HP
+			if e.HPMax != result.HPMax {
+				t.Errorf("HPMax- Expected: %d, Result: %d", e.HPMax, result.HPMax)
+			}
+		})
+	}
+}
+
+func TestCharacter_HealCharacter(t *testing.T) {
+	tests := []struct {
+		name			string
+		healthRecovered	int
+		character		*Character
+		expected		Character
+	}{
+		{
+			name: "Some Recovery",
+			healthRecovered: 4,
+			character: &Character {
+				HPCurrent: 11,
+				HPMax: 16,
+			},
+			expected: Character {
+				HPCurrent: 15,
+				HPMax: 16,
+			},
+		},
+		{
+			name: "Greater Than Full Recovery",
+			healthRecovered: 16,
+			character: &Character {
+				HPCurrent: 11,
+				HPMax: 16,
+			},
+			expected: Character {
+				HPCurrent: 16,
+				HPMax: 16,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.character.HealCharacter(tt.healthRecovered)
+
+			e := tt.expected
+			result := tt.character
+			if e.HPCurrent != result.HPCurrent {
+				t.Errorf("HPCurrent- Expected: %d, Result: %d", e.HPCurrent, result.HPCurrent)
+			}
+
+			// We should never mutate the max HP
+			if e.HPMax != result.HPMax {
+				t.Errorf("HPMax- Expected: %d, Result: %d", e.HPMax, result.HPMax)
+			}
+		})
+	}
+}
+
+func TestCharacter_AddEquipment(t *testing.T) {
+	tests := []struct {
+		name			string
+		character		*Character
+		equipmentType 	string
+		equipmentName	string
+		expected		BodyEquipment
+	}{
+		{
+			name: "Add Cloak",
+			character: &Character {},
+			equipmentType: "cloak",
+			equipmentName: "cloak of rad shit",
+			expected: BodyEquipment {
+				Cloak: "cloak of rad shit",
+			},
+		},
+		{
+			name: "EquipmentType not valid",
+			character: &Character {
+				BodyEquipment: BodyEquipment {
+					Cloak: "cloak of rad shit",
+				},
+			},
+			equipmentType: "cloakwef",
+			equipmentName: "cloak of cool shit",
+			expected: BodyEquipment {
+				Cloak: "cloak of rad shit",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Prevent from writing to terminal during tests
+			original := os.Stdout
+			os.Stdout, _ = os.Open(os.DevNull)
+			defer func() { os.Stdout = original }()
+
+			tt.character.AddEquipment(tt.equipmentType, tt.equipmentName)
+
+			e := tt.expected.Cloak 
+			result := tt.character.BodyEquipment.Cloak
+
+			if e != result {
+				t.Errorf("Cloak- Expected: %s. Result: %s", e, result)
+			}
+		})
+	}
+}
+
+func TestCharacter_RemoveItemFromBackpack(t *testing.T) {
+	tests := []struct {
+		name		string
+		character	*Character
+		itemName	string
+		quantity	int
+		expected	[]BackpackItem
+	}{
+		{
+			name: "Remove 1 Item",
+			itemName: "soap",
+			quantity: 5,
+			character: &Character {
+				Backpack: []BackpackItem {
+					{Name: "soap", Quantity: 50},
+					{Name: "gold", Quantity: 5},
+				},
+			},
+			expected: []BackpackItem {
+				{Name: "soap", Quantity: 45},
+				{Name: "gold", Quantity: 5},
+			},
+		},
+		{
+			name: "Remove More Than Available Quantity",
+			itemName: "soap",
+			quantity: 51,
+			character: &Character {
+				Backpack: []BackpackItem {
+					{Name: "soap", Quantity: 51},
+					{Name: "gold", Quantity: 5},
+				},
+			},
+			expected: []BackpackItem {
+				{Name: "soap", Quantity: 0},
+				{Name: "gold", Quantity: 5},
+			},
+		},
+		{
+			name: "Item Not In Backpack",
+			itemName: "soapehrgerg",
+			quantity: 50,
+			character: &Character {
+				Backpack: []BackpackItem {
+					{Name: "soap", Quantity: 50},
+					{Name: "gold", Quantity: 5},
+				},
+			},
+			expected: []BackpackItem {
+				{Name: "soap", Quantity: 50},
+				{Name: "gold", Quantity: 5},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Prevent from writing to terminal during tests
+			original := os.Stdout
+			os.Stdout, _ = os.Open(os.DevNull)
+			defer func() { os.Stdout = original }()
+
+			tt.character.RemoveItemFromPack(tt.itemName, tt.quantity)
+
+			if len(tt.expected) != len(tt.character.Backpack) {
+				t.Errorf("Item Count- Expected: %d, Result: %d", len(tt.expected), len(tt.character.Backpack))
+			}
+
+			for i, e := range tt.expected {
+				result := tt.character.Backpack[i]
+
+				if e.Quantity != result.Quantity {
+					t.Errorf("Item Quantity %s- Expected: %d, Result: %d", e.Name, e.Quantity, result.Quantity)
+				}
+			}
+		})
+	}
+}
+
+func TestCharacter_AddItemToBackpack(t *testing.T) {
+	tests := []struct {
+		name		string
+		character	*Character
+		itemName	string
+		quantity	int
+		expected	[]BackpackItem
+	}{
+		{
+			name: "Add 1 New Item",
+			itemName: "soap",
+			quantity: 5,
+			character: &Character {
+				Backpack: []BackpackItem {
+					{Name: "gold", Quantity: 5},
+				},
+			},
+			expected: []BackpackItem {
+				{Name: "gold", Quantity: 5},
+				{Name: "soap", Quantity: 5},
+			},
+		},
+		{
+			name: "Add 1 Existing Item",
+			itemName: "soap",
+			quantity: 5,
+			character: &Character {
+				Backpack: []BackpackItem {
+					{Name: "gold", Quantity: 5},
+					{Name: "soap", Quantity: 5},
+				},
+			},
+			expected: []BackpackItem {
+				{Name: "gold", Quantity: 5},
+				{Name: "soap", Quantity: 10},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.character.AddItemToPack(tt.itemName, tt.quantity)
+
+			if len(tt.expected) != len(tt.character.Backpack) {
+				t.Errorf("Item Count- Expected: %d, Result: %d", len(tt.expected), len(tt.character.Backpack))
+			}
+
+			for i, e := range tt.expected {
+				result := tt.character.Backpack[i]
+
+				if e != result {
+					t.Errorf("Item Quantity %s- Expected: %d, Result: %d", e.Name, e.Quantity, result.Quantity)
 				}
 			}
 		})
