@@ -20,6 +20,7 @@ func PrintSpellSingle(spell models.Spell) {
 
 	fmt.Printf("Range: %v\n", spell.Range)
 	fmt.Printf("Casting Time: %v\n", spell.CastingTime)
+	fmt.Printf("Duration: %v\n", spell.Duration)
 
 	if spell.Damage != nil {
 		fmt.Println()
