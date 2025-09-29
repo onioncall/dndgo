@@ -11,14 +11,14 @@ import (
 type MonsterRequest api.BaseRequest
 const MonsterType api.PathType = "monsters"
 
-func HandleMonsterRequest(monsterQuery string) {
+func HandleMonsterRequest(monsterQuery string, termWidth int) {
 	r := MonsterRequest {
 		Name: monsterQuery,
 		PathType: MonsterType,
 	}		
 	
 	m := r.GetSingle()
-	cli.PrintMonsterSingle(m)
+	cli.PrintMonsterSingle(m, termWidth)
 }
 
 func HandleMonsterListRequest() {

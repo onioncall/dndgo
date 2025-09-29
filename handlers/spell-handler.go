@@ -11,14 +11,14 @@ import (
 type SpellRequest api.BaseRequest
 const SpellType	api.PathType = "spells"
 
-func HandleSpellRequest(spellQuery string) {
+func HandleSpellRequest(spellQuery string, termWidth int) {
 	r := SpellRequest {
 		Name: spellQuery,
 		PathType: SpellType,
 	}		
 	
 	s := r.GetSingle()
-	cli.PrintSpellSingle(s)
+	cli.PrintSpellSingle(s, termWidth)
 }
 
 func HandleSpellListRequest() {

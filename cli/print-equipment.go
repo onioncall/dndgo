@@ -7,11 +7,11 @@ import (
 	"github.com/onioncall/wrapt"
 )
 
-func PrintEquipmentSingle(equipment models.Equipment) {
+func PrintEquipmentSingle(equipment models.Equipment, termWidth int) {
 	fmt.Printf("%s\n\n", equipment.Name)
 
 	for _, description := range equipment.Desc {
-		fmt.Printf("%s\n\n", wrapt.Wrap(description))	
+		fmt.Printf("%s\n\n", wrapt.Wrap(description, termWidth))	
 	}
 	
 	fmt.Printf("Equipment Category: %s\n", equipment.EquipmentCategory.Name)

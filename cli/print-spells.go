@@ -8,10 +8,10 @@ import (
 	"github.com/onioncall/wrapt"
 )
 
-func PrintSpellSingle(spell models.Spell) {
+func PrintSpellSingle(spell models.Spell, termWidth int) {
 	fmt.Printf("%s\n\n", spell.Name)
 	for _, description := range spell.Description {
-		fmt.Printf("%s\n\n", wrapt.Wrap(description))	
+		fmt.Printf("%s\n\n", wrapt.Wrap(description, termWidth))	
 	}
 
 	if spell.AreaOfEffect.Size != 0 {
