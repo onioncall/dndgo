@@ -530,14 +530,17 @@ func (c *Character) RemoveItemFromPack(item string, quantity int) {
 	for i, packItem := range c.Backpack {
 		if packItem.Name == item {
 			if packItem.Quantity < quantity {
-				err := fmt.Sprintf("Quantity to remove (%d) greater than quantity in pack (%d)", quantity, packItem.Quantity)
-				panic(err)
+				msg := fmt.Sprintf("Quantity to remove (%d) greater than quantity in pack (%d)", quantity, packItem.Quantity)
+				fmt.Println(msg)
 			}
 
 			c.Backpack[i].Quantity -= quantity
 			return
 		}
 	}
+
+	msg := fmt.Sprintf("Item %s not found in pack", item)
+	fmt.Println(msg)
 }
 
 func (c *Character) AddLanguage(language string) {
@@ -566,8 +569,8 @@ func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
 		case Boots:
 			c.BodyEquipment.Boots = equipmentName
 		default:
-			err := fmt.Sprintf("Invalid Equipment Type: %s", equipmentType)
-			panic(err)
+			msg := fmt.Sprintf("Invalid Equipment Type: %s", equipmentType)
+			fmt.Println(msg)
 	}
 }
 
@@ -584,8 +587,14 @@ func (c *Character) HealCharacter(hpInc int) {
 }
 
 func (c *Character) DamageCharacter(hpDecr int) {
+	if c.HPCurrent <= 0 {
+		fmt.Println("Character had no health left")
+		return
+	}
+
 	c.HPCurrent -= hpDecr
 
+	// reset to zero if the decremented amount is greater than remaining health
 	if c.HPCurrent < 0 {
 		c.HPCurrent = 0
 	}
@@ -594,15 +603,17 @@ func (c *Character) DamageCharacter(hpDecr int) {
 func (c *Character) UseSpellSlot(level int) {
 	for i := range c.SpellSlots {
 		if c.SpellSlots[i].Level == level {
-			if c.SpellSlots[i].Available > 0 {
-				c.SpellSlots[i].Available--
+			if c.SpellSlots[i].Available <= 0 {
+				fmt.Printf("Spell Slot Level %d: already at zero", level)
+				return
 			}
 
+			c.SpellSlots[i].Available--
 			return
 		}
 	}
 
-	panic("invalid level, must be 1-9") 
+	fmt.Println("invalid level, must be 1-9") 
 }
 
 func (c *Character) RecoverSpellSlots(level int) {
@@ -637,8 +648,13 @@ func (c *Character) Recover() {
 func (c *Character) UseClassSlots(name string) {
 	name = strings.ToLower(name)
 	for i, slot := range c.ClassDetails.Slots {
-		if strings.ToLower(slot.Name) == name && slot.Available > 0 {
+		if strings.ToLower(slot.Name) == name {
+			if slot.Available < 0 {
+				fmt.Println("Class slot had no uses left")
+			} 
+
 			c.ClassDetails.Slots[i].Available--
+			return
 		}	
 	}
 }
