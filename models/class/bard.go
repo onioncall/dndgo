@@ -108,7 +108,7 @@ func (b *Bard) PrintOtherFeatures() []string {
 	}
 
 	s := make([]string, 0, 100)	
-	header := fmt.Sprintf("Sub-Class Details\n")
+	header := fmt.Sprintf("Class Details\n")
 	spacer := fmt.Sprintf("---\n")
 	s = append(s, header)
 	s = append(s, spacer)
@@ -125,7 +125,7 @@ func (b *Bard) PrintOtherFeatures() []string {
 	s = append(s, collegeHeader)
 
 	for _, collegeDetail := range b.College.Details {
-		collegeDetailName := fmt.Sprintf("%s\n", collegeDetail.Name)
+		collegeDetailName := fmt.Sprintf("---\n%s\n", collegeDetail.Name)
 		s = append(s, collegeDetailName)
 		collegeDetail := fmt.Sprintf("%s\n", collegeDetail.Details)
 		s = append(s, collegeDetail)

@@ -12,7 +12,6 @@ type Character struct {
 	ClassName         string           	`json:"class-name"`
 	Race              string           	`json:"race"`
 	Background        string           	`json:"background"`
-	Feats             []Feat           	`json:"feats"`
 	Languages         []string         	`json:"languages"`
 	Proficiency       int              	`json:"proficiency"`
 	PassivePerception int              	`json:"passive-perception"`
@@ -31,7 +30,7 @@ type Character struct {
 	Weapons           []Weapon         	`json:"weapons"`
 	BodyEquipment     BodyEquipment    	`json:"body-equipment"`
 	Backpack          []BackpackItem   	`json:"backpack"`
-	ClassDetails	  ClassDetails	   	`json:"class-details"`
+	ClassDetails	  ClassDetails		`json:"class-details"`
 	Class			  IClass			`json:"-"`	
 }
 
@@ -42,7 +41,7 @@ type IClass interface {
 	PrintOtherFeatures() []string
 }
 
-type Feat struct {
+type GenericItem struct {
 	Name string `json:"name"`
 	Desc string `json:"desc"`
 }
@@ -162,7 +161,6 @@ func (c *Character) calculateProficiencyBonusByLevel() {
 }
 
 // Format Markdown
-
 func (c *Character) BuildCharacter() string {
 	var builder strings.Builder	
 	nl := "\n"
@@ -176,12 +174,6 @@ func (c *Character) BuildCharacter() string {
 	characterInfo := c.BuildCharacterInfo()
 	for i := range characterInfo {
 		builder.WriteString(characterInfo[i])	
-	}
-	builder.WriteString(nl)
-
-	feats := c.BuildFeats()
-	for i := range feats {
-		builder.WriteString(feats[i])
 	}
 	builder.WriteString(nl)
 
@@ -238,7 +230,7 @@ func (c *Character) BuildCharacter() string {
 		builder.WriteString(classSlots[i]) 
 	}
 	builder.WriteString(nl)
-	
+
 	if c.Class != nil {
 		otherClassFeatures := c.Class.PrintOtherFeatures()
 		for i := range otherClassFeatures {
@@ -270,19 +262,6 @@ func (c *Character) BuildCharacterInfo() []string {
 		classLine,
 		raceLine,
 		backgroundLine,
-	}
-
-	return s
-}
-
-func (c *Character) BuildFeats() []string {
-	s := make([]string, 0, len(c.Feats) + 1)
-	featsLine := fmt.Sprintf("- Feats:\n")
-	s = append(s, featsLine)
-
-	for _, feat := range c.Feats {
-		featRow := fmt.Sprintf("	- %s: %s\n", feat.Name, feat.Desc)
-		s = append(s, featRow)
 	}
 
 	return s
