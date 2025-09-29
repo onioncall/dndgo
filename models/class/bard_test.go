@@ -1,7 +1,6 @@
 package class
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/onioncall/dndgo/models"
@@ -12,7 +11,7 @@ func TestBard_expertise(t *testing.T) {
 		name 			string
 		character 		*models.Character
 		bard			*Bard
-		expectedSKills 	[]models.Skill
+		expected 	[]models.Skill
 	}{
 		{
 			name: "Below Level Requirement",
@@ -31,7 +30,7 @@ func TestBard_expertise(t *testing.T) {
 					"deception",
 				},
 			},
-			expectedSKills: []models.Skill {
+			expected: []models.Skill {
 				{Name: "dexterity", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 4, Proficient: false},
 				{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -54,7 +53,7 @@ func TestBard_expertise(t *testing.T) {
 					"deception",
 				},
 			},
-			expectedSKills: []models.Skill {
+			expected: []models.Skill {
 				{Name: "nature", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 6, Proficient: false},
 				{Name: "deception", SkillModifier: 5, Proficient: false},
@@ -78,7 +77,7 @@ func TestBard_expertise(t *testing.T) {
 					"nature",
 				},
 			},
-			expectedSKills: []models.Skill {
+			expected: []models.Skill {
 				{Name: "nature", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 6, Proficient: false},
 				{Name: "deception", SkillModifier: 5, Proficient: false},
@@ -105,7 +104,7 @@ func TestBard_expertise(t *testing.T) {
 					"religion",
 				},
 			},
-			expectedSKills: []models.Skill {
+			expected: []models.Skill {
 				{Name: "nature", SkillModifier: 9, Proficient: false},
 				{Name: "persuasion", SkillModifier: 8, Proficient: false},
 				{Name: "deception", SkillModifier: 7, Proficient: false},
@@ -115,28 +114,23 @@ func TestBard_expertise(t *testing.T) {
 		},
 	}
 
-	for  _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
+	for  _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.bard.expertise(tt.character)
 
-			// Create a deep copy to avoid modifying the original test data
-			testChar := &models.Character{
-				Level:       test.character.Level,
-				Proficiency: test.character.Proficiency,
-				Skills:      make([]models.Skill, len(test.character.Skills)),
+			if len(tt.character.Skills) != len(tt.expected) {
+				t.Errorf("Skills Count- Expected: %d, Result: %d", len(tt.expected), len(tt.character.Skills))
+				return
 			}
-			copy(testChar.Skills, test.character.Skills)
 
-			fmt.Println(test.name)
-			test.bard.expertise(testChar)
+			for i, e := range tt.expected {
+				result := tt.character.Skills[i]
 
-			for i, skill := range testChar.Skills {
-				expected := test.expectedSKills[i]
-
-				if skill.SkillModifier != expected.SkillModifier {
-					t.Errorf("Skill[%d].SkillModifier = %d, expected %d", i, skill.SkillModifier, expected.SkillModifier)
+				if e.SkillModifier != result.SkillModifier {
+					t.Errorf("Skill Modifier %s- Expected: %d, Result %d", e.Name, e.SkillModifier, result.SkillModifier)
 				}
-				if skill.Proficient != expected.Proficient {
-					t.Errorf("Skill[%d].Proficient = %v, expected %v", i, skill.Proficient, expected.Proficient)
+				if e.Proficient != result.Proficient {
+					t.Errorf("Skill Proficient %s- Expected: %t, Result %t", e.Name, e.Proficient, result.Proficient)
 				}
 			}
 		})
@@ -147,7 +141,8 @@ func TestBard_jackOfAllTrades(t *testing.T) {
 	tests := []struct {
 		name           string
 		character      *models.Character
-		expectedSkills []models.Skill
+		bard		   *Bard
+		expected []models.Skill
 	}{
 		{
 			name: "Level 1 character - no bonus applied",
@@ -159,7 +154,8 @@ func TestBard_jackOfAllTrades(t *testing.T) {
 					{SkillModifier: 3, Proficient: false},
 				},
 			},
-			expectedSkills: []models.Skill {
+			bard: &Bard{},
+			expected: []models.Skill {
 				{SkillModifier: 5, Proficient: false},
 				{SkillModifier: 3, Proficient: false},
 			},
@@ -175,7 +171,8 @@ func TestBard_jackOfAllTrades(t *testing.T) {
 					{SkillModifier: 1, Proficient: false},
 				},
 			},
-			expectedSkills: []models.Skill {
+			bard: &Bard{},
+			expected: []models.Skill {
 				{SkillModifier: 6, Proficient: false},
 				{SkillModifier: 4, Proficient: false},
 				{SkillModifier: 2, Proficient: false},
@@ -183,32 +180,23 @@ func TestBard_jackOfAllTrades(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			bard := &Bard{}
-			
-			// Create a deep copy to avoid modifying the original test data
-			testChar := &models.Character {
-				Level:       test.character.Level,
-				Proficiency: test.character.Proficiency,
-				Skills:      make([]models.Skill, len(test.character.Skills)),
-			}
-			copy(testChar.Skills, test.character.Skills)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.bard.jackOfAllTrades(tt.character)
+			result := tt.character
 
-			bard.jackOfAllTrades(testChar)
-
-			if len(testChar.Skills) != len(test.expectedSkills) {
-				t.Errorf("Expected %d skills, got %d", len(test.expectedSkills), len(testChar.Skills))
+			if len(result.Skills) != len(tt.expected) {
+				t.Errorf("Skills Count- Expected: %d, Result: %d", len(tt.expected), len(result.Skills))
 				return
 			}
 
-			for i, skill := range testChar.Skills {
-				expected := test.expectedSkills[i]
-				if skill.SkillModifier != expected.SkillModifier {
-					t.Errorf("Skill[%d].SkillModifier = %d, expected %d", i, skill.SkillModifier, expected.SkillModifier)
+			for i, e := range tt.expected {
+				result := tt.expected[i]
+				if e.SkillModifier != result.SkillModifier {
+					t.Errorf("Skill Modifier %s- Expected: %d, Result %d", e.Name, e.SkillModifier, result.SkillModifier)
 				}
-				if skill.Proficient != expected.Proficient {
-					t.Errorf("Skill[%d].Proficient = %v, expected %v", i, skill.Proficient, expected.Proficient)
+				if e.Proficient != result.Proficient {
+					t.Errorf("Skill Proficient %s- Expected: %t, Result %t", e.Name, e.Proficient, result.Proficient)
 				}
 			}
 		})
