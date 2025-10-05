@@ -13,10 +13,10 @@ type Bard struct {
 	SkillProficienciesToDouble 	[]string 						`json:"expertise"`
 	AbilityScoreImprovement		[]AbilityScoreImprovementItem	`json:"ability-score-improvement"`
 	College 					string 							`json:"college"`
-	OtherDetails 				[]ClassDetails					`json:"other-Details"`
+	OtherFeatures 				[]ClassFeatures					`json:"other-features"`
 }
 
-type ClassDetails struct {
+type ClassFeatures struct {
 	Name 	string 	`json:"name"`
 	Level	int		`json:"level"`
 	Details string 	`json:"details"`
@@ -183,12 +183,12 @@ func (b *Bard) PrintOtherFeatures(c *models.Character) []string {
 	}
 
 	if b.College != "" {
-		collegeHeader := fmt.Sprintf("*%s*\n\n", b.College)
+		collegeHeader := fmt.Sprintf("Sub-Class: *%s*\n\n", b.College)
 		s = append(s, collegeHeader)
 	}
 
-	if len(b.OtherDetails) > 0 {
-		for _, detail := range b.OtherDetails {
+	if len(b.OtherFeatures) > 0 {
+		for _, detail := range b.OtherFeatures {
 			if detail.Level > c.Level {
 				continue
 			}
@@ -198,7 +198,6 @@ func (b *Bard) PrintOtherFeatures(c *models.Character) []string {
 			collegeDetail := fmt.Sprintf("%s\n", detail.Details)
 			s = append(s, collegeDetail)
 		}
-		s = append(s, "\n")
 	}
 
 	return s
