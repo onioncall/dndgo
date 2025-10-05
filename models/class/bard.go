@@ -13,12 +13,13 @@ type Bard struct {
 	SkillProficienciesToDouble 	[]string 						`json:"expertise"`
 	AbilityScoreImprovement		[]AbilityScoreImprovementItem	`json:"ability-score-improvement"`
 	College 					string 							`json:"college"`
-	OtherDetails 				[]NameDetailPair				`json:"other-Details"`
+	OtherDetails 				[]ClassDetails					`json:"other-Details"`
 }
 
-type NameDetailPair struct {
-	Name 	string `json:"name"`
-	Details string `json:"details"`
+type ClassDetails struct {
+	Name 	string 	`json:"name"`
+	Level	int		`json:"level"`
+	Details string 	`json:"details"`
 }
 
 type AbilityScoreImprovementItem struct {
@@ -51,7 +52,6 @@ func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
 }
 
 func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
-	fmt.Println("About to pre calculate")
 	preCalculateMethods = append(preCalculateMethods, b.abilityScoreImprovement)
 	for _, m := range preCalculateMethods {
 		m(c)
@@ -143,18 +143,40 @@ func (b *Bard) abilityScoreImprovement(c *models.Character) {
 	}
 }
 
-func (b *Bard) PrintOtherFeatures() []string {
+func (b *Bard) PrintOtherFeatures(c *models.Character) []string {
 	s := make([]string, 0, 100)	
 	header := fmt.Sprintf("Class Details\n")
 	spacer := fmt.Sprintf("---\n")
 	s = append(s, header)
 	s = append(s, spacer)
 
-	if len(b.SkillProficienciesToDouble) > 0 {
+	if len(b.SkillProficienciesToDouble) > 0 && c.Level >= 3 {
 		expertiseHeader := fmt.Sprintf("Expertise\n")
 		s = append(s, expertiseHeader)
 		for _, exp := range b.SkillProficienciesToDouble {
 			expLine := fmt.Sprintf("- %s\n", exp)
+			s = append(s, expLine)
+		}
+		s = append(s, "\n")
+	}
+
+	if len(b.AbilityScoreImprovement) > 0 && c.Level >= 4 {
+		abilityMap := make(map[string]int)
+
+		// Build map
+		for _, ability := range b.AbilityScoreImprovement {
+			_, exists := abilityMap[ability.Ability]
+			if exists {
+				abilityMap[ability.Ability] += ability.Bonus
+			}
+		}
+
+		abilityScoreImprovementHeader := fmt.Sprintf("Ability Score Improvement\n")
+		s = append(s, abilityScoreImprovementHeader)
+
+		// TODO: Make this more sophistocated so we don't need to loop through this twice
+		for _, ability := range b.AbilityScoreImprovement {
+			expLine := fmt.Sprintf("- %s: +%d\n", ability.Ability, ability.Bonus)
 			s = append(s, expLine)
 		}
 		s = append(s, "\n")
@@ -165,9 +187,12 @@ func (b *Bard) PrintOtherFeatures() []string {
 		s = append(s, collegeHeader)
 	}
 
-
 	if len(b.OtherDetails) > 0 {
 		for _, detail := range b.OtherDetails {
+			if detail.Level > c.Level {
+				continue
+			}
+
 			collegeDetailName := fmt.Sprintf("---\n%s\n", detail.Name)
 			s = append(s, collegeDetailName)
 			collegeDetail := fmt.Sprintf("%s\n", detail.Details)
