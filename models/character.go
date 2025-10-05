@@ -12,6 +12,7 @@ type Character struct {
 	ClassName         string           	`json:"class-name"`
 	Race              string           	`json:"race"`
 	Background        string           	`json:"background"`
+	Feats			  []GenericItem		`json:"feats"`
 	Languages         []string         	`json:"languages"`
 	Proficiency       int              	`json:"proficiency"`
 	PassivePerception int              	`json:"passive-perception"`
@@ -43,7 +44,7 @@ type IClass interface {
 
 type GenericItem struct {
 	Name string `json:"name"`
-	Desc string `json:"desc"`
+	Desc string `json:"description"`
 }
 
 type BackpackItem struct {
@@ -177,6 +178,12 @@ func (c *Character) BuildCharacter() string {
 	}
 	builder.WriteString(nl)
 
+	feats := c.BuildFeats()
+	for i := range feats {
+		builder.WriteString(feats[i])
+	}
+	builder.WriteString(nl)
+
 	languages := c.BuildLanguages()
 	for i := range languages {
 		builder.WriteString(languages[i])
@@ -263,6 +270,20 @@ func (c *Character) BuildCharacterInfo() []string {
 		raceLine,
 		backgroundLine,
 	}
+
+	return s
+}
+
+func (c *Character) BuildFeats() []string {
+	s := make([]string, 0, len(c.Feats) + 1)
+	featLine := fmt.Sprintf("- Feats:\n")
+	s = append(s, featLine)
+
+	for _, feat := range c.Feats {
+		featRow := fmt.Sprintf("	- %s: %s\n", feat.Name, feat.Desc)
+		s = append(s, featRow)
+	}
+	s = append(s, "---")
 
 	return s
 }

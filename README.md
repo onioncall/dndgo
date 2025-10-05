@@ -1,5 +1,7 @@
 # README 
 ---
+
+## Search CLI usage
 to return a list of all spells/monsters/etc, pass l or list as an argument
 
 -s for spells (ex. dndgo search -s "acid arrow" -or- dndgo -s acid-arrow)
@@ -8,8 +10,7 @@ to return a list of all spells/monsters/etc, pass l or list as an argument
 
 -e for equipment (ex. dndgo search -e "soap" -or- dndgo -e soap)
 
-ctr for character actions
-
+## Character CLI usage
 dndgo ctr add -l "Elvish" (add Language)
 dndgo ctr add -b Gold -q 17 (add 17 gold)
 dndgo ctr remove -b Gold -q 2 (remove 2 gold)
@@ -27,12 +28,16 @@ character flag hints
     -e Equipment (type: Name)
     -lvl Level
 
--tui (TODO: Implement alternative method of searching and viewing returned data with bubbletea)
-
-upcoming TODOs: 
-    - implement add spell and add weapon by using the 5e API. in theory, like dndgo ctr add -s "acid-arrow" or dndgo ctr add -w "Rapier" 
-
 When in doubt, don't use caps. I haven't done the conversion everywhere to lower case everywhere, so it may cause problems
+
+## Setting up Character Config
+- copy character file from the "default-json-configs" directory
+- modify it to your character
+- find your class and copy the file from "default-json-configs" directory
+- modify it to your character
+- rename files "character.json" and "class.json" respectively
+- move them to your ~/.config/dndgo directory
+- run "dndgo ctr update" to generate your markdown file
 
 Search Example
 
@@ -41,6 +46,3 @@ https://github.com/user-attachments/assets/d7c95bd0-3388-4514-ae1c-aa1fadc10b02
 Character Markdown Example
 
 https://github.com/user-attachments/assets/730cd6f4-2f8b-4afa-a784-067a18f9bf3f
-
-
-
