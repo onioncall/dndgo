@@ -38,7 +38,7 @@ type IClass interface {
 	LoadMethods()
 	ExecutePostCalculateMethods(c *Character)
 	ExecutePreCalculateMethods(c *Character)
-	PrintOtherFeatures() []string
+	PrintOtherFeatures(c *Character) []string
 }
 
 type GenericItem struct {
@@ -232,7 +232,7 @@ func (c *Character) BuildCharacter() string {
 	builder.WriteString(nl)
 
 	if c.Class != nil {
-		otherClassFeatures := c.Class.PrintOtherFeatures()
+		otherClassFeatures := c.Class.PrintOtherFeatures(c)
 		for i := range otherClassFeatures {
 			builder.WriteString(otherClassFeatures[i]) 
 		}
