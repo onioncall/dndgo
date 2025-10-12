@@ -58,6 +58,7 @@ var (
 			}
 			
 			handlers.SaveCharacterJson(c)
+			handlers.SaveClassHandler(c.Class)
 			handlers.HandleCharacter(c)
 		},
 	}
@@ -81,6 +82,7 @@ var (
 			} 
 
 			handlers.SaveCharacterJson(c)
+			handlers.SaveClassHandler(c.Class)
 			handlers.HandleCharacter(c)
 		},
 	}
@@ -105,7 +107,7 @@ var (
 			s, _ := cmd.Flags().GetInt("spell-slots")
 			bp, _ := cmd.Flags().GetString("backpack")
 			q, _ := cmd.Flags().GetInt("quantity")
-			cd, _ := cmd.Flags().GetString("class-detail-slots")
+			cs, _ := cmd.Flags().GetString("class-slots")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -120,11 +122,12 @@ var (
 				c.RemoveItemFromPack(bp, q)
 			} else if s > 0 {
 				c.UseSpellSlot(s);
-			} else if cd != "" {
-				c.UseClassSlots(cd)	
+			} else if cs != "" {
+				c.UseClassSlots(cs)	
 			}
 
 			handlers.SaveCharacterJson(c)
+			handlers.SaveClassHandler(c.Class)
 			handlers.HandleCharacter(c)
 		},
 	}
@@ -136,7 +139,8 @@ var (
 			a, _ := cmd.Flags().GetBool("all")
 			ss, _ := cmd.Flags().GetInt("spell-slots")
 			hp, _ := cmd.Flags().GetInt("hitpoints")
-			cd, _ := cmd.Flags().GetString("class-detail-slots")
+			cs, _ := cmd.Flags().GetString("class-slots")
+			q, _ := cmd.Flags().GetInt("quantity")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -149,11 +153,12 @@ var (
 				c.RecoverSpellSlots(ss)	
 			} else if hp > 0 {
 				c.HealCharacter(hp)
-			} else if cd != "" {
-				c.RecoverClassDetailSlots(cd)
+			} else if cs != "" {
+				c.RecoverClassSlots(cs, q)
 			}
 
 			handlers.SaveCharacterJson(c)
+			handlers.SaveClassHandler(c.Class)
 			handlers.HandleCharacter(c)
 		},
 	}
@@ -179,10 +184,11 @@ func init() {
 	useCmd.Flags().IntP("spell-slots", "x", 0, "Use spell-slot by level")
 	useCmd.Flags().StringP("backpack", "b", "", "Use item from backpack")
 	useCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
-	useCmd.Flags().StringP("class-detail-slots", "d", "", "Use class-detail-slot by slot name")
+	useCmd.Flags().StringP("class-slots", "c", "any", "Use class-detail-slot by slot name")
 
 	recoverCmd.Flags().IntP("spell-slots", "x", 0, "Recover spell-slot by level")
 	recoverCmd.Flags().BoolP("all", "a", false, "Recover all health and slots")
 	recoverCmd.Flags().IntP("hitpoints", "p", 0, "Recover hitpoints")
-	recoverCmd.Flags().StringP("class-detail-slots", "d", "", "Recover class-detail-slot by slot name")
+	recoverCmd.Flags().StringP("class-slots", "c", "all", "Recover class-slot by slot name")
+	recoverCmd.Flags().IntP("quantity", "q", 0, "Recover the quantity of something")
 }

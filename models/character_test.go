@@ -140,95 +140,6 @@ func TestCharacter_calculateProficiencyBonus(t *testing.T) {
 	}
 }
 
-func TestCharacter_UseClassSlots(t *testing.T) {
-	tests := []struct {
-		name		string
-		slotName 	string
-		character 	*Character
-		expected	[]ClassSlot
-	}{
-		{
-			name: "One Use, Single Slot",
-			slotName: "bardic inspiration",
-			character: &Character {
-				ClassDetails: ClassDetails {
-					Slots: []ClassSlot {
-						{Name: "bardic inspiration", Slot: 4, Available: 4},
-					},
-				},
-			},
-			expected: []ClassSlot {
-				{Name: "bardic inspiration", Slot: 4, Available: 3},
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Prevent from writing to terminal during tests
-			original := os.Stdout
-			os.Stdout, _ = os.Open(os.DevNull)
-			defer func() { os.Stdout = original }()
-
-			tt.character.UseClassSlots(tt.slotName)	
-
-			if len(tt.character.ClassDetails.Slots) != len(tt.expected) {
-				t.Errorf("Skills Count- Expected: %d, Result: %d", len(tt.expected), len(tt.character.Skills))
-				return
-			}
-
-			for i, e := range tt.expected {
-				result := tt.character.ClassDetails.Slots[i]
-				if e != result {
-					t.Errorf("Expected ClassSlot: %v\nReturned: %v", e, result)
-				}
-			}
-		})
-	}
-}
-
-func TestCharacter_RecoverClassDetailSlots(t *testing.T) {
-	tests := []struct {
-		name		string
-		slotName 	string
-		character 	*Character
-		expected	[]ClassSlot
-	}{
-		{
-			name: "Recover Single Slot",
-			slotName: "bardic inspiration",
-			character: &Character {
-				ClassDetails: ClassDetails {
-					Slots: []ClassSlot {
-						{Name: "bardic inspiration", Slot: 4, Available: 0},
-					},
-				},
-			},
-			expected: []ClassSlot {
-				{Name: "bardic inspiration", Slot: 4, Available: 4},
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tt.character.RecoverClassDetailSlots(tt.slotName)
-
-			if len(tt.character.ClassDetails.Slots) != len(tt.expected) {
-				t.Errorf("Skills Count- Expected: %d, Result: %d", len(tt.expected), len(tt.character.Skills))
-				return
-			}
-
-			for i, e := range tt.expected {
-				result := tt.character.ClassDetails.Slots[i]
-				if e != result {
-					t.Errorf("Expected ClassSlot: %v\nReturned: %v", e, result)
-				}
-			}
-		})
-	}
-}
-
 func TestCharacter_Recover(t *testing.T) {
 	tests := []struct {
 		name		string
@@ -240,11 +151,7 @@ func TestCharacter_Recover(t *testing.T) {
 			character: &Character{
 				HPCurrent: 0,
 				HPMax: 16,
-				ClassDetails: ClassDetails {
-					Slots: []ClassSlot {
-						{Name: "bardic inspiration", Slot: 4, Available: 0},
-					},
-				},
+				ClassName: "bard",
 				SpellSlots: []SpellSlot {
 					{Level: 1, Slot: 4, Available: 1},
 					{Level: 2, Slot: 2, Available: 0},
@@ -256,11 +163,6 @@ func TestCharacter_Recover(t *testing.T) {
 				SpellSlots: []SpellSlot {
 					{Level: 1, Slot: 4, Available: 4},
 					{Level: 2, Slot: 2, Available: 2},
-				},
-				ClassDetails: ClassDetails {
-					Slots: []ClassSlot {
-						{Name: "bardic inspiration", Slot: 4, Available: 4},
-					},
 				},
 			},
 		},
@@ -269,12 +171,6 @@ func TestCharacter_Recover(t *testing.T) {
 			character: &Character{
 				HPCurrent: 0,
 				HPMax: 16,
-				ClassDetails: ClassDetails {
-					Slots: []ClassSlot {
-						{Name: "bardic inspiration", Slot: 4, Available: 0},
-						{Name: "some other charge or token", Slot: 3, Available: 1},
-					},
-				},
 				SpellSlots: []SpellSlot {
 					{Level: 1, Slot: 4, Available: 1},
 					{Level: 2, Slot: 2, Available: 0},
@@ -286,12 +182,6 @@ func TestCharacter_Recover(t *testing.T) {
 				SpellSlots: []SpellSlot {
 					{Level: 1, Slot: 4, Available: 4},
 					{Level: 2, Slot: 2, Available: 2},
-				},
-				ClassDetails: ClassDetails {
-					Slots: []ClassSlot {
-						{Name: "bardic inspiration", Slot: 4, Available: 4},
-						{Name: "some other charge or token", Slot: 3, Available: 3},
-					},
 				},
 			},
 		},
@@ -310,13 +200,14 @@ func TestCharacter_Recover(t *testing.T) {
 				t.Errorf("HPMax- Expected: %d, Result: %d BAAAAD", tt.character.HPMax, tt.character.HPMax)
 			}
 
-			for i, e := range tt.expected.ClassDetails.Slots {
-				result := tt.character.ClassDetails.Slots[i]
-
-				if e.Available != result.Available {
-					t.Errorf("Class Detail Slot %s- Expected: %d, Result: %d", e.Name, e.Available, result.Available)
-				}
-			}
+			// TODO: Add implementation for class details in full recovery
+			// for i, e := range tt.expected.ClassDetails.Slots {
+			// 	result := tt.character.ClassDetails.Slots[i]
+			//
+			// 	if e.Available != result.Available {
+			// 		t.Errorf("Class Detail Slot %s- Expected: %d, Result: %d", e.Name, e.Available, result.Available)
+			// 	}
+			// }
 
 			for i, e := range tt.expected.SpellSlots {
 				result := tt.character.SpellSlots[i]

@@ -1,4 +1,9 @@
 {
+  "bardic-inspiration": {
+    "available": 3,
+    "slot": 4
+  },
+  "college":  "Bardic School of Creation",
   "expertise": [
     "persuasion",
     "deception"
