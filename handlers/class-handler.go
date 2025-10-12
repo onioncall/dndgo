@@ -54,7 +54,7 @@ func LoadClass(classType string) (models.IClass, error) {
 	return c, nil
 }
 
-func SaveClassHandler(c *models.IClass) error {
+func SaveClassHandler(c models.IClass) error {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return fmt.Errorf("error getting home directory: %w", err)

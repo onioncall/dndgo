@@ -58,7 +58,7 @@ var (
 			}
 			
 			handlers.SaveCharacterJson(c)
-			handlers.SaveClassHandler(&c.Class)
+			handlers.SaveClassHandler(c.Class)
 			handlers.HandleCharacter(c)
 		},
 	}
@@ -82,7 +82,7 @@ var (
 			} 
 
 			handlers.SaveCharacterJson(c)
-			handlers.SaveClassHandler(&c.Class)
+			handlers.SaveClassHandler(c.Class)
 			handlers.HandleCharacter(c)
 		},
 	}
@@ -127,7 +127,7 @@ var (
 			}
 
 			handlers.SaveCharacterJson(c)
-			handlers.SaveClassHandler(&c.Class)
+			handlers.SaveClassHandler(c.Class)
 			handlers.HandleCharacter(c)
 		},
 	}
@@ -158,7 +158,7 @@ var (
 			}
 
 			handlers.SaveCharacterJson(c)
-			handlers.SaveClassHandler(&c.Class)
+			handlers.SaveClassHandler(c.Class)
 			handlers.HandleCharacter(c)
 		},
 	}
