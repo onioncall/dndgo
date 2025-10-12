@@ -13,22 +13,19 @@ type Bard struct {
 	SkillProficienciesToDouble 	[]string 						`json:"expertise"`
 	AbilityScoreImprovement		[]AbilityScoreImprovementItem	`json:"ability-score-improvement"`
 	College 					string 							`json:"college"`
-	OtherFeatures 				[]ClassFeatures					`json:"other-features"`
+	OtherFeatures 				[]models.ClassFeatures			`json:"other-features"`
+	BardicInspiration			BardicInspiration				`json:"bardic-inspiration"`
 }
 
-type ClassFeatures struct {
-	Name 	string 	`json:"name"`
-	Level	int		`json:"level"`
-	Details string 	`json:"details"`
+type BardicInspiration struct {
+	Available	int	`json:"available"`
+	Slot		int	`json:"slot"`
 }
 
 type AbilityScoreImprovementItem struct {
 	Ability string 	`json:"ability"`
 	Bonus	int		`json:"bonus"`
 }
-
-var preCalculateMethods []func(c *models.Character)
-var postCalculateMethods []func(c *models.Character)
 
 func LoadBard(data []byte) (*Bard, error) {
 	var bard Bard
@@ -44,16 +41,16 @@ func (b *Bard) LoadMethods() {
 }
 
 func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
-	postCalculateMethods = append(postCalculateMethods, b.jackOfAllTrades)
-	postCalculateMethods = append(postCalculateMethods, b.expertise)
-	for _, m := range postCalculateMethods {
+	models.PostCalculateMethods = append(models.PostCalculateMethods, b.jackOfAllTrades)
+	models.PostCalculateMethods = append(models.PostCalculateMethods, b.expertise)
+	for _, m := range models.PostCalculateMethods {
 		m(c)
 	}
 }
 
 func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
-	preCalculateMethods = append(preCalculateMethods, b.abilityScoreImprovement)
-	for _, m := range preCalculateMethods {
+	models.PreCalculateMethods = append(models.PreCalculateMethods, b.abilityScoreImprovement)
+	for _, m := range models.PreCalculateMethods {
 		m(c)
 	}
 }
@@ -143,12 +140,19 @@ func (b *Bard) abilityScoreImprovement(c *models.Character) {
 	}
 }
 
-func (b *Bard) PrintOtherFeatures(c *models.Character) []string {
-	s := make([]string, 0, 100)	
-	header := fmt.Sprintf("Class Details\n")
-	spacer := fmt.Sprintf("---\n")
-	s = append(s, header)
-	s = append(s, spacer)
+func (b *Bard) PrintClassDetails(c *models.Character) []string {
+	s := c.BuildClassDetailsHeader()
+
+	if b.College != "" {
+		collegeHeader := fmt.Sprintf("College: *%s*\n\n", b.College)
+		s = append(s, collegeHeader)
+	}
+
+	if b.BardicInspiration.Available != 0 && b.BardicInspiration.Slot != 0 {
+		bardicSlots := c.GetSlots(b.BardicInspiration.Available, b.BardicInspiration.Slot)
+		biLine := fmt.Sprintf("**Bardic Inspiration**: %s\n\n", bardicSlots)
+		s = append(s, biLine)
+	}
 
 	if len(b.SkillProficienciesToDouble) > 0 && c.Level >= 3 {
 		expertiseHeader := fmt.Sprintf("Expertise\n")
@@ -182,18 +186,13 @@ func (b *Bard) PrintOtherFeatures(c *models.Character) []string {
 		s = append(s, "\n")
 	}
 
-	if b.College != "" {
-		collegeHeader := fmt.Sprintf("Sub-Class: *%s*\n\n", b.College)
-		s = append(s, collegeHeader)
-	}
-
 	if len(b.OtherFeatures) > 0 {
 		for _, detail := range b.OtherFeatures {
 			if detail.Level > c.Level {
 				continue
 			}
 
-			collegeDetailName := fmt.Sprintf("---\n%s\n", detail.Name)
+			collegeDetailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
 			s = append(s, collegeDetailName)
 			collegeDetail := fmt.Sprintf("%s\n", detail.Details)
 			s = append(s, collegeDetail)
@@ -201,4 +200,28 @@ func (b *Bard) PrintOtherFeatures(c *models.Character) []string {
 	}
 
 	return s
+}
+
+// CLI
+
+func (b *Bard) UseClassSlots(slotName string) {
+	// We only really need slot name for classes that have multiple slots
+	// since bard only has bardic inspiration, we won't check the slot name value
+	if b.BardicInspiration.Available <= 0 {
+		fmt.Println("Class slot had no uses left")
+		return
+	} 
+
+	b.BardicInspiration.Available--
+}
+
+func (b *Bard) RecoverClassSlots(slotName string, quantity int) {
+	// We only really need slot name for classes that have multiple slots
+	// since bard only has bardic inspiration, we won't check the slot name value
+	b.BardicInspiration.Available += quantity
+
+	// if no quantity is provided, or the new value exceeds the max we will perform a full recover
+	if quantity == 0 || b.BardicInspiration.Available > b.BardicInspiration.Slot {
+		b.BardicInspiration.Available = b.BardicInspiration.Slot
+	}
 }

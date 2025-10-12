@@ -402,3 +402,103 @@ func TestBard_abilityScoreImprovement(t *testing.T) {
 		})
 	}
 }
+
+func TestBard_UseClassSlots(t *testing.T) {
+	tests := []struct {
+		name		string
+		slotName 	string
+		character 	*models.Character
+		bard		*Bard
+		expected	BardicInspiration
+	}{
+		{
+			name: "One Use, Single Slot",
+			slotName: "bardic inspiration",
+			character: &models.Character{},
+			bard: &Bard {
+				BardicInspiration: BardicInspiration {
+					Slot: 4,
+					Available: 4,
+				},
+			},
+			expected: BardicInspiration {
+				Slot: 4,
+				Available: 3,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Prevent from writing to terminal during tests
+			original := os.Stdout
+			os.Stdout, _ = os.Open(os.DevNull)
+			defer func() { os.Stdout = original }()
+
+			tt.bard.UseClassSlots(tt.slotName)	
+
+			result := tt.bard.BardicInspiration.Available
+			e := tt.expected.Available
+			
+			if e != result {
+				t.Errorf("Bardic Inspiration- Expected: %d\nResult: %d", e, result)
+			}
+		})
+	}
+}
+
+func TestBard_RecoverClassSlots(t *testing.T) {
+	tests := []struct {
+		name		string
+		slotName 	string
+		recover 	int
+		character 	*models.Character
+		bard		*Bard
+		expected	BardicInspiration
+	}{
+		{
+			name: "Recover By 1",
+			slotName: "bardic inspiration",
+			recover: 1,
+			bard: &Bard {
+				BardicInspiration: BardicInspiration {
+					Slot: 4,
+					Available: 2,
+				},
+			},
+			expected: BardicInspiration {
+				Slot: 4,
+				Available: 3,
+			},
+		},
+		{
+			name: "Full Recover",
+			slotName: "bardic inspiration",
+			recover: 0,
+			bard: &Bard {
+				BardicInspiration: BardicInspiration {
+					Slot: 4,
+					Available: 2,
+				},
+			},
+			expected: BardicInspiration {
+				Slot: 4,
+				Available: 4,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.bard.RecoverClassSlots(tt.slotName, tt.recover)
+
+			result := tt.bard.BardicInspiration.Available
+			e := tt.expected.Available
+
+			if e != result {
+				t.Errorf("Bardic Inspiration- Expected: %d\nResult: %d", e, result)
+			}
+		})
+	}
+}
+

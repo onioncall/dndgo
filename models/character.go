@@ -31,7 +31,6 @@ type Character struct {
 	Weapons           []Weapon         	`json:"weapons"`
 	BodyEquipment     BodyEquipment    	`json:"body-equipment"`
 	Backpack          []BackpackItem   	`json:"backpack"`
-	ClassDetails	  ClassDetails		`json:"class-details"`
 	Class			  IClass			`json:"-"`	
 }
 
@@ -39,7 +38,9 @@ type IClass interface {
 	LoadMethods()
 	ExecutePostCalculateMethods(c *Character)
 	ExecutePreCalculateMethods(c *Character)
-	PrintOtherFeatures(c *Character) []string
+	PrintClassDetails(c *Character) []string
+	UseClassSlots(string)
+	RecoverClassSlots(string, int)
 }
 
 type GenericItem struct {
@@ -74,14 +75,10 @@ type CharacterSpell struct {
 	Name      string `json:"name"`
 }
 
-type ClassDetails struct {
-	Slots []ClassSlot `json:"slots"`
-}
-
-type ClassSlot struct {
-	Name 		string `json:"name"`
-	Slot 		int	`json:"slot"`
-	Available	int `json:"available"`
+type ClassFeatures struct {
+	Name 	string 	`json:"name"`
+	Level	int		`json:"level"`
+	Details string 	`json:"details"`
 }
 
 type SpellSlot struct {
@@ -121,6 +118,9 @@ const (
 	Belt      string = "belt"
 	Boots     string = "boots"
 )
+
+var PreCalculateMethods []func(c *Character)
+var PostCalculateMethods []func(c *Character)
 
 // Load Character Details
 
@@ -232,14 +232,8 @@ func (c *Character) BuildCharacter() string {
 	}
 	builder.WriteString(nl)
 
-	classSlots := c.BuildClassSlots()
-	for i := range classSlots {
-		builder.WriteString(classSlots[i]) 
-	}
-	builder.WriteString(nl)
-
 	if c.Class != nil {
-		otherClassFeatures := c.Class.PrintOtherFeatures(c)
+		otherClassFeatures := c.Class.PrintClassDetails(c)
 		for i := range otherClassFeatures {
 			builder.WriteString(otherClassFeatures[i]) 
 		}
@@ -513,20 +507,21 @@ func (c *Character) BuildBackpack() []string {
 	return s
 }
 
-func (c *Character) BuildClassSlots() []string {
-	s := make([]string, 0, len(c.ClassDetails.Slots) + 10)
-
-	classSlotHeader := fmt.Sprintf("%s Specific Slots\n", c.ClassName)
-	s = append(s, classSlotHeader)
-
-	for _, slot := range c.ClassDetails.Slots {
-		fullCircle := strings.Repeat("● ", slot.Available)
-		hollowCircle := strings.Repeat("○ ", (slot.Slot - slot.Available))
-		slot := fmt.Sprintf("%s - %s%s\n", slot.Name, fullCircle, hollowCircle)	
-		s = append(s, slot)
-	}
+func (c *Character) BuildClassDetailsHeader() []string {
+	s := make([]string, 0, 100)	
+	header := fmt.Sprintf("Class Details\n")
+	spacer := fmt.Sprintf("---\n")
+	s = append(s, header)
+	s = append(s, spacer)
 
 	return s
+}
+
+func (c *Character) GetSlots(available int, max int) string {
+	fullCircle := strings.Repeat("● ", available)
+	hollowCircle := strings.Repeat("○ ", (max - available))
+
+	return fmt.Sprintf("%s%s", fullCircle, hollowCircle)
 }
 
 // CLI Actions
@@ -645,15 +640,6 @@ func (c *Character) RecoverSpellSlots(level int) {
 	}
 }
 
-func (c *Character) RecoverClassDetailSlots(name string) {
-	name = strings.ToLower(name)
-	for i, slot := range c.ClassDetails.Slots {
-		if strings.ToLower(slot.Name) == name {
-			c.ClassDetails.Slots[i].Available = c.ClassDetails.Slots[i].Slot
-		}
-	}
-}
-
 func (c *Character) Recover() {
 	c.HPCurrent = c.HPMax
 
@@ -661,21 +647,15 @@ func (c *Character) Recover() {
 		c.SpellSlots[i].Available = c.SpellSlots[i].Slot
 	}
 
-	for i := range c.ClassDetails.Slots {
-		c.ClassDetails.Slots[i].Available = c.ClassDetails.Slots[i].Slot
+	if c.Class != nil {
+		c.Class.RecoverClassSlots("", 0)
 	}
 }
 
 func (c *Character) UseClassSlots(name string) {
-	name = strings.ToLower(name)
-	for i, slot := range c.ClassDetails.Slots {
-		if strings.ToLower(slot.Name) == name {
-			if slot.Available < 0 {
-				fmt.Println("Class slot had no uses left")
-			} 
+	c.Class.UseClassSlots(name)
+}
 
-			c.ClassDetails.Slots[i].Available--
-			return
-		}	
-	}
+func (c *Character) RecoverClassSlots(name string, quantity int) {
+	c.Class.RecoverClassSlots(name, quantity)
 }
