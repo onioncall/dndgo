@@ -140,6 +140,192 @@ func TestCharacter_calculateProficiencyBonus(t *testing.T) {
 	}
 }
 
+func TestCharacter_calculateAbilityScoreImprovement(t *testing.T) {
+	tests := []struct {
+		name 		string
+		character 	*Character
+		expected	[]Attribute
+	}{
+		{
+			name: "Level not high enough",
+			character: &Character {
+				Level: 3,
+				Attributes: []Attribute {
+					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
+					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
+					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+				},
+				AbilityScoreImprovement: []AbilityScoreImprovementItem {
+					{Ability: "Strength", Bonus: 2},
+				},
+			},
+			expected: []Attribute {
+				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+				{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
+				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
+				{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+			},
+		},
+		{
+			name: "Level 4, one ability increased by two",
+			character: &Character {
+				Level: 4,
+				Attributes: []Attribute {
+					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
+					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
+					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+				},
+				AbilityScoreImprovement: []AbilityScoreImprovementItem {
+					{Ability: "Dexterity", Bonus: 2},
+				},
+			},
+			expected: []Attribute {
+				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
+				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
+				{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+			},
+		},
+		{
+			name: "Level 4, two abilities increased by one",
+			character: &Character {
+				Level: 4,
+				Attributes: []Attribute {
+					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
+					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
+					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+				},
+				AbilityScoreImprovement: []AbilityScoreImprovementItem {
+					{Ability: "Dexterity", Bonus: 1},
+					{Ability: "Charisma", Bonus: 1},
+				},
+			},
+			expected: []Attribute {
+				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+				{Name: "Dexterity", Base: 11, SavingThrowsProficient: false},
+				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
+				{Name: "Charisma", Base: 11, SavingThrowsProficient: false},
+			},
+		},
+		{
+			name: "Level 4, two abilities increased by two (failure)",
+			character: &Character {
+				Level: 4,
+				Attributes: []Attribute {
+					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
+					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
+					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+				},
+				AbilityScoreImprovement: []AbilityScoreImprovementItem {
+					{Ability: "Dexterity", Bonus: 2},
+					{Ability: "Charisma", Bonus: 2},
+				},
+			},
+			expected: []Attribute {
+				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+				{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
+				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
+				{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+			},
+		},
+		{
+			name: "Level 8, one ability increased by two, and two abilities increased by one",
+			character: &Character {
+				Level: 8,
+				Attributes: []Attribute {
+					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
+					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
+					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+				},
+				AbilityScoreImprovement: []AbilityScoreImprovementItem {
+					{Ability: "Dexterity", Bonus: 2},
+					{Ability: "Charisma", Bonus: 1},
+					{Ability: "Wisdom", Bonus: 1},
+				},
+			},
+			expected: []Attribute {
+				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
+				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+				{Name: "Wisdom", Base: 11, SavingThrowsProficient: false},
+				{Name: "Charisma", Base: 11, SavingThrowsProficient: false},
+			},
+		},
+		{
+			name: "Level 20, one ability over maximum",
+			character: &Character {
+				Level: 20,
+				Attributes: []Attribute {
+					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+					{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
+					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
+					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+				},
+				AbilityScoreImprovement: []AbilityScoreImprovementItem {
+					{Ability: "Dexterity", Bonus: 2},
+					{Ability: "Dexterity", Bonus: 2},
+					{Ability: "Dexterity", Bonus: 2},
+					{Ability: "Dexterity", Bonus: 2},
+					{Ability: "Dexterity", Bonus: 2},
+				},
+			},
+			expected: []Attribute {
+				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
+				{Name: "Dexterity", Base: 20, SavingThrowsProficient: false},
+				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
+				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
+				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
+				{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Prevent from writing to terminal during tests
+			original := os.Stdout
+			os.Stdout, _ = os.Open(os.DevNull)
+			defer func() { os.Stdout = original }()
+
+			tt.character.calculateAbilityScoreImprovement()
+
+			for i, e := range tt.expected {
+				result := tt.character.Attributes[i]
+				
+				if e.Base != result.Base {
+					t.Errorf("Attribute Base %s- Expected: %d, Result: %d", e.Name, e.Base, result.Base)
+				}
+			}
+		})
+	}
+}
+
 func TestCharacter_Recover(t *testing.T) {
 	tests := []struct {
 		name		string
@@ -151,7 +337,7 @@ func TestCharacter_Recover(t *testing.T) {
 			character: &Character{
 				HPCurrent: 0,
 				HPMax: 16,
-				ClassName: "bard",
+				ClassName: "character",
 				SpellSlots: []SpellSlot {
 					{Level: 1, Slot: 4, Available: 1},
 					{Level: 2, Slot: 2, Available: 0},
@@ -609,3 +795,4 @@ func TestCharacter_AddItemToBackpack(t *testing.T) {
 		})
 	}
 }
+

@@ -8,12 +8,6 @@
     "persuasion",
     "deception"
   ],
-  "ability-score-improvement": [
-    {
-      "ability": "dexterity",
-      "bonus": 2
-    }
-  ],
   "college":  "Bardic School of Creation",
   "other-features": [
     {

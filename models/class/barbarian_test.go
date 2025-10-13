@@ -149,6 +149,58 @@ func TestBarbarian_primalKnowledge(t *testing.T) {
 	}
 }
 
+func TestBarbarian_primalChamption(t *testing.T) {
+	tests := []struct {
+		name		string
+		character	*models.Character
+		expected	[]models.Attribute
+	}{
+		{
+			name: "Below Level Threshold",
+			character: &models.Character {
+				Level: 15,
+				Attributes: []models.Attribute {
+					{Name: "Strength", Base: 16},
+					{Name: "Constitution", Base: 16},
+				},
+			},
+			expected: []models.Attribute {
+				{Name: "Strength", Base: 16},
+				{Name: "Constitution", Base: 16},
+			},
+		},
+		{
+			name: "Meets Level Requirements, Valid Configuration",
+			character: &models.Character {
+				Level: 20,
+				Attributes: []models.Attribute {
+					{Name: "Strength", Base: 17},
+					{Name: "Constitution", Base: 17},
+				},
+			},
+			expected: []models.Attribute {
+				{Name: "Strength", Base: 21},
+				{Name: "Constitution", Base: 21},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			barbarian := &Barbarian{}
+			
+			barbarian.primalChampion(tt.character)
+
+			for i, e :=range  tt.expected {
+				result := tt.character.Attributes[i]
+				if e.Base != result.Base {
+					t.Errorf("Ability %s- Expected: %d, Result: %d", e.Name, e.Base, result.Base)
+				}
+			}
+		})
+	}
+}
+
 func TestBarbarian_UseSlots(t *testing.T) {
 	tests := []struct {
 		name		string

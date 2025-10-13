@@ -6,32 +6,33 @@ import (
 )
 
 type Character struct {
-	Path              string           	`json:"path"`
-	Name              string           	`json:"name"`
-	Level             int              	`json:"level"`
-	ClassName         string           	`json:"class-name"`
-	Race              string           	`json:"race"`
-	Background        string           	`json:"background"`
-	Feats			  []GenericItem		`json:"feats"`
-	Languages         []string         	`json:"languages"`
-	Proficiency       int              	`json:"proficiency"`
-	PassivePerception int              	`json:"passive-perception"`
-	PassiveInsight    int              	`json:"passive-insight"`
-	AC                int              	`json:"ac"`
-	SpellSaveDC       int              	`json:"spell-save-dc"`
-	HPCurrent		  int			   	`json:"hp-current"`
-	HPMax			  int			   	`json:"hp-max"`
-	Initiative        int              	`json:"initiative"`
-	Speed             int              	`json:"speed"`
-	HitDice           string           	`json:"hit-dice"`
-	Attributes     	  []Attribute		`json:"attributes"`
-	Skills            []Skill          	`json:"skills"`
-	Spells            []CharacterSpell 	`json:"spells"`
-	SpellSlots        []SpellSlot       `json:"spell-slots"`
-	Weapons           []Weapon         	`json:"weapons"`
-	BodyEquipment     BodyEquipment    	`json:"body-equipment"`
-	Backpack          []BackpackItem   	`json:"backpack"`
-	Class			  IClass			`json:"-"`	
+	Path              		string           	`json:"path"`
+	Name              		string           	`json:"name"`
+	Level             		int              	`json:"level"`
+	ClassName         		string           	`json:"class-name"`
+	Race              		string           	`json:"race"`
+	Background        		string           	`json:"background"`
+	Feats			  		[]GenericItem		`json:"feats"`
+	Languages         		[]string         	`json:"languages"`
+	Proficiency       		int
+	PassivePerception 		int              	`json:"passive-perception"`
+	PassiveInsight    		int              	`json:"passive-insight"`
+	AC                		int              	`json:"ac"`
+	SpellSaveDC       		int              	`json:"spell-save-dc"`
+	HPCurrent		  		int			   		`json:"hp-current"`
+	HPMax			  		int			   		`json:"hp-max"`
+	Initiative        		int              	`json:"initiative"`
+	Speed             		int              	`json:"speed"`
+	HitDice           		string           	`json:"hit-dice"`
+	Attributes     	  		[]Attribute			`json:"attributes"`
+	Skills            		[]Skill          	`json:"skills"`
+	Spells            		[]CharacterSpell 	`json:"spells"`
+	SpellSlots        		[]SpellSlot       	`json:"spell-slots"`
+	Weapons           		[]Weapon         	`json:"weapons"`
+	BodyEquipment			BodyEquipment    	`json:"body-equipment"`
+	Backpack          		[]BackpackItem   	`json:"backpack"`
+	AbilityScoreImprovement []AbilityScoreImprovementItem `json:"ability-score-improvement"`
+	Class			  		IClass				`json:"-"`	
 }
 
 type IClass interface {
@@ -59,6 +60,11 @@ type Attribute struct {
 	Adjusted			int
 	AbilityModifier		int
 	SavingThrowsProficient  bool   `json:"saving-throws-proficient"`
+}
+
+type AbilityScoreImprovementItem struct {
+	Ability string 	`json:"ability"`
+	Bonus	int		`json:"bonus"`
 }
 
 type Skill struct {
@@ -127,6 +133,7 @@ var PostCalculateMethods []func(c *Character)
 func (c *Character) CalculateCharacterStats() {
 	c.calculateProficiencyBonusByLevel()	
 	c.calculateAttributesFromBase()
+	c.calculateAbilityScoreImprovement()
 	c.calculateSkillModifierFromBase()
 }
 
@@ -142,6 +149,45 @@ func (c *Character) calculateSkillModifierFromBase() {
 		for _, a := range c.Attributes {
 			if strings.ToLower(skill.Attribute) == strings.ToLower(a.Name) {
 				c.Skills[i].SkillModifier = a.AbilityModifier 
+			}
+		}
+	}
+}
+
+// At level 4, select one ability and add 2 to that score,
+// or select two abilities and add 1 to each score (max of 20).
+// They get to do this again at levels 8, 12, 16, and 19
+func (c *Character) calculateAbilityScoreImprovement() {
+	maxBonus := 0
+	switch {
+	case c.Level < 4:  maxBonus = 0
+	case c.Level < 8:  maxBonus = 2
+	case c.Level < 12: maxBonus = 4
+	case c.Level < 16: maxBonus = 6
+	case c.Level < 19: maxBonus = 8
+	case c.Level >= 19: maxBonus = 10
+	}
+
+	if maxBonus == 0 {
+		return // don't qualify yet
+	}
+
+	bonusSum := 0
+	for _, item := range c.AbilityScoreImprovement {
+		bonusSum += item.Bonus
+	}
+
+	if bonusSum > maxBonus {
+		fmt.Printf("Ability Score Bonus (%d) exceeds available for level (%d)\n", bonusSum, maxBonus)
+		return
+	}
+	
+	for _, item := range c.AbilityScoreImprovement {
+		for i := range c.Attributes {
+			if strings.ToLower(c.Attributes[i].Name) == strings.ToLower(item.Ability) {
+				c.Attributes[i].Base += item.Bonus
+				c.Attributes[i].Base = min(20, c.Attributes[i].Base)
+				break
 			}
 		}
 	}
@@ -229,6 +275,12 @@ func (c *Character) BuildCharacter() string {
 	backpack := c.BuildBackpack()
 	for i := range backpack {
 		builder.WriteString(backpack[i]) 
+	}
+	builder.WriteString(nl)
+
+	abilityScoreImprovement := c.BuildAbilityScoreImprovement()
+	for i := range abilityScoreImprovement {
+		builder.WriteString(abilityScoreImprovement[i]) 
 	}
 	builder.WriteString(nl)
 
@@ -513,6 +565,33 @@ func (c *Character) BuildClassDetailsHeader() []string {
 	spacer := fmt.Sprintf("---\n")
 	s = append(s, header)
 	s = append(s, spacer)
+
+	return s
+}
+
+func (c *Character) BuildAbilityScoreImprovement() []string {
+	s := make([]string, 0, len(c.AbilityScoreImprovement))
+	if len(c.AbilityScoreImprovement) > 0 && c.Level >= 4 {
+		abilityMap := make(map[string]int)
+
+		// Build map
+		for _, ability := range c.AbilityScoreImprovement {
+			_, exists := abilityMap[ability.Ability]
+			if exists {
+				abilityMap[ability.Ability] += ability.Bonus
+			}
+		}
+
+		abilityScoreImprovementHeader := fmt.Sprintf("Ability Score Improvement\n")
+		s = append(s, abilityScoreImprovementHeader)
+
+		// TODO: Make this more sophistocated so we don't need to loop through this twice
+		for _, ability := range c.AbilityScoreImprovement {
+			expLine := fmt.Sprintf("- %s: +%d\n", ability.Ability, ability.Bonus)
+			s = append(s, expLine)
+		}
+		s = append(s, "\n")
+	}
 
 	return s
 }
