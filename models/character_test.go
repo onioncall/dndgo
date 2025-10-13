@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestCharacter_calculateAttributesFromBase(t *testing.T) {
+func TestCharacterCalculateAttributesFromBase(t *testing.T) {
 	tests := []struct {
 		name 			string
 		character 		*Character
@@ -43,7 +43,7 @@ func TestCharacter_calculateAttributesFromBase(t *testing.T) {
 	}
 }
 
-func TestCharacter_calculateSkillModifierFromBase(t *testing.T) {
+func TestCharacterCalculateSkillModifierFromBase(t *testing.T) {
 	tests := []struct {
 		name 		string
 		character 	*Character
@@ -92,7 +92,7 @@ func TestCharacter_calculateSkillModifierFromBase(t *testing.T) {
 }
 
 
-func TestCharacter_calculateProficiencyBonus(t *testing.T) {
+func TestCharacterCalculateProficiencyBonus(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*Character
@@ -140,7 +140,7 @@ func TestCharacter_calculateProficiencyBonus(t *testing.T) {
 	}
 }
 
-func TestCharacter_calculateAbilityScoreImprovement(t *testing.T) {
+func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 	tests := []struct {
 		name 		string
 		character 	*Character
@@ -326,7 +326,7 @@ func TestCharacter_calculateAbilityScoreImprovement(t *testing.T) {
 	}
 }
 
-func TestCharacter_Recover(t *testing.T) {
+func TestCharacterRecover(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*Character
@@ -406,7 +406,7 @@ func TestCharacter_Recover(t *testing.T) {
 	}
 }
 
-func TestCharacter_UseSpellSlot(t *testing.T) {
+func TestCharacterUseSpellSlot(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*Character
@@ -463,7 +463,7 @@ func TestCharacter_UseSpellSlot(t *testing.T) {
 	}
 }
 
-func TestCharacter_RecoverSpellSlots(t *testing.T) {
+func TestCharacterRecoverSpellSlots(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*Character
@@ -501,7 +501,7 @@ func TestCharacter_RecoverSpellSlots(t *testing.T) {
 	}
 }
 
-func TestCharacter_DamageCharacter(t *testing.T) {
+func TestCharacterDamageCharacter(t *testing.T) {
 	tests := []struct {
 		name		string
 		damage		int
@@ -557,7 +557,7 @@ func TestCharacter_DamageCharacter(t *testing.T) {
 	}
 }
 
-func TestCharacter_HealCharacter(t *testing.T) {
+func TestCharacterHealCharacter(t *testing.T) {
 	tests := []struct {
 		name			string
 		healthRecovered	int
@@ -608,7 +608,7 @@ func TestCharacter_HealCharacter(t *testing.T) {
 	}
 }
 
-func TestCharacter_AddEquipment(t *testing.T) {
+func TestCharacterAddEquipment(t *testing.T) {
 	tests := []struct {
 		name			string
 		character		*Character
@@ -659,7 +659,7 @@ func TestCharacter_AddEquipment(t *testing.T) {
 	}
 }
 
-func TestCharacter_RemoveItemFromBackpack(t *testing.T) {
+func TestCharacterRemoveItemFromBackpack(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*Character
@@ -738,7 +738,7 @@ func TestCharacter_RemoveItemFromBackpack(t *testing.T) {
 	}
 }
 
-func TestCharacter_AddItemToBackpack(t *testing.T) {
+func TestCharacterAddItemToBackpack(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*Character

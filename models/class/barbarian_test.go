@@ -7,7 +7,7 @@ import (
 	"github.com/onioncall/dndgo/models"
 )
 
-func TestBarbarian_ExecuteUnarmoredDefense(t *testing.T) {
+func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*models.Character
@@ -101,7 +101,7 @@ func TestBarbarian_ExecuteUnarmoredDefense(t *testing.T) {
 	}
 }
 
-func TestBarbarian_ExecutePrimalKnowledge(t *testing.T) {
+func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*models.Character
@@ -149,7 +149,7 @@ func TestBarbarian_ExecutePrimalKnowledge(t *testing.T) {
 	}
 }
 
-func TestBarbarian_ExecutePrimalChampion(t *testing.T) {
+func TestBarbarianExecutePrimalChampion(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*models.Character
@@ -201,7 +201,7 @@ func TestBarbarian_ExecutePrimalChampion(t *testing.T) {
 	}
 }
 
-func TestBarbarian_UseSlots(t *testing.T) {
+func TestBarbarianUseSlots(t *testing.T) {
 	tests := []struct {
 		name		string
 		slotName 	string
@@ -245,7 +245,7 @@ func TestBarbarian_UseSlots(t *testing.T) {
 	}
 }
 
-func TestBarbarian_RecoverClassSlots(t *testing.T) {
+func TestBarbarianRecoverClassSlots(t *testing.T) {
 	tests := []struct {
 		name		string
 		slotName 	string

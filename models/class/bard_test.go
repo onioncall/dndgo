@@ -7,7 +7,7 @@ import (
 	"github.com/onioncall/dndgo/models"
 )
 
-func TestBard_ExecuteExpertise(t *testing.T) {
+func TestBardExecuteExpertise(t *testing.T) {
 	tests := []struct {
 		name 			string
 		character 		*models.Character
@@ -138,7 +138,7 @@ func TestBard_ExecuteExpertise(t *testing.T) {
 	}
 }
 
-func TestBard_ExecuteJackOfAllTrades(t *testing.T) {
+func TestBardExecuteJackOfAllTrades(t *testing.T) {
 	tests := []struct {
 		name        string
 		character   *models.Character
@@ -204,7 +204,7 @@ func TestBard_ExecuteJackOfAllTrades(t *testing.T) {
 	}
 }
 
-func TestBard_UseClassSlots(t *testing.T) {
+func TestBardUseClassSlots(t *testing.T) {
 	tests := []struct {
 		name		string
 		slotName 	string
@@ -248,7 +248,7 @@ func TestBard_UseClassSlots(t *testing.T) {
 	}
 }
 
-func TestBard_RecoverClassSlots(t *testing.T) {
+func TestBardRecoverClassSlots(t *testing.T) {
 	tests := []struct {
 		name		string
 		slotName 	string
