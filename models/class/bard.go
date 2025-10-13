@@ -11,7 +11,6 @@ import (
 
 type Bard struct {
 	SkillProficienciesToDouble 	[]string 						`json:"expertise"`
-	AbilityScoreImprovement		[]AbilityScoreImprovementItem	`json:"ability-score-improvement"`
 	College 					string 							`json:"college"`
 	OtherFeatures 				[]models.ClassFeatures			`json:"other-features"`
 	BardicInspiration			BardicInspiration				`json:"bardic-inspiration"`
@@ -20,11 +19,6 @@ type Bard struct {
 type BardicInspiration struct {
 	Available	int	`json:"available"`
 	Slot		int	`json:"slot"`
-}
-
-type AbilityScoreImprovementItem struct {
-	Ability string 	`json:"ability"`
-	Bonus	int		`json:"bonus"`
 }
 
 func LoadBard(data []byte) (*Bard, error) {
@@ -49,7 +43,6 @@ func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
 }
 
 func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
-	models.PreCalculateMethods = append(models.PreCalculateMethods, b.abilityScoreImprovement)
 	for _, m := range models.PreCalculateMethods {
 		m(c)
 	}
@@ -101,45 +94,6 @@ func (b *Bard) jackOfAllTrades(c *models.Character) {
 	}
 }
 
-// At level 4, Bards may select one ability and add 2 to that score,
-// or select two abilities and add 1 to each score (max of 20).
-// They get to do this again at levels 8, 12, 16, and 19
-func (b *Bard) abilityScoreImprovement(c *models.Character) {
-	maxBonus := 0
-	switch {
-	case c.Level < 4:  maxBonus = 0
-	case c.Level < 8:  maxBonus = 2
-	case c.Level < 12: maxBonus = 4
-	case c.Level < 16: maxBonus = 6
-	case c.Level < 19: maxBonus = 8
-	case c.Level >= 19: maxBonus = 10
-	}
-
-	if maxBonus == 0 {
-		return // don't qualify yet
-	}
-	
-	bonusSum := 0
-	for _, item := range b.AbilityScoreImprovement {
-		bonusSum += item.Bonus
-	}
-
-	if bonusSum > maxBonus {
-		fmt.Printf("Ability Score Bonus (%d) exceeds available for level (%d)\n", bonusSum, maxBonus)
-		return
-	}
-	
-	for _, item := range b.AbilityScoreImprovement {
-		for i := range c.Attributes {
-			if strings.ToLower(c.Attributes[i].Name) == strings.ToLower(item.Ability) {
-				c.Attributes[i].Base += item.Bonus
-				c.Attributes[i].Base = min(20, c.Attributes[i].Base)
-				break
-			}
-		}
-	}
-}
-
 func (b *Bard) PrintClassDetails(c *models.Character) []string {
 	s := c.BuildClassDetailsHeader()
 
@@ -159,28 +113,6 @@ func (b *Bard) PrintClassDetails(c *models.Character) []string {
 		s = append(s, expertiseHeader)
 		for _, exp := range b.SkillProficienciesToDouble {
 			expLine := fmt.Sprintf("- %s\n", exp)
-			s = append(s, expLine)
-		}
-		s = append(s, "\n")
-	}
-
-	if len(b.AbilityScoreImprovement) > 0 && c.Level >= 4 {
-		abilityMap := make(map[string]int)
-
-		// Build map
-		for _, ability := range b.AbilityScoreImprovement {
-			_, exists := abilityMap[ability.Ability]
-			if exists {
-				abilityMap[ability.Ability] += ability.Bonus
-			}
-		}
-
-		abilityScoreImprovementHeader := fmt.Sprintf("Ability Score Improvement\n")
-		s = append(s, abilityScoreImprovementHeader)
-
-		// TODO: Make this more sophistocated so we don't need to loop through this twice
-		for _, ability := range b.AbilityScoreImprovement {
-			expLine := fmt.Sprintf("- %s: +%d\n", ability.Ability, ability.Bonus)
 			s = append(s, expLine)
 		}
 		s = append(s, "\n")

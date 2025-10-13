@@ -43,6 +43,7 @@ func (b *Barbarian) ExecutePostCalculateMethods(c *models.Character) {
 }
 
 func (b *Barbarian) ExecutePreCalculateMethods(c *models.Character) {
+	models.PreCalculateMethods = append(models.PreCalculateMethods, b.primalChampion)
 	for _, m := range models.PreCalculateMethods {
 		m(c)
 	}
@@ -131,6 +132,21 @@ func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
 	}
 
 	return s
+}
+
+// At level 20, your Strength and Constitution scores increase by 4. Your maximum for those scores is now 24. 
+func (b *Barbarian) primalChampion(c *models.Character) {
+	if c.Level < 20 {
+		return
+	}
+
+	for i, a := range c.Attributes {
+		if strings.ToLower(a.Name) != "strength" && strings.ToLower(a.Name) != "constitution" {
+			continue
+		}
+
+		c.Attributes[i].Base += 4
+	}
 }
 
 // CLI
