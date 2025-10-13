@@ -7,7 +7,7 @@ import (
 	"github.com/onioncall/dndgo/models"
 )
 
-func TestBard_expertise(t *testing.T) {
+func TestBard_ExecuteExpertise(t *testing.T) {
 	tests := []struct {
 		name 			string
 		character 		*models.Character
@@ -117,7 +117,7 @@ func TestBard_expertise(t *testing.T) {
 
 	for  _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.bard.expertise(tt.character)
+			tt.bard.executeExpertise(tt.character)
 
 			if len(tt.character.Skills) != len(tt.expected) {
 				t.Errorf("Skills Count- Expected: %d, Result: %d", len(tt.expected), len(tt.character.Skills))
@@ -138,7 +138,7 @@ func TestBard_expertise(t *testing.T) {
 	}
 }
 
-func TestBard_jackOfAllTrades(t *testing.T) {
+func TestBard_ExecuteJackOfAllTrades(t *testing.T) {
 	tests := []struct {
 		name        string
 		character   *models.Character
@@ -183,7 +183,7 @@ func TestBard_jackOfAllTrades(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.bard.jackOfAllTrades(tt.character)
+			tt.bard.executeJackOfAllTrades(tt.character)
 			result := tt.character
 
 			if len(result.Skills) != len(tt.expected) {

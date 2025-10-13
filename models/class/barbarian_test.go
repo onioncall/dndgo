@@ -7,7 +7,7 @@ import (
 	"github.com/onioncall/dndgo/models"
 )
 
-func TestBarbarian_unarmoredDefense(t *testing.T) {
+func TestBarbarian_ExecuteUnarmoredDefense(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*models.Character
@@ -91,7 +91,7 @@ func TestBarbarian_unarmoredDefense(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			barbarian := &Barbarian{}
 
-			barbarian.unarmoredDefense(tt.character)
+			barbarian.executeUnarmoredDefense(tt.character)
 			result := tt.character.AC
 
 			if tt.expected != result {
@@ -101,7 +101,7 @@ func TestBarbarian_unarmoredDefense(t *testing.T) {
 	}
 }
 
-func TestBarbarian_primalKnowledge(t *testing.T) {
+func TestBarbarian_ExecutePrimalKnowledge(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*models.Character
@@ -134,7 +134,7 @@ func TestBarbarian_primalKnowledge(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.barbarian.primalKnowledge(tt.character)
+			tt.barbarian.executePrimalKnowledge(tt.character)
 
 			result := tt.character.Skills 
 			for i, e := range tt.expected {
@@ -149,7 +149,7 @@ func TestBarbarian_primalKnowledge(t *testing.T) {
 	}
 }
 
-func TestBarbarian_primalChamption(t *testing.T) {
+func TestBarbarian_ExecutePrimalChampion(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*models.Character
@@ -189,7 +189,7 @@ func TestBarbarian_primalChamption(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			barbarian := &Barbarian{}
 			
-			barbarian.primalChampion(tt.character)
+			barbarian.executePrimalChampion(tt.character)
 
 			for i, e :=range  tt.expected {
 				result := tt.character.Attributes[i]
