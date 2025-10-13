@@ -7,7 +7,7 @@ import (
 	"github.com/onioncall/dndgo/models"
 )
 
-func TestBard_expertise(t *testing.T) {
+func TestBardExecuteExpertise(t *testing.T) {
 	tests := []struct {
 		name 			string
 		character 		*models.Character
@@ -117,7 +117,7 @@ func TestBard_expertise(t *testing.T) {
 
 	for  _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.bard.expertise(tt.character)
+			tt.bard.executeExpertise(tt.character)
 
 			if len(tt.character.Skills) != len(tt.expected) {
 				t.Errorf("Skills Count- Expected: %d, Result: %d", len(tt.expected), len(tt.character.Skills))
@@ -138,7 +138,7 @@ func TestBard_expertise(t *testing.T) {
 	}
 }
 
-func TestBard_jackOfAllTrades(t *testing.T) {
+func TestBardExecuteJackOfAllTrades(t *testing.T) {
 	tests := []struct {
 		name        string
 		character   *models.Character
@@ -183,7 +183,7 @@ func TestBard_jackOfAllTrades(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.bard.jackOfAllTrades(tt.character)
+			tt.bard.executeJackOfAllTrades(tt.character)
 			result := tt.character
 
 			if len(result.Skills) != len(tt.expected) {
@@ -204,7 +204,7 @@ func TestBard_jackOfAllTrades(t *testing.T) {
 	}
 }
 
-func TestBard_UseClassSlots(t *testing.T) {
+func TestBardUseClassSlots(t *testing.T) {
 	tests := []struct {
 		name		string
 		slotName 	string
@@ -248,7 +248,7 @@ func TestBard_UseClassSlots(t *testing.T) {
 	}
 }
 
-func TestBard_RecoverClassSlots(t *testing.T) {
+func TestBardRecoverClassSlots(t *testing.T) {
 	tests := []struct {
 		name		string
 		slotName 	string
