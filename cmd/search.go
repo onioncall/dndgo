@@ -34,6 +34,7 @@ var (
 			} else if f != "" {
 				handlers.HandleFeatureRequest(f, w)
 			}
+
 		},
 	}
 

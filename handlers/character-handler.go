@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/onioncall/dndgo/logger"
 	"github.com/onioncall/dndgo/models"
 )
 
@@ -39,7 +40,12 @@ func AddSpell(c *models.Character, spellQuery string) {
 		PathType: SpellType,
 	}
 
-	s := r.GetSingle()
+	s, err := r.GetSingle()
+	if err != nil {
+		logError := fmt.Errorf("Failed To Add Spell")
+		logger.HandleError(err, logError)
+	}
+
 	caltrop := false
 
 	if s.Level == 0 {

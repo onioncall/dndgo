@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/onioncall/dndgo/logger"
 )
 
 var url = "https://www.dnd5eapi.co/api/2014"
@@ -17,27 +19,31 @@ type BaseRequest struct {
 }
 
 func ExecuteGetRequest[T any](p PathType, criteria string) (T, error) {
-	resp, err := http.Get(fmt.Sprintf("%s/%s/%s", url, p, criteria))
+	path := fmt.Sprintf("%s/%s/%s", url, p, criteria)
+	resp, err := http.Get(path)
 	if err != nil {
-		fmt.Println("Request Failed")
-		panic(err)
+		logErr := fmt.Errorf("Failed Request: %s, Error: %v", path, err)
+		logger.HandleError(err, logErr)
+		
+		return *new(T), err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		panic(resp.Status)
+		err = fmt.Errorf("Failed Request: %s, HTTP Status: %v", path, resp.StatusCode)
+		return *new(T), err
 	}
 
     body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Read Response Failed")
+		err := fmt.Errorf("Request: %s, Read Response Failed: %v", path, err)
 		return *new(T), err
 	}
 
 	var obj T
     err = json.Unmarshal([]byte(body), &obj)
 	if err != nil {
-		fmt.Println("Unmarshal Response Failed")
+		err := fmt.Errorf("Request: %s, Unmarshal Response Failed: %v", path, err)
 		return *new(T), err
 	}
 
