@@ -4,23 +4,23 @@ import (
 	"testing"
 )
 
-func TestCharacterCalculateAttributesFromBase(t *testing.T) {
+func TestCharacterCalculateAbilitiesFromBase(t *testing.T) {
 	tests := []struct {
 		name 			string
 		character 		*Character
-		expected	 	[]Attribute
+		expected	 	[]Abilities
 	}{
 		{
 			name: "Ability Mod Round Down",
 			character: &Character {
 				Level: 3,
-				Attributes: []Attribute {
+				Abilities: []Abilities {
 					{Name: "Strength", AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},	
 					{Name: "Dexterity", AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},	
 					{Name: "Constitution", AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},	
 				},
 			},
-			expected: []Attribute {
+			expected: []Abilities {
 				{Name: "Strength", AbilityModifier: 2, Base: 14, SavingThrowsProficient: true},	
 				{Name: "Dexterity", AbilityModifier: 1, Base: 12, SavingThrowsProficient: false},	
 				{Name: "Constitution", AbilityModifier: 2, Base: 15, SavingThrowsProficient: true},	
@@ -30,10 +30,10 @@ func TestCharacterCalculateAttributesFromBase(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.character.calculateAttributesFromBase()
+			tt.character.calculateAbilitiesFromBase()
 
 			for i, e := range tt.expected {
-				result := tt.character.Attributes[i].AbilityModifier
+				result := tt.character.Abilities[i].AbilityModifier
 				if e.AbilityModifier != result {
 					t.Errorf("Expected %d modifier, returned %d: %s", e.AbilityModifier, result, e.Name)
 				}
@@ -52,11 +52,11 @@ func TestCharacterCalculateSkillModifierFromBase(t *testing.T) {
 			name: "Multiple Skills, different values",
 			character: &Character {
 				Skills: []Skill {
-					{Name: "slight of hand", SkillModifier: 0, Proficient: false, Attribute: "dexterity"},
-					{Name: "persuasion", SkillModifier: 0, Proficient: false, Attribute: "charisma"},
-					{Name: "deception", SkillModifier: 0, Proficient: false, Attribute: "charisma"},
+					{Name: "slight of hand", SkillModifier: 0, Proficient: false, Ability: "dexterity"},
+					{Name: "persuasion", SkillModifier: 0, Proficient: false, Ability: "charisma"},
+					{Name: "deception", SkillModifier: 0, Proficient: false, Ability: "charisma"},
 				},
-				Attributes: []Attribute {
+				Abilities: []Abilities {
 					{Name: "Strength", AbilityModifier: 2, Base: 14, SavingThrowsProficient: true},	
 					{Name: "Dexterity", AbilityModifier: 1, Base: 12, SavingThrowsProficient: false},	
 					{Name: "Constitution", AbilityModifier: 2, Base: 15, SavingThrowsProficient: true},	
@@ -64,9 +64,9 @@ func TestCharacterCalculateSkillModifierFromBase(t *testing.T) {
 				},
 			},
 			expected: []Skill {
-				{Name: "slight of hand", SkillModifier: 1, Proficient: false, Attribute: "dexterity"},
-				{Name: "persuasion", SkillModifier: 0, Proficient: false, Attribute: "charisma"},
-				{Name: "deception", SkillModifier: 0, Proficient: false, Attribute: "charisma"},
+				{Name: "slight of hand", SkillModifier: 1, Proficient: false, Ability: "dexterity"},
+				{Name: "persuasion", SkillModifier: 0, Proficient: false, Ability: "charisma"},
+				{Name: "deception", SkillModifier: 0, Proficient: false, Ability: "charisma"},
 			},
 		},
 	}
@@ -143,13 +143,13 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 	tests := []struct {
 		name 		string
 		character 	*Character
-		expected	[]Attribute
+		expected	[]Abilities
 	}{
 		{
 			name: "Level not high enough",
 			character: &Character {
 				Level: 3,
-				Attributes: []Attribute {
+				Abilities: []Abilities {
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -161,7 +161,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Strength", Bonus: 2},
 				},
 			},
-			expected: []Attribute {
+			expected: []Abilities {
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -174,7 +174,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			name: "Level 4, one ability increased by two",
 			character: &Character {
 				Level: 4,
-				Attributes: []Attribute {
+				Abilities: []Abilities {
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -186,7 +186,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Dexterity", Bonus: 2},
 				},
 			},
-			expected: []Attribute {
+			expected: []Abilities {
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -199,7 +199,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			name: "Level 4, two abilities increased by one",
 			character: &Character {
 				Level: 4,
-				Attributes: []Attribute {
+				Abilities: []Abilities {
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -212,7 +212,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Charisma", Bonus: 1},
 				},
 			},
-			expected: []Attribute {
+			expected: []Abilities {
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 11, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -225,7 +225,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			name: "Level 4, two abilities increased by two (failure)",
 			character: &Character {
 				Level: 4,
-				Attributes: []Attribute {
+				Abilities: []Abilities {
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -238,7 +238,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Charisma", Bonus: 2},
 				},
 			},
-			expected: []Attribute {
+			expected: []Abilities {
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -251,7 +251,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			name: "Level 8, one ability increased by two, and two abilities increased by one",
 			character: &Character {
 				Level: 8,
-				Attributes: []Attribute {
+				Abilities: []Abilities {
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -265,7 +265,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Wisdom", Bonus: 1},
 				},
 			},
-			expected: []Attribute {
+			expected: []Abilities {
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -278,7 +278,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			name: "Level 20, one ability over maximum",
 			character: &Character {
 				Level: 20,
-				Attributes: []Attribute {
+				Abilities: []Abilities {
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -294,7 +294,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Dexterity", Bonus: 2},
 				},
 			},
-			expected: []Attribute {
+			expected: []Abilities {
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 20, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -310,10 +310,10 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			tt.character.calculateAbilityScoreImprovement()
 
 			for i, e := range tt.expected {
-				result := tt.character.Attributes[i]
+				result := tt.character.Abilities[i]
 				
 				if e.Base != result.Base {
-					t.Errorf("Attribute Base %s- Expected: %d, Result: %d", e.Name, e.Base, result.Base)
+					t.Errorf("Ability Base %s- Expected: %d, Result: %d", e.Name, e.Base, result.Base)
 				}
 			}
 		})
