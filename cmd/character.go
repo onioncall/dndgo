@@ -178,12 +178,12 @@ var (
 func init() {
 	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd)
 
-	addCmd.Flags().StringP("equipment", "e", "", "Equipment to add")
+	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
 	addCmd.Flags().StringP("language", "l", "", "Language to add")
 	addCmd.Flags().StringP("weapon", "w", "", "Weapon to add")
-	addCmd.Flags().IntP("spell-slots", "x", 0, "Increase spell-slot by level")
-	addCmd.Flags().StringP("spell", "s", "", "Add spell to list of character spells")
-	addCmd.Flags().StringP("backpack", "b", "", "Item to add to backpack")
+	addCmd.Flags().IntP("spell-slots", "s", 0, "Increase spell-slot max capacity by level")
+	addCmd.Flags().StringP("spell", "x", "", "Add spell to list of character spells")
+	addCmd.Flags().StringP("backpack", "b", "", "Item to add to backpack (use -q to specify quantity)")
 	addCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
 	addCmd.Flags().StringP("name", "n", "", "Name of equipment to add") 
 
@@ -192,12 +192,12 @@ func init() {
 	removeCmd.Flags().StringP("backpack", "b", "", "Item to remove from backpack")
 	removeCmd.Flags().IntP("hitpoints", "p", 0, "Include or modify hitpoints")
 
-	useCmd.Flags().IntP("spell-slots", "x", 0, "Use spell-slot by level")
+	useCmd.Flags().IntP("spell-slots", "s", 0, "Use spell-slot by level")
 	useCmd.Flags().StringP("backpack", "b", "", "Use item from backpack")
 	useCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
 	useCmd.Flags().StringP("class-tokens", "c", "any", "Use class-tokens by token name")
 
-	recoverCmd.Flags().IntP("spell-slots", "x", 0, "Recover spell-slot by level")
+	recoverCmd.Flags().IntP("spell-slots", "s", 0, "Recover spell-slot by level")
 	recoverCmd.Flags().BoolP("all", "a", false, "Recover all health, slots, and tokens")
 	recoverCmd.Flags().IntP("hitpoints", "p", 0, "Recover hitpoints")
 	recoverCmd.Flags().StringP("class-tokens", "c", "all", "Recover class-tokens by token name")

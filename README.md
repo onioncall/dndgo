@@ -21,22 +21,15 @@ dndgo ctr use -s 1 (uses level one spell slot)
 dndgo ctr remove -p 12 (damage 12 hp)
 dndgo ctr update (update markdown from existing character.json)
 
-character flag hints 
-    -p Hit Points (int)
-    -l Language (string)
-    -b Backpack (Name Quantity)
-    -e Equipment (type: Name)
-    -lvl Level
-
 When in doubt, don't use caps. I haven't done the conversion everywhere to lower case everywhere, so it may cause problems
 
 ## Setting up Character Config
-- copy character file from the "default-json-configs" directory
+- copy default-character.json file from the "default-json-configs" directory
 - modify it to your character
 - find your class and copy the file from "default-json-configs" directory
 - modify it to your character
-- rename files "character.json" and "class.json" respectively
 - move them to your ~/.config/dndgo directory
+- rename files "character.json" and "class.json" respectively
 - run "dndgo ctr update" to generate your markdown file
 
 Search Example
