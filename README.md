@@ -34,8 +34,9 @@ When in doubt, don't use caps. I haven't done the conversion everywhere to lower
 
 Search Example
 
-https://github.com/user-attachments/assets/d7c95bd0-3388-4514-ae1c-aa1fadc10b02
+https://github.com/user-attachments/assets/0770df8d-d0c6-4dd4-ab1c-8e7098882262
 
 Character Markdown Example
 
-https://github.com/user-attachments/assets/730cd6f4-2f8b-4afa-a784-067a18f9bf3f
+https://github.com/user-attachments/assets/85c1b130-808e-4889-aa60-fd8d45ae1190
+
