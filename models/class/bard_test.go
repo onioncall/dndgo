@@ -206,14 +206,14 @@ func TestBardExecuteJackOfAllTrades(t *testing.T) {
 func TestBardUseClassSlots(t *testing.T) {
 	tests := []struct {
 		name		string
-		slotName 	string
+		tokenName 	string
 		character 	*models.Character
 		bard		*Bard
 		expected	BardicInspiration
 	}{
 		{
 			name: "One Use, Single Slot",
-			slotName: "bardic inspiration",
+			tokenName: "bardic inspiration",
 			character: &models.Character{},
 			bard: &Bard {
 				BardicInspiration: BardicInspiration {
@@ -230,7 +230,7 @@ func TestBardUseClassSlots(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.bard.UseClassSlots(tt.slotName)	
+			tt.bard.UseClassTokens(tt.tokenName)	
 
 			result := tt.bard.BardicInspiration.Available
 			e := tt.expected.Available
@@ -245,7 +245,7 @@ func TestBardUseClassSlots(t *testing.T) {
 func TestBardRecoverClassSlots(t *testing.T) {
 	tests := []struct {
 		name		string
-		slotName 	string
+		tokenName 	string
 		recover 	int
 		character 	*models.Character
 		bard		*Bard
@@ -253,7 +253,7 @@ func TestBardRecoverClassSlots(t *testing.T) {
 	}{
 		{
 			name: "Recover By 1",
-			slotName: "bardic inspiration",
+			tokenName: "bardic inspiration",
 			recover: 1,
 			bard: &Bard {
 				BardicInspiration: BardicInspiration {
@@ -268,7 +268,7 @@ func TestBardRecoverClassSlots(t *testing.T) {
 		},
 		{
 			name: "Full Recover",
-			slotName: "bardic inspiration",
+			tokenName: "bardic inspiration",
 			recover: 0,
 			bard: &Bard {
 				BardicInspiration: BardicInspiration {
@@ -285,7 +285,7 @@ func TestBardRecoverClassSlots(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.bard.RecoverClassSlots(tt.slotName, tt.recover)
+			tt.bard.RecoverClassTokens(tt.tokenName, tt.recover)
 
 			result := tt.bard.BardicInspiration.Available
 			e := tt.expected.Available

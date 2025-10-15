@@ -1,7 +1,10 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/onioncall/dndgo/handlers"
+	"github.com/onioncall/dndgo/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -27,6 +30,7 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
+				err := fmt.Errorf("Failed to load character: %v", err)
 				panic(err)
 			}
 			
@@ -35,14 +39,16 @@ var (
 			}
 			if e != "" {
 				if n == "" {
-					panic("Name of equipment can not be left empty")
+					logger.HandleInfo("Name of equipment can not be left empty")
+					return
 				}
 
 				c.AddEquipment(e, n) 
 			}
 			if bp != "" {
 				if q <= 0 {
-					panic("Must pass a positive quantity to add")
+					logger.HandleInfo("Must pass a positive quantity to add")
+					return
 				}
 
 				c.AddItemToPack(bp, q)
@@ -72,6 +78,7 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
+				err := fmt.Errorf("Failed to load character: %v", err)
 				panic(err)
 			}
 
@@ -93,6 +100,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			c, err := handlers.LoadCharacter()
 			if err != nil {
+				err := fmt.Errorf("Failed to load character: %v", err)
 				panic(err)
 			}
 
@@ -107,23 +115,25 @@ var (
 			s, _ := cmd.Flags().GetInt("spell-slots")
 			bp, _ := cmd.Flags().GetString("backpack")
 			q, _ := cmd.Flags().GetInt("quantity")
-			cs, _ := cmd.Flags().GetString("class-slots")
+			ct, _ := cmd.Flags().GetString("class-tokens")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
+				err := fmt.Errorf("Failed to load character: %v", err)
 				panic(err)
 			}
 
 			if bp != "" {
 				if q <= 0 {
-					panic("Must pass a positive quantity to use")
+					logger.HandleInfo("Must pass a positive quantity to use")
+					return
 				}
 
 				c.RemoveItemFromPack(bp, q)
 			} else if s > 0 {
 				c.UseSpellSlot(s);
-			} else if cs != "" {
-				c.UseClassSlots(cs)	
+			} else if ct != "" {
+				c.UseClassTokens(ct)	
 			}
 
 			handlers.SaveCharacterJson(c)
@@ -139,11 +149,12 @@ var (
 			a, _ := cmd.Flags().GetBool("all")
 			ss, _ := cmd.Flags().GetInt("spell-slots")
 			hp, _ := cmd.Flags().GetInt("hitpoints")
-			cs, _ := cmd.Flags().GetString("class-slots")
+			ct, _ := cmd.Flags().GetString("class-tokens")
 			q, _ := cmd.Flags().GetInt("quantity")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
+				err := fmt.Errorf("Failed to load character: %v", err)
 				panic(err)
 			}
 
@@ -153,8 +164,8 @@ var (
 				c.RecoverSpellSlots(ss)	
 			} else if hp > 0 {
 				c.HealCharacter(hp)
-			} else if cs != "" {
-				c.RecoverClassSlots(cs, q)
+			} else if ct != "" {
+				c.RecoverClassTokens(ct, q)
 			}
 
 			handlers.SaveCharacterJson(c)
@@ -184,11 +195,11 @@ func init() {
 	useCmd.Flags().IntP("spell-slots", "x", 0, "Use spell-slot by level")
 	useCmd.Flags().StringP("backpack", "b", "", "Use item from backpack")
 	useCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
-	useCmd.Flags().StringP("class-slots", "c", "any", "Use class-detail-slot by slot name")
+	useCmd.Flags().StringP("class-tokens", "c", "any", "Use class-tokens by token name")
 
 	recoverCmd.Flags().IntP("spell-slots", "x", 0, "Recover spell-slot by level")
-	recoverCmd.Flags().BoolP("all", "a", false, "Recover all health and slots")
+	recoverCmd.Flags().BoolP("all", "a", false, "Recover all health, slots, and tokens")
 	recoverCmd.Flags().IntP("hitpoints", "p", 0, "Recover hitpoints")
-	recoverCmd.Flags().StringP("class-slots", "c", "all", "Recover class-slot by slot name")
+	recoverCmd.Flags().StringP("class-tokens", "c", "all", "Recover class-tokens by token name")
 	recoverCmd.Flags().IntP("quantity", "q", 0, "Recover the quantity of something")
 }

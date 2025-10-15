@@ -203,14 +203,14 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 func TestBarbarianUseSlots(t *testing.T) {
 	tests := []struct {
 		name		string
-		slotName 	string
+		tokenName 	string
 		character 	*models.Character
 		barbarian	*Barbarian
 		expected	Rage
 	}{
 		{
 			name: "One Use, Success",
-			slotName: "rage",
+			tokenName: "rage",
 			character: &models.Character{},
 			barbarian: &Barbarian {
 				Rage: Rage {
@@ -227,7 +227,7 @@ func TestBarbarianUseSlots(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.barbarian.UseClassSlots(tt.slotName)	
+			tt.barbarian.UseClassTokens(tt.tokenName)	
 
 			result := tt.barbarian.Rage.Available
 			e := tt.expected.Available
@@ -242,7 +242,7 @@ func TestBarbarianUseSlots(t *testing.T) {
 func TestBarbarianRecoverClassSlots(t *testing.T) {
 	tests := []struct {
 		name		string
-		slotName 	string
+		tokenName 	string
 		recover 	int
 		character 	*models.Character
 		barbarian	*Barbarian
@@ -250,7 +250,7 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 	}{
 		{
 			name: "Recover By 1",
-			slotName: "rage",
+			tokenName: "rage",
 			recover: 1,
 			character: &models.Character{},
 			barbarian: &Barbarian {
@@ -266,7 +266,7 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 		},
 		{
 			name: "Full Recover",
-			slotName: "rage",
+			tokenName: "rage",
 			recover: 0,
 			barbarian: &Barbarian {
 				Rage: Rage {
@@ -283,7 +283,7 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.barbarian.RecoverClassSlots(tt.slotName, tt.recover)
+			tt.barbarian.RecoverClassTokens(tt.tokenName, tt.recover)
 
 			result := tt.barbarian.Rage.Available
 			e := tt.expected.Available
