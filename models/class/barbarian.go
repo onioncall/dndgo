@@ -18,7 +18,7 @@ type Barbarian struct {
 
 type Rage struct {
 	Available	int	`json:"available"`
-	Slot		int	`json:"slot"`
+	Slot		int	`json:"token"`
 	Damage		int `json:"damage"`
 }
 
@@ -156,20 +156,20 @@ func (b *Barbarian) executePrimalChampion(c *models.Character) {
 
 // CLI
 
-func (b *Barbarian) UseClassSlots(slotName string) {
-	// We only really need slot name for classes that have multiple slots
-	// since barbarian only has rage, we won't check the slot name value
+func (b *Barbarian) UseClassTokens(tokenName string) {
+	// We only really need token name for classes that have multiple tokens
+	// since barbarian only has rage, we won't check the token name value
 	if b.Rage.Available <= 0 {
-		logger.HandleInfo("Class slot had no uses left")
+		logger.HandleInfo("Class token had no uses left")
 		return
 	} 
 
 	b.Rage.Available--
 }
 
-func (b *Barbarian) RecoverClassSlots(slotName string, quantity int) {
-	// We only really need slot name for classes that have multiple slots
-	// since barbarian only has rage, we won't check the slot name value
+func (b *Barbarian) RecoverClassTokens(tokenName string, quantity int) {
+	// We only really need token name for classes that have multiple tokens
+	// since barbarian only has rage, we won't check the token name value
 	b.Rage.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover

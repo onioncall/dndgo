@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/onioncall/dndgo/handlers"
+	"github.com/onioncall/dndgo/logger"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )
@@ -21,8 +22,8 @@ var (
 
 			w, _, err := term.GetSize(int(os.Stdout.Fd()))
 			if err != nil {
-				msg := fmt.Sprintf("Failed to get terminal size: %s", err)
-				panic(msg)
+				errLog := fmt.Errorf("Failed to get terminal size: %s", err)
+				logger.HandleError(err, errLog)
 			}
 
 			if s != "" {

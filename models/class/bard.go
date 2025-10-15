@@ -140,18 +140,18 @@ func (b *Bard) PrintClassDetails(c *models.Character) []string {
 
 // CLI
 
-func (b *Bard) UseClassSlots(slotName string) {
+func (b *Bard) UseClassTokens(tokenName string) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has bardic inspiration, we won't check the slot name value
 	if b.BardicInspiration.Available <= 0 {
-		logger.HandleInfo("Class slot had no uses left")
+		logger.HandleInfo("No Bardic Inspiration tokens left")
 		return
 	} 
 
 	b.BardicInspiration.Available--
 }
 
-func (b *Bard) RecoverClassSlots(slotName string, quantity int) {
+func (b *Bard) RecoverClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has bardic inspiration, we won't check the slot name value
 	b.BardicInspiration.Available += quantity

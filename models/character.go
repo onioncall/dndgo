@@ -42,8 +42,8 @@ type IClass interface {
 	ExecutePostCalculateMethods(c *Character)
 	ExecutePreCalculateMethods(c *Character)
 	PrintClassDetails(c *Character) []string
-	UseClassSlots(string)
-	RecoverClassSlots(string, int)
+	UseClassTokens(string)
+	RecoverClassTokens(string, int)
 }
 
 type GenericItem struct {
@@ -731,14 +731,14 @@ func (c *Character) Recover() {
 	}
 
 	if c.Class != nil {
-		c.Class.RecoverClassSlots("", 0)
+		c.Class.RecoverClassTokens("", 0)
 	}
 }
 
-func (c *Character) UseClassSlots(name string) {
-	c.Class.UseClassSlots(name)
+func (c *Character) UseClassTokens(name string) {
+	c.Class.UseClassTokens(name)
 }
 
-func (c *Character) RecoverClassSlots(name string, quantity int) {
-	c.Class.RecoverClassSlots(name, quantity)
+func (c *Character) RecoverClassTokens(name string, quantity int) {
+	c.Class.RecoverClassTokens(name, quantity)
 }
