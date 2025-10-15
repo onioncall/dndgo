@@ -115,7 +115,7 @@ var (
 			s, _ := cmd.Flags().GetInt("spell-slots")
 			bp, _ := cmd.Flags().GetString("backpack")
 			q, _ := cmd.Flags().GetInt("quantity")
-			ct, _ := cmd.Flags().GetString("class-token")
+			ct, _ := cmd.Flags().GetString("class-tokens")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -149,7 +149,7 @@ var (
 			a, _ := cmd.Flags().GetBool("all")
 			ss, _ := cmd.Flags().GetInt("spell-slots")
 			hp, _ := cmd.Flags().GetInt("hitpoints")
-			ct, _ := cmd.Flags().GetString("class-token")
+			ct, _ := cmd.Flags().GetString("class-tokens")
 			q, _ := cmd.Flags().GetInt("quantity")
 
 			c, err := handlers.LoadCharacter()
@@ -195,11 +195,11 @@ func init() {
 	useCmd.Flags().IntP("spell-slots", "x", 0, "Use spell-slot by level")
 	useCmd.Flags().StringP("backpack", "b", "", "Use item from backpack")
 	useCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
-	useCmd.Flags().StringP("class-token", "c", "any", "Use class-token by token name")
+	useCmd.Flags().StringP("class-tokens", "c", "any", "Use class-tokens by token name")
 
 	recoverCmd.Flags().IntP("spell-slots", "x", 0, "Recover spell-slot by level")
 	recoverCmd.Flags().BoolP("all", "a", false, "Recover all health, slots, and tokens")
 	recoverCmd.Flags().IntP("hitpoints", "p", 0, "Recover hitpoints")
-	recoverCmd.Flags().StringP("class-token", "c", "all", "Recover class-token by token name")
+	recoverCmd.Flags().StringP("class-tokens", "c", "all", "Recover class-tokens by token name")
 	recoverCmd.Flags().IntP("quantity", "q", 0, "Recover the quantity of something")
 }
