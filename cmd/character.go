@@ -115,7 +115,7 @@ var (
 			s, _ := cmd.Flags().GetInt("spell-slots")
 			bp, _ := cmd.Flags().GetString("backpack")
 			q, _ := cmd.Flags().GetInt("quantity")
-			cg, _ := cmd.Flags().GetString("class-charges")
+			ct, _ := cmd.Flags().GetString("class-token")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -132,8 +132,8 @@ var (
 				c.RemoveItemFromPack(bp, q)
 			} else if s > 0 {
 				c.UseSpellSlot(s);
-			} else if cg != "" {
-				c.UseClassTokens(cg)	
+			} else if ct != "" {
+				c.UseClassTokens(ct)	
 			}
 
 			handlers.SaveCharacterJson(c)
@@ -149,7 +149,7 @@ var (
 			a, _ := cmd.Flags().GetBool("all")
 			ss, _ := cmd.Flags().GetInt("spell-slots")
 			hp, _ := cmd.Flags().GetInt("hitpoints")
-			cs, _ := cmd.Flags().GetString("class-slots")
+			ct, _ := cmd.Flags().GetString("class-token")
 			q, _ := cmd.Flags().GetInt("quantity")
 
 			c, err := handlers.LoadCharacter()
@@ -164,8 +164,8 @@ var (
 				c.RecoverSpellSlots(ss)	
 			} else if hp > 0 {
 				c.HealCharacter(hp)
-			} else if cs != "" {
-				c.RecoverClassTokens(cs, q)
+			} else if ct != "" {
+				c.RecoverClassTokens(ct, q)
 			}
 
 			handlers.SaveCharacterJson(c)
@@ -195,11 +195,11 @@ func init() {
 	useCmd.Flags().IntP("spell-slots", "x", 0, "Use spell-slot by level")
 	useCmd.Flags().StringP("backpack", "b", "", "Use item from backpack")
 	useCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
-	useCmd.Flags().StringP("class-slots", "c", "any", "Use class-detail-slot by slot name")
+	useCmd.Flags().StringP("class-token", "c", "any", "Use class-token by token name")
 
 	recoverCmd.Flags().IntP("spell-slots", "x", 0, "Recover spell-slot by level")
-	recoverCmd.Flags().BoolP("all", "a", false, "Recover all health and slots")
+	recoverCmd.Flags().BoolP("all", "a", false, "Recover all health, slots, and tokens")
 	recoverCmd.Flags().IntP("hitpoints", "p", 0, "Recover hitpoints")
-	recoverCmd.Flags().StringP("class-slots", "c", "all", "Recover class-slot by slot name")
+	recoverCmd.Flags().StringP("class-token", "c", "all", "Recover class-token by token name")
 	recoverCmd.Flags().IntP("quantity", "q", 0, "Recover the quantity of something")
 }
