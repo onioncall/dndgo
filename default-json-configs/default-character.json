@@ -25,7 +25,7 @@
   "initiative": 0,
   "speed": 0,
   "hit-dice": "",
-  "attributes": [
+  "abilities": [
     {
       "name": "Strength",
       "base": 0,
@@ -59,92 +59,92 @@
   ],
   "skills": [
     {
-      "attribute": "Strength",
+      "ability": "Strength",
       "name": "Athletics",
       "proficient": false
     },
     {
-      "attribute": "Dexterity",
+      "ability": "Dexterity",
       "name": "Acrobatics",
       "proficient": false
     },
     {
-      "attribute": "Dexterity",
+      "ability": "Dexterity",
       "name": "Slight of Hand",
       "proficient": false
     },
     {
-      "attribute": "Dexterity",
+      "ability": "Dexterity",
       "name": "Stealth",
       "proficient": false
     },
     {
-      "attribute": "Intelligence",
+      "ability": "Intelligence",
       "name": "Arcana",
       "proficient": false
     },
     {
-      "attribute": "Intelligence",
+      "ability": "Intelligence",
       "name": "History",
       "proficient": false
     },
     {
-      "attribute": "Intelligence",
+      "ability": "Intelligence",
       "name": "Investigation",
       "proficient": false
     },
     {
-      "attribute": "Intelligence",
+      "ability": "Intelligence",
       "name": "Nature",
       "proficient": false
     },
     {
-      "attribute": "Intelligence",
+      "ability": "Intelligence",
       "name": "Religion",
       "proficient": false
     },
     {
-      "attribute": "Wisdom",
+      "ability": "Wisdom",
       "name": "Animal Handling",
       "proficient": false
     },
     {
-      "attribute": "Wisdom",
+      "ability": "Wisdom",
       "name": "Insight",
       "proficient": false
     },
     {
-      "attribute": "Wisdom",
+      "ability": "Wisdom",
       "name": "Medicine",
       "proficient": false
     },
     {
-      "attribute": "Wisdom",
+      "ability": "Wisdom",
       "name": "Perception",
       "proficient": false
     },
     {
-      "attribute": "Wisdom",
+      "ability": "Wisdom",
       "name": "Survival",
       "proficient": false
     },
     {
-      "attribute": "Charisma",
+      "ability": "Charisma",
       "name": "Deception",
       "proficient": false
     },
     {
-      "attribute": "Charisma",
+      "ability": "Charisma",
       "name": "Intimidation",
       "proficient": false
     },
     {
-      "attribute": "Charisma",
+      "ability": "Charisma",
       "name": "Performance",
       "proficient": false
     },
     {
-      "attribute": "Charisma",
+      "ability": "Charisma",
       "name": "Persuasion",
       "proficient": false
     }

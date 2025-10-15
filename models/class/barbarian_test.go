@@ -16,7 +16,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 			name: "ArmorEquiped, EarlyReturn",
 			character: &models.Character {
 				AC: 0,
-				Attributes: []models.Attribute {
+				Abilities: []models.Abilities {
 					{
 						Name: "Strength",
 						AbilityModifier: 4,
@@ -52,7 +52,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 			name: "No Armor, Valid",
 			character: &models.Character {
 				AC: 0,
-				Attributes: []models.Attribute {
+				Abilities: []models.Abilities {
 					{
 						Name: "Strength",
 						AbilityModifier: 5,
@@ -152,18 +152,18 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*models.Character
-		expected	[]models.Attribute
+		expected	[]models.Abilities
 	}{
 		{
 			name: "Below Level Threshold",
 			character: &models.Character {
 				Level: 15,
-				Attributes: []models.Attribute {
+				Abilities: []models.Abilities {
 					{Name: "Strength", Base: 16},
 					{Name: "Constitution", Base: 16},
 				},
 			},
-			expected: []models.Attribute {
+			expected: []models.Abilities {
 				{Name: "Strength", Base: 16},
 				{Name: "Constitution", Base: 16},
 			},
@@ -172,12 +172,12 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 			name: "Meets Level Requirements, Valid Configuration",
 			character: &models.Character {
 				Level: 20,
-				Attributes: []models.Attribute {
+				Abilities: []models.Abilities {
 					{Name: "Strength", Base: 17},
 					{Name: "Constitution", Base: 17},
 				},
 			},
-			expected: []models.Attribute {
+			expected: []models.Abilities {
 				{Name: "Strength", Base: 21},
 				{Name: "Constitution", Base: 21},
 			},
@@ -191,7 +191,7 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 			barbarian.executePrimalChampion(tt.character)
 
 			for i, e :=range  tt.expected {
-				result := tt.character.Attributes[i]
+				result := tt.character.Abilities[i]
 				if e.Base != result.Base {
 					t.Errorf("Ability %s- Expected: %d, Result: %d", e.Name, e.Base, result.Base)
 				}

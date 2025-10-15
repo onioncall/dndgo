@@ -98,7 +98,7 @@ func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 
 	c.AC = 0
 	
-	for _, a := range c.Attributes {
+	for _, a := range c.Abilities {
 		if strings.ToLower(a.Name) != "dexterity" && strings.ToLower(a.Name) != "constitution" {
 			continue
 		}
@@ -145,12 +145,12 @@ func (b *Barbarian) executePrimalChampion(c *models.Character) {
 		return
 	}
 
-	for i, a := range c.Attributes {
+	for i, a := range c.Abilities {
 		if strings.ToLower(a.Name) != "strength" && strings.ToLower(a.Name) != "constitution" {
 			continue
 		}
 
-		c.Attributes[i].Base += 4
+		c.Abilities[i].Base += 4
 	}
 }
 

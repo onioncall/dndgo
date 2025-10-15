@@ -16,7 +16,7 @@ type Character struct {
 	Background        		string           	`json:"background"`
 	Feats			  		[]GenericItem		`json:"feats"`
 	Languages         		[]string         	`json:"languages"`
-	Proficiency       		int
+	Proficiency       		int					`json:"-"`
 	PassivePerception 		int              	`json:"passive-perception"`
 	PassiveInsight    		int              	`json:"passive-insight"`
 	AC                		int              	`json:"ac"`
@@ -26,7 +26,7 @@ type Character struct {
 	Initiative        		int              	`json:"initiative"`
 	Speed             		int              	`json:"speed"`
 	HitDice           		string           	`json:"hit-dice"`
-	Attributes     	  		[]Attribute			`json:"attributes"`
+	Abilities     	  		[]Abilities			`json:"abilities"`
 	Skills            		[]Skill          	`json:"skills"`
 	Spells            		[]CharacterSpell 	`json:"spells"`
 	SpellSlots        		[]SpellSlot       	`json:"spell-slots"`
@@ -56,12 +56,12 @@ type BackpackItem struct {
 	Quantity int 	`json:"quantity"`
 }
 
-type Attribute struct {
-	Name        		string `json:"name"`
-	Base        		int    `json:"base"`
-	Adjusted			int
-	AbilityModifier		int
-	SavingThrowsProficient  bool   `json:"saving-throws-proficient"`
+type Abilities struct {
+	Name        		string 		`json:"name"`
+	Base        		int    		`json:"base"`
+	Adjusted			int			`json:"-"`
+	AbilityModifier		int			`json:"-"`
+	SavingThrowsProficient  bool   	`json:"saving-throws-proficient"`
 }
 
 type AbilityScoreImprovementItem struct {
@@ -70,17 +70,17 @@ type AbilityScoreImprovementItem struct {
 }
 
 type Skill struct {
-	Attribute 		string `json:"attribute"`
-	Name       		string `json:"name"`
-	SkillModifier	int
-	Proficient  	bool   `json:"proficient"`
+	Ability 		string 	`json:"ability"`
+	Name       		string 	`json:"name"`
+	SkillModifier	int		`json:"-"`
+	Proficient  	bool   	`json:"proficient"`
 }
 
 type CharacterSpell struct {
-	IsCaltrop bool   `json:"is-caltrop"`
-	SlotLevel int    `json:"slot-level"`
-	IsRitual    bool   `json:"ritual"`
-	Name      string `json:"name"`
+	IsCaltrop bool   	`json:"is-caltrop"`
+	SlotLevel int    	`json:"slot-level"`
+	IsRitual    bool   	`json:"ritual"`
+	Name      string 	`json:"name"`
 }
 
 type ClassFeatures struct {
@@ -134,22 +134,22 @@ var PostCalculateMethods []func(c *Character)
 
 func (c *Character) CalculateCharacterStats() {
 	c.calculateProficiencyBonusByLevel()	
-	c.calculateAttributesFromBase()
+	c.calculateAbilitiesFromBase()
 	c.calculateAbilityScoreImprovement()
 	c.calculateSkillModifierFromBase()
 }
 
-func (c *Character) calculateAttributesFromBase() {
-	for i, a := range c.Attributes {
-		c.Attributes[i].AbilityModifier = (a.Base - 10) / 2
+func (c *Character) calculateAbilitiesFromBase() {
+	for i, a := range c.Abilities {
+		c.Abilities[i].AbilityModifier = (a.Base - 10) / 2
 	}
 }
 
 func (c *Character) calculateSkillModifierFromBase() {
 	for i, skill := range c.Skills {
 		// if this is too slow, I'll refactor this to use a map with the proficiency name as the key
-		for _, a := range c.Attributes {
-			if strings.ToLower(skill.Attribute) == strings.ToLower(a.Name) {
+		for _, a := range c.Abilities {
+			if strings.ToLower(skill.Ability) == strings.ToLower(a.Name) {
 				c.Skills[i].SkillModifier = a.AbilityModifier 
 			}
 		}
@@ -185,10 +185,10 @@ func (c *Character) calculateAbilityScoreImprovement() {
 	}
 	
 	for _, item := range c.AbilityScoreImprovement {
-		for i := range c.Attributes {
-			if strings.ToLower(c.Attributes[i].Name) == strings.ToLower(item.Ability) {
-				c.Attributes[i].Base += item.Bonus
-				c.Attributes[i].Base = min(20, c.Attributes[i].Base)
+		for i := range c.Abilities {
+			if strings.ToLower(c.Abilities[i].Name) == strings.ToLower(item.Ability) {
+				c.Abilities[i].Base += item.Bonus
+				c.Abilities[i].Base = min(20, c.Abilities[i].Base)
 				break
 			}
 		}
@@ -244,7 +244,7 @@ func (c *Character) BuildCharacter() string {
 	}
 	builder.WriteString(nl)
 	
-	proficiencies := c.BuildAttributes()
+	proficiencies := c.BuildAbilities()
 	for i := range proficiencies {
 		builder.WriteString(proficiencies[i])
 	}
@@ -378,9 +378,9 @@ func (c *Character) BuildGeneralStats() []string {
 	return s
 }
 
-func (c *Character) BuildAttributes() []string {
-	s := make([]string, 0, len(c.Attributes) + 3)
-	profHeader := fmt.Sprintf("*Attributes*\n\n")
+func (c *Character) BuildAbilities() []string {
+	s := make([]string, 0, len(c.Abilities) + 3)
+	profHeader := fmt.Sprintf("*Abilities*\n\n")
 	s = append(s, profHeader)
 
 	profTopRow := fmt.Sprintf("| Proficiency  | Base  | Modifier | Saving Throws |\n") 
@@ -388,7 +388,7 @@ func (c *Character) BuildAttributes() []string {
 	s = append(s, profTopRow)
 	s = append(s, profSpacer)
 
-	for _, attr := range c.Attributes {
+	for _, attr := range c.Abilities {
 		abMod := attr.AbilityModifier
 		if attr.SavingThrowsProficient {
 			abMod += c.Proficiency	
@@ -419,7 +419,7 @@ func (c *Character) BuildSkills() []string {
 	skillHeader		:= fmt.Sprintf("*Skills*\n\n")
 	s = append(s, skillHeader)
 
-	skillTopRow 	:= fmt.Sprintf("| Skill | Attribute | Modifier |\n") 
+	skillTopRow 	:= fmt.Sprintf("| Skill | Ability | Modifier |\n") 
 	skillSpacer		:= fmt.Sprintf("| --- | --- | --- |\n")
 	s = append(s, skillTopRow)
 	s = append(s, skillSpacer)
@@ -435,7 +435,7 @@ func (c *Character) BuildSkills() []string {
 		}
 
 		skillModifierString = fmt.Sprintf("%s%d", skillModifierString, skill.SkillModifier)
-		skillRow := fmt.Sprintf("| %s | %s | %s |\n", skill.Name, skill.Attribute, skillModifierString)
+		skillRow := fmt.Sprintf("| %s | %s | %s |\n", skill.Name, skill.Ability, skillModifierString)
 		s = append(s, skillRow)
 	}
 
