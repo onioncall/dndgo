@@ -3,6 +3,8 @@ package models
 import (
 	"fmt"
 	"strings"
+
+	"github.com/onioncall/dndgo/logger"
 )
 
 type Character struct {
@@ -625,8 +627,8 @@ func (c *Character) RemoveItemFromPack(item string, quantity int) {
 	for i, packItem := range c.Backpack {
 		if packItem.Name == item {
 			if packItem.Quantity < quantity {
-				msg := fmt.Sprintf("Quantity to remove (%d) greater than quantity in pack (%d)", quantity, packItem.Quantity)
-				fmt.Println(msg)
+				info := fmt.Sprintf("Quantity to remove (%d) greater than quantity in pack (%d)", quantity, packItem.Quantity)
+				logger.HandleInfo(info)
 			}
 
 			c.Backpack[i].Quantity -= quantity
@@ -664,8 +666,8 @@ func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
 		case Boots:
 			c.BodyEquipment.Boots = equipmentName
 		default:
-			msg := fmt.Sprintf("Invalid Equipment Type: %s", equipmentType)
-			fmt.Println(msg)
+			info := fmt.Sprintf("Invalid Equipment Type: %s", equipmentType)
+			logger.HandleInfo(info)
 	}
 }
 
@@ -683,7 +685,7 @@ func (c *Character) HealCharacter(hpInc int) {
 
 func (c *Character) DamageCharacter(hpDecr int) {
 	if c.HPCurrent <= 0 {
-		fmt.Println("Character had no health left")
+		logger.HandleInfo("Character had no health left")
 		return
 	}
 
@@ -699,7 +701,9 @@ func (c *Character) UseSpellSlot(level int) {
 	for i := range c.SpellSlots {
 		if c.SpellSlots[i].Level == level {
 			if c.SpellSlots[i].Available <= 0 {
-				fmt.Printf("Spell Slot Level %d: already at zero", level)
+				info := fmt.Sprintf("Spell Slot Level %d: already at zero", level)
+				logger.HandleInfo(info)
+
 				return
 			}
 
@@ -708,7 +712,7 @@ func (c *Character) UseSpellSlot(level int) {
 		}
 	}
 
-	fmt.Println("invalid level, must be 1-9") 
+	logger.HandleInfo("Invalid level, must be 1-9") 
 }
 
 func (c *Character) RecoverSpellSlots(level int) {

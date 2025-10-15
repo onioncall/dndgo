@@ -12,11 +12,11 @@ type errorEntry struct {
 	timestamp time.Time
 }
 
-var consoleErrors map[error][]errorEntry
+var consoleErrors map[string][]errorEntry
 
 func NewLogger() {
 	if consoleErrors == nil {
-		consoleErrors = make(map[error][]errorEntry)
+		consoleErrors = make(map[string][]errorEntry)
 	}
 	
 	// Considered persisting this longer, but for now we're 
@@ -33,7 +33,7 @@ func NewLogger() {
 		return
 	}
 	
-	logPath := filepath.Join(logDir, "log.txt")
+	logPath := filepath.Join(logDir, "log")
 	f, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "LOG ERROR- failed to clear log file: %v\n", err)
@@ -42,21 +42,27 @@ func NewLogger() {
 	f.Close()
 }
 
-// Handles a friendly cli error, and a stacktrace-like error to a log file if required
+// Handles cli info that the user should see, but does not need to get logged to our log file
+func HandleInfo(info string) {
+	if consoleErrors == nil {
+		return
+	}
+
+	// checking if this has been logged so we don't accidentally overwrite data to be logged
+	if _, exists := consoleErrors[info]; !exists {
+		consoleErrors[info] = nil
+	}
+}
+
+// Handles a friendly cli error, and a stacktrace-like error to a log file
 func HandleError(cliErr error, logError error) {
-	if cliErr == nil {
+	if cliErr == nil || consoleErrors == nil {
 		return
 	}
+
+	strErr := fmt.Sprintf("%v", cliErr)
 	
-	// If no log error provided and this cli error hasn't been logged yet, mark it as "no stack trace needed"
-	if logError == nil {
-		if _, exists := consoleErrors[cliErr]; !exists {
-			consoleErrors[cliErr] = nil
-		}
-		return
-	}
-	
-	consoleErrors[cliErr] = append(consoleErrors[cliErr], errorEntry{
+	consoleErrors[strErr] = append(consoleErrors[strErr], errorEntry{
 		err:       logError,  // Store the detailed error
 		timestamp: time.Now(),
 	})
@@ -65,8 +71,8 @@ func HandleError(cliErr error, logError error) {
 func LogErrors() {
 	if len(consoleErrors) < 1 {
 		return
-	}
-	
+	}	
+
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "LOG ERROR- failed to get home directory: %v\n", err)
@@ -79,7 +85,7 @@ func LogErrors() {
 		return
 	}
 	
-	logPath := filepath.Join(logDir, "log.txt")
+	logPath := filepath.Join(logDir, "log")
 	f, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "LOG ERROR- failed to open log file: %v\n", err)
@@ -89,7 +95,12 @@ func LogErrors() {
 	
 	for cliErr, entries := range consoleErrors {
 		fmt.Println(cliErr)
-			
+
+		// If we don't have entries, we don't need to add the error to the log
+		if (len(entries) < 1) {
+			continue
+		}
+
 		consoleEntry := fmt.Sprintf("%v\n", cliErr)
 		if _, err := f.WriteString(consoleEntry); err != nil {
 			fmt.Fprintf(os.Stderr, "LOG ERROR- failed to write to log file: %v\n", err)
@@ -102,11 +113,6 @@ func LogErrors() {
 				if _, err := f.WriteString(logEntry); err != nil {
 					fmt.Fprintf(os.Stderr, "LOG ERROR- failed to write to log file: %v\n", err)
 				}
-			}
-		} else {
-			// No stack trace needed
-			if _, err := f.WriteString("(no additional details)\n"); err != nil {
-				fmt.Fprintf(os.Stderr, "LOG ERROR- failed to write to log file: %v\n", err)
 			}
 		}
 	}

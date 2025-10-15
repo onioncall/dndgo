@@ -1,7 +1,6 @@
 package models
 
 import (
-	"os"
 	"testing"
 )
 
@@ -308,11 +307,6 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Prevent from writing to terminal during tests
-			original := os.Stdout
-			os.Stdout, _ = os.Open(os.DevNull)
-			defer func() { os.Stdout = original }()
-
 			tt.character.calculateAbilityScoreImprovement()
 
 			for i, e := range tt.expected {
@@ -445,11 +439,6 @@ func TestCharacterUseSpellSlot(t *testing.T) {
 	
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Prevent from writing to terminal during tests
-			original := os.Stdout
-			os.Stdout, _ = os.Open(os.DevNull)
-			defer func() { os.Stdout = original }()
-
 			tt.character.UseSpellSlot(tt.level)
 
 			for i, e := range tt.expected {
@@ -536,11 +525,6 @@ func TestCharacterDamageCharacter(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Prevent from writing to terminal during tests
-			original := os.Stdout
-			os.Stdout, _ = os.Open(os.DevNull)
-			defer func() { os.Stdout = original }()
-
 			tt.character.DamageCharacter(tt.damage)
 
 			e := tt.expected
@@ -642,11 +626,6 @@ func TestCharacterAddEquipment(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Prevent from writing to terminal during tests
-			original := os.Stdout
-			os.Stdout, _ = os.Open(os.DevNull)
-			defer func() { os.Stdout = original }()
-
 			tt.character.AddEquipment(tt.equipmentType, tt.equipmentName)
 
 			e := tt.expected.Cloak 
@@ -716,11 +695,6 @@ func TestCharacterRemoveItemFromBackpack(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Prevent from writing to terminal during tests
-			original := os.Stdout
-			os.Stdout, _ = os.Open(os.DevNull)
-			defer func() { os.Stdout = original }()
-
 			tt.character.RemoveItemFromPack(tt.itemName, tt.quantity)
 
 			if len(tt.expected) != len(tt.character.Backpack) {
