@@ -6,6 +6,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/onioncall/dndgo/logger"
 	"github.com/onioncall/dndgo/models"
 )
 
@@ -24,8 +25,10 @@ type BardicInspiration struct {
 func LoadBard(data []byte) (*Bard, error) {
 	var bard Bard
 	if err := json.Unmarshal(data, &bard); err != nil {
-		fmt.Println(err)
-		return nil, fmt.Errorf("failed to parse character data: %w", err)
+		errLog := fmt.Errorf("Failed to parse class data: %w", err)
+		logger.HandleError(errLog, err)
+
+		return nil, err
 	}
 
 	return &bard, nil
@@ -68,7 +71,8 @@ func (b *Bard) executeExpertise(c *models.Character) {
 	seen := make(map[string]bool)
 	for _, profToDouble := range b.SkillProficienciesToDouble {
 		if seen[profToDouble] == true {
-			panic("Bard Config Error - Expertise can not have dupliate proficiencies")
+			logger.HandleInfo("Bard Config Error - Expertise can not have dupliate proficiencies")
+			return
 		}
 		seen[profToDouble] = true
 
@@ -140,7 +144,7 @@ func (b *Bard) UseClassSlots(slotName string) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has bardic inspiration, we won't check the slot name value
 	if b.BardicInspiration.Available <= 0 {
-		fmt.Println("Class slot had no uses left")
+		logger.HandleInfo("Class slot had no uses left")
 		return
 	} 
 

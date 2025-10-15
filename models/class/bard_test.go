@@ -1,7 +1,6 @@
 package class
 
 import (
-	"os"
 	"testing"
 
 	"github.com/onioncall/dndgo/models"
@@ -231,11 +230,6 @@ func TestBardUseClassSlots(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Prevent from writing to terminal during tests
-			original := os.Stdout
-			os.Stdout, _ = os.Open(os.DevNull)
-			defer func() { os.Stdout = original }()
-
 			tt.bard.UseClassSlots(tt.slotName)	
 
 			result := tt.bard.BardicInspiration.Available

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/onioncall/dndgo/logger"
 	"github.com/onioncall/dndgo/models"
 )
 
@@ -24,8 +25,10 @@ type Rage struct {
 func LoadBarbarian(data []byte) (*Barbarian, error) {
 	var barbarian Barbarian
 	if err := json.Unmarshal(data, &barbarian); err != nil {
-		fmt.Println(err)
-		return nil, fmt.Errorf("failed to parse character data: %w", err)
+		errLog := fmt.Errorf("Failed to parse class data: %w", err)
+		logger.HandleError(errLog, err)
+
+		return nil, err
 	}
 
 	return &barbarian, nil
@@ -76,9 +79,11 @@ func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
 					c.Skills[i].Proficient = true
 					break
 				} else if i == len(avaliableSkills) {
-					fmt.Printf("Primal Knowledge Skill %s was not one of the six available skills at level 1: %s\n",
+					info := fmt.Sprintf("Primal Knowledge Skill %s was not one of the six available skills at level 1: %s\n",
 					pk, 
 					strings.Join(avaliableSkills, ", "))
+
+					logger.HandleInfo(info)
 				}
 			}
 		}
@@ -155,7 +160,7 @@ func (b *Barbarian) UseClassSlots(slotName string) {
 	// We only really need slot name for classes that have multiple slots
 	// since barbarian only has rage, we won't check the slot name value
 	if b.Rage.Available <= 0 {
-		fmt.Println("Class slot had no uses left")
+		logger.HandleInfo("Class slot had no uses left")
 		return
 	} 
 
