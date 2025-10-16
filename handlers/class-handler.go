@@ -44,6 +44,7 @@ func LoadClass(classType string) (models.IClass, error) {
 	switch strings.ToLower(classType) {
 	case Bard: c, err = class.LoadBard(fileData)
 	case Barbarian: c, err = class.LoadBarbarian(fileData)
+	case Ranger: c, err = class.LoadRanger(fileData) 
 	default: fmt.Println("BAD") 
 	}
 

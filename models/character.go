@@ -96,11 +96,12 @@ type SpellSlot struct {
 }
 
 type Weapon struct {
-	Name   		string `json:"name"`
-	Bonus  		int    `json:"bonus"`
-	Damage 		string `json:"damage"`
-	Type   		string `json:"type"`
-	Properties 	string `json:"properties"`
+	Name   		string 		`json:"name"`
+	Bonus  		int    		`json:"bonus"`
+	Damage 		string 		`json:"damage"`
+	Range		string 		`json:"range"`
+	Type   		string 		`json:"type"`
+	Properties 	[]string 	`json:"properties"`
 }
 
 type BodyEquipment struct {
@@ -115,6 +116,7 @@ type BodyEquipment struct {
 	Boots     string `json:"boots"`
 }
 
+// Body Equipment
 const (
 	Head      string = "head"
 	Amulet    string = "amulet"
@@ -125,6 +127,16 @@ const (
 	Ring2     string = "ring2"
 	Belt      string = "belt"
 	Boots     string = "boots"
+)
+
+// Abilities
+const (
+	Strength		string = "strength"
+	Dexterity		string = "dexterity"
+	Constitution	string = "constitution"
+	Intelligence	string = "Intelligence"
+	Wisdom			string = "wisdom"
+	Charisma		string = "charisma"
 )
 
 var PreCalculateMethods []func(c *Character)
@@ -505,7 +517,7 @@ func (c *Character) BuildWeapons() []string {
 			wBonusString, 
 			weapon.Damage, 
 			weapon.Type, 
-			weapon.Properties)
+			strings.Join(weapon.Properties, ", "))
 			s = append(s, weaponRow)
 	}
 

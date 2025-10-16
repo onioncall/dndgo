@@ -101,7 +101,7 @@ func (b *Bard) executeJackOfAllTrades(c *models.Character) {
 func (b *Bard) PrintClassDetails(c *models.Character) []string {
 	s := c.BuildClassDetailsHeader()
 
-	if b.College != "" {
+	if b.College != "" && c.Level > 3 {
 		collegeHeader := fmt.Sprintf("College: *%s*\n\n", b.College)
 		s = append(s, collegeHeader)
 	}
@@ -113,8 +113,9 @@ func (b *Bard) PrintClassDetails(c *models.Character) []string {
 	}
 
 	if len(b.SkillProficienciesToDouble) > 0 && c.Level >= 3 {
-		expertiseHeader := fmt.Sprintf("Expertise\n")
+		expertiseHeader := fmt.Sprintf("Expertise:\n")
 		s = append(s, expertiseHeader)
+
 		for _, exp := range b.SkillProficienciesToDouble {
 			expLine := fmt.Sprintf("- %s\n", exp)
 			s = append(s, expLine)

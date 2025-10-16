@@ -118,7 +118,7 @@ func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
 		s = append(s, rageLine)
 	}
 
-	if b.Path != "" {
+	if b.Path != "" && c.Level > 3 {
 		pathHeader := fmt.Sprintf("Primal Path: *%s*\n\n", b.Path)
 		s = append(s, pathHeader)
 	}
@@ -129,10 +129,10 @@ func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
 				continue
 			}
 
-			collegeDetailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, collegeDetailName)
-			collegeDetail := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, collegeDetail)
+			detailHeader := fmt.Sprintf("---\n**%s**\n", detail.Name)
+			s = append(s, detailHeader)
+			detail := fmt.Sprintf("%s\n", detail.Details)
+			s = append(s, detail)
 		}
 	}
 
