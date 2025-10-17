@@ -13,7 +13,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 		expected	int
 	}{
 		{
-			name: "ArmorEquiped, EarlyReturn",
+			name: "Armor equiped, early return",
 			character: &models.Character {
 				AC: 0,
 				Abilities: []models.Abilities {
@@ -49,7 +49,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 			expected: 0,
 		},
 		{
-			name: "No Armor, Valid",
+			name: "No armor, valid",
 			character: &models.Character {
 				AC: 0,
 				Abilities: []models.Abilities {
@@ -108,7 +108,7 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 		expected	[]models.Skill
 	}{
 		{
-			name: "Below Level Requirement",
+			name: "Below level requirement",
 			character: &models.Character {
 				Level: 2,
 				Proficiency: 2,
@@ -155,7 +155,7 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 		expected	[]models.Abilities
 	}{
 		{
-			name: "Below Level Threshold",
+			name: "Below level threshold",
 			character: &models.Character {
 				Level: 15,
 				Abilities: []models.Abilities {
@@ -169,7 +169,7 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 			},
 		},
 		{
-			name: "Meets Level Requirements, Valid Configuration",
+			name: "Meets level requirements, valid configuration",
 			character: &models.Character {
 				Level: 20,
 				Abilities: []models.Abilities {
@@ -209,7 +209,7 @@ func TestBarbarianUseSlots(t *testing.T) {
 		expected	Rage
 	}{
 		{
-			name: "One Use, Success",
+			name: "One use, success",
 			tokenName: "rage",
 			character: &models.Character{},
 			barbarian: &Barbarian {
@@ -249,7 +249,7 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 		expected	Rage
 	}{
 		{
-			name: "Recover By 1",
+			name: "Recover by 1",
 			tokenName: "rage",
 			recover: 1,
 			character: &models.Character{},
@@ -265,7 +265,7 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 			},
 		},
 		{
-			name: "Full Recover",
+			name: "Full recover",
 			tokenName: "rage",
 			recover: 0,
 			barbarian: &Barbarian {

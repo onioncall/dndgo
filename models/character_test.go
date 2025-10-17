@@ -11,7 +11,7 @@ func TestCharacterCalculateAbilitiesFromBase(t *testing.T) {
 		expected	 	[]Abilities
 	}{
 		{
-			name: "Ability Mod Round Down",
+			name: "Ability mod round down",
 			character: &Character {
 				Level: 3,
 				Abilities: []Abilities {
@@ -49,7 +49,7 @@ func TestCharacterCalculateSkillModifierFromBase(t *testing.T) {
 		expected 	[]Skill
 	}{
 		{
-			name: "Multiple Skills, different values",
+			name: "Multiple skills, different values",
 			character: &Character {
 				Skills: []Skill {
 					{Name: "slight of hand", SkillModifier: 0, Proficient: false, Ability: "dexterity"},
@@ -98,28 +98,28 @@ func TestCharacterCalculateProficiencyBonus(t *testing.T) {
 		expected 	int 
 	}{
 		{
-			name: "Level 3 Character",
+			name: "Level 3 character",
 			character: &Character {
 				Level: 3,
 			},
 			expected: 2,
 		},
 		{
-			name: "Level 8 Character",
+			name: "Level 8 character",
 			character: &Character {
 				Level: 8,
 			},
 			expected: 3,
 		},
 		{
-			name: "Level 9 Character",
+			name: "Level 9 character",
 			character: &Character {
 				Level: 9,
 			},
 			expected: 4,
 		},
 		{
-			name: "Level 13 Character",
+			name: "Level 13 character",
 			character: &Character {
 				Level: 13,
 			},
