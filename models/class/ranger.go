@@ -1,0 +1,243 @@
+package class
+
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+
+	"github.com/onioncall/dndgo/logger"
+	"github.com/onioncall/dndgo/models"
+)
+
+type Ranger struct {
+	Archetype					string							`json:"archetype"`
+	FightingStyle				string							`json:"fighting-style"`
+	FavoredEnemies				[]string						`json:"favored-enemies"`
+	OtherFeatures 				[]models.ClassFeatures			`json:"other-features"`
+	FightingStyleApplied		bool							`json:"-"`
+}
+
+// Fighting Styles
+const (
+	Archery				string = "archery"
+	Defense				string = "defense"
+	Dueling				string = "dueling"
+	TwoWeaponFighting	string = "two-weapon-fighting"
+)
+
+// Weapon Ranges
+const (
+	Ranged		string = "ranged"
+	Melee		string = "melee"
+)
+
+func LoadRanger(data []byte) (*Ranger, error) {
+	var ranger Ranger
+	if err := json.Unmarshal(data, &ranger); err != nil {
+		errLog := fmt.Errorf("Failed to parse class data: %w", err)
+		logger.HandleError(errLog, err)
+
+		return nil, err
+	}
+
+	return &ranger, nil
+}
+
+func (r *Ranger) LoadMethods() {
+}
+
+func (r *Ranger) ExecutePostCalculateMethods(c *models.Character) {
+	models.PostCalculateMethods = append(models.PostCalculateMethods, r.executeFightingStyle)
+	for _, m := range models.PostCalculateMethods {
+		m(c)
+	}
+}
+
+func (r *Ranger) ExecutePreCalculateMethods(c *models.Character) {
+	for _, m := range models.PreCalculateMethods {
+		m(c)
+	}
+}
+
+func (r *Ranger) PrintClassDetails(c *models.Character) []string { 
+	s := c.BuildClassDetailsHeader()
+	
+	if r.Archetype != "" && c.Level > 3 {
+		archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
+		s = append(s, archetypeHeader)
+	}
+
+	if len(r.FavoredEnemies) > 0 {
+		favoredEnemyHeader := fmt.Sprintf("Favored Enemies:\n")
+		s = append(s, favoredEnemyHeader)
+
+		for _, enemy := range r.FavoredEnemies {
+			enemyLine := fmt.Sprintf("- %s\n", enemy)
+			s = append(s, enemyLine)
+		}
+		s = append(s, "\n")
+	}
+
+	if len(r.OtherFeatures) > 0 {
+		for _, detail := range r.OtherFeatures {
+			if detail.Level > c.Level {
+				continue
+			}
+
+			name := fmt.Sprintf("---\n**%s**\n", detail.Name)
+			s = append(s, name)
+			detail := fmt.Sprintf("%s\n", detail.Details)
+			s = append(s, detail)
+		}
+	}
+
+	return s
+}
+
+// At level 2, Rangers adopt a fighting style as their specialty
+// only one of these styles can be selected
+func (r *Ranger) executeFightingStyle(c *models.Character) {
+	if c.Level < 2 {
+		return 
+	}
+
+	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s", 
+		r.FightingStyle, Archery, Defense, Dueling, TwoWeaponFighting)
+
+	switch r.FightingStyle {
+	case Archery: r.FightingStyleApplied = applyArchery(c)
+	case Defense: r.FightingStyleApplied = applyDefense(c)
+	case Dueling: r.FightingStyleApplied = applyDueling(c)
+	case TwoWeaponFighting: r.FightingStyleApplied = applyTwoWeaponFighting(c)
+	default: logger.HandleInfo(invalidMsg)
+	}
+}
+
+// Only to be called from executeFightingStyle
+func applyArchery(c *models.Character) bool {
+	for i, weapon := range c.Weapons {
+		if strings.ToLower(weapon.Range) == Ranged {
+			c.Weapons[i].Bonus += 2
+			return true
+		}
+	}
+
+	return false
+}
+
+// Only to be called from executeFightingStyle
+func applyDefense(c *models.Character) bool {
+	if c.BodyEquipment.Armour == "" {
+		c.AC += 1
+		return true
+	}
+
+	return false
+}
+
+// Only to be called from executeFightingStyle
+func applyDueling(c *models.Character) bool {
+	// this is less defined, since it depends on us knowing what weapons are currently 
+	// in the characters hand. We'll assume that they have which ever weapon they want
+	// this applied to to be the first one they have, and that it will be equipped in combat.
+	//Maybe later we'll come up with a flag for the weapon being in use or something
+	for i, weapon := range c.Weapons {
+		if strings.ToLower(weapon.Range) != Melee {
+			continue
+		}
+
+		isTwoHanded := false
+
+		for _, prop := range weapon.Properties {
+			 if prop == models.TwoHanded {
+				isTwoHanded = true
+			}
+		}
+
+		if !isTwoHanded {
+			c.Weapons[i].Bonus += 2
+			return true
+		}
+	}
+
+	return false
+}
+
+
+// Only to be called from executeFightingStyle
+func applyTwoWeaponFighting(c *models.Character) bool {
+	// This is somewhat nuanced, so I'm just going to document how this works for clarity
+	// When dual wielding, there is a primary weapon that must be one handed, and an off hand
+	// weapon that must be one handed and have the "light" property. The primary weapon can be 
+	// light, but does not have to be. The dexterity bonus while dual weilding applies to the 
+	// off hand weapon. For our purposes, we'll consider the first weapon that meets both 
+	// criteria the "secondary" weapon, and the the next one to meet just the one handed criteria 
+	// the primary. We'll only apply the bonus if both primary and secondary weapons are found
+
+	secondaryWeaponIndex := -1
+	primaryWeaponIndex := -1
+
+	for i, weapon := range c.Weapons {
+		isLight := false
+		isOneHanded := true
+
+		for _, prop := range weapon.Properties {
+			if strings.ToLower(prop) == models.TwoHanded {
+				isOneHanded = false
+				break
+			}
+			if strings.ToLower(prop) == models.Light {
+				isLight = true
+			}
+		}
+
+		if !isOneHanded {
+			continue
+		}
+		
+		// We'll take the first secondary weapon that meets these criteria
+		if isOneHanded && isLight && secondaryWeaponIndex == -1 {
+			secondaryWeaponIndex = i
+			if primaryWeaponIndex != -1 {
+				break
+			}
+
+			continue
+		}	
+
+		// The first weapon that meets this criteria will be considered the primary
+		if isOneHanded {
+			primaryWeaponIndex = i	
+		}
+
+		// Once both are set we don't need to continue looping over weapons
+		if primaryWeaponIndex != -1 && secondaryWeaponIndex != -1 {
+			break
+		}
+	}
+
+	if primaryWeaponIndex == -1 || secondaryWeaponIndex == -1 {
+		return false
+	}
+
+	for _, mod := range c.Abilities {
+		if strings.ToLower(mod.Name) == models.Dexterity {
+			c.Weapons[secondaryWeaponIndex].Bonus += mod.AbilityModifier
+			return true
+		}
+	}
+
+	return false
+}
+
+// CLI
+
+func (r *Ranger) UseClassTokens(tokenName string) {
+	// Not sure Rangers have a token like system to implement
+	logger.HandleInfo("No token set up for Ranger class")
+}
+
+func (r *Ranger) RecoverClassTokens(tokenName string, quantity int) {
+	// Not sure Rangers have a token like system to implement
+	logger.HandleInfo("No token set up for Ranger class")
+}

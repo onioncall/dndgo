@@ -1,0 +1,54 @@
+{
+  "archetype": "Beast Master",
+  "favored-enemy": [
+    "Beasts"
+  ],
+  "fighting-style": "archery",
+  "other-features": [
+    {
+      "name": "Natural Explorer",
+      "level": 1,
+      "details": "While traveling for an hour or more in your favored terrain, you gain the following benefits:\n- Difficult terrain doesn't slow your group's travel.\n- Your group can't become lost except by magical means.\n- Even when you are engaged in another activity while traveling, you remain alert to danger.\n- If traveling alone, you can move stealthily at a normal pace.\n- When you forage, you find twice as much food as normal.\n- While tracking other creatures, you learn their exact number, their sizes, and how long ago they passed through the area.\n"
+    },
+    {
+      "name": "Rangers Companion",
+      "level": 3,
+      "details": "You have a beast companion that accompanies you on your adventures and is trained to fight alongside you. Add your proficiency bonus to the beast’s AC, attack rolls, and damage rolls, as well as to any saving throws and skills it is proficient in. Its hit point maximum equals its normal maximum or four times your ranger level, whichever is higher. Like any creature, the beast can spend Hit Dice during a short rest.\n\nThe beast obeys your commands as best as it can. It takes its turn on your initiative. On your turn, you can verbally command the beast where to move (no action required by you). You can use your action to verbally command it to take the Attack, Dash, Disengage, or Help action. If you don’t issue a command, the beast takes the Dodge action. Once you have the Extra Attack feature, you can make one weapon attack yourself when you command the beast to take the Attack action. While traveling through your favored terrain with only the beast, you can move stealthily at a normal pace.\n\nIf you are incapacitated or absent, the beast acts on its own, focusing on protecting you and itself. The beast never requires your command to use its reaction, such as when making an opportunity attack.\n\nIf the beast dies, you can obtain another one by spending 8 hours magically bonding with another beast that isn’t hostile to you, either the same type of beast as before or a different one.\n"
+    },
+    {
+      "name": "Primeval Awareness",
+      "level": 3,
+      "details": "You can use your action and expend one ranger spell slot to focus your awareness on the region around you. For 1 minute per level of the spell slot you expend, you can sense whether the following types of creatures are present within 1 mile of you (or within up to 6 miles if you are in your favored terrain): aberrations, celestials, dragons, elementals, fey, fiends, and undead. This feature doesn't reveal the creatures' location or number.\n"
+    },
+    {
+      "name": "Extra Attack",
+      "level": 5,
+      "details": "You can attack twice, instead of once, whenever you take the Attack action on your turn.\n"
+    },
+    {
+      "name": "Land's Stride",
+      "level": 8,
+      "details": "Moving through nonmagical difficult terrain costs you no extra movement. You can also pass through nonmagical plants without being slowed by them and without taking damage from them if they have thorns, spines, or a similar hazard.\n\nIn addition, you have advantage on saving throws against plants that are magically created or manipulated to impede movement, such those created by the entangle spell.\n"
+    },
+    {
+      "name": "Hide in Plain Sight",
+      "level": 10,
+      "details": "You can spend 1 minute creating camouflage for yourself. You must have access to fresh mud, dirt, plants, soot, and other naturally occurring materials with which to create your camouflage.\n\nOnce you are camouflaged in this way, you can try to hide by pressing yourself up against a solid surface, such as a tree or wall, that is at least as tall and wide as you are. You gain a +10 bonus to Dexterity (Stealth) checks as long as you remain there without moving or taking actions. Once you move or take an action or a reaction, you must camouflage yourself again to gain this benefit.\n"
+    },
+    {
+      "name": "Vanish",
+      "level": 14,
+      "details": "You can use the Hide action as a bonus action on your turn. Also, you can't be tracked by nonmagical means, unless you choose to leave a trail.\n"
+    },
+    {
+      "name": "Feral Senses",
+      "level": 18,
+      "details": "You gain preternatural senses that help you fight creatures you can't see. When you attack a creature you can't see, your inability to see it doesn't impose disadvantage on your attack rolls against it. You are also aware of the location of any invisible creature within 30 feet of you, provided that the creature isn't hidden from you and you aren't blinded or deafened.\n"
+    },
+    {
+      "name": "Foe Slayer",
+      "level": 20,
+      "details": "You become an unparalleled hunter of your enemies. Once on each of your turns, you can add your Wisdom modifier to the attack roll or the damage roll of an attack you make against one of your favored enemies. You can choose to use this feature before or after the roll, but before any effects of the roll are applied.\n"
+    }
+  ]
+}

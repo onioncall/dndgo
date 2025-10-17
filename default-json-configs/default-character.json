@@ -209,8 +209,9 @@
       "name": "",
       "bonus": 0,
       "damage": "",
+      "range": "",
       "type": "",
-      "properties": ""
+      "properties": [""]
     },
   ],
   "body-equipment": {
