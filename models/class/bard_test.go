@@ -14,7 +14,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 		expected 		[]models.Skill
 	}{
 		{
-			name: "Below Level Requirement",
+			name: "Below level requirement",
 			character: &models.Character {
 				Level: 2,
 				Proficiency: 2,
@@ -37,7 +37,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 			},
 		},
 		{
-			name: "Level 3 - Two Skill Proficiencies Doubled",
+			name: "Level 3 - two skill proficiencies doubled",
 			character: &models.Character {
 				Level: 3,
 				Proficiency: 2,
@@ -60,7 +60,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 			},
 		},
 		{
-			name: "Level 3 - Two Skill Proficiencies Doubled, One Removed",
+			name: "Level 3 - two skill proficiencies doubled, one removed",
 			character: &models.Character {
 				Level: 3,
 				Proficiency: 2,
@@ -84,7 +84,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 			},
 		},
 		{
-			name: "Level 10 - Four Skill Proficiencies Doubled",
+			name: "Level 10, four skill proficiencies doubled",
 			character: &models.Character {
 				Level: 10,
 				Proficiency: 4,
@@ -212,7 +212,7 @@ func TestBardUseClassSlots(t *testing.T) {
 		expected	BardicInspiration
 	}{
 		{
-			name: "One Use, Single Slot",
+			name: "One use, single slot",
 			tokenName: "bardic inspiration",
 			character: &models.Character{},
 			bard: &Bard {
@@ -252,7 +252,7 @@ func TestBardRecoverClassSlots(t *testing.T) {
 		expected	BardicInspiration
 	}{
 		{
-			name: "Recover By 1",
+			name: "Recover by 1",
 			tokenName: "bardic inspiration",
 			recover: 1,
 			bard: &Bard {
@@ -267,7 +267,7 @@ func TestBardRecoverClassSlots(t *testing.T) {
 			},
 		},
 		{
-			name: "Full Recover",
+			name: "Full recover",
 			tokenName: "bardic inspiration",
 			recover: 0,
 			bard: &Bard {

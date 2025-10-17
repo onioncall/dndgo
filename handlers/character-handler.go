@@ -101,7 +101,7 @@ func LoadCharacter() (*models.Character, error) {
 		return nil, fmt.Errorf("failed to get home directory: %w", err)
 	}
 
-	configPath := filepath.Join(homeDir, ".config/dndgo", "character.json")
+	configPath := filepath.Join(homeDir, ".config", "dndgo", "character.json")
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return nil, fmt.Errorf("character file not found at %s: %w", configPath, err)
 	}
@@ -135,24 +135,29 @@ func SaveCharacterMarkdown(res string, path string) {
 		panic(fmt.Sprintf("Error getting home directory: %v", err))
 	}
 
-	filePath := filepath.Join(homeDir, path, "character.md")
+	// If path is empty, we're going to default to the config path
+	if path == "" {
+		path = filepath.Join(".config", "dndgo")
+	}
 
-	dir := filepath.Dir(filePath)
+	path = filepath.Join(homeDir, path, "character.md")
+
+	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		panic(fmt.Sprintf("Error creating directories: %v", err))
 	}
 
-	err = ClearFile(filePath)
+	err = ClearFile(path)
 	if err != nil {
 		panic(fmt.Sprintf("Error clearing file: %v", err))
 	}
 
-	err = os.WriteFile(filePath, []byte(res), 0644)
+	err = os.WriteFile(path, []byte(res), 0644)
 	if err != nil {
 		panic(fmt.Sprintf("Error writing file: %v", err))
 	}
 
-	fmt.Printf("Character markdown saved at: %s\n", filePath)
+	fmt.Printf("Character markdown saved at: %s\n", path)
 }
 
 func ClearFile(filePath string) error {
