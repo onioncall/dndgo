@@ -14,6 +14,7 @@ type Ranger struct {
 	FightingStyle				string							`json:"fighting-style"`
 	FavoredEnemies				[]string						`json:"favored-enemies"`
 	OtherFeatures 				[]models.ClassFeatures			`json:"other-features"`
+	FightingStyleApplied		bool							`json:"-"`
 }
 
 // Fighting Styles
@@ -101,70 +102,132 @@ func (r *Ranger) executeFightingStyle(c *models.Character) {
 	}
 
 	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s", 
-		r.FightingStyle,
-		Archery,
-		Defense,
-		Dueling,
-		TwoWeaponFighting)
+		r.FightingStyle, Archery, Defense, Dueling, TwoWeaponFighting)
 
 	switch r.FightingStyle {
-	case Archery: executeArchery(c)
-	case Defense: executeDefense(c)
-	case Dueling: executeDueling(c)
-	case TwoWeaponFighting: executeTwoWeaponFighting(c)
+	case Archery: r.FightingStyleApplied = applyArchery(c)
+	case Defense: r.FightingStyleApplied = applyDefense(c)
+	case Dueling: r.FightingStyleApplied = applyDueling(c)
+	case TwoWeaponFighting: r.FightingStyleApplied = applyTwoWeaponFighting(c)
 	default: logger.HandleInfo(invalidMsg)
 	}
 }
 
-func executeArchery(c *models.Character) {
+// Only to be called from executeFightingStyle
+func applyArchery(c *models.Character) bool {
 	for i, weapon := range c.Weapons {
 		if strings.ToLower(weapon.Range) == Ranged {
 			c.Weapons[i].Bonus += 2
+			return true
 		}
 	}
+
+	return false
 }
 
-func executeDefense(c *models.Character) {
-	if c.BodyEquipment.Armour != "" {
+// Only to be called from executeFightingStyle
+func applyDefense(c *models.Character) bool {
+	if c.BodyEquipment.Armour == "" {
 		c.AC += 1
+		return true
 	}
+
+	return false
 }
 
-func executeDueling(c *models.Character) {
-	// this is less defined, since it depends on character actions we can't know, but we will 
-	// assume that if someone has this fighting style that they aren't dual weilding or something
+// Only to be called from executeFightingStyle
+func applyDueling(c *models.Character) bool {
+	// this is less defined, since it depends on us knowing what weapons are currently 
+	// in the characters hand. We'll assume that they have which ever weapon they want
+	// this applied to to be the first one they have, and that it will be equipped in combat.
+	//Maybe later we'll come up with a flag for the weapon being in use or something
 	for i, weapon := range c.Weapons {
-		if strings.ToLower(weapon.Range) == Melee {
-			c.Weapons[i].Bonus += 2
+		if strings.ToLower(weapon.Range) != Melee {
+			continue
 		}
-	}
-}
 
-func executeTwoWeaponFighting(c *models.Character) {
-	// This is a little wonky to implement becuase we don't have the concept of multiple attacks
-	// so as a middle ground the solution will be to add a duplicate weapon if you have two, and then 
-	// this bonus will only be applied to one while duel weilding
-    weaponCounts := make(map[string]int)
-    
-	for _, weapon := range c.Weapons {
-        weaponCounts[weapon.Name]++
-	}
+		isTwoHanded := false
 
-	for i, weapon := range c.Weapons {
 		for _, prop := range weapon.Properties {
-			// weapon must be light to dual weild
-			if strings.ToLower(prop) == "light" && weaponCounts[weapon.Name] > 1 {
-				for _, mod := range c.Abilities {
-					if strings.ToLower(mod.Name) == models.Dexterity {
-						c.Weapons[i].Bonus += mod.AbilityModifier
-						// we only want to apply this once. In text,
-						// its's the second weapon, but we'll do it for the first one
-						return
-					}
-				}
+			 if prop == models.TwoHanded {
+				isTwoHanded = true
 			}
 		}
+
+		if !isTwoHanded {
+			c.Weapons[i].Bonus += 2
+			return true
+		}
 	}
+
+	return false
+}
+
+
+// Only to be called from executeFightingStyle
+func applyTwoWeaponFighting(c *models.Character) bool {
+	// This is somewhat nuanced, so I'm just going to document how this works for clarity
+	// When dual wielding, there is a primary weapon that must be one handed, and an off hand
+	// weapon that must be one handed and have the "light" property. The primary weapon can be 
+	// light, but does not have to be. The dexterity bonus while dual weilding applies to the 
+	// off hand weapon. For our purposes, we'll consider the first weapon that meets both 
+	// criteria the "secondary" weapon, and the the next one to meet just the one handed criteria 
+	// the primary. We'll only apply the bonus if both primary and secondary weapons are found
+
+	secondaryWeaponIndex := -1
+	primaryWeaponIndex := -1
+
+	for i, weapon := range c.Weapons {
+		isLight := false
+		isOneHanded := true
+
+		for _, prop := range weapon.Properties {
+			if strings.ToLower(prop) == models.TwoHanded {
+				isOneHanded = false
+				break
+			}
+			if strings.ToLower(prop) == models.Light {
+				isLight = true
+			}
+		}
+
+		if !isOneHanded {
+			continue
+		}
+		
+		// We'll take the first secondary weapon that meets these criteria
+		if isOneHanded && isLight && secondaryWeaponIndex == -1 {
+			secondaryWeaponIndex = i
+			if primaryWeaponIndex != -1 {
+				break
+			}
+
+			continue
+		}	
+
+		// The first weapon that meets this criteria will be considered the primary
+		if isOneHanded {
+			primaryWeaponIndex = i	
+		}
+
+		// Once both are set we don't need to continue looping over weapons
+		if primaryWeaponIndex != -1 && secondaryWeaponIndex != -1 {
+			break
+		}
+	}
+
+	if primaryWeaponIndex == -1 || secondaryWeaponIndex == -1 {
+		return false
+	}
+
+	for _, mod := range c.Abilities {
+		if strings.ToLower(mod.Name) == models.Dexterity {
+			c.Weapons[secondaryWeaponIndex].Bonus += mod.AbilityModifier
+			return true
+		}
+	}
+
+	return false
 }
 
 // CLI

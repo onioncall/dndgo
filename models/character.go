@@ -129,6 +129,21 @@ const (
 	Boots     string = "boots"
 )
 
+// Weapon Proprties
+const (
+	Ammunition		string = "ammunition"
+	Finesse			string = "finesse"
+	Heavy			string = "heavy"
+	Light			string = "light"
+	Loading			string = "loading"
+	Reach			string = "reach"
+	Special			string = "special"
+	Thrown			string = "thrown"
+	TwoHanded		string = "two-handed"
+	Versatile		string = "versatile"
+	Monk			string = "monk"
+)
+
 // Abilities
 const (
 	Strength		string = "strength"
