@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	defaultjsonconfigs "github.com/onioncall/dndgo/default-json-configs"
 	"github.com/onioncall/dndgo/handlers"
 	"github.com/onioncall/dndgo/logger"
 	"github.com/spf13/cobra"
@@ -33,7 +35,7 @@ var (
 				err := fmt.Errorf("Failed to load character: %v", err)
 				panic(err)
 			}
-			
+
 			if l != "" {
 				c.AddLanguage(l)
 			}
@@ -43,7 +45,7 @@ var (
 					return
 				}
 
-				c.AddEquipment(e, n) 
+				c.AddEquipment(e, n)
 			}
 			if bp != "" {
 				if q <= 0 {
@@ -54,15 +56,15 @@ var (
 				c.AddItemToPack(bp, q)
 			}
 			if il {
-				// c.AddLevel()				
+				// c.AddLevel()
 			}
 			if ss > 0 {
 				// add spell slot for level
-			} 
+			}
 			if s != "" {
 				handlers.AddSpell(c, s)
 			}
-			
+
 			handlers.SaveCharacterJson(c)
 			handlers.SaveClassHandler(c.Class)
 			handlers.HandleCharacter(c)
@@ -85,8 +87,8 @@ var (
 			if hp > 0 {
 				c.DamageCharacter(hp)
 			} else if u > 0 {
-				c.UseSpellSlot(u);
-			} 
+				c.UseSpellSlot(u)
+			}
 
 			handlers.SaveCharacterJson(c)
 			handlers.SaveClassHandler(c.Class)
@@ -131,9 +133,9 @@ var (
 
 				c.RemoveItemFromPack(bp, q)
 			} else if s > 0 {
-				c.UseSpellSlot(s);
+				c.UseSpellSlot(s)
 			} else if ct != "" {
-				c.UseClassTokens(ct)	
+				c.UseClassTokens(ct)
 			}
 
 			handlers.SaveCharacterJson(c)
@@ -161,7 +163,7 @@ var (
 			if a {
 				c.Recover()
 			} else if ss > 0 {
-				c.RecoverSpellSlots(ss)	
+				c.RecoverSpellSlots(ss)
 			} else if hp > 0 {
 				c.HealCharacter(hp)
 			} else if ct != "" {
@@ -173,10 +175,55 @@ var (
 			handlers.HandleCharacter(c)
 		},
 	}
+
+	initCmd = &cobra.Command{
+		Use:   "init",
+		Short: "Initializes a new character on this machine",
+		Run: func(cmd *cobra.Command, args []string) {
+			c, _ := cmd.Flags().GetString("class")
+
+			var templateName string
+			switch c {
+			case "bard":
+				templateName = "bard-class.json"
+			case "barbarian":
+				templateName = "barbarian-class.json"
+			case "ranger":
+				templateName = "default-ranger.json"
+			default:
+				panic(fmt.Sprintf("Unsupported class '%v'", c))
+			}
+
+			classBytes, err := defaultjsonconfigs.Content.ReadFile(fmt.Sprintf("default-json-configs/%v", templateName))
+			if err != nil {
+				panic(fmt.Errorf("Failed to read content of %v: %w", templateName, err))
+			}
+			charBytes, err := defaultjsonconfigs.Content.ReadFile("default-json-configs/default-character.json")
+			if err != nil {
+				panic(fmt.Errorf("Failed to read content of %v: %w", templateName, err))
+			}
+
+			dirname := "$HOME/.config/dndgo"
+			classFile := fmt.Sprintf("%v/class.json", dirname)
+			charFile := fmt.Sprintf("%v/character.json", dirname)
+
+			if err = os.MkdirAll(classFile, 0755); err != nil {
+				panic(fmt.Errorf("Failed to create dir %v: %w", dirname, err))
+			}
+
+			if err = os.WriteFile(classFile, classBytes, 0655); err != nil {
+				panic(fmt.Errorf("Failed to create dir %v: %w", classFile, err))
+			}
+
+			if err = os.WriteFile(charFile, charBytes, 0655); err != nil {
+				panic(fmt.Errorf("Failed to write file %v: %w", charFile, err))
+			}
+		},
+	}
 )
 
 func init() {
-	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd)
+	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd, initCmd)
 
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
 	addCmd.Flags().StringP("language", "l", "", "Language to add")
@@ -184,8 +231,8 @@ func init() {
 	addCmd.Flags().IntP("spell-slots", "s", 0, "Increase spell-slot max capacity by level")
 	addCmd.Flags().StringP("spell", "x", "", "Add spell to list of character spells")
 	addCmd.Flags().StringP("backpack", "b", "", "Item to add to backpack (use -q to specify quantity)")
-	addCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
-	addCmd.Flags().StringP("name", "n", "", "Name of equipment to add") 
+	addCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
+	addCmd.Flags().StringP("name", "n", "", "Name of equipment to add")
 
 	removeCmd.Flags().StringP("language", "l", "", "Language to remove")
 	removeCmd.Flags().StringP("weapon", "w", "", "Weapon to remove")
@@ -194,7 +241,7 @@ func init() {
 
 	useCmd.Flags().IntP("spell-slots", "s", 0, "Use spell-slot by level")
 	useCmd.Flags().StringP("backpack", "b", "", "Use item from backpack")
-	useCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
+	useCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
 	useCmd.Flags().StringP("class-tokens", "c", "any", "Use class-tokens by token name")
 
 	recoverCmd.Flags().IntP("spell-slots", "s", 0, "Recover spell-slot by level")
@@ -202,4 +249,6 @@ func init() {
 	recoverCmd.Flags().IntP("hitpoints", "p", 0, "Recover hitpoints")
 	recoverCmd.Flags().StringP("class-tokens", "c", "all", "Recover class-tokens by token name")
 	recoverCmd.Flags().IntP("quantity", "q", 0, "Recover the quantity of something")
+
+	initCmd.Flags().StringP("class", "c", "", "Name of character class")
 }
