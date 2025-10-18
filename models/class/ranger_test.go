@@ -281,6 +281,23 @@ func TestRanger_executeFightingStyle(t *testing.T) {
 		expected	models.Character	
 	}{
 		{
+			name: "Below level requirement",
+			character: &models.Character {
+				AC: 15,
+				Level: 1,
+				WornEquipment: types.WornEquipment {
+					Armour: "",
+				},
+			},
+			ranger: &Ranger {
+				FightingStyle: Defense,
+			},
+			expected: models.Character {
+				AC: 15,
+				Level: 3,
+			},
+		},
+		{
 			name: "Not valid fighting style",
 			character: &models.Character {
 				AC: 15,
