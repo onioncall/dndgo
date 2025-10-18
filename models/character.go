@@ -111,7 +111,8 @@ func (c *Character) calculateAbilityScoreImprovement() {
 	}
 
 	if bonusSum > maxBonus {
-		fmt.Printf("Ability Score Bonus (%d) exceeds available for level (%d)\n", bonusSum, maxBonus)
+		info := fmt.Sprintf("Ability Score Bonus (%d) exceeds available for level (%d)\n", bonusSum, maxBonus)
+		logger.HandleInfo(info)
 		return
 	}
 	
@@ -558,8 +559,13 @@ func (c *Character) RemoveItemFromPack(item string, quantity int) {
 	for i, packItem := range c.Backpack {
 		if packItem.Name == item {
 			if packItem.Quantity < quantity {
-				info := fmt.Sprintf("Quantity to remove (%d) greater than quantity in pack (%d)", quantity, packItem.Quantity)
+				info := fmt.Sprintf("Quantity to remove (%d) greater than quantity in pack (%d), set to 0",
+					quantity,
+					packItem.Quantity)
+				
 				logger.HandleInfo(info)
+				c.Backpack[i].Quantity = 0
+				return
 			}
 
 			c.Backpack[i].Quantity -= quantity
@@ -567,8 +573,8 @@ func (c *Character) RemoveItemFromPack(item string, quantity int) {
 		}
 	}
 
-	msg := fmt.Sprintf("Item %s not found in pack", item)
-	fmt.Println(msg)
+	info := fmt.Sprintf("Item %s not found in pack", item)
+	logger.HandleInfo(info)
 }
 
 func (c *Character) AddLanguage(language string) {
