@@ -7,6 +7,8 @@ import (
 
 	"github.com/onioncall/dndgo/logger"
 	"github.com/onioncall/dndgo/models"
+	eqmt "github.com/onioncall/dndgo/types/equipment"
+	attr "github.com/onioncall/dndgo/types/attributes"
 )
 
 type Ranger struct {
@@ -149,7 +151,7 @@ func applyDueling(c *models.Character) bool {
 		isTwoHanded := false
 
 		for _, prop := range weapon.Properties {
-			 if prop == models.TwoHanded {
+			 if prop == eqmt.TwoHanded {
 				isTwoHanded = true
 			}
 		}
@@ -182,11 +184,11 @@ func applyTwoWeaponFighting(c *models.Character) bool {
 		isOneHanded := true
 
 		for _, prop := range weapon.Properties {
-			if strings.ToLower(prop) == models.TwoHanded {
+			if strings.ToLower(prop) == eqmt.TwoHanded {
 				isOneHanded = false
 				break
 			}
-			if strings.ToLower(prop) == models.Light {
+			if strings.ToLower(prop) == eqmt.Light {
 				isLight = true
 			}
 		}
@@ -221,7 +223,7 @@ func applyTwoWeaponFighting(c *models.Character) bool {
 	}
 
 	for _, mod := range c.Abilities {
-		if strings.ToLower(mod.Name) == models.Dexterity {
+		if strings.ToLower(mod.Name) == attr.Dexterity {
 			c.Weapons[secondaryWeaponIndex].Bonus += mod.AbilityModifier
 			return true
 		}

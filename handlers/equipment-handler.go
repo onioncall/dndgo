@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/api"
+	"github.com/onioncall/dndgo/api/responses"
 	"github.com/onioncall/dndgo/cli"
 	"github.com/onioncall/dndgo/logger"
-	"github.com/onioncall/dndgo/models"
 )
 
 type EquipmentRequest api.BaseRequest
@@ -49,8 +49,8 @@ func HandleEquipmentListRequest() error {
 	return nil
 }
 
-func (s *EquipmentRequest) GetList() (models.EquipmentList, error) {
-	equipmentList, err := api.ExecuteGetRequest[models.EquipmentList](EquipmentType, "")
+func (s *EquipmentRequest) GetList() (responses.EquipmentList, error) {
+	equipmentList, err := api.ExecuteGetRequest[responses.EquipmentList](EquipmentType, "")
 	if err != nil {
 		logErr := fmt.Errorf("Failed to search Equipment (list)")
 		logger.HandleError(err, logErr)
@@ -61,11 +61,11 @@ func (s *EquipmentRequest) GetList() (models.EquipmentList, error) {
 	return equipmentList, nil
 }
 
-func (e *EquipmentRequest) GetSingle() (models.Equipment, error) {
+func (e *EquipmentRequest) GetSingle() (responses.Equipment, error) {
 	e.Name = strings.ReplaceAll(e.Name, " ", "-")
 
-	equipment := models.Equipment{}
-	equipment, err := api.ExecuteGetRequest[models.Equipment](EquipmentType, e.Name)
+	equipment := responses.Equipment{}
+	equipment, err := api.ExecuteGetRequest[responses.Equipment](EquipmentType, e.Name)
 	if err != nil {
 		logErr := fmt.Errorf("Failed to search Equipment (single): %s", e.Name)
 		logger.HandleError(err, logErr)

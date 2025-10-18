@@ -4,24 +4,26 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/models"
+	attr "github.com/onioncall/dndgo/types/attributes"
+	eqmt "github.com/onioncall/dndgo/types/equipment"
 )
 
 func TestRangerAppliedArchery(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*models.Character
-		expected	[]models.Weapon
+		expected	[]eqmt.Weapon
 		applied		bool
 	}{
 		{
 			name: "No ranged weapon",
 			character: &models.Character {
-				Weapons: []models.Weapon {
+				Weapons: []eqmt.Weapon {
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 					{Name: "Dagger", Bonus: 2, Damage: "1d4", Range: "melee"},
 				},
 			},
-			expected: []models.Weapon {
+			expected: []eqmt.Weapon {
 				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 				{Name: "Dagger", Bonus: 2, Damage: "1d4", Range: "melee"},
 			},
@@ -30,12 +32,12 @@ func TestRangerAppliedArchery(t *testing.T) {
 		{
 			name: "Range bonus applied",
 			character: &models.Character {
-				Weapons: []models.Weapon {
+				Weapons: []eqmt.Weapon {
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged"},
 				},
 			},
-			expected: []models.Weapon {
+			expected: []eqmt.Weapon {
 				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 				{Name: "Longbow", Bonus: 4, Damage: "1d8", Range: "ranged"},
 			},
@@ -72,7 +74,7 @@ func TestRangerAppliedDefense(t *testing.T) {
 			name: "Armor equiped, early return",
 			character: &models.Character {
 				AC: 15,
-				BodyEquipment: models.BodyEquipment {
+				BodyEquipment: eqmt.BodyEquipment {
 					Armour: "Light Armor",
 				},
 			},
@@ -83,7 +85,7 @@ func TestRangerAppliedDefense(t *testing.T) {
 			name: "Armor not equiped, bonus added",
 			character: &models.Character {
 				AC: 15,
-				BodyEquipment: models.BodyEquipment {
+				BodyEquipment: eqmt.BodyEquipment {
 					Armour: "",
 				},
 			},
@@ -112,17 +114,17 @@ func TestRangerAppliedDueling(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*models.Character
-		expected	[]models.Weapon
+		expected	[]eqmt.Weapon
 		applied		bool
 	}{
 		{
 			name: "No melee weapon",
 			character: &models.Character {
-				Weapons: []models.Weapon {
+				Weapons: []eqmt.Weapon {
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged"},
 				},
 			},
-			expected: []models.Weapon {
+			expected: []eqmt.Weapon {
 				{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged"},
 			},
 			applied: false,
@@ -130,12 +132,12 @@ func TestRangerAppliedDueling(t *testing.T) {
 		{
 			name: "Melee bonus applied",
 			character: &models.Character {
-				Weapons: []models.Weapon {
+				Weapons: []eqmt.Weapon {
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 				},
 			},
-			expected: []models.Weapon {
+			expected: []eqmt.Weapon {
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
 				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee"},
 			},
@@ -144,13 +146,13 @@ func TestRangerAppliedDueling(t *testing.T) {
 		{
 			name: "Multiple valid weapons, one bonus",
 			character: &models.Character {
-				Weapons: []models.Weapon {
+				Weapons: []eqmt.Weapon {
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 				},
 			},
-			expected: []models.Weapon {
+			expected: []eqmt.Weapon {
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
 				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee"},
 				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
@@ -181,21 +183,21 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*models.Character
-		expected	[]models.Weapon
+		expected	[]eqmt.Weapon
 		applied		bool
 	}{
 		{
 			name: "No applicable weapons, bonus not applied",
 			character: &models.Character {
-				Abilities: []models.Abilities {
+				Abilities: []attr.Abilities {
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []models.Weapon {
+				Weapons: []eqmt.Weapon {
 					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string {"two-handed"}},
 				},
 			},
-			expected: []models.Weapon {
+			expected: []eqmt.Weapon {
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
 				{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string {"two-handed"}},
 			},
@@ -204,15 +206,15 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 		{
 			name: "One applicable weapon, bonus not applied",
 			character: &models.Character {
-				Abilities: []models.Abilities {
+				Abilities: []attr.Abilities {
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []models.Weapon {
+				Weapons: []eqmt.Weapon {
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string {"two-handed"}},
 				},
 			},
-			expected: []models.Weapon {
+			expected: []eqmt.Weapon {
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
 				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 			},
@@ -221,15 +223,15 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 		{
 			name: "Two applicable light weapons, bonus applied",
 			character: &models.Character {
-				Abilities: []models.Abilities {
+				Abilities: []attr.Abilities {
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []models.Weapon {
+				Weapons: []eqmt.Weapon {
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
 				},
 			},
-			expected: []models.Weapon {
+			expected: []eqmt.Weapon {
 				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
 				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
 			},
@@ -238,15 +240,15 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 		{
 			name: "Two applicable weapons, one light, both one handed, bonus applied",
 			character: &models.Character {
-				Abilities: []models.Abilities {
+				Abilities: []attr.Abilities {
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []models.Weapon {
+				Weapons: []eqmt.Weapon {
 					{Name: "Rapier", Bonus: 2, Damage: "1d8", Range: "melee", Properties: []string {"finesse"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
 				},
 			},
-			expected: []models.Weapon {
+			expected: []eqmt.Weapon {
 				{Name: "Rapier", Bonus: 2, Damage: "1d8", Range: "melee", Properties: []string {"finesse"}},
 				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
 			},

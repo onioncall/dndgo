@@ -7,7 +7,7 @@ import (
 	"github.com/onioncall/dndgo/api"
 	"github.com/onioncall/dndgo/cli"
 	"github.com/onioncall/dndgo/logger"
-	"github.com/onioncall/dndgo/models"
+	"github.com/onioncall/dndgo/api/responses"
 )
 
 type FeatureRequest api.BaseRequest
@@ -48,8 +48,8 @@ func HandleFeatureListRequest() error {
 	return nil
 }
 
-func (f *FeatureRequest) GetList() (models.FeatureList, error) {
-	featureList, err := api.ExecuteGetRequest[models.FeatureList](FeatureType, "")
+func (f *FeatureRequest) GetList() (responses.FeatureList, error) {
+	featureList, err := api.ExecuteGetRequest[responses.FeatureList](FeatureType, "")
 	if err != nil {
 		logErr := fmt.Errorf("Failed to search Feature (list)")
 		logger.HandleError(err, logErr)
@@ -60,11 +60,11 @@ func (f *FeatureRequest) GetList() (models.FeatureList, error) {
 	return featureList, nil
 }
 
-func (f *FeatureRequest) GetSingle() (models.Feature, error) {
+func (f *FeatureRequest) GetSingle() (responses.Feature, error) {
 	f.Name = strings.ReplaceAll(f.Name, " ", "-")
 
-	feature := models.Feature{}
-	feature, err := api.ExecuteGetRequest[models.Feature](EquipmentType, f.Name)
+	feature := responses.Feature{}
+	feature, err := api.ExecuteGetRequest[responses.Feature](EquipmentType, f.Name)
 	if err != nil {
 		logErr := fmt.Errorf("Failed to search Feature (single): %s", f.Name)
 		logger.HandleError(err, logErr)

@@ -3,11 +3,11 @@ package cli
 import (
 	"fmt"
 
-	"github.com/onioncall/dndgo/models"
+	"github.com/onioncall/dndgo/api/responses"
 	"github.com/onioncall/wrapt"
 )
 
-func PrintEquipmentSingle(equipment models.Equipment, termWidth int) {
+func PrintEquipmentSingle(equipment responses.Equipment, termWidth int) {
 	fmt.Printf("%s\n\n", equipment.Name)
 
 	for _, description := range equipment.Desc {
@@ -27,7 +27,7 @@ func PrintEquipmentSingle(equipment models.Equipment, termWidth int) {
 	fmt.Printf("Cost: %d%s\n", equipment.Cost.Quantity, equipment.Cost.Unit)
 }
 
-func PrintEquipmentList(equipmentList models.EquipmentList) {
+func PrintEquipmentList(equipmentList responses.EquipmentList) {
 	fmt.Print("Equipment Name\n\n")
 	for _, equpment := range equipmentList.ListItems {
 		fmt.Printf("%s - %s\n", equpment.Name, equpment.Index)

@@ -5,36 +5,44 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/logger"
+	attr "github.com/onioncall/dndgo/types/attributes"
+	eqmt "github.com/onioncall/dndgo/types/equipment"
+	"github.com/onioncall/dndgo/types/magic"
 )
 
 type Character struct {
-	Path              		string           	`json:"path"`
-	Name              		string           	`json:"name"`
-	Level             		int              	`json:"level"`
-	ClassName         		string           	`json:"class-name"`
-	Race              		string           	`json:"race"`
-	Background        		string           	`json:"background"`
-	Feats			  		[]GenericItem		`json:"feats"`
-	Languages         		[]string         	`json:"languages"`
-	Proficiency       		int					`json:"-"`
-	PassivePerception 		int              	`json:"passive-perception"`
-	PassiveInsight    		int              	`json:"passive-insight"`
-	AC                		int              	`json:"ac"`
-	SpellSaveDC       		int              	`json:"spell-save-dc"`
-	HPCurrent		  		int			   		`json:"hp-current"`
-	HPMax			  		int			   		`json:"hp-max"`
-	Initiative        		int              	`json:"initiative"`
-	Speed             		int              	`json:"speed"`
-	HitDice           		string           	`json:"hit-dice"`
-	Abilities     	  		[]Abilities			`json:"abilities"`
-	Skills            		[]Skill          	`json:"skills"`
-	Spells            		[]CharacterSpell 	`json:"spells"`
-	SpellSlots        		[]SpellSlot       	`json:"spell-slots"`
-	Weapons           		[]Weapon         	`json:"weapons"`
-	BodyEquipment			BodyEquipment    	`json:"body-equipment"`
-	Backpack          		[]BackpackItem   	`json:"backpack"`
-	AbilityScoreImprovement []AbilityScoreImprovementItem `json:"ability-score-improvement"`
-	Class			  		IClass				`json:"-"`	
+	Path              		string           					`json:"path"`
+	Name              		string           					`json:"name"`
+	Level             		int              					`json:"level"`
+	ClassName         		string           					`json:"class-name"`
+	Race              		string           					`json:"race"`
+	Background        		string           					`json:"background"`
+	Feats			  		[]GenericItem						`json:"feats"`
+	Languages         		[]string         					`json:"languages"`
+	Proficiency       		int									`json:"-"`
+	PassivePerception 		int              					`json:"passive-perception"`
+	PassiveInsight    		int              					`json:"passive-insight"`
+	AC                		int              					`json:"ac"`
+	SpellSaveDC       		int              					`json:"spell-save-dc"`
+	HPCurrent		  		int			   						`json:"hp-current"`
+	HPMax			  		int			   						`json:"hp-max"`
+	Initiative        		int              					`json:"initiative"`
+	Speed             		int              					`json:"speed"`
+	HitDice           		string           					`json:"hit-dice"`
+	Abilities     	  		[]attr.Abilities					`json:"abilities"`
+	Skills            		[]attr.Skill          				`json:"skills"`
+	Spells            		[]magic.CharacterSpell 				`json:"spells"`
+	SpellSlots        		[]magic.SpellSlot       			`json:"spell-slots"`
+	Weapons           		[]eqmt.Weapon         				`json:"weapons"`
+	BodyEquipment			eqmt.BodyEquipment    				`json:"body-equipment"`
+	Backpack          		[]eqmt.BackpackItem   				`json:"backpack"`
+	AbilityScoreImprovement []attr.AbilityScoreImprovementItem 	`json:"ability-score-improvement"`
+	Class			  		IClass								`json:"-"`	
+}
+
+type GenericItem struct {
+	Name string `json:"name"`
+	Desc string `json:"description"`
 }
 
 type IClass interface {
@@ -46,113 +54,11 @@ type IClass interface {
 	RecoverClassTokens(string, int)
 }
 
-type GenericItem struct {
-	Name string `json:"name"`
-	Desc string `json:"description"`
-}
-
-type BackpackItem struct {
-	Name	 string `json:"name"`
-	Quantity int 	`json:"quantity"`
-}
-
-type Abilities struct {
-	Name        		string 		`json:"name"`
-	Base        		int    		`json:"base"`
-	Adjusted			int			`json:"-"`
-	AbilityModifier		int			`json:"-"`
-	SavingThrowsProficient  bool   	`json:"saving-throws-proficient"`
-}
-
-type AbilityScoreImprovementItem struct {
-	Ability string 	`json:"ability"`
-	Bonus	int		`json:"bonus"`
-}
-
-type Skill struct {
-	Ability 		string 	`json:"ability"`
-	Name       		string 	`json:"name"`
-	SkillModifier	int		`json:"-"`
-	Proficient  	bool   	`json:"proficient"`
-}
-
-type CharacterSpell struct {
-	IsCaltrop bool   	`json:"is-caltrop"`
-	SlotLevel int    	`json:"slot-level"`
-	IsRitual    bool   	`json:"ritual"`
-	Name      string 	`json:"name"`
-}
-
 type ClassFeatures struct {
 	Name 	string 	`json:"name"`
 	Level	int		`json:"level"`
 	Details string 	`json:"details"`
 }
-
-type SpellSlot struct {
-	Level		int	`json:"level"`
-	Slot		int `json:"slot"`
-	Available	int `json:"available"`
-}
-
-type Weapon struct {
-	Name   		string 		`json:"name"`
-	Bonus  		int    		`json:"bonus"`
-	Damage 		string 		`json:"damage"`
-	Range		string 		`json:"range"`
-	Type   		string 		`json:"type"`
-	Properties 	[]string 	`json:"properties"`
-}
-
-type BodyEquipment struct {
-	Head      string `json:"head"`
-	Amulet    string `json:"amulet"`
-	Cloak     string `json:"cloak"`
-	Armour    string `json:"armour"`
-	HandsArms string `json:"hands-arms"`
-	Ring      string `json:"ring"`
-	Ring2     string `json:"ring2"`
-	Belt      string `json:"belt"`
-	Boots     string `json:"boots"`
-}
-
-// Body Equipment
-const (
-	Head      string = "head"
-	Amulet    string = "amulet"
-	Cloak     string = "cloak"
-	Armour    string = "armor"
-	HandsArms string = "hands-arms"
-	Ring      string = "ring"
-	Ring2     string = "ring2"
-	Belt      string = "belt"
-	Boots     string = "boots"
-)
-
-// Weapon Proprties
-const (
-	Ammunition		string = "ammunition"
-	Finesse			string = "finesse"
-	Heavy			string = "heavy"
-	Light			string = "light"
-	Loading			string = "loading"
-	Reach			string = "reach"
-	Special			string = "special"
-	Thrown			string = "thrown"
-	TwoHanded		string = "two-handed"
-	Versatile		string = "versatile"
-	Monk			string = "monk"
-)
-
-// Abilities
-const (
-	Strength		string = "strength"
-	Dexterity		string = "dexterity"
-	Constitution	string = "constitution"
-	Intelligence	string = "Intelligence"
-	Wisdom			string = "wisdom"
-	Charisma		string = "charisma"
-)
 
 var PreCalculateMethods []func(c *Character)
 var PostCalculateMethods []func(c *Character)
@@ -642,7 +548,7 @@ func (c *Character) AddItemToPack(item string, quantity int) {
 		}
 	}
 
-	newItem := BackpackItem {
+	newItem := eqmt.BackpackItem {
 		Name: item,
 		Quantity: quantity,
 	}
@@ -674,23 +580,23 @@ func (c *Character) AddLanguage(language string) {
 func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
 	equipmentName = strings.ToLower(equipmentName)
 	switch equipmentType {
-		case Head:
+		case eqmt.Head:
 			c.BodyEquipment.Head = equipmentName
-		case Amulet:
+		case eqmt.Amulet:
 			c.BodyEquipment.Amulet = equipmentName
-		case Cloak:
+		case eqmt.Cloak:
 			c.BodyEquipment.Cloak = equipmentName
-		case Armour:
+		case eqmt.Armour:
 			c.BodyEquipment.Armour = equipmentName
-		case HandsArms:
+		case eqmt.HandsArms:
 			c.BodyEquipment.HandsArms = equipmentName
-		case Ring:
+		case eqmt.Ring:
 			c.BodyEquipment.Ring = equipmentName
-		case Ring2:
+		case eqmt.Ring2:
 			c.BodyEquipment.Ring2 = equipmentName
-		case Belt:
+		case eqmt.Belt:
 			c.BodyEquipment.Belt = equipmentName
-		case Boots:
+		case eqmt.Boots:
 			c.BodyEquipment.Boots = equipmentName
 		default:
 			info := fmt.Sprintf("Invalid Equipment Type: %s", equipmentType)

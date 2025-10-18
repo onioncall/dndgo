@@ -7,7 +7,7 @@ import (
 	"github.com/onioncall/dndgo/api"
 	"github.com/onioncall/dndgo/cli"
 	"github.com/onioncall/dndgo/logger"
-	"github.com/onioncall/dndgo/models"
+	"github.com/onioncall/dndgo/api/responses"
 )
 
 type MonsterRequest api.BaseRequest
@@ -49,8 +49,8 @@ func HandleMonsterListRequest() error {
 	return nil
 }
 
-func (m *MonsterRequest) GetList() (models.MonsterList, error) {
-	monsterList, err := api.ExecuteGetRequest[models.MonsterList](MonsterType, "")
+func (m *MonsterRequest) GetList() (responses.MonsterList, error) {
+	monsterList, err := api.ExecuteGetRequest[responses.MonsterList](MonsterType, "")
 	if err != nil {
 		logErr := fmt.Errorf("Failed to search Monster (list)")
 		logger.HandleError(err, logErr)
@@ -61,10 +61,10 @@ func (m *MonsterRequest) GetList() (models.MonsterList, error) {
 	return monsterList, nil
 }
 
-func (m *MonsterRequest) GetSingle() (models.Monster, error) {
+func (m *MonsterRequest) GetSingle() (responses.Monster, error) {
 	m.Name = strings.ReplaceAll(m.Name, " ", "-")
 
-	monster, err := api.ExecuteGetRequest[models.Monster](MonsterType, m.Name)
+	monster, err := api.ExecuteGetRequest[responses.Monster](MonsterType, m.Name)
 	if err != nil {
 		logErr := fmt.Errorf("Failed to search Monster (single): %s", m.Name)
 		logger.HandleError(err, logErr)

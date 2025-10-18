@@ -9,6 +9,7 @@ import (
 
 	"github.com/onioncall/dndgo/logger"
 	"github.com/onioncall/dndgo/models"
+	"github.com/onioncall/dndgo/types/magic"
 )
 
 const (
@@ -52,7 +53,7 @@ func AddSpell(c *models.Character, spellQuery string) {
 		caltrop = true
 	}
 
-	cs := models.CharacterSpell {
+	cs := magic.CharacterSpell {
 		IsCaltrop: caltrop,
 		SlotLevel: s.Level,
 		IsRitual: s.Ritual,

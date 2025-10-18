@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/onioncall/dndgo/models"
+	"github.com/onioncall/dndgo/api/responses"
 	"github.com/onioncall/wrapt"
 )
 
-func PrintSpellSingle(spell models.Spell, termWidth int) {
+func PrintSpellSingle(spell responses.Spell, termWidth int) {
 	fmt.Printf("%s\n\n", spell.Name)
 	for _, description := range spell.Description {
 		fmt.Printf("%s\n\n", wrapt.Wrap(description, termWidth))	
@@ -46,7 +46,7 @@ func printDamageBySlotLevel(dmg map[int]string) {
 	}		
 }
 
-func PrintSpellList(spellList models.SpellList) {
+func PrintSpellList(spellList responses.SpellList) {
 	fmt.Println("Spell Name | Level")
 	for _, spell := range spellList.ListItems {
 		fmt.Printf("%s: %d\n", spell.Name, spell.Level)
