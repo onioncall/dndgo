@@ -21,7 +21,7 @@ const(
 	Rogue string = "rogue"
 )
 
-func LoadClass(classType string) (models.IClass, error) {
+func LoadClass(classType string) (models.Class, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Println(err)
@@ -40,7 +40,7 @@ func LoadClass(classType string) (models.IClass, error) {
 		return nil, fmt.Errorf("failed to read character file: %w", err)
 	}
 	
-	var c models.IClass
+	var c models.Class
 	switch strings.ToLower(classType) {
 	case Bard: c, err = class.LoadBard(fileData)
 	case Barbarian: c, err = class.LoadBarbarian(fileData)
@@ -55,7 +55,7 @@ func LoadClass(classType string) (models.IClass, error) {
 	return c, nil
 }
 
-func SaveClassHandler(c models.IClass) error {
+func SaveClassHandler(c models.Class) error {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return fmt.Errorf("error getting home directory: %w", err)

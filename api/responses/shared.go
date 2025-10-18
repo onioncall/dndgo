@@ -1,4 +1,4 @@
-package models
+package responses
 
 type Reference struct {
 	Index 	string	`json:"index"`

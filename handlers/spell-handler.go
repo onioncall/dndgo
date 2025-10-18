@@ -7,7 +7,7 @@ import (
 	"github.com/onioncall/dndgo/api"
 	"github.com/onioncall/dndgo/cli"
 	"github.com/onioncall/dndgo/logger"
-	"github.com/onioncall/dndgo/models"
+	"github.com/onioncall/dndgo/api/responses"
 )
 
 type SpellRequest api.BaseRequest
@@ -49,8 +49,8 @@ func HandleSpellListRequest() error {
 	return nil
 }
 
-func (s *SpellRequest) GetList() (models.SpellList, error) {
-	spellList, err := api.ExecuteGetRequest[models.SpellList](SpellType, "")
+func (s *SpellRequest) GetList() (responses.SpellList, error) {
+	spellList, err := api.ExecuteGetRequest[responses.SpellList](SpellType, "")
 	if err != nil {
 		logErr := fmt.Errorf("Failed to search Spell (list)")
 		logger.HandleError(err, logErr)
@@ -61,11 +61,11 @@ func (s *SpellRequest) GetList() (models.SpellList, error) {
 	return spellList, nil
 }
 
-func (s *SpellRequest) GetSingle() (models.Spell, error) {
+func (s *SpellRequest) GetSingle() (responses.Spell, error) {
 	s.Name = strings.ReplaceAll(s.Name, " ", "-")
 
-	spell := models.Spell{}
-	spell, err := api.ExecuteGetRequest[models.Spell](SpellType, s.Name)
+	spell := responses.Spell{}
+	spell, err := api.ExecuteGetRequest[responses.Spell](SpellType, s.Name)
 	if err != nil {
 		logErr := fmt.Errorf("Failed to search Spell (single): %s", s.Name)
 		logger.HandleError(err, logErr)

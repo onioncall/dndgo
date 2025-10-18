@@ -5,39 +5,45 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/logger"
+	"github.com/onioncall/dndgo/types"
 )
 
 type Character struct {
-	Path              		string           	`json:"path"`
-	Name              		string           	`json:"name"`
-	Level             		int              	`json:"level"`
-	ClassName         		string           	`json:"class-name"`
-	Race              		string           	`json:"race"`
-	Background        		string           	`json:"background"`
-	Feats			  		[]GenericItem		`json:"feats"`
-	Languages         		[]string         	`json:"languages"`
-	Proficiency       		int					`json:"-"`
-	PassivePerception 		int              	`json:"passive-perception"`
-	PassiveInsight    		int              	`json:"passive-insight"`
-	AC                		int              	`json:"ac"`
-	SpellSaveDC       		int              	`json:"spell-save-dc"`
-	HPCurrent		  		int			   		`json:"hp-current"`
-	HPMax			  		int			   		`json:"hp-max"`
-	Initiative        		int              	`json:"initiative"`
-	Speed             		int              	`json:"speed"`
-	HitDice           		string           	`json:"hit-dice"`
-	Abilities     	  		[]Abilities			`json:"abilities"`
-	Skills            		[]Skill          	`json:"skills"`
-	Spells            		[]CharacterSpell 	`json:"spells"`
-	SpellSlots        		[]SpellSlot       	`json:"spell-slots"`
-	Weapons           		[]Weapon         	`json:"weapons"`
-	BodyEquipment			BodyEquipment    	`json:"body-equipment"`
-	Backpack          		[]BackpackItem   	`json:"backpack"`
-	AbilityScoreImprovement []AbilityScoreImprovementItem `json:"ability-score-improvement"`
-	Class			  		IClass				`json:"-"`	
+	Path              		string           					`json:"path"`
+	Name              		string           					`json:"name"`
+	Level             		int              					`json:"level"`
+	ClassName         		string           					`json:"class-name"`
+	Race              		string           					`json:"race"`
+	Background        		string           					`json:"background"`
+	Feats			  		[]GenericItem						`json:"feats"`
+	Languages         		[]string         					`json:"languages"`
+	Proficiency       		int									`json:"-"`
+	PassivePerception 		int              					`json:"passive-perception"`
+	PassiveInsight    		int              					`json:"passive-insight"`
+	AC                		int              					`json:"ac"`
+	SpellSaveDC       		int              					`json:"spell-save-dc"`
+	HPCurrent		  		int			   						`json:"hp-current"`
+	HPMax			  		int			   						`json:"hp-max"`
+	Initiative        		int              					`json:"initiative"`
+	Speed             		int              					`json:"speed"`
+	HitDice           		string           					`json:"hit-dice"`
+	Abilities     	  		[]types.Abilities					`json:"abilities"`
+	Skills            		[]types.Skill          				`json:"skills"`
+	Spells            		[]types.CharacterSpell 				`json:"spells"`
+	SpellSlots        		[]types.SpellSlot       			`json:"spell-slots"`
+	Weapons           		[]types.Weapon         				`json:"weapons"`
+	WornEquipment			types.WornEquipment    				`json:"body-equipment"`
+	Backpack          		[]types.BackpackItem   				`json:"backpack"`
+	AbilityScoreImprovement []types.AbilityScoreImprovementItem 	`json:"ability-score-improvement"`
+	Class			  		Class								`json:"-"`	
 }
 
-type IClass interface {
+type GenericItem struct {
+	Name string `json:"name"`
+	Desc string `json:"description"`
+}
+
+type Class interface {
 	LoadMethods()
 	ExecutePostCalculateMethods(c *Character)
 	ExecutePreCalculateMethods(c *Character)
@@ -46,113 +52,11 @@ type IClass interface {
 	RecoverClassTokens(string, int)
 }
 
-type GenericItem struct {
-	Name string `json:"name"`
-	Desc string `json:"description"`
-}
-
-type BackpackItem struct {
-	Name	 string `json:"name"`
-	Quantity int 	`json:"quantity"`
-}
-
-type Abilities struct {
-	Name        		string 		`json:"name"`
-	Base        		int    		`json:"base"`
-	Adjusted			int			`json:"-"`
-	AbilityModifier		int			`json:"-"`
-	SavingThrowsProficient  bool   	`json:"saving-throws-proficient"`
-}
-
-type AbilityScoreImprovementItem struct {
-	Ability string 	`json:"ability"`
-	Bonus	int		`json:"bonus"`
-}
-
-type Skill struct {
-	Ability 		string 	`json:"ability"`
-	Name       		string 	`json:"name"`
-	SkillModifier	int		`json:"-"`
-	Proficient  	bool   	`json:"proficient"`
-}
-
-type CharacterSpell struct {
-	IsCaltrop bool   	`json:"is-caltrop"`
-	SlotLevel int    	`json:"slot-level"`
-	IsRitual    bool   	`json:"ritual"`
-	Name      string 	`json:"name"`
-}
-
 type ClassFeatures struct {
 	Name 	string 	`json:"name"`
 	Level	int		`json:"level"`
 	Details string 	`json:"details"`
 }
-
-type SpellSlot struct {
-	Level		int	`json:"level"`
-	Slot		int `json:"slot"`
-	Available	int `json:"available"`
-}
-
-type Weapon struct {
-	Name   		string 		`json:"name"`
-	Bonus  		int    		`json:"bonus"`
-	Damage 		string 		`json:"damage"`
-	Range		string 		`json:"range"`
-	Type   		string 		`json:"type"`
-	Properties 	[]string 	`json:"properties"`
-}
-
-type BodyEquipment struct {
-	Head      string `json:"head"`
-	Amulet    string `json:"amulet"`
-	Cloak     string `json:"cloak"`
-	Armour    string `json:"armour"`
-	HandsArms string `json:"hands-arms"`
-	Ring      string `json:"ring"`
-	Ring2     string `json:"ring2"`
-	Belt      string `json:"belt"`
-	Boots     string `json:"boots"`
-}
-
-// Body Equipment
-const (
-	Head      string = "head"
-	Amulet    string = "amulet"
-	Cloak     string = "cloak"
-	Armour    string = "armor"
-	HandsArms string = "hands-arms"
-	Ring      string = "ring"
-	Ring2     string = "ring2"
-	Belt      string = "belt"
-	Boots     string = "boots"
-)
-
-// Weapon Proprties
-const (
-	Ammunition		string = "ammunition"
-	Finesse			string = "finesse"
-	Heavy			string = "heavy"
-	Light			string = "light"
-	Loading			string = "loading"
-	Reach			string = "reach"
-	Special			string = "special"
-	Thrown			string = "thrown"
-	TwoHanded		string = "two-handed"
-	Versatile		string = "versatile"
-	Monk			string = "monk"
-)
-
-// Abilities
-const (
-	Strength		string = "strength"
-	Dexterity		string = "dexterity"
-	Constitution	string = "constitution"
-	Intelligence	string = "Intelligence"
-	Wisdom			string = "wisdom"
-	Charisma		string = "charisma"
-)
 
 var PreCalculateMethods []func(c *Character)
 var PostCalculateMethods []func(c *Character)
@@ -415,14 +319,14 @@ func (c *Character) BuildAbilities() []string {
 	s = append(s, profTopRow)
 	s = append(s, profSpacer)
 
-	for _, attr := range c.Abilities {
-		abMod := attr.AbilityModifier
-		if attr.SavingThrowsProficient {
+	for _, types := range c.Abilities {
+		abMod := types.AbilityModifier
+		if types.SavingThrowsProficient {
 			abMod += c.Proficiency	
 		}
 
 		abBaseString := ""
-		if attr.AbilityModifier > 0 {
+		if types.AbilityModifier > 0 {
 			abBaseString = "+"
 		}
 
@@ -432,9 +336,9 @@ func (c *Character) BuildAbilities() []string {
 		}
 
 		abModString = fmt.Sprintf("%s%d", abModString, abMod)
-		abBaseString = fmt.Sprintf("%s%d", abBaseString, attr.AbilityModifier)
+		abBaseString = fmt.Sprintf("%s%d", abBaseString, types.AbilityModifier)
 
-		profRow := fmt.Sprintf("| %s | %d | %s | %s |\n", attr.Name, attr.Base, abBaseString, abModString)
+		profRow := fmt.Sprintf("| %s | %d | %s | %s |\n", types.Name, types.Base, abBaseString, abModString)
 		s = append(s, profRow)
 	}
 
@@ -543,15 +447,15 @@ func (c *Character) BuildEquipment() []string {
 	equipmentHeader := fmt.Sprintf("*Equipment*\n\n")
 
 	bodyEquipment 	:= fmt.Sprintf("- Body Equipment\n")
-	head 		:= fmt.Sprintf("	- Head: %s\n", c.BodyEquipment.Head)
-	amulet 		:= fmt.Sprintf("	- Amulet: %s\n", c.BodyEquipment.Amulet)
-	cloak 		:= fmt.Sprintf("	- Cloak: %s\n", c.BodyEquipment.Cloak)
-	armor 		:= fmt.Sprintf("	- Armor: %s\n", c.BodyEquipment.Armour)
-	hands 		:= fmt.Sprintf("	- Hands: %s\n", c.BodyEquipment.HandsArms)
-	ring 		:= fmt.Sprintf("	- Ring: %s\n", c.BodyEquipment.Ring)
-	ring2 		:= fmt.Sprintf("	- Ring: %s\n", c.BodyEquipment.Ring2)
-	belt 		:= fmt.Sprintf("	- Belt: %s\n", c.BodyEquipment.Belt)
-	boots 		:= fmt.Sprintf("	- Boots: %s\n", c.BodyEquipment.Boots)
+	head 		:= fmt.Sprintf("	- Head: %s\n", c.WornEquipment.Head)
+	amulet 		:= fmt.Sprintf("	- Amulet: %s\n", c.WornEquipment.Amulet)
+	cloak 		:= fmt.Sprintf("	- Cloak: %s\n", c.WornEquipment.Cloak)
+	armor 		:= fmt.Sprintf("	- Armor: %s\n", c.WornEquipment.Armour)
+	hands 		:= fmt.Sprintf("	- Hands: %s\n", c.WornEquipment.HandsArms)
+	ring 		:= fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring)
+	ring2 		:= fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring2)
+	belt 		:= fmt.Sprintf("	- Belt: %s\n", c.WornEquipment.Belt)
+	boots 		:= fmt.Sprintf("	- Boots: %s\n", c.WornEquipment.Boots)
 
 	s := []string {
 		equipmentHeader,
@@ -642,7 +546,7 @@ func (c *Character) AddItemToPack(item string, quantity int) {
 		}
 	}
 
-	newItem := BackpackItem {
+	newItem := types.BackpackItem {
 		Name: item,
 		Quantity: quantity,
 	}
@@ -674,24 +578,24 @@ func (c *Character) AddLanguage(language string) {
 func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
 	equipmentName = strings.ToLower(equipmentName)
 	switch equipmentType {
-		case Head:
-			c.BodyEquipment.Head = equipmentName
-		case Amulet:
-			c.BodyEquipment.Amulet = equipmentName
-		case Cloak:
-			c.BodyEquipment.Cloak = equipmentName
-		case Armour:
-			c.BodyEquipment.Armour = equipmentName
-		case HandsArms:
-			c.BodyEquipment.HandsArms = equipmentName
-		case Ring:
-			c.BodyEquipment.Ring = equipmentName
-		case Ring2:
-			c.BodyEquipment.Ring2 = equipmentName
-		case Belt:
-			c.BodyEquipment.Belt = equipmentName
-		case Boots:
-			c.BodyEquipment.Boots = equipmentName
+		case types.WornEquipmentHead:
+			c.WornEquipment.Head = equipmentName
+		case types.WornEquipmentAmulet:
+			c.WornEquipment.Amulet = equipmentName
+		case types.WornEquipmentCloak:
+			c.WornEquipment.Cloak = equipmentName
+		case types.WornEquipmentArmour:
+			c.WornEquipment.Armour = equipmentName
+		case types.WornEquipmentHandsArms:
+			c.WornEquipment.HandsArms = equipmentName
+		case types.WornEquipmentRing:
+			c.WornEquipment.Ring = equipmentName
+		case types.WornEquipmentRing2:
+			c.WornEquipment.Ring2 = equipmentName
+		case types.WornEquipmentBelt:
+			c.WornEquipment.Belt = equipmentName
+		case types.WornEquipmentBoots:
+			c.WornEquipment.Boots = equipmentName
 		default:
 			info := fmt.Sprintf("Invalid Equipment Type: %s", equipmentType)
 			logger.HandleInfo(info)

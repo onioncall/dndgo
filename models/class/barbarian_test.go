@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/models"
+	"github.com/onioncall/dndgo/types"
 )
 
 func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
@@ -16,7 +17,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 			name: "Armor equiped, early return",
 			character: &models.Character {
 				AC: 0,
-				Abilities: []models.Abilities {
+				Abilities: []types.Abilities {
 					{
 						Name: "Strength",
 						AbilityModifier: 4,
@@ -42,7 +43,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 						AbilityModifier: 2,
 					},
 				},
-				BodyEquipment: models.BodyEquipment {
+				WornEquipment: types.WornEquipment {
 					Armour: "Leather Armor",
 				},
 			},
@@ -52,7 +53,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 			name: "No armor, valid",
 			character: &models.Character {
 				AC: 0,
-				Abilities: []models.Abilities {
+				Abilities: []types.Abilities {
 					{
 						Name: "Strength",
 						AbilityModifier: 5,
@@ -78,7 +79,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 						AbilityModifier: -1,
 					},
 				},
-				BodyEquipment: models.BodyEquipment {
+				WornEquipment: types.WornEquipment {
 					Armour: "",
 				},
 			},
@@ -105,14 +106,14 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 		name		string
 		character	*models.Character
 		barbarian	Barbarian
-		expected	[]models.Skill
+		expected	[]types.Skill
 	}{
 		{
 			name: "Below level requirement",
 			character: &models.Character {
 				Level: 2,
 				Proficiency: 2,
-				Skills: []models.Skill {
+				Skills: []types.Skill {
 					{Name: "athletics", SkillModifier: 5, Proficient: false},
 					{Name: "intimidation", SkillModifier: 4, Proficient: true},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -123,7 +124,7 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 					"athletics",
 				},
 			},
-			expected: []models.Skill {
+			expected: []types.Skill {
 				{Name: "athletics", SkillModifier: 5, Proficient: false},
 				{Name: "intimidation", SkillModifier: 4, Proficient: true},
 				{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -152,18 +153,18 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 	tests := []struct {
 		name		string
 		character	*models.Character
-		expected	[]models.Abilities
+		expected	[]types.Abilities
 	}{
 		{
 			name: "Below level threshold",
 			character: &models.Character {
 				Level: 15,
-				Abilities: []models.Abilities {
+				Abilities: []types.Abilities {
 					{Name: "Strength", Base: 16},
 					{Name: "Constitution", Base: 16},
 				},
 			},
-			expected: []models.Abilities {
+			expected: []types.Abilities {
 				{Name: "Strength", Base: 16},
 				{Name: "Constitution", Base: 16},
 			},
@@ -172,12 +173,12 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 			name: "Meets level requirements, valid configuration",
 			character: &models.Character {
 				Level: 20,
-				Abilities: []models.Abilities {
+				Abilities: []types.Abilities {
 					{Name: "Strength", Base: 17},
 					{Name: "Constitution", Base: 17},
 				},
 			},
-			expected: []models.Abilities {
+			expected: []types.Abilities {
 				{Name: "Strength", Base: 21},
 				{Name: "Constitution", Base: 21},
 			},

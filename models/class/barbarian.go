@@ -92,7 +92,7 @@ func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
 
 // If not wearing armor, Armor Class is boosted to 10 + dex mod + constitution mod
 func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
-	if c.BodyEquipment.Armour != "" {
+	if c.WornEquipment.Armour != "" {
 		return
 	}
 

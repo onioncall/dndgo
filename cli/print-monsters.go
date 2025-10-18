@@ -3,11 +3,11 @@ package cli
 import (
 	"fmt"
 
-	"github.com/onioncall/dndgo/models"
+	"github.com/onioncall/dndgo/api/responses"
 	"github.com/onioncall/wrapt"
 )
 
-func PrintMonsterSingle(monster models.Monster, termWidth int) {
+func PrintMonsterSingle(monster responses.Monster, termWidth int) {
 
 	fmt.Printf("%s\n\n", monster.Name)
 	fmt.Printf("Hit Points: %d\n", monster.HitPoints)
@@ -24,14 +24,14 @@ func PrintMonsterSingle(monster models.Monster, termWidth int) {
 	}
 }
 
-func PrintMonsterList(monsterList models.MonsterList) {
+func PrintMonsterList(monsterList responses.MonsterList) {
 	fmt.Print("Monster Name\n\n")
 	for _, monster := range monsterList.ListItems {
 		fmt.Printf("%s - %s\n", monster.Name, monster.Index)
 	}
 }
 
-func printSpecialAbilities(abilities []models.SpecialAbility, termWidth int) {
+func printSpecialAbilities(abilities []responses.SpecialAbility, termWidth int) {
 	fmt.Print("Special Abilities:\n")
 	
 	for _, ability := range abilities {
