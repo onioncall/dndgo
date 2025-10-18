@@ -5,9 +5,7 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/logger"
-	attr "github.com/onioncall/dndgo/types/attributes"
-	eqmt "github.com/onioncall/dndgo/types/equipment"
-	"github.com/onioncall/dndgo/types/magic"
+	"github.com/onioncall/dndgo/types"
 )
 
 type Character struct {
@@ -29,15 +27,15 @@ type Character struct {
 	Initiative        		int              					`json:"initiative"`
 	Speed             		int              					`json:"speed"`
 	HitDice           		string           					`json:"hit-dice"`
-	Abilities     	  		[]attr.Abilities					`json:"abilities"`
-	Skills            		[]attr.Skill          				`json:"skills"`
-	Spells            		[]magic.CharacterSpell 				`json:"spells"`
-	SpellSlots        		[]magic.SpellSlot       			`json:"spell-slots"`
-	Weapons           		[]eqmt.Weapon         				`json:"weapons"`
-	BodyEquipment			eqmt.BodyEquipment    				`json:"body-equipment"`
-	Backpack          		[]eqmt.BackpackItem   				`json:"backpack"`
-	AbilityScoreImprovement []attr.AbilityScoreImprovementItem 	`json:"ability-score-improvement"`
-	Class			  		IClass								`json:"-"`	
+	Abilities     	  		[]types.Abilities					`json:"abilities"`
+	Skills            		[]types.Skill          				`json:"skills"`
+	Spells            		[]types.CharacterSpell 				`json:"spells"`
+	SpellSlots        		[]types.SpellSlot       			`json:"spell-slots"`
+	Weapons           		[]types.Weapon         				`json:"weapons"`
+	WornEquipment			types.WornEquipment    				`json:"body-equipment"`
+	Backpack          		[]types.BackpackItem   				`json:"backpack"`
+	AbilityScoreImprovement []types.AbilityScoreImprovementItem 	`json:"ability-score-improvement"`
+	Class			  		Class								`json:"-"`	
 }
 
 type GenericItem struct {
@@ -45,7 +43,7 @@ type GenericItem struct {
 	Desc string `json:"description"`
 }
 
-type IClass interface {
+type Class interface {
 	LoadMethods()
 	ExecutePostCalculateMethods(c *Character)
 	ExecutePreCalculateMethods(c *Character)
@@ -321,14 +319,14 @@ func (c *Character) BuildAbilities() []string {
 	s = append(s, profTopRow)
 	s = append(s, profSpacer)
 
-	for _, attr := range c.Abilities {
-		abMod := attr.AbilityModifier
-		if attr.SavingThrowsProficient {
+	for _, types := range c.Abilities {
+		abMod := types.AbilityModifier
+		if types.SavingThrowsProficient {
 			abMod += c.Proficiency	
 		}
 
 		abBaseString := ""
-		if attr.AbilityModifier > 0 {
+		if types.AbilityModifier > 0 {
 			abBaseString = "+"
 		}
 
@@ -338,9 +336,9 @@ func (c *Character) BuildAbilities() []string {
 		}
 
 		abModString = fmt.Sprintf("%s%d", abModString, abMod)
-		abBaseString = fmt.Sprintf("%s%d", abBaseString, attr.AbilityModifier)
+		abBaseString = fmt.Sprintf("%s%d", abBaseString, types.AbilityModifier)
 
-		profRow := fmt.Sprintf("| %s | %d | %s | %s |\n", attr.Name, attr.Base, abBaseString, abModString)
+		profRow := fmt.Sprintf("| %s | %d | %s | %s |\n", types.Name, types.Base, abBaseString, abModString)
 		s = append(s, profRow)
 	}
 
@@ -449,15 +447,15 @@ func (c *Character) BuildEquipment() []string {
 	equipmentHeader := fmt.Sprintf("*Equipment*\n\n")
 
 	bodyEquipment 	:= fmt.Sprintf("- Body Equipment\n")
-	head 		:= fmt.Sprintf("	- Head: %s\n", c.BodyEquipment.Head)
-	amulet 		:= fmt.Sprintf("	- Amulet: %s\n", c.BodyEquipment.Amulet)
-	cloak 		:= fmt.Sprintf("	- Cloak: %s\n", c.BodyEquipment.Cloak)
-	armor 		:= fmt.Sprintf("	- Armor: %s\n", c.BodyEquipment.Armour)
-	hands 		:= fmt.Sprintf("	- Hands: %s\n", c.BodyEquipment.HandsArms)
-	ring 		:= fmt.Sprintf("	- Ring: %s\n", c.BodyEquipment.Ring)
-	ring2 		:= fmt.Sprintf("	- Ring: %s\n", c.BodyEquipment.Ring2)
-	belt 		:= fmt.Sprintf("	- Belt: %s\n", c.BodyEquipment.Belt)
-	boots 		:= fmt.Sprintf("	- Boots: %s\n", c.BodyEquipment.Boots)
+	head 		:= fmt.Sprintf("	- Head: %s\n", c.WornEquipment.Head)
+	amulet 		:= fmt.Sprintf("	- Amulet: %s\n", c.WornEquipment.Amulet)
+	cloak 		:= fmt.Sprintf("	- Cloak: %s\n", c.WornEquipment.Cloak)
+	armor 		:= fmt.Sprintf("	- Armor: %s\n", c.WornEquipment.Armour)
+	hands 		:= fmt.Sprintf("	- Hands: %s\n", c.WornEquipment.HandsArms)
+	ring 		:= fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring)
+	ring2 		:= fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring2)
+	belt 		:= fmt.Sprintf("	- Belt: %s\n", c.WornEquipment.Belt)
+	boots 		:= fmt.Sprintf("	- Boots: %s\n", c.WornEquipment.Boots)
 
 	s := []string {
 		equipmentHeader,
@@ -548,7 +546,7 @@ func (c *Character) AddItemToPack(item string, quantity int) {
 		}
 	}
 
-	newItem := eqmt.BackpackItem {
+	newItem := types.BackpackItem {
 		Name: item,
 		Quantity: quantity,
 	}
@@ -580,24 +578,24 @@ func (c *Character) AddLanguage(language string) {
 func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
 	equipmentName = strings.ToLower(equipmentName)
 	switch equipmentType {
-		case eqmt.Head:
-			c.BodyEquipment.Head = equipmentName
-		case eqmt.Amulet:
-			c.BodyEquipment.Amulet = equipmentName
-		case eqmt.Cloak:
-			c.BodyEquipment.Cloak = equipmentName
-		case eqmt.Armour:
-			c.BodyEquipment.Armour = equipmentName
-		case eqmt.HandsArms:
-			c.BodyEquipment.HandsArms = equipmentName
-		case eqmt.Ring:
-			c.BodyEquipment.Ring = equipmentName
-		case eqmt.Ring2:
-			c.BodyEquipment.Ring2 = equipmentName
-		case eqmt.Belt:
-			c.BodyEquipment.Belt = equipmentName
-		case eqmt.Boots:
-			c.BodyEquipment.Boots = equipmentName
+		case types.WornEquipmentHead:
+			c.WornEquipment.Head = equipmentName
+		case types.WornEquipmentAmulet:
+			c.WornEquipment.Amulet = equipmentName
+		case types.WornEquipmentCloak:
+			c.WornEquipment.Cloak = equipmentName
+		case types.WornEquipmentArmour:
+			c.WornEquipment.Armour = equipmentName
+		case types.WornEquipmentHandsArms:
+			c.WornEquipment.HandsArms = equipmentName
+		case types.WornEquipmentRing:
+			c.WornEquipment.Ring = equipmentName
+		case types.WornEquipmentRing2:
+			c.WornEquipment.Ring2 = equipmentName
+		case types.WornEquipmentBelt:
+			c.WornEquipment.Belt = equipmentName
+		case types.WornEquipmentBoots:
+			c.WornEquipment.Boots = equipmentName
 		default:
 			info := fmt.Sprintf("Invalid Equipment Type: %s", equipmentType)
 			logger.HandleInfo(info)

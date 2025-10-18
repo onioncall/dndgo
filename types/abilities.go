@@ -1,4 +1,4 @@
-package attributes
+package types
 
 type Abilities struct {
 	Name        		string 		`json:"name"`
@@ -14,10 +14,10 @@ type AbilityScoreImprovementItem struct {
 }
 
 const (
-	Strength		string = "strength"
-	Dexterity		string = "dexterity"
-	Constitution	string = "constitution"
-	Intelligence	string = "Intelligence"
-	Wisdom			string = "wisdom"
-	Charisma		string = "charisma"
+	AbilityStrength			string = "strength"
+	AbilityDexterity		string = "dexterity"
+	AbilityConstitution		string = "constitution"
+	AbilityIntelligence		string = "Intelligence"
+	AbilityWisdom			string = "wisdom"
+	AbilityCharisma			string = "charisma"
 )

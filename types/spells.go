@@ -1,4 +1,4 @@
-package magic
+package types
 
 type SpellSlot struct {
 	Level		int	`json:"level"`
