@@ -9,41 +9,41 @@ import (
 
 func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*models.Character
-		expected	int
+		name      string
+		character *models.Character
+		expected  int
 	}{
 		{
 			name: "Armor equiped, early return",
-			character: &models.Character {
+			character: &models.Character{
 				AC: 0,
-				Abilities: []types.Abilities {
+				Abilities: []types.Abilities{
 					{
-						Name: "Strength",
+						Name:            "Strength",
 						AbilityModifier: 4,
 					},
 					{
-						Name: "Dexterity",
+						Name:            "Dexterity",
 						AbilityModifier: 3,
 					},
 					{
-						Name: "Constitution",
+						Name:            "Constitution",
 						AbilityModifier: 2,
 					},
 					{
-						Name: "Intelligence",
+						Name:            "Intelligence",
 						AbilityModifier: 2,
 					},
 					{
-						Name: "Wisdom",
+						Name:            "Wisdom",
 						AbilityModifier: 2,
 					},
 					{
-						Name: "Charisma",
+						Name:            "Charisma",
 						AbilityModifier: 2,
 					},
 				},
-				WornEquipment: types.WornEquipment {
+				WornEquipment: types.WornEquipment{
 					Armour: "Leather Armor",
 				},
 			},
@@ -51,35 +51,35 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 		},
 		{
 			name: "No armor, valid",
-			character: &models.Character {
+			character: &models.Character{
 				AC: 0,
-				Abilities: []types.Abilities {
+				Abilities: []types.Abilities{
 					{
-						Name: "Strength",
+						Name:            "Strength",
 						AbilityModifier: 5,
 					},
 					{
-						Name: "Dexterity",
+						Name:            "Dexterity",
 						AbilityModifier: 3,
 					},
 					{
-						Name: "Constitution",
+						Name:            "Constitution",
 						AbilityModifier: 4,
 					},
 					{
-						Name: "Intelligence",
+						Name:            "Intelligence",
 						AbilityModifier: 2,
 					},
 					{
-						Name: "Wisdom",
+						Name:            "Wisdom",
 						AbilityModifier: 0,
 					},
 					{
-						Name: "Charisma",
+						Name:            "Charisma",
 						AbilityModifier: -1,
 					},
 				},
-				WornEquipment: types.WornEquipment {
+				WornEquipment: types.WornEquipment{
 					Armour: "",
 				},
 			},
@@ -95,7 +95,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 			result := tt.character.AC
 
 			if tt.expected != result {
-				t.Errorf("AC- Expected: %d, Result: %d", tt.expected, result)		
+				t.Errorf("AC- Expected: %d, Result: %d", tt.expected, result)
 			}
 		})
 	}
@@ -103,28 +103,28 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 
 func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*models.Character
-		barbarian	Barbarian
-		expected	[]types.Skill
+		name      string
+		character *models.Character
+		barbarian Barbarian
+		expected  []types.Skill
 	}{
 		{
 			name: "Below level requirement",
-			character: &models.Character {
-				Level: 2,
+			character: &models.Character{
+				Level:       2,
 				Proficiency: 2,
-				Skills: []types.Skill {
+				Skills: []types.Skill{
 					{Name: "athletics", SkillModifier: 5, Proficient: false},
 					{Name: "intimidation", SkillModifier: 4, Proficient: true},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
 				},
 			},
-			barbarian: Barbarian {
-				PrimalKnowledge: []string {
+			barbarian: Barbarian{
+				PrimalKnowledge: []string{
 					"athletics",
 				},
 			},
-			expected: []types.Skill {
+			expected: []types.Skill{
 				{Name: "athletics", SkillModifier: 5, Proficient: false},
 				{Name: "intimidation", SkillModifier: 4, Proficient: true},
 				{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -136,14 +136,14 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.barbarian.executePrimalKnowledge(tt.character)
 
-			result := tt.character.Skills 
+			result := tt.character.Skills
 			for i, e := range tt.expected {
 				if e.Proficient != result[i].Proficient {
 					t.Errorf("Skill Proficiency %s- Expected: %t , Result %t",
-					e.Name, 
-					e.Proficient, 
-					result[i].Proficient)
-				} 	
+						e.Name,
+						e.Proficient,
+						result[i].Proficient)
+				}
 			}
 		})
 	}
@@ -151,34 +151,34 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 
 func TestBarbarianExecutePrimalChampion(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*models.Character
-		expected	[]types.Abilities
+		name      string
+		character *models.Character
+		expected  []types.Abilities
 	}{
 		{
 			name: "Below level threshold",
-			character: &models.Character {
+			character: &models.Character{
 				Level: 15,
-				Abilities: []types.Abilities {
+				Abilities: []types.Abilities{
 					{Name: "Strength", Base: 16},
 					{Name: "Constitution", Base: 16},
 				},
 			},
-			expected: []types.Abilities {
+			expected: []types.Abilities{
 				{Name: "Strength", Base: 16},
 				{Name: "Constitution", Base: 16},
 			},
 		},
 		{
 			name: "Meets level requirements, valid configuration",
-			character: &models.Character {
+			character: &models.Character{
 				Level: 20,
-				Abilities: []types.Abilities {
+				Abilities: []types.Abilities{
 					{Name: "Strength", Base: 17},
 					{Name: "Constitution", Base: 17},
 				},
 			},
-			expected: []types.Abilities {
+			expected: []types.Abilities{
 				{Name: "Strength", Base: 21},
 				{Name: "Constitution", Base: 21},
 			},
@@ -188,10 +188,10 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			barbarian := &Barbarian{}
-			
+
 			barbarian.executePrimalChampion(tt.character)
 
-			for i, e :=range  tt.expected {
+			for i, e := range tt.expected {
 				result := tt.character.Abilities[i]
 				if e.Base != result.Base {
 					t.Errorf("Ability %s- Expected: %d, Result: %d", e.Name, e.Base, result.Base)
@@ -203,24 +203,24 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 
 func TestBarbarianUseSlots(t *testing.T) {
 	tests := []struct {
-		name		string
-		tokenName 	string
-		character 	*models.Character
-		barbarian	*Barbarian
-		expected	Rage
+		name      string
+		tokenName string
+		character *models.Character
+		barbarian *Barbarian
+		expected  Rage
 	}{
 		{
-			name: "One use, success",
+			name:      "One use, success",
 			tokenName: "rage",
 			character: &models.Character{},
-			barbarian: &Barbarian {
-				Rage: Rage {
-					Slot: 4,
+			barbarian: &Barbarian{
+				Rage: Rage{
+					Slot:      4,
 					Available: 4,
 				},
 			},
-			expected: Rage {
-				Slot: 4,
+			expected: Rage{
+				Slot:      4,
 				Available: 3,
 			},
 		},
@@ -228,11 +228,11 @@ func TestBarbarianUseSlots(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.barbarian.UseClassTokens(tt.tokenName)	
+			tt.barbarian.UseClassTokens(tt.tokenName)
 
 			result := tt.barbarian.Rage.Available
 			e := tt.expected.Available
-			
+
 			if e != result {
 				t.Errorf("Rage- Expected: %d\nResult: %d", e, result)
 			}
@@ -242,41 +242,41 @@ func TestBarbarianUseSlots(t *testing.T) {
 
 func TestBarbarianRecoverClassSlots(t *testing.T) {
 	tests := []struct {
-		name		string
-		tokenName 	string
-		recover 	int
-		character 	*models.Character
-		barbarian	*Barbarian
-		expected	Rage
+		name      string
+		tokenName string
+		recover   int
+		character *models.Character
+		barbarian *Barbarian
+		expected  Rage
 	}{
 		{
-			name: "Recover by 1",
+			name:      "Recover by 1",
 			tokenName: "rage",
-			recover: 1,
+			recover:   1,
 			character: &models.Character{},
-			barbarian: &Barbarian {
-				Rage: Rage {
-					Slot: 4,
+			barbarian: &Barbarian{
+				Rage: Rage{
+					Slot:      4,
 					Available: 2,
 				},
 			},
-			expected: Rage {
-				Slot: 4,
+			expected: Rage{
+				Slot:      4,
 				Available: 3,
 			},
 		},
 		{
-			name: "Full recover",
+			name:      "Full recover",
 			tokenName: "rage",
-			recover: 0,
-			barbarian: &Barbarian {
-				Rage: Rage {
-					Slot: 4,
+			recover:   0,
+			barbarian: &Barbarian{
+				Rage: Rage{
+					Slot:      4,
 					Available: 2,
 				},
 			},
-			expected: Rage {
-				Slot: 4,
+			expected: Rage{
+				Slot:      4,
 				Available: 4,
 			},
 		},

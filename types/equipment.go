@@ -13,8 +13,8 @@ type WornEquipment struct {
 }
 
 type BackpackItem struct {
-	Name	 string `json:"name"`
-	Quantity int 	`json:"quantity"`
+	Name     string `json:"name"`
+	Quantity int    `json:"quantity"`
 }
 
 const (
@@ -28,4 +28,3 @@ const (
 	WornEquipmentBelt      string = "belt"
 	WornEquipmentBoots     string = "boots"
 )
-

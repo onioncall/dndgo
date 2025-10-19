@@ -9,20 +9,20 @@ import (
 
 func TestRangerAppliedArchery(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*models.Character
-		expected	[]types.Weapon
-		applied		bool
+		name      string
+		character *models.Character
+		expected  []types.Weapon
+		applied   bool
 	}{
 		{
 			name: "No ranged weapon",
-			character: &models.Character {
-				Weapons: []types.Weapon {
+			character: &models.Character{
+				Weapons: []types.Weapon{
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 					{Name: "Dagger", Bonus: 2, Damage: "1d4", Range: "melee"},
 				},
 			},
-			expected: []types.Weapon {
+			expected: []types.Weapon{
 				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 				{Name: "Dagger", Bonus: 2, Damage: "1d4", Range: "melee"},
 			},
@@ -30,13 +30,13 @@ func TestRangerAppliedArchery(t *testing.T) {
 		},
 		{
 			name: "Range bonus applied",
-			character: &models.Character {
-				Weapons: []types.Weapon {
+			character: &models.Character{
+				Weapons: []types.Weapon{
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged"},
 				},
 			},
-			expected: []types.Weapon {
+			expected: []types.Weapon{
 				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 				{Name: "Longbow", Bonus: 4, Damage: "1d8", Range: "ranged"},
 			},
@@ -64,32 +64,32 @@ func TestRangerAppliedArchery(t *testing.T) {
 
 func TestRangerAppliedDefense(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*models.Character
-		expected	int
-		applied		bool
+		name      string
+		character *models.Character
+		expected  int
+		applied   bool
 	}{
 		{
 			name: "Armor equiped, early return",
-			character: &models.Character {
+			character: &models.Character{
 				AC: 15,
-				WornEquipment: types.WornEquipment {
+				WornEquipment: types.WornEquipment{
 					Armour: "Light Armor",
 				},
 			},
 			expected: 15,
-			applied: false,
+			applied:  false,
 		},
 		{
 			name: "Armor not equiped, bonus added",
-			character: &models.Character {
+			character: &models.Character{
 				AC: 15,
-				WornEquipment: types.WornEquipment {
+				WornEquipment: types.WornEquipment{
 					Armour: "",
 				},
 			},
 			expected: 16,
-			applied: true,
+			applied:  true,
 		},
 	}
 
@@ -111,48 +111,48 @@ func TestRangerAppliedDefense(t *testing.T) {
 
 func TestRangerAppliedDueling(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*models.Character
-		expected	[]types.Weapon
-		applied		bool
+		name      string
+		character *models.Character
+		expected  []types.Weapon
+		applied   bool
 	}{
 		{
 			name: "No melee weapon",
-			character: &models.Character {
-				Weapons: []types.Weapon {
+			character: &models.Character{
+				Weapons: []types.Weapon{
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged"},
 				},
 			},
-			expected: []types.Weapon {
+			expected: []types.Weapon{
 				{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged"},
 			},
 			applied: false,
 		},
 		{
 			name: "Melee bonus applied",
-			character: &models.Character {
-				Weapons: []types.Weapon {
-				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
+			character: &models.Character{
+				Weapons: []types.Weapon{
+					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 				},
 			},
-			expected: []types.Weapon {
-				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
+			expected: []types.Weapon{
+				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
 				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee"},
 			},
 			applied: true,
 		},
 		{
 			name: "Multiple valid weapons, one bonus",
-			character: &models.Character {
-				Weapons: []types.Weapon {
-				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
+			character: &models.Character{
+				Weapons: []types.Weapon{
+					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 				},
 			},
-			expected: []types.Weapon {
-				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
+			expected: []types.Weapon{
+				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
 				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee"},
 				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 			},
@@ -170,7 +170,7 @@ func TestRangerAppliedDueling(t *testing.T) {
 					t.Errorf("Weapon %s Bonus- Expected: %d, Result: %d", e.Name, e.Bonus, result[i].Bonus)
 				}
 			}
-			
+
 			if tt.applied != returned {
 				t.Errorf("Not Applied Correctly- Expected: %t, Result: %t", tt.applied, returned)
 			}
@@ -180,83 +180,83 @@ func TestRangerAppliedDueling(t *testing.T) {
 
 func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*models.Character
-		expected	[]types.Weapon
-		applied		bool
+		name      string
+		character *models.Character
+		expected  []types.Weapon
+		applied   bool
 	}{
 		{
 			name: "No applicable weapons, bonus not applied",
-			character: &models.Character {
-				Abilities: []types.Abilities {
+			character: &models.Character{
+				Abilities: []types.Abilities{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []types.Weapon {
-					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
-					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string {"two-handed"}},
+				Weapons: []types.Weapon{
+					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
+					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string{"two-handed"}},
 				},
 			},
-			expected: []types.Weapon {
-				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
-				{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string {"two-handed"}},
+			expected: []types.Weapon{
+				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
+				{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string{"two-handed"}},
 			},
 			applied: false,
 		},
 		{
 			name: "One applicable weapon, bonus not applied",
-			character: &models.Character {
-				Abilities: []types.Abilities {
+			character: &models.Character{
+				Abilities: []types.Abilities{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []types.Weapon {
+				Weapons: []types.Weapon{
 					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
-					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string {"two-handed"}},
+					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string{"two-handed"}},
 				},
 			},
-			expected: []types.Weapon {
-				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string {"two-handed"}},
+			expected: []types.Weapon{
+				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
 				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
 			},
 			applied: false,
 		},
 		{
 			name: "Two applicable light weapons, bonus applied",
-			character: &models.Character {
-				Abilities: []types.Abilities {
+			character: &models.Character{
+				Abilities: []types.Abilities{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []types.Weapon {
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
+				Weapons: []types.Weapon{
+					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
+					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
 				},
 			},
-			expected: []types.Weapon {
-				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
-				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
+			expected: []types.Weapon{
+				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
+				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
 			},
 			applied: true,
 		},
 		{
 			name: "Two applicable weapons, one light, both one handed, bonus applied",
-			character: &models.Character {
-				Abilities: []types.Abilities {
+			character: &models.Character{
+				Abilities: []types.Abilities{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []types.Weapon {
-					{Name: "Rapier", Bonus: 2, Damage: "1d8", Range: "melee", Properties: []string {"finesse"}},
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
+				Weapons: []types.Weapon{
+					{Name: "Rapier", Bonus: 2, Damage: "1d8", Range: "melee", Properties: []string{"finesse"}},
+					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
 				},
 			},
-			expected: []types.Weapon {
-				{Name: "Rapier", Bonus: 2, Damage: "1d8", Range: "melee", Properties: []string {"finesse"}},
-				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee", Properties: []string {"light"}},
+			expected: []types.Weapon{
+				{Name: "Rapier", Bonus: 2, Damage: "1d8", Range: "melee", Properties: []string{"finesse"}},
+				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
 			},
 			applied: true,
 		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func (t *testing.T) {
+		t.Run(tt.name, func(t *testing.T) {
 			returned := applyTwoWeaponFighting(tt.character)
 			result := tt.character.Weapons
 
@@ -275,76 +275,76 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 
 func TestRanger_executeFightingStyle(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*models.Character
-		ranger		*Ranger
-		expected	models.Character	
+		name      string
+		character *models.Character
+		ranger    *Ranger
+		expected  models.Character
 	}{
 		{
 			name: "Below level requirement",
-			character: &models.Character {
-				AC: 15,
+			character: &models.Character{
+				AC:    15,
 				Level: 1,
-				WornEquipment: types.WornEquipment {
+				WornEquipment: types.WornEquipment{
 					Armour: "",
 				},
 			},
-			ranger: &Ranger {
+			ranger: &Ranger{
 				FightingStyle: Defense,
 			},
-			expected: models.Character {
-				AC: 15,
+			expected: models.Character{
+				AC:    15,
 				Level: 3,
 			},
 		},
 		{
 			name: "Not valid fighting style",
-			character: &models.Character {
-				AC: 15,
+			character: &models.Character{
+				AC:    15,
 				Level: 3,
-				WornEquipment: types.WornEquipment {
+				WornEquipment: types.WornEquipment{
 					Armour: "",
 				},
 			},
-			ranger: &Ranger {
+			ranger: &Ranger{
 				FightingStyle: "the-worm",
 			},
-			expected: models.Character {
-				AC: 15,
+			expected: models.Character{
+				AC:    15,
 				Level: 3,
 			},
 		},
 		{
 			name: "Defense applied",
-			character: &models.Character {
-				AC: 15,
+			character: &models.Character{
+				AC:    15,
 				Level: 3,
-				WornEquipment: types.WornEquipment {
+				WornEquipment: types.WornEquipment{
 					Armour: "",
 				},
 			},
-			ranger: &Ranger {
+			ranger: &Ranger{
 				FightingStyle: Defense,
 			},
-			expected: models.Character {
-				AC: 16,
+			expected: models.Character{
+				AC:    16,
 				Level: 3,
 			},
 		},
 		{
 			name: "Defense not applied (armor equiped)",
-			character: &models.Character {
-				AC: 15,
+			character: &models.Character{
+				AC:    15,
 				Level: 3,
-				WornEquipment: types.WornEquipment {
+				WornEquipment: types.WornEquipment{
 					Armour: "light-armor",
 				},
 			},
-			ranger: &Ranger {
+			ranger: &Ranger{
 				FightingStyle: Defense,
 			},
-			expected: models.Character {
-				AC: 15,
+			expected: models.Character{
+				AC:    15,
 				Level: 3,
 			},
 		},

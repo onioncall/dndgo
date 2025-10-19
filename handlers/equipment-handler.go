@@ -11,15 +11,16 @@ import (
 )
 
 type EquipmentRequest api.BaseRequest
+
 const EquipmentType api.PathType = "equipment"
 
 func HandleEquipmentRequest(equipmentQuery string, termWidth int) error {
-	r := EquipmentRequest {
-		Name: equipmentQuery,
+	r := EquipmentRequest{
+		Name:     equipmentQuery,
 		PathType: EquipmentType,
-	}		
+	}
 
-	e, err := r.GetSingle()	
+	e, err := r.GetSingle()
 	if err != nil {
 		logErr := fmt.Errorf("Failed to Handle Equipment Request (single)")
 		logger.HandleError(err, logErr)
@@ -32,12 +33,12 @@ func HandleEquipmentRequest(equipmentQuery string, termWidth int) error {
 }
 
 func HandleEquipmentListRequest() error {
-	r := EquipmentRequest {
-		Name: "",
+	r := EquipmentRequest{
+		Name:     "",
 		PathType: EquipmentType,
-	}		
+	}
 
-	el, err := r.GetList()	
+	el, err := r.GetList()
 	if err != nil {
 		logErr := fmt.Errorf("Failed to Handle Equipment Request (list)")
 		logger.HandleError(err, logErr)

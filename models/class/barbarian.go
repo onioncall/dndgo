@@ -10,16 +10,16 @@ import (
 )
 
 type Barbarian struct {
-	Path			string					`json:"path"`
-	OtherFeatures	[]models.ClassFeatures	`json:"other-features"`
-	Rage			Rage					`json:"rage"`
-	PrimalKnowledge	[]string				`json:"primal-knowledge"`
+	Path            string                 `json:"path"`
+	OtherFeatures   []models.ClassFeatures `json:"other-features"`
+	Rage            Rage                   `json:"rage"`
+	PrimalKnowledge []string               `json:"primal-knowledge"`
 }
 
 type Rage struct {
-	Available	int	`json:"available"`
-	Slot		int	`json:"token"`
-	Damage		int `json:"damage"`
+	Available int `json:"available"`
+	Slot      int `json:"token"`
+	Damage    int `json:"damage"`
 }
 
 func LoadBarbarian(data []byte) (*Barbarian, error) {
@@ -53,13 +53,13 @@ func (b *Barbarian) ExecutePreCalculateMethods(c *models.Character) {
 }
 
 // At level 3, You gain proficiency in one skill of your choice from the list of skills
-// available to barbarians at 1st level. 
+// available to barbarians at 1st level.
 func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
 	if c.Level < 3 {
 		return
 	}
 
-	avaliableSkills := []string {
+	avaliableSkills := []string{
 		"Animal Handling",
 		"Athletics",
 		"Intimidation",
@@ -67,7 +67,6 @@ func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
 		"Perception",
 		"Survival",
 	}
-	
 
 	// TODO: Refactor this to make it more performant, the three loops are going to be the least efficient way to handle this
 	for _, pk := range b.PrimalKnowledge {
@@ -80,8 +79,8 @@ func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
 					break
 				} else if i == len(avaliableSkills) {
 					info := fmt.Sprintf("Primal Knowledge Skill %s was not one of the six available skills at level 1: %s\n",
-					pk, 
-					strings.Join(avaliableSkills, ", "))
+						pk,
+						strings.Join(avaliableSkills, ", "))
 
 					logger.HandleInfo(info)
 				}
@@ -97,7 +96,7 @@ func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 	}
 
 	c.AC = 0
-	
+
 	for _, a := range c.Abilities {
 		if strings.ToLower(a.Name) != "dexterity" && strings.ToLower(a.Name) != "constitution" {
 			continue
@@ -139,7 +138,7 @@ func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
 	return s
 }
 
-// At level 20, your Strength and Constitution scores increase by 4. Your maximum for those scores is now 24. 
+// At level 20, your Strength and Constitution scores increase by 4. Your maximum for those scores is now 24.
 func (b *Barbarian) executePrimalChampion(c *models.Character) {
 	if c.Level < 20 {
 		return
@@ -162,7 +161,7 @@ func (b *Barbarian) UseClassTokens(tokenName string) {
 	if b.Rage.Available <= 0 {
 		logger.HandleInfo("Class token had no uses left")
 		return
-	} 
+	}
 
 	b.Rage.Available--
 }

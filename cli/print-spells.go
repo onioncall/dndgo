@@ -11,7 +11,7 @@ import (
 func PrintSpellSingle(spell responses.Spell, termWidth int) {
 	fmt.Printf("%s\n\n", spell.Name)
 	for _, description := range spell.Description {
-		fmt.Printf("%s\n\n", wrapt.Wrap(description, termWidth))	
+		fmt.Printf("%s\n\n", wrapt.Wrap(description, termWidth))
 	}
 
 	if spell.AreaOfEffect.Size != 0 {
@@ -35,7 +35,7 @@ func PrintSpellSingle(spell responses.Spell, termWidth int) {
 }
 
 func printDamageBySlotLevel(dmg map[int]string) {
-    keys := make([]int, 0, len(dmg))
+	keys := make([]int, 0, len(dmg))
 	for k := range dmg {
 		keys = append(keys, k)
 	}
@@ -43,7 +43,7 @@ func printDamageBySlotLevel(dmg map[int]string) {
 	sort.Ints(keys)
 	for _, k := range keys {
 		fmt.Printf("	%v: %v\n", k, dmg[k])
-	}		
+	}
 }
 
 func PrintSpellList(spellList responses.SpellList) {

@@ -5,20 +5,21 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/api"
+	"github.com/onioncall/dndgo/api/responses"
 	"github.com/onioncall/dndgo/cli"
 	"github.com/onioncall/dndgo/logger"
-	"github.com/onioncall/dndgo/api/responses"
 )
 
 type MonsterRequest api.BaseRequest
+
 const MonsterType api.PathType = "monsters"
 
 func HandleMonsterRequest(monsterQuery string, termWidth int) error {
-	r := MonsterRequest {
-		Name: monsterQuery,
+	r := MonsterRequest{
+		Name:     monsterQuery,
 		PathType: MonsterType,
-	}		
-	
+	}
+
 	m, err := r.GetSingle()
 	if err != nil {
 		logErr := fmt.Errorf("Failed to Handle Monster Request (single)")
@@ -32,10 +33,10 @@ func HandleMonsterRequest(monsterQuery string, termWidth int) error {
 }
 
 func HandleMonsterListRequest() error {
-	r := MonsterRequest {
-		Name: "",
+	r := MonsterRequest{
+		Name:     "",
 		PathType: MonsterType,
-	}		
+	}
 
 	ml, err := r.GetList()
 	if err != nil {
@@ -71,6 +72,6 @@ func (m *MonsterRequest) GetSingle() (responses.Monster, error) {
 
 		return monster, err
 	}
-	
+
 	return monster, nil
 }

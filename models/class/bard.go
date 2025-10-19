@@ -11,15 +11,15 @@ import (
 )
 
 type Bard struct {
-	SkillProficienciesToDouble 	[]string 						`json:"expertise"`
-	College 					string 							`json:"college"`
-	OtherFeatures 				[]models.ClassFeatures			`json:"other-features"`
-	BardicInspiration			BardicInspiration				`json:"bardic-inspiration"`
+	SkillProficienciesToDouble []string               `json:"expertise"`
+	College                    string                 `json:"college"`
+	OtherFeatures              []models.ClassFeatures `json:"other-features"`
+	BardicInspiration          BardicInspiration      `json:"bardic-inspiration"`
 }
 
 type BardicInspiration struct {
-	Available	int	`json:"available"`
-	Slot		int	`json:"slot"`
+	Available int `json:"available"`
+	Slot      int `json:"slot"`
 }
 
 func LoadBard(data []byte) (*Bard, error) {
@@ -51,17 +51,17 @@ func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
 	}
 }
 
-// At level 3, bards can pick two skills they are proficient in, and double the modifier. 
+// At level 3, bards can pick two skills they are proficient in, and double the modifier.
 // They select two more at level 10
 func (b *Bard) executeExpertise(c *models.Character) {
 	if c.Level < 3 {
 		return
 	}
-	
+
 	if c.Level < 10 && len(b.SkillProficienciesToDouble) > 2 {
 		// We'll allow the user to specify more, but only the first two get taken for it to be legal
 		b.SkillProficienciesToDouble = b.SkillProficienciesToDouble[:2]
-	} 
+	}
 
 	if c.Level > 10 && len(b.SkillProficienciesToDouble) > 4 {
 		// We'll allow the user to specify more, but only the first four get taken for it to be legal
@@ -84,17 +84,17 @@ func (b *Bard) executeExpertise(c *models.Character) {
 	}
 }
 
-// At level 2, bards can add half their proficiency bonus (rounded down) to any ability check 
+// At level 2, bards can add half their proficiency bonus (rounded down) to any ability check
 // that doesn't already use their proficiency bonus.
 func (b *Bard) executeJackOfAllTrades(c *models.Character) {
-	if (c.Level < 2) {
+	if c.Level < 2 {
 		return
 	}
 
 	for i, skill := range c.Skills {
 		if !skill.Proficient {
-			c.Skills[i].SkillModifier += int(math.Floor(float64(c.Proficiency / 2)))	
-		} 
+			c.Skills[i].SkillModifier += int(math.Floor(float64(c.Proficiency / 2)))
+		}
 	}
 }
 
@@ -147,7 +147,7 @@ func (b *Bard) UseClassTokens(tokenName string) {
 	if b.BardicInspiration.Available <= 0 {
 		logger.HandleInfo("No Bardic Inspiration tokens left")
 		return
-	} 
+	}
 
 	b.BardicInspiration.Available--
 }

@@ -5,20 +5,21 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/api"
+	"github.com/onioncall/dndgo/api/responses"
 	"github.com/onioncall/dndgo/cli"
 	"github.com/onioncall/dndgo/logger"
-	"github.com/onioncall/dndgo/api/responses"
 )
 
 type SpellRequest api.BaseRequest
-const SpellType	api.PathType = "spells"
+
+const SpellType api.PathType = "spells"
 
 func HandleSpellRequest(spellQuery string, termWidth int) error {
-	r := SpellRequest {
-		Name: spellQuery,
+	r := SpellRequest{
+		Name:     spellQuery,
 		PathType: SpellType,
-	}		
-	
+	}
+
 	s, err := r.GetSingle()
 	if err != nil {
 		logErr := fmt.Errorf("Failed to Handle Spell Request (single)")
@@ -32,18 +33,18 @@ func HandleSpellRequest(spellQuery string, termWidth int) error {
 }
 
 func HandleSpellListRequest() error {
-	r := SpellRequest {
-		Name: "",
+	r := SpellRequest{
+		Name:     "",
 		PathType: SpellType,
-	}		
+	}
 
-	sl, err := r.GetList()	
+	sl, err := r.GetList()
 	if err != nil {
 		logErr := fmt.Errorf("Failed to Handle Spell Request (list)")
 		logger.HandleError(err, logErr)
 
 		return err
-	} 
+	}
 
 	cli.PrintSpellList(sl)
 	return nil
