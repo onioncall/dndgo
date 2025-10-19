@@ -18,21 +18,21 @@ func NewLogger() {
 	if consoleErrors == nil {
 		consoleErrors = make(map[string][]errorEntry)
 	}
-	
-	// Considered persisting this longer, but for now we're 
+
+	// Considered persisting this longer, but for now we're
 	// only going to keep log records from the last run
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "LOG ERROR- failed to get home directory: %v\n", err)
 		return
 	}
-	
+
 	logDir := filepath.Join(homeDir, ".config", "dndgo")
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "LOG ERROR- failed to create log directory: %v\n", err)
 		return
 	}
-	
+
 	logPath := filepath.Join(logDir, "log")
 	f, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
@@ -61,9 +61,9 @@ func HandleError(cliErr error, logError error) {
 	}
 
 	strErr := fmt.Sprintf("%v", cliErr)
-	
+
 	consoleErrors[strErr] = append(consoleErrors[strErr], errorEntry{
-		err:       logError,  // Store the detailed error
+		err:       logError, // Store the detailed error
 		timestamp: time.Now(),
 	})
 }
@@ -71,20 +71,20 @@ func HandleError(cliErr error, logError error) {
 func LogErrors() {
 	if len(consoleErrors) < 1 {
 		return
-	}	
+	}
 
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "LOG ERROR- failed to get home directory: %v\n", err)
 		return
 	}
-	
+
 	logDir := filepath.Join(homeDir, ".config", "dndgo")
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "LOG ERROR- failed to create log directory: %v\n", err)
 		return
 	}
-	
+
 	logPath := filepath.Join(logDir, "log")
 	f, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -92,12 +92,12 @@ func LogErrors() {
 		return
 	}
 	defer f.Close()
-	
+
 	for cliErr, entries := range consoleErrors {
 		fmt.Println(cliErr)
 
 		// If we don't have entries, we don't need to add the error to the log
-		if (len(entries) < 1) {
+		if len(entries) < 1 {
 			continue
 		}
 
@@ -105,7 +105,7 @@ func LogErrors() {
 		if _, err := f.WriteString(consoleEntry); err != nil {
 			fmt.Fprintf(os.Stderr, "LOG ERROR- failed to write to log file: %v\n", err)
 		}
-		
+
 		if entries != nil {
 			for _, logError := range entries {
 				timestamp := logError.timestamp.Format(time.RFC3339)

@@ -10,7 +10,7 @@ import (
 var (
 	spellName   string
 	monsterName string
-	weaponName 	string
+	weaponName  string
 	charAction  string
 )
 

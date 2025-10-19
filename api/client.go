@@ -15,7 +15,7 @@ type PathType string
 
 type BaseRequest struct {
 	Name     string
-    PathType PathType
+	PathType PathType
 }
 
 func ExecuteGetRequest[T any](p PathType, criteria string) (T, error) {
@@ -24,7 +24,7 @@ func ExecuteGetRequest[T any](p PathType, criteria string) (T, error) {
 	if err != nil {
 		logErr := fmt.Errorf("Failed Request: %s, Error: %v", path, err)
 		logger.HandleError(err, logErr)
-		
+
 		return *new(T), err
 	}
 	defer resp.Body.Close()
@@ -34,14 +34,14 @@ func ExecuteGetRequest[T any](p PathType, criteria string) (T, error) {
 		return *new(T), err
 	}
 
-    body, err := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		err := fmt.Errorf("Request: %s, Read Response Failed: %v", path, err)
 		return *new(T), err
 	}
 
 	var obj T
-    err = json.Unmarshal([]byte(body), &obj)
+	err = json.Unmarshal([]byte(body), &obj)
 	if err != nil {
 		err := fmt.Errorf("Request: %s, Unmarshal Response Failed: %v", path, err)
 		return *new(T), err

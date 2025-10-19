@@ -3,38 +3,38 @@ package responses
 import "time"
 
 type Monster struct {
-	Index                  string                `json:"index"`
-	Name                   string                `json:"name"`
-	Size                   string                `json:"size"`
-	Type                   string                `json:"type"`
-	Alignment              string                `json:"alignment"`
-	ArmorClass             []ArmorClass          `json:"armor_class"`
-	HitPoints              int                   `json:"hit_points"`
-	HitDice                string                `json:"hit_dice"`
-	HitPointsRoll          string                `json:"hit_points_roll"`
-	Speed                  Speed                 `json:"speed"`
-	Strength               int                   `json:"strength"`
-	Dexterity              int                   `json:"dexterity"`
-	Constitution           int                   `json:"constitution"`
-	Intelligence           int                   `json:"intelligence"`
-	Wisdom                 int                   `json:"wisdom"`
-	Charisma               int                   `json:"charisma"`
-	Proficiencies          []Proficiency         `json:"proficiencies"`
-	DamageVulnerabilities  []string              `json:"damage_vulnerabilities"`
-	DamageResistances      []string              `json:"damage_resistances"`
-	DamageImmunities       []string              `json:"damage_immunities"`
-	ConditionImmunities    []string              `json:"condition_immunities"`
-	Senses                 Senses                `json:"senses"`
-	Languages              string                `json:"languages"`
-	ChallengeRating        float64               `json:"challenge_rating"`
-	ProficiencyBonus       int                   `json:"proficiency_bonus"`
-	XP                     int                   `json:"xp"`
-	SpecialAbilities       []SpecialAbility      `json:"special_abilities"`
-	Actions                []Action              `json:"actions"`
-	LegendaryActions       []LegendaryAction     `json:"legendary_actions,omitempty"`
-	Image                  string                `json:"image"`
-	URL                    string                `json:"url"`
-	UpdatedAt              time.Time             `json:"updated_at"`
+	Index                 string            `json:"index"`
+	Name                  string            `json:"name"`
+	Size                  string            `json:"size"`
+	Type                  string            `json:"type"`
+	Alignment             string            `json:"alignment"`
+	ArmorClass            []ArmorClass      `json:"armor_class"`
+	HitPoints             int               `json:"hit_points"`
+	HitDice               string            `json:"hit_dice"`
+	HitPointsRoll         string            `json:"hit_points_roll"`
+	Speed                 Speed             `json:"speed"`
+	Strength              int               `json:"strength"`
+	Dexterity             int               `json:"dexterity"`
+	Constitution          int               `json:"constitution"`
+	Intelligence          int               `json:"intelligence"`
+	Wisdom                int               `json:"wisdom"`
+	Charisma              int               `json:"charisma"`
+	Proficiencies         []Proficiency     `json:"proficiencies"`
+	DamageVulnerabilities []string          `json:"damage_vulnerabilities"`
+	DamageResistances     []string          `json:"damage_resistances"`
+	DamageImmunities      []string          `json:"damage_immunities"`
+	ConditionImmunities   []string          `json:"condition_immunities"`
+	Senses                Senses            `json:"senses"`
+	Languages             string            `json:"languages"`
+	ChallengeRating       float64           `json:"challenge_rating"`
+	ProficiencyBonus      int               `json:"proficiency_bonus"`
+	XP                    int               `json:"xp"`
+	SpecialAbilities      []SpecialAbility  `json:"special_abilities"`
+	Actions               []Action          `json:"actions"`
+	LegendaryActions      []LegendaryAction `json:"legendary_actions,omitempty"`
+	Image                 string            `json:"image"`
+	URL                   string            `json:"url"`
+	UpdatedAt             time.Time         `json:"updated_at"`
 }
 
 type MonsterList struct {
@@ -53,7 +53,7 @@ type Speed struct {
 }
 
 type Proficiency struct {
-	Value       int        `json:"value"`
+	Value       int       `json:"value"`
 	Proficiency Reference `json:"proficiency"`
 }
 
@@ -64,26 +64,26 @@ type Senses struct {
 }
 
 type SpecialAbility struct {
-	Name   string    `json:"name"`
-	Desc   string    `json:"desc"`
-	Usage  *Usage    `json:"usage,omitempty"`
+	Name  string `json:"name"`
+	Desc  string `json:"desc"`
+	Usage *Usage `json:"usage,omitempty"`
 }
 
 type Action struct {
-	Name            string           `json:"name"`
-	MultiattackType string           `json:"multiattack_type,omitempty"`
-	Desc            string           `json:"desc"`
-	AttackBonus     int              `json:"attack_bonus,omitempty"`
-	Damage          []DamageDetails  `json:"damage,omitempty"`
-	DC              *DC              `json:"dc,omitempty"`
-	Usage           *Usage           `json:"usage,omitempty"`
-	Actions         []SubAction      `json:"actions,omitempty"`
+	Name            string          `json:"name"`
+	MultiattackType string          `json:"multiattack_type,omitempty"`
+	Desc            string          `json:"desc"`
+	AttackBonus     int             `json:"attack_bonus,omitempty"`
+	Damage          []DamageDetails `json:"damage,omitempty"`
+	DC              *DC             `json:"dc,omitempty"`
+	Usage           *Usage          `json:"usage,omitempty"`
+	Actions         []SubAction     `json:"actions,omitempty"`
 }
 
 type LegendaryAction struct {
-	Name   string `json:"name"`
-	Desc   string `json:"desc"`
-	DC     *DC    `json:"dc,omitempty"`
+	Name   string          `json:"name"`
+	Desc   string          `json:"desc"`
+	DC     *DC             `json:"dc,omitempty"`
 	Damage []DamageDetails `json:"damage,omitempty"`
 }
 

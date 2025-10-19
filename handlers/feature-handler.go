@@ -5,19 +5,20 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/api"
+	"github.com/onioncall/dndgo/api/responses"
 	"github.com/onioncall/dndgo/cli"
 	"github.com/onioncall/dndgo/logger"
-	"github.com/onioncall/dndgo/api/responses"
 )
 
 type FeatureRequest api.BaseRequest
+
 const FeatureType api.PathType = "features"
 
 func HandleFeatureRequest(featureQuery string, termWidth int) error {
-	r := FeatureRequest {
-		Name: featureQuery,
+	r := FeatureRequest{
+		Name:     featureQuery,
 		PathType: FeatureType,
-	}		
+	}
 
 	f, err := r.GetSingle()
 	if err != nil {
@@ -32,11 +33,11 @@ func HandleFeatureRequest(featureQuery string, termWidth int) error {
 }
 
 func HandleFeatureListRequest() error {
-	r := FeatureRequest {
+	r := FeatureRequest{
 		PathType: FeatureType,
-	}		
+	}
 
-	fl, err := r.GetList()	
+	fl, err := r.GetList()
 	if err != nil {
 		logErr := fmt.Errorf("Failed to Handle Feature Request (list)")
 		logger.HandleError(err, logErr)

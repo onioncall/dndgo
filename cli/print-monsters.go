@@ -33,7 +33,7 @@ func PrintMonsterList(monsterList responses.MonsterList) {
 
 func printSpecialAbilities(abilities []responses.SpecialAbility, termWidth int) {
 	fmt.Print("Special Abilities:\n")
-	
+
 	for _, ability := range abilities {
 		tab := "    "
 		fmt.Println()

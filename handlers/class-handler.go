@@ -23,9 +23,9 @@ const (
 )
 
 var ClassFileMap = map[string]string{
-	Bard:      "bard-class.json",
-	Barbarian: "barbarian-class.json",
-	Ranger:    "default-ranger.json",
+	Bard:      "bard.json",
+	Barbarian: "barbarian.json",
+	Ranger:    "ranger.json",
 }
 
 func LoadClass(classType string) (models.Class, error) {

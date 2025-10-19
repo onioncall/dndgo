@@ -134,7 +134,7 @@ func LoadCharacter() (*models.Character, error) {
 }
 
 func LoadCharacterTemplate(characterName string, className string) (*models.Character, error) {
-	filePath := "default-character.json"
+	filePath := "character.json"
 	fileData, err := defaultjsonconfigs.Content.ReadFile(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read template character file: %w", err)

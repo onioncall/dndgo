@@ -11,9 +11,9 @@ func PrintEquipmentSingle(equipment responses.Equipment, termWidth int) {
 	fmt.Printf("%s\n\n", equipment.Name)
 
 	for _, description := range equipment.Desc {
-		fmt.Printf("%s\n\n", wrapt.Wrap(description, termWidth))	
+		fmt.Printf("%s\n\n", wrapt.Wrap(description, termWidth))
 	}
-	
+
 	fmt.Printf("Equipment Category: %s\n", equipment.EquipmentCategory.Name)
 	if equipment.GearCategory != nil {
 		fmt.Printf("Gear Category: %s\n", equipment.GearCategory.Name)

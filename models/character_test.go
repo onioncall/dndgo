@@ -8,24 +8,24 @@ import (
 
 func TestCharacterCalculateAbilitiesFromBase(t *testing.T) {
 	tests := []struct {
-		name 			string
-		character 		*Character
-		expected	 	[]types.Abilities
+		name      string
+		character *Character
+		expected  []types.Abilities
 	}{
 		{
 			name: "Ability mod round down",
-			character: &Character {
+			character: &Character{
 				Level: 3,
-				Abilities: []types.Abilities {
-					{Name: "Strength", AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},	
-					{Name: "Dexterity", AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},	
-					{Name: "Constitution", AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},	
+				Abilities: []types.Abilities{
+					{Name: "Strength", AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},
+					{Name: "Dexterity", AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
+					{Name: "Constitution", AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},
 				},
 			},
-			expected: []types.Abilities {
-				{Name: "Strength", AbilityModifier: 2, Base: 14, SavingThrowsProficient: true},	
-				{Name: "Dexterity", AbilityModifier: 1, Base: 12, SavingThrowsProficient: false},	
-				{Name: "Constitution", AbilityModifier: 2, Base: 15, SavingThrowsProficient: true},	
+			expected: []types.Abilities{
+				{Name: "Strength", AbilityModifier: 2, Base: 14, SavingThrowsProficient: true},
+				{Name: "Dexterity", AbilityModifier: 1, Base: 12, SavingThrowsProficient: false},
+				{Name: "Constitution", AbilityModifier: 2, Base: 15, SavingThrowsProficient: true},
 			},
 		},
 	}
@@ -46,26 +46,26 @@ func TestCharacterCalculateAbilitiesFromBase(t *testing.T) {
 
 func TestCharacterCalculateSkillModifierFromBase(t *testing.T) {
 	tests := []struct {
-		name 		string
-		character 	*Character
-		expected 	[]types.Skill
+		name      string
+		character *Character
+		expected  []types.Skill
 	}{
 		{
 			name: "Multiple skills, different values",
-			character: &Character {
-				Skills: []types.Skill {
+			character: &Character{
+				Skills: []types.Skill{
 					{Name: "slight of hand", SkillModifier: 0, Proficient: false, Ability: "dexterity"},
 					{Name: "persuasion", SkillModifier: 0, Proficient: false, Ability: "charisma"},
 					{Name: "deception", SkillModifier: 0, Proficient: false, Ability: "charisma"},
 				},
-				Abilities: []types.Abilities {
-					{Name: "Strength", AbilityModifier: 2, Base: 14, SavingThrowsProficient: true},	
-					{Name: "Dexterity", AbilityModifier: 1, Base: 12, SavingThrowsProficient: false},	
-					{Name: "Constitution", AbilityModifier: 2, Base: 15, SavingThrowsProficient: true},	
-					{Name: "Charisma", AbilityModifier: 0, Base: 10, SavingThrowsProficient: true},	
+				Abilities: []types.Abilities{
+					{Name: "Strength", AbilityModifier: 2, Base: 14, SavingThrowsProficient: true},
+					{Name: "Dexterity", AbilityModifier: 1, Base: 12, SavingThrowsProficient: false},
+					{Name: "Constitution", AbilityModifier: 2, Base: 15, SavingThrowsProficient: true},
+					{Name: "Charisma", AbilityModifier: 0, Base: 10, SavingThrowsProficient: true},
 				},
 			},
-			expected: []types.Skill {
+			expected: []types.Skill{
 				{Name: "slight of hand", SkillModifier: 1, Proficient: false, Ability: "dexterity"},
 				{Name: "persuasion", SkillModifier: 0, Proficient: false, Ability: "charisma"},
 				{Name: "deception", SkillModifier: 0, Proficient: false, Ability: "charisma"},
@@ -81,48 +81,47 @@ func TestCharacterCalculateSkillModifierFromBase(t *testing.T) {
 				t.Errorf("Skills Count- Expected: %d, Result: %d", len(tt.expected), len(tt.character.Skills))
 				return
 			}
-			
+
 			for i, e := range tt.expected {
 				result := tt.character.Skills[i].SkillModifier
 				if e.SkillModifier != result {
-					t.Errorf("Modifier %s- Expected: %d, returned: %d", e.Name,  e.SkillModifier, result)
+					t.Errorf("Modifier %s- Expected: %d, returned: %d", e.Name, e.SkillModifier, result)
 				}
 			}
 		})
 	}
 }
 
-
 func TestCharacterCalculateProficiencyBonus(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*Character
-		expected 	int 
+		name      string
+		character *Character
+		expected  int
 	}{
 		{
 			name: "Level 3 character",
-			character: &Character {
+			character: &Character{
 				Level: 3,
 			},
 			expected: 2,
 		},
 		{
 			name: "Level 8 character",
-			character: &Character {
+			character: &Character{
 				Level: 8,
 			},
 			expected: 3,
 		},
 		{
 			name: "Level 9 character",
-			character: &Character {
+			character: &Character{
 				Level: 9,
 			},
 			expected: 4,
 		},
 		{
 			name: "Level 13 character",
-			character: &Character {
+			character: &Character{
 				Level: 13,
 			},
 			expected: 5,
@@ -133,7 +132,7 @@ func TestCharacterCalculateProficiencyBonus(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.character.calculateProficiencyBonusByLevel()
 
-			result :=  tt.character.Proficiency
+			result := tt.character.Proficiency
 			if tt.expected != tt.character.Proficiency {
 				t.Errorf("Proficiency Expected: %d, Returned: %d, Level %d", tt.expected, result, tt.character.Level)
 			}
@@ -143,15 +142,15 @@ func TestCharacterCalculateProficiencyBonus(t *testing.T) {
 
 func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 	tests := []struct {
-		name 		string
-		character 	*Character
-		expected	[]types.Abilities
+		name      string
+		character *Character
+		expected  []types.Abilities
 	}{
 		{
 			name: "Level not high enough",
-			character: &Character {
+			character: &Character{
 				Level: 3,
-				Abilities: []types.Abilities {
+				Abilities: []types.Abilities{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -159,11 +158,11 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
 					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
 				},
-				AbilityScoreImprovement: []types.AbilityScoreImprovementItem {
+				AbilityScoreImprovement: []types.AbilityScoreImprovementItem{
 					{Ability: "Strength", Bonus: 2},
 				},
 			},
-			expected: []types.Abilities {
+			expected: []types.Abilities{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -174,9 +173,9 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 		},
 		{
 			name: "Level 4, one ability increased by two",
-			character: &Character {
+			character: &Character{
 				Level: 4,
-				Abilities: []types.Abilities {
+				Abilities: []types.Abilities{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -184,11 +183,11 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
 					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
 				},
-				AbilityScoreImprovement: []types.AbilityScoreImprovementItem {
+				AbilityScoreImprovement: []types.AbilityScoreImprovementItem{
 					{Ability: "Dexterity", Bonus: 2},
 				},
 			},
-			expected: []types.Abilities {
+			expected: []types.Abilities{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -199,9 +198,9 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 		},
 		{
 			name: "Level 4, two abilities increased by one",
-			character: &Character {
+			character: &Character{
 				Level: 4,
-				Abilities: []types.Abilities {
+				Abilities: []types.Abilities{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -209,12 +208,12 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
 					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
 				},
-				AbilityScoreImprovement: []types.AbilityScoreImprovementItem {
+				AbilityScoreImprovement: []types.AbilityScoreImprovementItem{
 					{Ability: "Dexterity", Bonus: 1},
 					{Ability: "Charisma", Bonus: 1},
 				},
 			},
-			expected: []types.Abilities {
+			expected: []types.Abilities{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 11, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -225,9 +224,9 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 		},
 		{
 			name: "Level 4, two abilities increased by two (failure)",
-			character: &Character {
+			character: &Character{
 				Level: 4,
-				Abilities: []types.Abilities {
+				Abilities: []types.Abilities{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -235,12 +234,12 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
 					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
 				},
-				AbilityScoreImprovement: []types.AbilityScoreImprovementItem {
+				AbilityScoreImprovement: []types.AbilityScoreImprovementItem{
 					{Ability: "Dexterity", Bonus: 2},
 					{Ability: "Charisma", Bonus: 2},
 				},
 			},
-			expected: []types.Abilities {
+			expected: []types.Abilities{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -251,9 +250,9 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 		},
 		{
 			name: "Level 8, one ability increased by two, and two abilities increased by one",
-			character: &Character {
+			character: &Character{
 				Level: 8,
-				Abilities: []types.Abilities {
+				Abilities: []types.Abilities{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -261,13 +260,13 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
 					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
 				},
-				AbilityScoreImprovement: []types.AbilityScoreImprovementItem {
+				AbilityScoreImprovement: []types.AbilityScoreImprovementItem{
 					{Ability: "Dexterity", Bonus: 2},
 					{Ability: "Charisma", Bonus: 1},
 					{Ability: "Wisdom", Bonus: 1},
 				},
 			},
-			expected: []types.Abilities {
+			expected: []types.Abilities{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -278,9 +277,9 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 		},
 		{
 			name: "Level 20, one ability over maximum",
-			character: &Character {
+			character: &Character{
 				Level: 20,
-				Abilities: []types.Abilities {
+				Abilities: []types.Abilities{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -288,7 +287,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
 					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
 				},
-				AbilityScoreImprovement: []types.AbilityScoreImprovementItem {
+				AbilityScoreImprovement: []types.AbilityScoreImprovementItem{
 					{Ability: "Dexterity", Bonus: 2},
 					{Ability: "Dexterity", Bonus: 2},
 					{Ability: "Dexterity", Bonus: 2},
@@ -296,7 +295,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Dexterity", Bonus: 2},
 				},
 			},
-			expected: []types.Abilities {
+			expected: []types.Abilities{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 20, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -313,7 +312,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 
 			for i, e := range tt.expected {
 				result := tt.character.Abilities[i]
-				
+
 				if e.Base != result.Base {
 					t.Errorf("Ability Base %s- Expected: %d, Result: %d", e.Name, e.Base, result.Base)
 				}
@@ -324,25 +323,25 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 
 func TestCharacterRecover(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*Character
-		expected	Character
+		name      string
+		character *Character
+		expected  Character
 	}{
 		{
 			name: "Recover Health, Spell Slots, Class Detail Slots",
 			character: &Character{
 				HPCurrent: 0,
-				HPMax: 16,
+				HPMax:     16,
 				ClassName: "character",
-				SpellSlots: []types.SpellSlot {
+				SpellSlots: []types.SpellSlot{
 					{Level: 1, Slot: 4, Available: 1},
 					{Level: 2, Slot: 2, Available: 0},
 				},
 			},
 			expected: Character{
 				HPCurrent: 16,
-				HPMax: 16,
-				SpellSlots: []types.SpellSlot {
+				HPMax:     16,
+				SpellSlots: []types.SpellSlot{
 					{Level: 1, Slot: 4, Available: 4},
 					{Level: 2, Slot: 2, Available: 2},
 				},
@@ -352,16 +351,16 @@ func TestCharacterRecover(t *testing.T) {
 			name: "Recover Health, Spell Slots, Multiple Class Detail Slots",
 			character: &Character{
 				HPCurrent: 0,
-				HPMax: 16,
-				SpellSlots: []types.SpellSlot {
+				HPMax:     16,
+				SpellSlots: []types.SpellSlot{
 					{Level: 1, Slot: 4, Available: 1},
 					{Level: 2, Slot: 2, Available: 0},
 				},
 			},
 			expected: Character{
 				HPCurrent: 16,
-				HPMax: 16,
-				SpellSlots: []types.SpellSlot {
+				HPMax:     16,
+				SpellSlots: []types.SpellSlot{
 					{Level: 1, Slot: 4, Available: 4},
 					{Level: 2, Slot: 2, Available: 2},
 				},
@@ -404,41 +403,41 @@ func TestCharacterRecover(t *testing.T) {
 
 func TestCharacterUseSpellSlot(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*Character
-		level		int
-		expected	[]types.SpellSlot
+		name      string
+		character *Character
+		level     int
+		expected  []types.SpellSlot
 	}{
 		{
-			name: "Use Level 1 Slot",
+			name:  "Use Level 1 Slot",
 			level: 1,
-			character: &Character {
-				SpellSlots: []types.SpellSlot {
+			character: &Character{
+				SpellSlots: []types.SpellSlot{
 					{Level: 1, Slot: 6, Available: 6},
 					{Level: 2, Slot: 3, Available: 3},
 				},
 			},
-			expected: []types.SpellSlot {
+			expected: []types.SpellSlot{
 				{Level: 1, Slot: 6, Available: 5},
 				{Level: 2, Slot: 3, Available: 3},
 			},
 		},
 		{
-			name: "All Slots Used",
+			name:  "All Slots Used",
 			level: 1,
-			character: &Character {
-				SpellSlots: []types.SpellSlot {
+			character: &Character{
+				SpellSlots: []types.SpellSlot{
 					{Level: 1, Slot: 6, Available: 0},
 					{Level: 2, Slot: 3, Available: 3},
 				},
 			},
-			expected: []types.SpellSlot {
+			expected: []types.SpellSlot{
 				{Level: 1, Slot: 6, Available: 0},
 				{Level: 2, Slot: 3, Available: 3},
 			},
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.character.UseSpellSlot(tt.level)
@@ -456,27 +455,27 @@ func TestCharacterUseSpellSlot(t *testing.T) {
 
 func TestCharacterRecoverSpellSlots(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*Character
-		level		int
-		expected	[]types.SpellSlot
+		name      string
+		character *Character
+		level     int
+		expected  []types.SpellSlot
 	}{
 		{
-			name: "Recover Level 1 Slot",
+			name:  "Recover Level 1 Slot",
 			level: 1,
-			character: &Character {
-				SpellSlots: []types.SpellSlot {
+			character: &Character{
+				SpellSlots: []types.SpellSlot{
 					{Level: 1, Slot: 6, Available: 3},
 					{Level: 2, Slot: 3, Available: 3},
 				},
 			},
-			expected: []types.SpellSlot {
+			expected: []types.SpellSlot{
 				{Level: 1, Slot: 6, Available: 6},
 				{Level: 2, Slot: 3, Available: 3},
 			},
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.character.RecoverSpellSlots(tt.level)
@@ -494,33 +493,33 @@ func TestCharacterRecoverSpellSlots(t *testing.T) {
 
 func TestCharacterDamageCharacter(t *testing.T) {
 	tests := []struct {
-		name		string
-		damage		int
-		character	*Character
-		expected	Character
+		name      string
+		damage    int
+		character *Character
+		expected  Character
 	}{
 		{
-			name: "Some Damage",
+			name:   "Some Damage",
 			damage: 5,
-			character: &Character {
+			character: &Character{
 				HPCurrent: 16,
-				HPMax: 16,
+				HPMax:     16,
 			},
-			expected: Character {
+			expected: Character{
 				HPCurrent: 11,
-				HPMax: 16,
+				HPMax:     16,
 			},
 		},
 		{
-			name: "Damage Below Zero",
+			name:   "Damage Below Zero",
 			damage: 16,
-			character: &Character {
+			character: &Character{
 				HPCurrent: 11,
-				HPMax: 16,
+				HPMax:     16,
 			},
-			expected: Character {
+			expected: Character{
 				HPCurrent: 0,
-				HPMax: 16,
+				HPMax:     16,
 			},
 		},
 	}
@@ -545,33 +544,33 @@ func TestCharacterDamageCharacter(t *testing.T) {
 
 func TestCharacterHealCharacter(t *testing.T) {
 	tests := []struct {
-		name			string
-		healthRecovered	int
-		character		*Character
-		expected		Character
+		name            string
+		healthRecovered int
+		character       *Character
+		expected        Character
 	}{
 		{
-			name: "Some Recovery",
+			name:            "Some Recovery",
 			healthRecovered: 4,
-			character: &Character {
+			character: &Character{
 				HPCurrent: 11,
-				HPMax: 16,
+				HPMax:     16,
 			},
-			expected: Character {
+			expected: Character{
 				HPCurrent: 15,
-				HPMax: 16,
+				HPMax:     16,
 			},
 		},
 		{
-			name: "Greater Than Full Recovery",
+			name:            "Greater Than Full Recovery",
 			healthRecovered: 16,
-			character: &Character {
+			character: &Character{
 				HPCurrent: 11,
-				HPMax: 16,
+				HPMax:     16,
 			},
-			expected: Character {
+			expected: Character{
 				HPCurrent: 16,
-				HPMax: 16,
+				HPMax:     16,
 			},
 		},
 	}
@@ -596,31 +595,31 @@ func TestCharacterHealCharacter(t *testing.T) {
 
 func TestCharacterAddEquipment(t *testing.T) {
 	tests := []struct {
-		name			string
-		character		*Character
-		equipmentType 	string
-		equipmentName	string
-		expected		types.WornEquipment
+		name          string
+		character     *Character
+		equipmentType string
+		equipmentName string
+		expected      types.WornEquipment
 	}{
 		{
-			name: "Add Cloak",
-			character: &Character {},
+			name:          "Add Cloak",
+			character:     &Character{},
 			equipmentType: "cloak",
 			equipmentName: "cloak of rad shit",
-			expected: types.WornEquipment {
+			expected: types.WornEquipment{
 				Cloak: "cloak of rad shit",
 			},
 		},
 		{
 			name: "EquipmentType not valid",
-			character: &Character {
-				WornEquipment: types.WornEquipment {
+			character: &Character{
+				WornEquipment: types.WornEquipment{
 					Cloak: "cloak of rad shit",
 				},
 			},
 			equipmentType: "cloakwef",
 			equipmentName: "cloak of cool shit",
-			expected: types.WornEquipment {
+			expected: types.WornEquipment{
 				Cloak: "cloak of rad shit",
 			},
 		},
@@ -630,7 +629,7 @@ func TestCharacterAddEquipment(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.character.AddEquipment(tt.equipmentType, tt.equipmentName)
 
-			e := tt.expected.Cloak 
+			e := tt.expected.Cloak
 			result := tt.character.WornEquipment.Cloak
 
 			if e != result {
@@ -642,53 +641,53 @@ func TestCharacterAddEquipment(t *testing.T) {
 
 func TestCharacterRemoveItemFromBackpack(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*Character
-		itemName	string
-		quantity	int
-		expected	[]types.BackpackItem
+		name      string
+		character *Character
+		itemName  string
+		quantity  int
+		expected  []types.BackpackItem
 	}{
 		{
-			name: "Remove 1 Item",
+			name:     "Remove 1 Item",
 			itemName: "soap",
 			quantity: 5,
-			character: &Character {
-				Backpack: []types.BackpackItem {
+			character: &Character{
+				Backpack: []types.BackpackItem{
 					{Name: "soap", Quantity: 50},
 					{Name: "gold", Quantity: 5},
 				},
 			},
-			expected: []types.BackpackItem {
+			expected: []types.BackpackItem{
 				{Name: "soap", Quantity: 45},
 				{Name: "gold", Quantity: 5},
 			},
 		},
 		{
-			name: "Remove More Than Available Quantity",
+			name:     "Remove More Than Available Quantity",
 			itemName: "soap",
 			quantity: 51,
-			character: &Character {
-				Backpack: []types.BackpackItem {
+			character: &Character{
+				Backpack: []types.BackpackItem{
 					{Name: "soap", Quantity: 51},
 					{Name: "gold", Quantity: 5},
 				},
 			},
-			expected: []types.BackpackItem {
+			expected: []types.BackpackItem{
 				{Name: "soap", Quantity: 0},
 				{Name: "gold", Quantity: 5},
 			},
 		},
 		{
-			name: "Item Not In Backpack",
+			name:     "Item Not In Backpack",
 			itemName: "soapehrgerg",
 			quantity: 50,
-			character: &Character {
-				Backpack: []types.BackpackItem {
+			character: &Character{
+				Backpack: []types.BackpackItem{
 					{Name: "soap", Quantity: 50},
 					{Name: "gold", Quantity: 5},
 				},
 			},
-			expected: []types.BackpackItem {
+			expected: []types.BackpackItem{
 				{Name: "soap", Quantity: 50},
 				{Name: "gold", Quantity: 5},
 			},
@@ -716,37 +715,37 @@ func TestCharacterRemoveItemFromBackpack(t *testing.T) {
 
 func TestCharacterAddItemToBackpack(t *testing.T) {
 	tests := []struct {
-		name		string
-		character	*Character
-		itemName	string
-		quantity	int
-		expected	[]types.BackpackItem
+		name      string
+		character *Character
+		itemName  string
+		quantity  int
+		expected  []types.BackpackItem
 	}{
 		{
-			name: "Add 1 New Item",
+			name:     "Add 1 New Item",
 			itemName: "soap",
 			quantity: 5,
-			character: &Character {
-				Backpack: []types.BackpackItem {
+			character: &Character{
+				Backpack: []types.BackpackItem{
 					{Name: "gold", Quantity: 5},
 				},
 			},
-			expected: []types.BackpackItem {
+			expected: []types.BackpackItem{
 				{Name: "gold", Quantity: 5},
 				{Name: "soap", Quantity: 5},
 			},
 		},
 		{
-			name: "Add 1 Existing Item",
+			name:     "Add 1 Existing Item",
 			itemName: "soap",
 			quantity: 5,
-			character: &Character {
-				Backpack: []types.BackpackItem {
+			character: &Character{
+				Backpack: []types.BackpackItem{
 					{Name: "gold", Quantity: 5},
 					{Name: "soap", Quantity: 5},
 				},
 			},
-			expected: []types.BackpackItem {
+			expected: []types.BackpackItem{
 				{Name: "gold", Quantity: 5},
 				{Name: "soap", Quantity: 10},
 			},
@@ -771,4 +770,3 @@ func TestCharacterAddItemToBackpack(t *testing.T) {
 		})
 	}
 }
-

@@ -9,29 +9,29 @@ import (
 
 func TestBardExecuteExpertise(t *testing.T) {
 	tests := []struct {
-		name 			string
-		character 		*models.Character
-		bard			*Bard
-		expected 		[]types.Skill
+		name      string
+		character *models.Character
+		bard      *Bard
+		expected  []types.Skill
 	}{
 		{
 			name: "Below level requirement",
-			character: &models.Character {
-				Level: 2,
+			character: &models.Character{
+				Level:       2,
 				Proficiency: 2,
-				Skills: []types.Skill {
+				Skills: []types.Skill{
 					{Name: "dexterity", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
 				},
 			},
-			bard: &Bard {
-				SkillProficienciesToDouble: []string {
+			bard: &Bard{
+				SkillProficienciesToDouble: []string{
 					"persuasion",
 					"deception",
 				},
 			},
-			expected: []types.Skill {
+			expected: []types.Skill{
 				{Name: "dexterity", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 4, Proficient: false},
 				{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -39,22 +39,22 @@ func TestBardExecuteExpertise(t *testing.T) {
 		},
 		{
 			name: "Level 3 - two skill proficiencies doubled",
-			character: &models.Character {
-				Level: 3,
+			character: &models.Character{
+				Level:       3,
 				Proficiency: 2,
-				Skills: []types.Skill {
+				Skills: []types.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
 				},
 			},
-			bard: &Bard {
-				SkillProficienciesToDouble: []string {
+			bard: &Bard{
+				SkillProficienciesToDouble: []string{
 					"persuasion",
 					"deception",
 				},
 			},
-			expected: []types.Skill {
+			expected: []types.Skill{
 				{Name: "nature", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 6, Proficient: false},
 				{Name: "deception", SkillModifier: 5, Proficient: false},
@@ -62,23 +62,23 @@ func TestBardExecuteExpertise(t *testing.T) {
 		},
 		{
 			name: "Level 3 - two skill proficiencies doubled, one removed",
-			character: &models.Character {
-				Level: 3,
+			character: &models.Character{
+				Level:       3,
 				Proficiency: 2,
-				Skills: []types.Skill {
+				Skills: []types.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
 				},
 			},
-			bard: &Bard {
-				SkillProficienciesToDouble: []string {
+			bard: &Bard{
+				SkillProficienciesToDouble: []string{
 					"persuasion",
 					"deception",
 					"nature",
 				},
 			},
-			expected: []types.Skill {
+			expected: []types.Skill{
 				{Name: "nature", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 6, Proficient: false},
 				{Name: "deception", SkillModifier: 5, Proficient: false},
@@ -86,10 +86,10 @@ func TestBardExecuteExpertise(t *testing.T) {
 		},
 		{
 			name: "Level 10, four skill proficiencies doubled",
-			character: &models.Character {
-				Level: 10,
+			character: &models.Character{
+				Level:       10,
 				Proficiency: 4,
-				Skills: []types.Skill {
+				Skills: []types.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -97,15 +97,15 @@ func TestBardExecuteExpertise(t *testing.T) {
 					{Name: "survival", SkillModifier: 4, Proficient: false},
 				},
 			},
-			bard: &Bard {
-				SkillProficienciesToDouble: []string {
+			bard: &Bard{
+				SkillProficienciesToDouble: []string{
 					"persuasion",
 					"deception",
 					"nature",
 					"religion",
 				},
 			},
-			expected: []types.Skill {
+			expected: []types.Skill{
 				{Name: "nature", SkillModifier: 9, Proficient: false},
 				{Name: "persuasion", SkillModifier: 8, Proficient: false},
 				{Name: "deception", SkillModifier: 7, Proficient: false},
@@ -115,7 +115,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 		},
 	}
 
-	for  _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.bard.executeExpertise(tt.character)
 
@@ -140,40 +140,40 @@ func TestBardExecuteExpertise(t *testing.T) {
 
 func TestBardExecuteJackOfAllTrades(t *testing.T) {
 	tests := []struct {
-		name        string
-		character   *models.Character
-		bard		*Bard
-		expected 	[]types.Skill
+		name      string
+		character *models.Character
+		bard      *Bard
+		expected  []types.Skill
 	}{
 		{
 			name: "Level 1 character - no bonus applied",
-			character: &models.Character {
+			character: &models.Character{
 				Level:       1,
 				Proficiency: 2,
-				Skills: []types.Skill {
+				Skills: []types.Skill{
 					{SkillModifier: 5, Proficient: false},
 					{SkillModifier: 3, Proficient: false},
 				},
 			},
 			bard: &Bard{},
-			expected: []types.Skill {
+			expected: []types.Skill{
 				{SkillModifier: 5, Proficient: false},
 				{SkillModifier: 3, Proficient: false},
 			},
 		},
 		{
 			name: "Level 2 character with non-proficient skills - bonus applied",
-			character: &models.Character {
+			character: &models.Character{
 				Level:       2,
 				Proficiency: 2,
-				Skills: []types.Skill {
+				Skills: []types.Skill{
 					{SkillModifier: 5, Proficient: false},
 					{SkillModifier: 3, Proficient: false},
 					{SkillModifier: 1, Proficient: false},
 				},
 			},
 			bard: &Bard{},
-			expected: []types.Skill {
+			expected: []types.Skill{
 				{SkillModifier: 6, Proficient: false},
 				{SkillModifier: 4, Proficient: false},
 				{SkillModifier: 2, Proficient: false},
@@ -206,24 +206,24 @@ func TestBardExecuteJackOfAllTrades(t *testing.T) {
 
 func TestBardUseClassSlots(t *testing.T) {
 	tests := []struct {
-		name		string
-		tokenName 	string
-		character 	*models.Character
-		bard		*Bard
-		expected	BardicInspiration
+		name      string
+		tokenName string
+		character *models.Character
+		bard      *Bard
+		expected  BardicInspiration
 	}{
 		{
-			name: "One use, single slot",
+			name:      "One use, single slot",
 			tokenName: "bardic inspiration",
 			character: &models.Character{},
-			bard: &Bard {
-				BardicInspiration: BardicInspiration {
-					Slot: 4,
+			bard: &Bard{
+				BardicInspiration: BardicInspiration{
+					Slot:      4,
 					Available: 4,
 				},
 			},
-			expected: BardicInspiration {
-				Slot: 4,
+			expected: BardicInspiration{
+				Slot:      4,
 				Available: 3,
 			},
 		},
@@ -231,11 +231,11 @@ func TestBardUseClassSlots(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.bard.UseClassTokens(tt.tokenName)	
+			tt.bard.UseClassTokens(tt.tokenName)
 
 			result := tt.bard.BardicInspiration.Available
 			e := tt.expected.Available
-			
+
 			if e != result {
 				t.Errorf("Bardic Inspiration- Expected: %d\nResult: %d", e, result)
 			}
@@ -245,40 +245,40 @@ func TestBardUseClassSlots(t *testing.T) {
 
 func TestBardRecoverClassSlots(t *testing.T) {
 	tests := []struct {
-		name		string
-		tokenName 	string
-		recover 	int
-		character 	*models.Character
-		bard		*Bard
-		expected	BardicInspiration
+		name      string
+		tokenName string
+		recover   int
+		character *models.Character
+		bard      *Bard
+		expected  BardicInspiration
 	}{
 		{
-			name: "Recover by 1",
+			name:      "Recover by 1",
 			tokenName: "bardic inspiration",
-			recover: 1,
-			bard: &Bard {
-				BardicInspiration: BardicInspiration {
-					Slot: 4,
+			recover:   1,
+			bard: &Bard{
+				BardicInspiration: BardicInspiration{
+					Slot:      4,
 					Available: 2,
 				},
 			},
-			expected: BardicInspiration {
-				Slot: 4,
+			expected: BardicInspiration{
+				Slot:      4,
 				Available: 3,
 			},
 		},
 		{
-			name: "Full recover",
+			name:      "Full recover",
 			tokenName: "bardic inspiration",
-			recover: 0,
-			bard: &Bard {
-				BardicInspiration: BardicInspiration {
-					Slot: 4,
+			recover:   0,
+			bard: &Bard{
+				BardicInspiration: BardicInspiration{
+					Slot:      4,
 					Available: 2,
 				},
 			},
-			expected: BardicInspiration {
-				Slot: 4,
+			expected: BardicInspiration{
+				Slot:      4,
 				Available: 4,
 			},
 		},

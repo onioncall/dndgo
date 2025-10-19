@@ -11,25 +11,25 @@ import (
 )
 
 type Ranger struct {
-	Archetype					string							`json:"archetype"`
-	FightingStyle				string							`json:"fighting-style"`
-	FavoredEnemies				[]string						`json:"favored-enemies"`
-	OtherFeatures 				[]models.ClassFeatures			`json:"other-features"`
-	FightingStyleApplied		bool							`json:"-"`
+	Archetype            string                 `json:"archetype"`
+	FightingStyle        string                 `json:"fighting-style"`
+	FavoredEnemies       []string               `json:"favored-enemies"`
+	OtherFeatures        []models.ClassFeatures `json:"other-features"`
+	FightingStyleApplied bool                   `json:"-"`
 }
 
 // Fighting Styles
 const (
-	Archery				string = "archery"
-	Defense				string = "defense"
-	Dueling				string = "dueling"
-	TwoWeaponFighting	string = "two-weapon-fighting"
+	Archery           string = "archery"
+	Defense           string = "defense"
+	Dueling           string = "dueling"
+	TwoWeaponFighting string = "two-weapon-fighting"
 )
 
 // Weapon Ranges
 const (
-	Ranged		string = "ranged"
-	Melee		string = "melee"
+	Ranged string = "ranged"
+	Melee  string = "melee"
 )
 
 func LoadRanger(data []byte) (*Ranger, error) {
@@ -60,9 +60,9 @@ func (r *Ranger) ExecutePreCalculateMethods(c *models.Character) {
 	}
 }
 
-func (r *Ranger) PrintClassDetails(c *models.Character) []string { 
+func (r *Ranger) PrintClassDetails(c *models.Character) []string {
 	s := c.BuildClassDetailsHeader()
-	
+
 	if r.Archetype != "" && c.Level > 3 {
 		archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
 		s = append(s, archetypeHeader)
@@ -99,18 +99,23 @@ func (r *Ranger) PrintClassDetails(c *models.Character) []string {
 // only one of these styles can be selected
 func (r *Ranger) executeFightingStyle(c *models.Character) {
 	if c.Level < 2 {
-		return 
+		return
 	}
 
-	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s", 
+	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s",
 		r.FightingStyle, Archery, Defense, Dueling, TwoWeaponFighting)
 
 	switch r.FightingStyle {
-	case Archery: r.FightingStyleApplied = applyArchery(c)
-	case Defense: r.FightingStyleApplied = applyDefense(c)
-	case Dueling: r.FightingStyleApplied = applyDueling(c)
-	case TwoWeaponFighting: r.FightingStyleApplied = applyTwoWeaponFighting(c)
-	default: logger.HandleInfo(invalidMsg)
+	case Archery:
+		r.FightingStyleApplied = applyArchery(c)
+	case Defense:
+		r.FightingStyleApplied = applyDefense(c)
+	case Dueling:
+		r.FightingStyleApplied = applyDueling(c)
+	case TwoWeaponFighting:
+		r.FightingStyleApplied = applyTwoWeaponFighting(c)
+	default:
+		logger.HandleInfo(invalidMsg)
 	}
 }
 
@@ -138,7 +143,7 @@ func applyDefense(c *models.Character) bool {
 
 // Only to be called from executeFightingStyle
 func applyDueling(c *models.Character) bool {
-	// this is less defined, since it depends on us knowing what weapons are currently 
+	// this is less defined, since it depends on us knowing what weapons are currently
 	// in the characters hand. We'll assume that they have which ever weapon they want
 	// this applied to to be the first one they have, and that it will be equipped in combat.
 	//Maybe later we'll come up with a flag for the weapon being in use or something
@@ -150,7 +155,7 @@ func applyDueling(c *models.Character) bool {
 		isTwoHanded := false
 
 		for _, prop := range weapon.Properties {
-			 if prop == types.WeaponPropertyTwoHanded {
+			if prop == types.WeaponPropertyTwoHanded {
 				isTwoHanded = true
 			}
 		}
@@ -164,15 +169,14 @@ func applyDueling(c *models.Character) bool {
 	return false
 }
 
-
 // Only to be called from executeFightingStyle
 func applyTwoWeaponFighting(c *models.Character) bool {
 	// This is somewhat nuanced, so I'm just going to document how this works for clarity
 	// When dual wielding, there is a primary weapon that must be one handed, and an off hand
-	// weapon that must be one handed and have the "light" property. The primary weapon can be 
-	// light, but does not have to be. The dexterity bonus while dual weilding applies to the 
-	// off hand weapon. For our purposes, we'll consider the first weapon that meets both 
-	// criteria the "secondary" weapon, and the the next one to meet just the one handed criteria 
+	// weapon that must be one handed and have the "light" property. The primary weapon can be
+	// light, but does not have to be. The dexterity bonus while dual weilding applies to the
+	// off hand weapon. For our purposes, we'll consider the first weapon that meets both
+	// criteria the "secondary" weapon, and the the next one to meet just the one handed criteria
 	// the primary. We'll only apply the bonus if both primary and secondary weapons are found
 
 	secondaryWeaponIndex := -1
@@ -195,7 +199,7 @@ func applyTwoWeaponFighting(c *models.Character) bool {
 		if !isOneHanded {
 			continue
 		}
-		
+
 		// We'll take the first secondary weapon that meets these criteria
 		if isOneHanded && isLight && secondaryWeaponIndex == -1 {
 			secondaryWeaponIndex = i
@@ -204,11 +208,11 @@ func applyTwoWeaponFighting(c *models.Character) bool {
 			}
 
 			continue
-		}	
+		}
 
 		// The first weapon that meets this criteria will be considered the primary
 		if isOneHanded {
-			primaryWeaponIndex = i	
+			primaryWeaponIndex = i
 		}
 
 		// Once both are set we don't need to continue looping over weapons
