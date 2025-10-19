@@ -24,12 +24,9 @@ dndgo ctr update (update markdown from existing character.json)
 When in doubt, don't use caps. I haven't done the conversion everywhere to lower case everywhere, so it may cause problems
 
 ## Setting up Character Config
-- copy default-character.json file from the "default-json-configs" directory
-- modify it to your character
-- find your class and copy the file from "default-json-configs" directory
-- modify it to your character
-- move them to your ~/.config/dndgo directory
-- rename files "character.json" and "class.json" respectively
+- run "dndgo ctr init -c <class-name> -n <character-name>
+- modify character details in the ~/.config/dndgo directory
+- if you want your character markdown to be saved to a different file than your config files, you can specify a path in the character.json file. If you do this, make sure that you only specify the path from the home directory (e.g. "dnd/mdfiles", not "~/dnd/mdfiles") or you will create a ~ dir in the home directory. 
 - run "dndgo ctr update" to generate your markdown file
 
 Search Example
