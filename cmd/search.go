@@ -22,20 +22,27 @@ var (
 
 			w, _, err := term.GetSize(int(os.Stdout.Fd()))
 			if err != nil {
-				errLog := fmt.Errorf("Failed to get terminal size: %s", err)
-				logger.HandleError(err, errLog)
+				errMsg := "Failed to get terminal size"
+				logger.HandleInfo(errMsg)
+				panic(fmt.Errorf("%s: %w", errMsg, err))
 			}
 
-			if s != "" {
-				handlers.HandleSpellRequest(s, w)
-			} else if e != "" {
-				handlers.HandleEquipmentRequest(e, w)
-			} else if m != "" {
-				handlers.HandleMonsterRequest(m, w)
-			} else if f != "" {
-				handlers.HandleFeatureRequest(f, w)
+			switch {
+			case s != "":
+				err = handlers.HandleSpellRequest(s, w)
+			case e != "":
+				err = handlers.HandleEquipmentRequest(e, w)
+			case m != "":
+				err = handlers.HandleMonsterRequest(m, w)
+			case f != "":
+				err = handlers.HandleFeatureRequest(f, w)
 			}
 
+			if err != nil {
+				errMsg := "Failed to handle search request"
+				logger.HandleInfo(errMsg)
+				panic(fmt.Errorf("%s: %w", errMsg, err))
+			}
 		},
 	}
 
@@ -48,14 +55,23 @@ var (
 			m, _ := cmd.Flags().GetBool("monster")
 			f, _ := cmd.Flags().GetBool("feature")
 
-			if s {
-				handlers.HandleSpellListRequest()
-			} else if e {
-				handlers.HandleEquipmentListRequest()
-			} else if m {
-				handlers.HandleMonsterListRequest()
-			} else if f {
-				handlers.HandleFeatureListRequest()
+			var err error
+
+			switch {
+			case s:
+				err = handlers.HandleSpellListRequest()
+			case e:
+				err = handlers.HandleEquipmentListRequest()
+			case m:
+				err = handlers.HandleMonsterListRequest()
+			case f:
+				err = handlers.HandleFeatureListRequest()
+			}
+
+			if err != nil {
+				errMsg := "Failed to handle search list request"
+				logger.HandleInfo(errMsg)
+				panic(fmt.Errorf("%s: %w", errMsg, err))
 			}
 		},
 	}

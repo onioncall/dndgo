@@ -35,10 +35,7 @@ const (
 func LoadRanger(data []byte) (*Ranger, error) {
 	var ranger Ranger
 	if err := json.Unmarshal(data, &ranger); err != nil {
-		errLog := fmt.Errorf("Failed to parse class data: %w", err)
-		logger.HandleError(errLog, err)
-
-		return nil, err
+		return &ranger, fmt.Errorf("Failed to parse class data: %w", err)
 	}
 
 	return &ranger, nil

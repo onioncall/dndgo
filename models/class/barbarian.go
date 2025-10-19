@@ -25,10 +25,8 @@ type Rage struct {
 func LoadBarbarian(data []byte) (*Barbarian, error) {
 	var barbarian Barbarian
 	if err := json.Unmarshal(data, &barbarian); err != nil {
-		errLog := fmt.Errorf("Failed to parse class data: %w", err)
-		logger.HandleError(errLog, err)
-
-		return nil, err
+		err = fmt.Errorf("Failed to parse class data: %w", err)
+		panic(err)
 	}
 
 	return &barbarian, nil
