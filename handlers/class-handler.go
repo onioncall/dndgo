@@ -55,7 +55,7 @@ func LoadClass(classType string) (models.Class, error) {
 	return c, nil
 }
 
-func LoadClassTemplate(classType string) (models.IClass, error) {
+func LoadClassTemplate(classType string) (models.Class, error) {
 	templateName := ClassFileMap[classType]
 	if templateName == "" {
 		return nil, fmt.Errorf("Unsupported class '%v'", classType)
