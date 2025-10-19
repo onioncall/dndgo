@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/handlers"
+	"github.com/onioncall/dndgo/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -15,17 +16,23 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "dnd-cli",
+	Use:   "dndgo",
 	Short: "A D&D helper CLI application",
 	Long:  `A CLI application to help with D&D spells, monsters, and character management.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		c, err := handlers.LoadCharacter()
 		if err != nil {
-			err := fmt.Errorf("Failed to load character: %v", err)
-			panic(err)
+			errMsg := "Failed to save character json"
+			logger.HandleInfo(errMsg)
+			panic(fmt.Errorf("%s: %w", errMsg, err))
 		}
 
-		handlers.HandleCharacter(c)
+		err = handlers.HandleCharacter(c)
+		if err != nil {
+			errMsg := "Failed to handle character"
+			logger.HandleInfo(errMsg)
+			panic(fmt.Errorf("%s: %w", errMsg, err))
+		}
 	},
 }
 

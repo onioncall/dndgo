@@ -7,7 +7,6 @@ import (
 	"github.com/onioncall/dndgo/api"
 	"github.com/onioncall/dndgo/api/responses"
 	"github.com/onioncall/dndgo/cli"
-	"github.com/onioncall/dndgo/logger"
 )
 
 type EquipmentRequest api.BaseRequest
@@ -22,10 +21,7 @@ func HandleEquipmentRequest(equipmentQuery string, termWidth int) error {
 
 	e, err := r.GetSingle()
 	if err != nil {
-		logErr := fmt.Errorf("Failed to Handle Equipment Request (single)")
-		logger.HandleError(err, logErr)
-
-		return err
+		return fmt.Errorf("Failed to handle equipment request (%s): %w", equipmentQuery, err)
 	}
 
 	cli.PrintEquipmentSingle(e, termWidth)
@@ -40,10 +36,7 @@ func HandleEquipmentListRequest() error {
 
 	el, err := r.GetList()
 	if err != nil {
-		logErr := fmt.Errorf("Failed to Handle Equipment Request (list)")
-		logger.HandleError(err, logErr)
-
-		return err
+		return fmt.Errorf("Failed to handle equipment request list: %w", err)
 	}
 
 	cli.PrintEquipmentList(el)
@@ -53,10 +46,7 @@ func HandleEquipmentListRequest() error {
 func (s *EquipmentRequest) GetList() (responses.EquipmentList, error) {
 	equipmentList, err := api.ExecuteGetRequest[responses.EquipmentList](EquipmentType, "")
 	if err != nil {
-		logErr := fmt.Errorf("Failed to search Equipment (list)")
-		logger.HandleError(err, logErr)
-
-		return equipmentList, err
+		return equipmentList, fmt.Errorf("Failed to get equipment request list: %w", err)
 	}
 
 	return equipmentList, nil
@@ -68,10 +58,7 @@ func (e *EquipmentRequest) GetSingle() (responses.Equipment, error) {
 	equipment := responses.Equipment{}
 	equipment, err := api.ExecuteGetRequest[responses.Equipment](EquipmentType, e.Name)
 	if err != nil {
-		logErr := fmt.Errorf("Failed to search Equipment (single): %s", e.Name)
-		logger.HandleError(err, logErr)
-
-		return equipment, err
+		return equipment, fmt.Errorf("Failed to get equipment (%s): %w", e.Name, err)
 	}
 
 	return equipment, nil

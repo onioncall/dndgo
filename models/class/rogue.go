@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/onioncall/dndgo/logger"
 	"github.com/onioncall/dndgo/models"
 )
 
@@ -15,10 +14,7 @@ type Rogue struct {
 func LoadRogue(data []byte) (*Rogue, error) {
 	var ranger Rogue
 	if err := json.Unmarshal(data, &ranger); err != nil {
-		errLog := fmt.Errorf("Failed to parse class data: %w", err)
-		logger.HandleError(errLog, err)
-
-		return nil, err
+		return &ranger, fmt.Errorf("Failed to parse class data: %w", err)
 	}
 
 	return &ranger, nil

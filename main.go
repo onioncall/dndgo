@@ -10,7 +10,7 @@ import (
 
 func main() {
 	logger.NewLogger()
-	defer logger.LogErrors()
+	defer logger.HandleLogs()
 
 	if err := cmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)

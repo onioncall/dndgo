@@ -7,7 +7,6 @@ import (
 	"github.com/onioncall/dndgo/api"
 	"github.com/onioncall/dndgo/api/responses"
 	"github.com/onioncall/dndgo/cli"
-	"github.com/onioncall/dndgo/logger"
 )
 
 type MonsterRequest api.BaseRequest
@@ -22,10 +21,7 @@ func HandleMonsterRequest(monsterQuery string, termWidth int) error {
 
 	m, err := r.GetSingle()
 	if err != nil {
-		logErr := fmt.Errorf("Failed to Handle Monster Request (single)")
-		logger.HandleError(err, logErr)
-
-		return err
+		return fmt.Errorf("Failed to handle monster request (%s): %w", monsterQuery, err)
 	}
 
 	cli.PrintMonsterSingle(m, termWidth)
@@ -40,10 +36,7 @@ func HandleMonsterListRequest() error {
 
 	ml, err := r.GetList()
 	if err != nil {
-		logErr := fmt.Errorf("Failed to Handle Monster Request (list)")
-		logger.HandleError(err, logErr)
-
-		return err
+		return fmt.Errorf("Failed to handle monster request list: %w", err)
 	}
 
 	cli.PrintMonsterList(ml)
@@ -53,10 +46,7 @@ func HandleMonsterListRequest() error {
 func (m *MonsterRequest) GetList() (responses.MonsterList, error) {
 	monsterList, err := api.ExecuteGetRequest[responses.MonsterList](MonsterType, "")
 	if err != nil {
-		logErr := fmt.Errorf("Failed to search Monster (list)")
-		logger.HandleError(err, logErr)
-
-		return monsterList, err
+		return monsterList, fmt.Errorf("Failed to get monster list: %w", err)
 	}
 
 	return monsterList, nil
@@ -67,10 +57,7 @@ func (m *MonsterRequest) GetSingle() (responses.Monster, error) {
 
 	monster, err := api.ExecuteGetRequest[responses.Monster](MonsterType, m.Name)
 	if err != nil {
-		logErr := fmt.Errorf("Failed to search Monster (single): %s", m.Name)
-		logger.HandleError(err, logErr)
-
-		return monster, err
+		return monster, fmt.Errorf("Failed to get monster (%s): %w", m.Name, err)
 	}
 
 	return monster, nil

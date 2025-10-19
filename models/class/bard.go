@@ -25,10 +25,7 @@ type BardicInspiration struct {
 func LoadBard(data []byte) (*Bard, error) {
 	var bard Bard
 	if err := json.Unmarshal(data, &bard); err != nil {
-		errLog := fmt.Errorf("Failed to parse class data: %w", err)
-		logger.HandleError(errLog, err)
-
-		return nil, err
+		return &bard, fmt.Errorf("Failed to parse class data: %w", err)
 	}
 
 	return &bard, nil
