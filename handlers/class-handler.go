@@ -61,8 +61,7 @@ func LoadClassTemplate(classType string) (models.IClass, error) {
 		return nil, fmt.Errorf("Unsupported class '%v'", classType)
 	}
 
-	filePath := filepath.Join("default-json-configs", templateName)
-	fileData, err := defaultjsonconfigs.Content.ReadFile(filePath)
+	fileData, err := defaultjsonconfigs.Content.ReadFile(templateName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read template class file: %w", err)
 	}
