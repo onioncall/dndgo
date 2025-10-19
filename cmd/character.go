@@ -2,9 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
-	defaultjsonconfigs "github.com/onioncall/dndgo/default-json-configs"
 	"github.com/onioncall/dndgo/handlers"
 	"github.com/onioncall/dndgo/logger"
 	"github.com/spf13/cobra"
@@ -181,43 +179,28 @@ var (
 		Short: "Initializes a new character on this machine",
 		Run: func(cmd *cobra.Command, args []string) {
 			c, _ := cmd.Flags().GetString("class")
+			n, _ := cmd.Flags().GetString("name")
 
-			var templateName string
-			switch c {
-			case "bard":
-				templateName = "bard-class.json"
-			case "barbarian":
-				templateName = "barbarian-class.json"
-			case "ranger":
-				templateName = "default-ranger.json"
-			default:
-				panic(fmt.Sprintf("Unsupported class '%v'", c))
-			}
-
-			classBytes, err := defaultjsonconfigs.Content.ReadFile(fmt.Sprintf("default-json-configs/%v", templateName))
+			character, err := handlers.LoadCharacterTemplate(n)
 			if err != nil {
-				panic(fmt.Errorf("Failed to read content of %v: %w", templateName, err))
+				panic(fmt.Errorf("Failed to load character template: %w", err))
 			}
-			charBytes, err := defaultjsonconfigs.Content.ReadFile("default-json-configs/default-character.json")
+			handlers.SaveCharacterJson(character)
 			if err != nil {
-				panic(fmt.Errorf("Failed to read content of %v: %w", templateName, err))
+				panic(fmt.Errorf("Failed to save new character data: %w", err))
 			}
 
-			dirname := "$HOME/.config/dndgo"
-			classFile := fmt.Sprintf("%v/class.json", dirname)
-			charFile := fmt.Sprintf("%v/character.json", dirname)
-
-			if err = os.MkdirAll(classFile, 0755); err != nil {
-				panic(fmt.Errorf("Failed to create dir %v: %w", dirname, err))
+			if c != "" {
+				class, err := handlers.LoadClassTemplate(c)
+				if err != nil {
+					panic(fmt.Errorf("Failed to load character class template: %w", err))
+				}
+				err = handlers.SaveClassHandler(class)
+				if err != nil {
+					panic(fmt.Errorf("Failed to save new character class data: %w", err))
+				}
 			}
 
-			if err = os.WriteFile(classFile, classBytes, 0655); err != nil {
-				panic(fmt.Errorf("Failed to create dir %v: %w", classFile, err))
-			}
-
-			if err = os.WriteFile(charFile, charBytes, 0655); err != nil {
-				panic(fmt.Errorf("Failed to write file %v: %w", charFile, err))
-			}
 		},
 	}
 )
@@ -251,4 +234,6 @@ func init() {
 	recoverCmd.Flags().IntP("quantity", "q", 0, "Recover the quantity of something")
 
 	initCmd.Flags().StringP("class", "c", "", "Name of character class")
+	initCmd.Flags().StringP("name", "n", "", "Name of character")
+	initCmd.MarkFlagRequired("name")
 }
