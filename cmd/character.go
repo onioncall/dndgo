@@ -33,7 +33,7 @@ var (
 				err := fmt.Errorf("Failed to load character: %v", err)
 				panic(err)
 			}
-			
+
 			if l != "" {
 				c.AddLanguage(l)
 			}
@@ -43,7 +43,7 @@ var (
 					return
 				}
 
-				c.AddEquipment(e, n) 
+				c.AddEquipment(e, n)
 			}
 			if bp != "" {
 				if q <= 0 {
@@ -54,15 +54,15 @@ var (
 				c.AddItemToPack(bp, q)
 			}
 			if il {
-				// c.AddLevel()				
+				// c.AddLevel()
 			}
 			if ss > 0 {
 				// add spell slot for level
-			} 
+			}
 			if s != "" {
 				handlers.AddSpell(c, s)
 			}
-			
+
 			handlers.SaveCharacterJson(c)
 			handlers.SaveClassHandler(c.Class)
 			handlers.HandleCharacter(c)
@@ -85,8 +85,8 @@ var (
 			if hp > 0 {
 				c.DamageCharacter(hp)
 			} else if u > 0 {
-				c.UseSpellSlot(u);
-			} 
+				c.UseSpellSlot(u)
+			}
 
 			handlers.SaveCharacterJson(c)
 			handlers.SaveClassHandler(c.Class)
@@ -131,9 +131,9 @@ var (
 
 				c.RemoveItemFromPack(bp, q)
 			} else if s > 0 {
-				c.UseSpellSlot(s);
+				c.UseSpellSlot(s)
 			} else if ct != "" {
-				c.UseClassTokens(ct)	
+				c.UseClassTokens(ct)
 			}
 
 			handlers.SaveCharacterJson(c)
@@ -161,7 +161,7 @@ var (
 			if a {
 				c.Recover()
 			} else if ss > 0 {
-				c.RecoverSpellSlots(ss)	
+				c.RecoverSpellSlots(ss)
 			} else if hp > 0 {
 				c.HealCharacter(hp)
 			} else if ct != "" {
@@ -173,10 +173,40 @@ var (
 			handlers.HandleCharacter(c)
 		},
 	}
+
+	initCmd = &cobra.Command{
+		Use:   "init",
+		Short: "Initializes a new character on this machine",
+		Run: func(cmd *cobra.Command, args []string) {
+			c, _ := cmd.Flags().GetString("class")
+			n, _ := cmd.Flags().GetString("name")
+
+			character, err := handlers.LoadCharacterTemplate(n, c)
+			if err != nil {
+				panic(fmt.Errorf("Failed to load character template: %w", err))
+			}
+			handlers.SaveCharacterJson(character)
+			if err != nil {
+				panic(fmt.Errorf("Failed to save new character data: %w", err))
+			}
+
+			if c != "" {
+				class, err := handlers.LoadClassTemplate(c)
+				if err != nil {
+					panic(fmt.Errorf("Failed to load character class template: %w", err))
+				}
+				err = handlers.SaveClassHandler(class)
+				if err != nil {
+					panic(fmt.Errorf("Failed to save new character class data: %w", err))
+				}
+			}
+
+		},
+	}
 )
 
 func init() {
-	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd)
+	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd, initCmd)
 
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
 	addCmd.Flags().StringP("language", "l", "", "Language to add")
@@ -184,8 +214,8 @@ func init() {
 	addCmd.Flags().IntP("spell-slots", "s", 0, "Increase spell-slot max capacity by level")
 	addCmd.Flags().StringP("spell", "x", "", "Add spell to list of character spells")
 	addCmd.Flags().StringP("backpack", "b", "", "Item to add to backpack (use -q to specify quantity)")
-	addCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
-	addCmd.Flags().StringP("name", "n", "", "Name of equipment to add") 
+	addCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
+	addCmd.Flags().StringP("name", "n", "", "Name of equipment to add")
 
 	removeCmd.Flags().StringP("language", "l", "", "Language to remove")
 	removeCmd.Flags().StringP("weapon", "w", "", "Weapon to remove")
@@ -194,7 +224,7 @@ func init() {
 
 	useCmd.Flags().IntP("spell-slots", "s", 0, "Use spell-slot by level")
 	useCmd.Flags().StringP("backpack", "b", "", "Use item from backpack")
-	useCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something") 
+	useCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
 	useCmd.Flags().StringP("class-tokens", "c", "any", "Use class-tokens by token name")
 
 	recoverCmd.Flags().IntP("spell-slots", "s", 0, "Recover spell-slot by level")
@@ -202,4 +232,8 @@ func init() {
 	recoverCmd.Flags().IntP("hitpoints", "p", 0, "Recover hitpoints")
 	recoverCmd.Flags().StringP("class-tokens", "c", "all", "Recover class-tokens by token name")
 	recoverCmd.Flags().IntP("quantity", "q", 0, "Recover the quantity of something")
+
+	initCmd.Flags().StringP("class", "c", "", "Name of character class")
+	initCmd.Flags().StringP("name", "n", "", "Name of character")
+	initCmd.MarkFlagRequired("name")
 }

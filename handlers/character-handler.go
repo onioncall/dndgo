@@ -7,16 +7,17 @@ import (
 	"path/filepath"
 	"sort"
 
+	defaultjsonconfigs "github.com/onioncall/dndgo/default-json-configs"
 	"github.com/onioncall/dndgo/logger"
 	"github.com/onioncall/dndgo/models"
 	"github.com/onioncall/dndgo/types"
 )
 
 const (
-	create 	string = "create"
-	update 	string = "update"
-	add		string = "add"
-	remove	string = "remove"
+	create   string = "create"
+	update   string = "update"
+	add      string = "add"
+	remove   string = "remove"
 	backpack string = "backpack"
 )
 
@@ -36,8 +37,8 @@ func HandleCharacter(c *models.Character) {
 }
 
 func AddSpell(c *models.Character, spellQuery string) {
-	r := SpellRequest {
-		Name: spellQuery,
+	r := SpellRequest{
+		Name:     spellQuery,
 		PathType: SpellType,
 	}
 
@@ -53,11 +54,11 @@ func AddSpell(c *models.Character, spellQuery string) {
 		caltrop = true
 	}
 
-	cs := types.CharacterSpell {
+	cs := types.CharacterSpell{
 		IsCaltrop: caltrop,
 		SlotLevel: s.Level,
-		IsRitual: s.Ritual,
-		Name: s.Name,
+		IsRitual:  s.Ritual,
+		Name:      s.Name,
 	}
 
 	c.Spells = append(c.Spells, cs)
@@ -106,26 +107,46 @@ func LoadCharacter() (*models.Character, error) {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return nil, fmt.Errorf("character file not found at %s: %w", configPath, err)
 	}
-	
+
 	fileData, err := os.ReadFile(configPath)
 	if err != nil {
 		fmt.Println(err)
 		return nil, fmt.Errorf("failed to read character file: %w", err)
 	}
-	
+
 	var character models.Character
 	if err := json.Unmarshal(fileData, &character); err != nil {
 		fmt.Println(err)
 		return nil, fmt.Errorf("failed to parse character data: %w", err)
 	}
 
-	class, err := LoadClass(character.ClassName)
-	if err != nil {
-		fmt.Println(err)
-		return nil, fmt.Errorf("failed to load class file: %w", err)
+	if character.ClassName != "" {
+		class, err := LoadClass(character.ClassName)
+		if err != nil {
+			fmt.Println(err)
+			return nil, fmt.Errorf("failed to load class file: %w", err)
+		}
+
+		character.Class = class
 	}
-	
-	character.Class = class
+
+	return &character, nil
+}
+
+func LoadCharacterTemplate(characterName string, className string) (*models.Character, error) {
+	filePath := "default-character.json"
+	fileData, err := defaultjsonconfigs.Content.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read template character file: %w", err)
+	}
+
+	var character models.Character
+	if err := json.Unmarshal(fileData, &character); err != nil {
+		fmt.Println(err)
+		return nil, fmt.Errorf("failed to parse character data: %w", err)
+	}
+	character.Name = characterName
+	character.ClassName = className
 
 	return &character, nil
 }
@@ -162,10 +183,10 @@ func SaveCharacterMarkdown(res string, path string) {
 }
 
 func ClearFile(filePath string) error {
-    err := os.WriteFile(filePath, []byte{}, 0644)
-    if err != nil {
-        return fmt.Errorf("failed to clear file: %w", err)
-    }
-    
-    return nil
+	err := os.WriteFile(filePath, []byte{}, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to clear file: %w", err)
+	}
+
+	return nil
 }
