@@ -181,7 +181,7 @@ var (
 			c, _ := cmd.Flags().GetString("class")
 			n, _ := cmd.Flags().GetString("name")
 
-			character, err := handlers.LoadCharacterTemplate(n)
+			character, err := handlers.LoadCharacterTemplate(n, c)
 			if err != nil {
 				panic(fmt.Errorf("Failed to load character template: %w", err))
 			}

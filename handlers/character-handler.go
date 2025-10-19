@@ -133,7 +133,7 @@ func LoadCharacter() (*models.Character, error) {
 	return &character, nil
 }
 
-func LoadCharacterTemplate(characterName string) (*models.Character, error) {
+func LoadCharacterTemplate(characterName string, className string) (*models.Character, error) {
 	filePath := "default-character.json"
 	fileData, err := defaultjsonconfigs.Content.ReadFile(filePath)
 	if err != nil {
@@ -146,6 +146,7 @@ func LoadCharacterTemplate(characterName string) (*models.Character, error) {
 		return nil, fmt.Errorf("failed to parse character data: %w", err)
 	}
 	character.Name = characterName
+	character.ClassName = className
 
 	return &character, nil
 }
