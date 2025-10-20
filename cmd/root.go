@@ -22,9 +22,8 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		c, err := handlers.LoadCharacter()
 		if err != nil {
-			errMsg := "Failed to save character json"
-			logger.HandleInfo(errMsg)
-			panic(fmt.Errorf("%s: %w", errMsg, err))
+			logger.HandleInfo("Failed to load character data")
+			panic(err)
 		}
 
 		err = handlers.HandleCharacter(c)
@@ -33,6 +32,8 @@ var rootCmd = &cobra.Command{
 			logger.HandleInfo(errMsg)
 			panic(fmt.Errorf("%s: %w", errMsg, err))
 		}
+
+		logger.HandleInfo("Character Update Successful")
 	},
 }
 

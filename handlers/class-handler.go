@@ -89,7 +89,6 @@ func SaveClassHandler(c models.Class) error {
 		return fmt.Errorf("Error writing character to file: %w", err)
 	}
 
-	fmt.Printf("Class json saved at: %s\n", filePath)
 	return nil
 }
 
