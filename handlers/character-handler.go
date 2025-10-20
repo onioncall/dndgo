@@ -74,6 +74,16 @@ func AddSpell(c *models.Character, spellQuery string) error {
 	return nil
 }
 
+func GetConfigPath() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("error getting home directory: %w", err)
+	}
+
+	configDir := filepath.Join(homeDir, ".config", "dndgo")
+	return configDir, nil
+}
+
 func SaveCharacterJson(c *models.Character) error {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -98,7 +108,6 @@ func SaveCharacterJson(c *models.Character) error {
 		return fmt.Errorf("error writing character to file: %w", err)
 	}
 
-	fmt.Printf("Character json saved at: %s\n", filePath)
 	return nil
 }
 
@@ -180,7 +189,6 @@ func SaveCharacterMarkdown(res string, path string) error {
 		return fmt.Errorf("Error writing file: %w", err)
 	}
 
-	fmt.Printf("Character markdown saved at: %s\n", path)
 	return nil
 }
 

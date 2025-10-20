@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/onioncall/dndgo/handlers"
@@ -22,9 +21,8 @@ var (
 
 			w, _, err := term.GetSize(int(os.Stdout.Fd()))
 			if err != nil {
-				errMsg := "Failed to get terminal size"
-				logger.HandleInfo(errMsg)
-				panic(fmt.Errorf("%s: %w", errMsg, err))
+				logger.HandleInfo("Failed to get terminal size")
+				panic(err)
 			}
 
 			switch {
@@ -39,9 +37,8 @@ var (
 			}
 
 			if err != nil {
-				errMsg := "Failed to handle search request"
-				logger.HandleInfo(errMsg)
-				panic(fmt.Errorf("%s: %w", errMsg, err))
+				logger.HandleInfo("Failed to hande search request")
+				panic(err)
 			}
 		},
 	}
@@ -69,9 +66,8 @@ var (
 			}
 
 			if err != nil {
-				errMsg := "Failed to handle search list request"
-				logger.HandleInfo(errMsg)
-				panic(fmt.Errorf("%s: %w", errMsg, err))
+				logger.HandleInfo("Failed to hande search list request")
+				panic(err)
 			}
 		},
 	}
