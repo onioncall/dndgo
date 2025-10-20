@@ -387,6 +387,13 @@ func (c *Character) BuildSkills() []string {
 
 func (c *Character) BuildSpells() []string {
 	s := make([]string, 0, len(c.Spells)+20)
+
+	// if the character doesn't have a spell save dc, they can't cast any spell and we don't need
+	// to polute the markdown file with a bunch of empty spell data
+	if c.SpellSaveDC == 0 {
+		return s
+	}
+
 	nl := "\n"
 	spellHeader := fmt.Sprintf("*Spells*\n\n")
 	s = append(s, spellHeader)
