@@ -334,16 +334,16 @@ func TestCharacterRecover(t *testing.T) {
 				HPMax:     16,
 				ClassName: "character",
 				SpellSlots: []types.SpellSlot{
-					{Level: 1, Slot: 4, Available: 1},
-					{Level: 2, Slot: 2, Available: 0},
+					{Level: 1, Maximum: 4, Available: 1},
+					{Level: 2, Maximum: 2, Available: 0},
 				},
 			},
 			expected: Character{
 				HPCurrent: 16,
 				HPMax:     16,
 				SpellSlots: []types.SpellSlot{
-					{Level: 1, Slot: 4, Available: 4},
-					{Level: 2, Slot: 2, Available: 2},
+					{Level: 1, Maximum: 4, Available: 4},
+					{Level: 2, Maximum: 2, Available: 2},
 				},
 			},
 		},
@@ -353,16 +353,16 @@ func TestCharacterRecover(t *testing.T) {
 				HPCurrent: 0,
 				HPMax:     16,
 				SpellSlots: []types.SpellSlot{
-					{Level: 1, Slot: 4, Available: 1},
-					{Level: 2, Slot: 2, Available: 0},
+					{Level: 1, Maximum: 4, Available: 1},
+					{Level: 2, Maximum: 2, Available: 0},
 				},
 			},
 			expected: Character{
 				HPCurrent: 16,
 				HPMax:     16,
 				SpellSlots: []types.SpellSlot{
-					{Level: 1, Slot: 4, Available: 4},
-					{Level: 2, Slot: 2, Available: 2},
+					{Level: 1, Maximum: 4, Available: 4},
+					{Level: 2, Maximum: 2, Available: 2},
 				},
 			},
 		},
@@ -413,13 +413,13 @@ func TestCharacterUseSpellSlot(t *testing.T) {
 			level: 1,
 			character: &Character{
 				SpellSlots: []types.SpellSlot{
-					{Level: 1, Slot: 6, Available: 6},
-					{Level: 2, Slot: 3, Available: 3},
+					{Level: 1, Maximum: 6, Available: 6},
+					{Level: 2, Maximum: 3, Available: 3},
 				},
 			},
 			expected: []types.SpellSlot{
-				{Level: 1, Slot: 6, Available: 5},
-				{Level: 2, Slot: 3, Available: 3},
+				{Level: 1, Maximum: 6, Available: 5},
+				{Level: 2, Maximum: 3, Available: 3},
 			},
 		},
 		{
@@ -427,13 +427,13 @@ func TestCharacterUseSpellSlot(t *testing.T) {
 			level: 1,
 			character: &Character{
 				SpellSlots: []types.SpellSlot{
-					{Level: 1, Slot: 6, Available: 0},
-					{Level: 2, Slot: 3, Available: 3},
+					{Level: 1, Maximum: 6, Available: 0},
+					{Level: 2, Maximum: 3, Available: 3},
 				},
 			},
 			expected: []types.SpellSlot{
-				{Level: 1, Slot: 6, Available: 0},
-				{Level: 2, Slot: 3, Available: 3},
+				{Level: 1, Maximum: 6, Available: 0},
+				{Level: 2, Maximum: 3, Available: 3},
 			},
 		},
 	}
@@ -465,13 +465,13 @@ func TestCharacterRecoverSpellSlots(t *testing.T) {
 			level: 1,
 			character: &Character{
 				SpellSlots: []types.SpellSlot{
-					{Level: 1, Slot: 6, Available: 3},
-					{Level: 2, Slot: 3, Available: 3},
+					{Level: 1, Maximum: 6, Available: 3},
+					{Level: 2, Maximum: 3, Available: 3},
 				},
 			},
 			expected: []types.SpellSlot{
-				{Level: 1, Slot: 6, Available: 6},
-				{Level: 2, Slot: 3, Available: 3},
+				{Level: 1, Maximum: 6, Available: 6},
+				{Level: 2, Maximum: 3, Available: 3},
 			},
 		},
 	}

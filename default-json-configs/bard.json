@@ -1,7 +1,7 @@
 {
   "bardic-inspiration": {
     "available": 4,
-    "slot": 4
+    "maximum": 4
   },
   "college":  "Bardic School of Creation",
   "expertise": [

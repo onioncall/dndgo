@@ -18,7 +18,7 @@ type Bard struct {
 
 type BardicInspiration struct {
 	Available int `json:"available"`
-	Slot      int `json:"slot"`
+	Maximum   int `json:"maximum"`
 }
 
 func LoadBard(data []byte) (*Bard, error) {
@@ -89,8 +89,8 @@ func (b *Bard) PrintClassDetails(c *models.Character) []string {
 		s = append(s, collegeHeader)
 	}
 
-	if b.BardicInspiration.Available != 0 && b.BardicInspiration.Slot != 0 {
-		bardicSlots := c.GetSlots(b.BardicInspiration.Available, b.BardicInspiration.Slot)
+	if b.BardicInspiration.Available != 0 && b.BardicInspiration.Maximum != 0 {
+		bardicSlots := c.GetSlots(b.BardicInspiration.Available, b.BardicInspiration.Maximum)
 		biLine := fmt.Sprintf("**Bardic Inspiration**: %s\n\n", bardicSlots)
 		s = append(s, biLine)
 	}
@@ -141,7 +141,7 @@ func (b *Bard) RecoverClassTokens(tokenName string, quantity int) {
 	b.BardicInspiration.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover
-	if quantity == 0 || b.BardicInspiration.Available > b.BardicInspiration.Slot {
-		b.BardicInspiration.Available = b.BardicInspiration.Slot
+	if quantity == 0 || b.BardicInspiration.Available > b.BardicInspiration.Maximum {
+		b.BardicInspiration.Available = b.BardicInspiration.Maximum
 	}
 }

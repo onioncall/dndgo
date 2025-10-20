@@ -424,7 +424,7 @@ func (c *Character) BuildSpells() []string {
 
 	for _, spellSlot := range c.SpellSlots {
 		fullCircle := strings.Repeat("● ", spellSlot.Available)
-		hollowCircle := strings.Repeat("○ ", (spellSlot.Slot - spellSlot.Available))
+		hollowCircle := strings.Repeat("○ ", (spellSlot.Maximum - spellSlot.Available))
 		slotRow := fmt.Sprintf("	- Level %d: %s%s\n", spellSlot.Level, fullCircle, hollowCircle)
 		s = append(s, slotRow)
 	}
@@ -673,7 +673,7 @@ func (c *Character) UseSpellSlot(level int) {
 func (c *Character) RecoverSpellSlots(level int) {
 	for i := range c.SpellSlots {
 		if c.SpellSlots[i].Level == level {
-			c.SpellSlots[i].Available = c.SpellSlots[i].Slot
+			c.SpellSlots[i].Available = c.SpellSlots[i].Maximum
 		}
 	}
 }
@@ -682,7 +682,7 @@ func (c *Character) Recover() {
 	c.HPCurrent = c.HPMax
 
 	for i := range c.SpellSlots {
-		c.SpellSlots[i].Available = c.SpellSlots[i].Slot
+		c.SpellSlots[i].Available = c.SpellSlots[i].Maximum
 	}
 
 	if c.Class != nil {
