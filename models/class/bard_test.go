@@ -26,7 +26,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 				},
 			},
 			bard: &Bard{
-				SkillProficienciesToDouble: []string{
+				ExpertiseSkills: []string{
 					"persuasion",
 					"deception",
 				},
@@ -49,7 +49,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 				},
 			},
 			bard: &Bard{
-				SkillProficienciesToDouble: []string{
+				ExpertiseSkills: []string{
 					"persuasion",
 					"deception",
 				},
@@ -72,7 +72,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 				},
 			},
 			bard: &Bard{
-				SkillProficienciesToDouble: []string{
+				ExpertiseSkills: []string{
 					"persuasion",
 					"deception",
 					"nature",
@@ -98,7 +98,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 				},
 			},
 			bard: &Bard{
-				SkillProficienciesToDouble: []string{
+				ExpertiseSkills: []string{
 					"persuasion",
 					"deception",
 					"nature",

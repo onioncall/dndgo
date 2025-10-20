@@ -262,6 +262,11 @@ func (c *Character) BuildCharacterInfo() []string {
 
 func (c *Character) BuildFeats() []string {
 	s := make([]string, 0, len(c.Feats)+1)
+
+	if len(c.Feats) < 1 || c.Feats[0].Name == "" {
+		return s
+	}
+
 	featLine := fmt.Sprintf("- Feats:\n")
 	s = append(s, featLine)
 

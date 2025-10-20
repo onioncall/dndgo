@@ -4,17 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
-	"strings"
 
 	"github.com/onioncall/dndgo/logger"
 	"github.com/onioncall/dndgo/models"
 )
 
 type Bard struct {
-	SkillProficienciesToDouble []string               `json:"expertise"`
-	College                    string                 `json:"college"`
-	OtherFeatures              []models.ClassFeatures `json:"other-features"`
-	BardicInspiration          BardicInspiration      `json:"bardic-inspiration"`
+	ExpertiseSkills   []string               `json:"expertise"`
+	College           string                 `json:"college"`
+	OtherFeatures     []models.ClassFeatures `json:"other-features"`
+	BardicInspiration BardicInspiration      `json:"bardic-inspiration"`
 }
 
 type BardicInspiration struct {
@@ -55,30 +54,17 @@ func (b *Bard) executeExpertise(c *models.Character) {
 		return
 	}
 
-	if c.Level < 10 && len(b.SkillProficienciesToDouble) > 2 {
-		// We'll allow the user to specify more, but only the first two get taken for it to be legal
-		b.SkillProficienciesToDouble = b.SkillProficienciesToDouble[:2]
+	if c.Level < 10 && len(b.ExpertiseSkills) > 2 {
+		// We'll allow the user to specify more, but only the first two get taken for it to be ExpertiseSkills
+		b.ExpertiseSkills = b.ExpertiseSkills[:2]
 	}
 
-	if c.Level > 10 && len(b.SkillProficienciesToDouble) > 4 {
-		// We'll allow the user to specify more, but only the first four get taken for it to be legal
-		b.SkillProficienciesToDouble = b.SkillProficienciesToDouble[:2]
+	if c.Level >= 10 && len(b.ExpertiseSkills) > 4 {
+		// We'll allow the user to specify more, but only the first two get taken for it to be ExpertiseSkills
+		b.ExpertiseSkills = b.ExpertiseSkills[:4]
 	}
 
-	seen := make(map[string]bool)
-	for _, profToDouble := range b.SkillProficienciesToDouble {
-		if seen[profToDouble] == true {
-			logger.HandleInfo("Bard Config Error - Expertise can not have dupliate proficiencies")
-			return
-		}
-		seen[profToDouble] = true
-
-		for i, cs := range c.Skills {
-			if strings.ToLower(cs.Name) == strings.ToLower(profToDouble) {
-				c.Skills[i].SkillModifier += c.Proficiency
-			}
-		}
-	}
+	executeExpertiseShared(c, b.ExpertiseSkills)
 }
 
 // At level 2, bards can add half their proficiency bonus (rounded down) to any ability check
@@ -109,11 +95,11 @@ func (b *Bard) PrintClassDetails(c *models.Character) []string {
 		s = append(s, biLine)
 	}
 
-	if len(b.SkillProficienciesToDouble) > 0 && c.Level >= 3 {
+	if len(b.ExpertiseSkills) > 0 && c.Level >= 3 {
 		expertiseHeader := fmt.Sprintf("Expertise:\n")
 		s = append(s, expertiseHeader)
 
-		for _, exp := range b.SkillProficienciesToDouble {
+		for _, exp := range b.ExpertiseSkills {
 			expLine := fmt.Sprintf("- %s\n", exp)
 			s = append(s, expLine)
 		}

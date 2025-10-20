@@ -14,9 +14,18 @@ import (
 )
 
 var ClassFileMap = map[string]string{
-	types.ClassBard:      "bard.json",
 	types.ClassBarbarian: "barbarian.json",
+	types.ClassBard:      "bard.json",
+	types.ClassCleric:    "cleric.json",
+	types.ClassDruid:     "druid.json",
+	types.ClassFighter:   "fighter.json",
+	types.ClassMonk:      "monk.json",
+	types.ClassPaladin:   "paladin.json",
 	types.ClassRanger:    "ranger.json",
+	types.ClassRogue:     "rogue.json",
+	types.ClassSorcerer:  "sorcerer.json",
+	types.ClassWarlock:   "warlock.json",
+	types.ClassWizard:    "wizard.json",
 }
 
 func LoadClass(classType string) (models.Class, error) {
@@ -119,8 +128,7 @@ func loadClassData(classType string, classData []byte) (models.Class, error) {
 	case types.ClassRanger:
 		c, err = class.LoadRanger(classData)
 	case types.ClassRogue:
-		c = nil
-		err = fmt.Errorf("%s not implemented yet", classType)
+		c, err = class.LoadRogue(classData)
 	case types.ClassSorcerer:
 		c = nil
 		err = fmt.Errorf("%s not implemented yet", classType)
