@@ -2,7 +2,7 @@ package types
 
 type SpellSlot struct {
 	Level     int `json:"level"`
-	Slot      int `json:"slot"`
+	Maximum   int `json:"maximum"`
 	Available int `json:"available"`
 }
 

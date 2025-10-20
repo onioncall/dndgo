@@ -218,12 +218,12 @@ func TestBardUseClassSlots(t *testing.T) {
 			character: &models.Character{},
 			bard: &Bard{
 				BardicInspiration: BardicInspiration{
-					Slot:      4,
+					Maximum:   4,
 					Available: 4,
 				},
 			},
 			expected: BardicInspiration{
-				Slot:      4,
+				Maximum:   4,
 				Available: 3,
 			},
 		},
@@ -258,12 +258,12 @@ func TestBardRecoverClassSlots(t *testing.T) {
 			recover:   1,
 			bard: &Bard{
 				BardicInspiration: BardicInspiration{
-					Slot:      4,
+					Maximum:   4,
 					Available: 2,
 				},
 			},
 			expected: BardicInspiration{
-				Slot:      4,
+				Maximum:   4,
 				Available: 3,
 			},
 		},
@@ -273,12 +273,12 @@ func TestBardRecoverClassSlots(t *testing.T) {
 			recover:   0,
 			bard: &Bard{
 				BardicInspiration: BardicInspiration{
-					Slot:      4,
+					Maximum:   4,
 					Available: 2,
 				},
 			},
 			expected: BardicInspiration{
-				Slot:      4,
+				Maximum:   4,
 				Available: 4,
 			},
 		},

@@ -18,7 +18,7 @@ type Barbarian struct {
 
 type Rage struct {
 	Available int `json:"available"`
-	Slot      int `json:"token"`
+	Maximum   int `json:"maximum"`
 	Damage    int `json:"damage"`
 }
 
@@ -109,8 +109,8 @@ func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
 	s := c.BuildClassDetailsHeader()
 
-	if b.Rage.Available != 0 && b.Rage.Slot != 0 {
-		rageSlots := c.GetSlots(b.Rage.Available, b.Rage.Slot)
+	if b.Rage.Available != 0 && b.Rage.Maximum != 0 {
+		rageSlots := c.GetSlots(b.Rage.Available, b.Rage.Maximum)
 		rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n\n", rageSlots, b.Rage.Damage)
 		s = append(s, rageLine)
 	}
@@ -170,7 +170,7 @@ func (b *Barbarian) RecoverClassTokens(tokenName string, quantity int) {
 	b.Rage.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover
-	if quantity == 0 || b.Rage.Available > b.Rage.Slot {
-		b.Rage.Available = b.Rage.Slot
+	if quantity == 0 || b.Rage.Available > b.Rage.Maximum {
+		b.Rage.Available = b.Rage.Maximum
 	}
 }

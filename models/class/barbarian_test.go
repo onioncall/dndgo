@@ -215,12 +215,12 @@ func TestBarbarianUseSlots(t *testing.T) {
 			character: &models.Character{},
 			barbarian: &Barbarian{
 				Rage: Rage{
-					Slot:      4,
+					Maximum:   4,
 					Available: 4,
 				},
 			},
 			expected: Rage{
-				Slot:      4,
+				Maximum:   4,
 				Available: 3,
 			},
 		},
@@ -256,12 +256,12 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 			character: &models.Character{},
 			barbarian: &Barbarian{
 				Rage: Rage{
-					Slot:      4,
+					Maximum:   4,
 					Available: 2,
 				},
 			},
 			expected: Rage{
-				Slot:      4,
+				Maximum:   4,
 				Available: 3,
 			},
 		},
@@ -271,12 +271,12 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 			recover:   0,
 			barbarian: &Barbarian{
 				Rage: Rage{
-					Slot:      4,
+					Maximum:   4,
 					Available: 2,
 				},
 			},
 			expected: Rage{
-				Slot:      4,
+				Maximum:   4,
 				Available: 4,
 			},
 		},

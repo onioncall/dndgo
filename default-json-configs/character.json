@@ -161,47 +161,47 @@
     {
       "level": 1,
       "available": 0,
-      "slot": 0
+      "maximum": 0
     },
     {
       "level": 2,
       "available": 0,
-      "slot": 0
+      "maximum": 0
     },
     {
       "level": 3,
       "available": 0,
-      "slot": 0
+      "maximum": 0
     },
     {
       "level": 4,
       "available": 0,
-      "slot": 0
+      "maximum": 0
     },
     {
       "level": 5,
       "available": 0,
-      "slot": 0
+      "maximum": 0
     },
     {
       "level": 6,
       "available": 0,
-      "slot": 0
+      "maximum": 0
     },
     {
       "level": 7,
       "available": 0,
-      "slot": 0
+      "maximum": 0
     },
     {
       "level": 8,
       "available": 0,
-      "slot": 0
+      "maximum": 0
     },
     {
       "level": 9,
       "available": 0,
-      "slot": 0
+      "maximum": 0
     }
   ],
   "weapons": [
