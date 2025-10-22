@@ -10,9 +10,9 @@
   "college":  "Bardic School of Creation",
   "other-features": [
     {
-      "name": "Bardic Inspiration",
+      "name": "bardic inspiration",
       "level": 1,
-      "details": "As a bonus action, give an ally a d6 (scales with level) they can add to one attack roll, ability check, or saving throw within the next 10 minutes. You have a number of uses equal to your Charisma modifier (minimum 1), and regain all uses on a long rest.\n"
+      "details": "as a bonus action, give an ally a d6 (scales with level) they can add to one attack roll, ability check, or saving throw within the next 10 minutes. you have a number of uses equal to your charisma modifier (minimum 1), and regain all uses on a long rest.\n"
     },
     {
       "name": "Song of Rest",

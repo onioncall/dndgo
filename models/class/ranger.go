@@ -143,7 +143,7 @@ func applyDueling(c *models.Character) bool {
 	// this is less defined, since it depends on us knowing what weapons are currently
 	// in the characters hand. We'll assume that they have which ever weapon they want
 	// this applied to to be the first one they have, and that it will be equipped in combat.
-	//Maybe later we'll come up with a flag for the weapon being in use or something
+	// Maybe later we'll come up with a flag for the weapon being in use or something
 	for i, weapon := range c.Weapons {
 		if strings.ToLower(weapon.Range) != Melee {
 			continue
