@@ -1,6 +1,7 @@
 package class
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/onioncall/dndgo/logger"
@@ -36,4 +37,14 @@ func executeExpertiseShared(c *models.Character, expertiseSkills []string) {
 			}
 		}
 	}
+}
+
+func buildClassDetailsHeader() []string {
+	s := make([]string, 0, 100)
+	header := fmt.Sprintf("Class Details\n")
+	spacer := fmt.Sprintf("---\n")
+	s = append(s, header)
+	s = append(s, spacer)
+
+	return s
 }

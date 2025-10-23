@@ -1,5 +1,6 @@
 {
   "path": ".config/dndgo",
+  "validation-enabled": true,
   "name": "",
   "level": 0,
   "class-name": "",

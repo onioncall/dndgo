@@ -10,6 +10,7 @@ import (
 
 type Character struct {
 	Path                    string                              `json:"path"`
+	ValidationEnabled       bool                                `json:"validation-enabled"`
 	Name                    string                              `json:"name"`
 	Level                   int                                 `json:"level"`
 	ClassName               string                              `json:"class-name"`
@@ -44,7 +45,7 @@ type GenericItem struct {
 }
 
 type Class interface {
-	LoadMethods()
+	ValidateMethods(c *Character)
 	ExecutePostCalculateMethods(c *Character)
 	ExecutePreCalculateMethods(c *Character)
 	PrintClassDetails(c *Character) []string
@@ -398,23 +399,18 @@ func (c *Character) BuildSpells() []string {
 	spellHeader := fmt.Sprintf("*Spells*\n\n")
 	s = append(s, spellHeader)
 
-	spellTopRow := fmt.Sprintf("| C/S | Slot Level | Ritual | Spell |\n")
+	spellTopRow := fmt.Sprintf("| Slot Level | Ritual | Spell |\n")
 	spellSpacer := fmt.Sprintf("| --- | --- | --- | --- |\n")
 	s = append(s, spellTopRow)
 	s = append(s, spellSpacer)
 
 	for _, spell := range c.Spells {
-		scString := "S"
-		if spell.IsCaltrop {
-			scString = "C"
-		}
-
 		rString := " "
 		if spell.IsRitual {
 			rString = "*"
 		}
 
-		spellRow := fmt.Sprintf("| %s | %d | %s | %s |\n", scString, spell.SlotLevel, rString, spell.Name)
+		spellRow := fmt.Sprintf("| %d | %s | %s |\n", spell.SlotLevel, rString, spell.Name)
 		s = append(s, spellRow)
 	}
 	s = append(s, nl)
@@ -507,16 +503,6 @@ func (c *Character) BuildBackpack() []string {
 		itemRow := fmt.Sprintf("| %s | %d |\n", item.Name, item.Quantity)
 		s = append(s, itemRow)
 	}
-
-	return s
-}
-
-func (c *Character) BuildClassDetailsHeader() []string {
-	s := make([]string, 0, 100)
-	header := fmt.Sprintf("Class Details\n")
-	spacer := fmt.Sprintf("---\n")
-	s = append(s, header)
-	s = append(s, spacer)
 
 	return s
 }

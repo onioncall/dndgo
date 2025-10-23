@@ -30,7 +30,7 @@ func LoadBard(data []byte) (*Bard, error) {
 	return &bard, nil
 }
 
-func (b *Bard) LoadMethods() {
+func (b *Bard) ValidateMethods(c *models.Character) {
 }
 
 func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
@@ -82,7 +82,7 @@ func (b *Bard) executeJackOfAllTrades(c *models.Character) {
 }
 
 func (b *Bard) PrintClassDetails(c *models.Character) []string {
-	s := c.BuildClassDetailsHeader()
+	s := buildClassDetailsHeader()
 
 	if b.College != "" && c.Level > 3 {
 		collegeHeader := fmt.Sprintf("College: *%s*\n\n", b.College)
@@ -112,10 +112,10 @@ func (b *Bard) PrintClassDetails(c *models.Character) []string {
 				continue
 			}
 
-			collegeDetailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, collegeDetailName)
-			collegeDetail := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, collegeDetail)
+			detailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
+			s = append(s, detailName)
+			details := fmt.Sprintf("%s\n", detail.Details)
+			s = append(s, details)
 		}
 	}
 

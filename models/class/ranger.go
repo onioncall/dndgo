@@ -41,7 +41,7 @@ func LoadRanger(data []byte) (*Ranger, error) {
 	return &ranger, nil
 }
 
-func (r *Ranger) LoadMethods() {
+func (r *Ranger) ValidateMethods(c *models.Character) {
 }
 
 func (r *Ranger) ExecutePostCalculateMethods(c *models.Character) {
@@ -58,7 +58,7 @@ func (r *Ranger) ExecutePreCalculateMethods(c *models.Character) {
 }
 
 func (r *Ranger) PrintClassDetails(c *models.Character) []string {
-	s := c.BuildClassDetailsHeader()
+	s := buildClassDetailsHeader()
 
 	if r.Archetype != "" && c.Level > 3 {
 		archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
