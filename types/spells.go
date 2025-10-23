@@ -7,7 +7,6 @@ type SpellSlot struct {
 }
 
 type CharacterSpell struct {
-	IsCaltrop bool   `json:"is-caltrop"`
 	SlotLevel int    `json:"slot-level"`
 	IsRitual  bool   `json:"ritual"`
 	Name      string `json:"name"`

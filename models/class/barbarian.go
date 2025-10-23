@@ -32,8 +32,7 @@ func LoadBarbarian(data []byte) (*Barbarian, error) {
 	return &barbarian, nil
 }
 
-func (b *Barbarian) LoadMethods() {
-	fmt.Println("TestPrint")
+func (b *Barbarian) ValidateMethods(c *models.Character) {
 }
 
 func (b *Barbarian) ExecutePostCalculateMethods(c *models.Character) {
@@ -107,7 +106,7 @@ func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 }
 
 func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
-	s := c.BuildClassDetailsHeader()
+	s := buildClassDetailsHeader()
 
 	if b.Rage.Available != 0 && b.Rage.Maximum != 0 {
 		rageSlots := c.GetSlots(b.Rage.Available, b.Rage.Maximum)

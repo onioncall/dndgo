@@ -41,7 +41,7 @@ func LoadRanger(data []byte) (*Ranger, error) {
 	return &ranger, nil
 }
 
-func (r *Ranger) LoadMethods() {
+func (r *Ranger) ValidateMethods(c *models.Character) {
 }
 
 func (r *Ranger) ExecutePostCalculateMethods(c *models.Character) {
@@ -58,7 +58,7 @@ func (r *Ranger) ExecutePreCalculateMethods(c *models.Character) {
 }
 
 func (r *Ranger) PrintClassDetails(c *models.Character) []string {
-	s := c.BuildClassDetailsHeader()
+	s := buildClassDetailsHeader()
 
 	if r.Archetype != "" && c.Level > 3 {
 		archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
@@ -143,7 +143,7 @@ func applyDueling(c *models.Character) bool {
 	// this is less defined, since it depends on us knowing what weapons are currently
 	// in the characters hand. We'll assume that they have which ever weapon they want
 	// this applied to to be the first one they have, and that it will be equipped in combat.
-	//Maybe later we'll come up with a flag for the weapon being in use or something
+	// Maybe later we'll come up with a flag for the weapon being in use or something
 	for i, weapon := range c.Weapons {
 		if strings.ToLower(weapon.Range) != Melee {
 			continue

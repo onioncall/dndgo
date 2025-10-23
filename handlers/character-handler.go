@@ -51,14 +51,7 @@ func AddSpell(c *models.Character, spellQuery string) error {
 		return fmt.Errorf("Failed To get spell (%s) to add: %w", spellQuery, err)
 	}
 
-	caltrop := false
-
-	if s.Level == 0 {
-		caltrop = true
-	}
-
 	cs := types.CharacterSpell{
-		IsCaltrop: caltrop,
 		SlotLevel: s.Level,
 		IsRitual:  s.Ritual,
 		Name:      s.Name,

@@ -24,7 +24,7 @@ func LoadRogue(data []byte) (*Rogue, error) {
 	return &ranger, nil
 }
 
-func (r *Rogue) LoadMethods() {
+func (r *Rogue) ValidateMethods(c *models.Character) {
 }
 
 func (r *Rogue) ExecutePostCalculateMethods(c *models.Character) {
@@ -82,7 +82,7 @@ func (r *Rogue) executeSneakAttack(c *models.Character) {
 }
 
 func (r *Rogue) PrintClassDetails(c *models.Character) []string {
-	s := c.BuildClassDetailsHeader()
+	s := buildClassDetailsHeader()
 
 	sneakAttackLine := fmt.Sprintf("*Sneak Attack*: %s\n\n", r.SneakAttack)
 	s = append(s, sneakAttackLine)
