@@ -400,7 +400,7 @@ func (c *Character) BuildSpells() []string {
 	s = append(s, spellHeader)
 
 	spellTopRow := fmt.Sprintf("| Slot Level | Ritual | Spell |\n")
-	spellSpacer := fmt.Sprintf("| --- | --- | --- | --- |\n")
+	spellSpacer := fmt.Sprintf("| --- | --- | --- |\n")
 	s = append(s, spellTopRow)
 	s = append(s, spellSpacer)
 
