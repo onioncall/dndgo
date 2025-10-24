@@ -111,8 +111,7 @@ func loadClassData(classType string, classData []byte) (models.Class, error) {
 	case types.ClassBard:
 		c, err = class.LoadBard(classData)
 	case types.ClassCleric:
-		c = nil
-		err = fmt.Errorf("%s not implemented yet", classType)
+		c, err = class.LoadCleric(classData)
 	case types.ClassDruid:
 		c, err = class.LoadDruid(classData)
 	case types.ClassFighter:

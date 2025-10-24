@@ -156,7 +156,7 @@ func (b *Barbarian) UseClassTokens(tokenName string) {
 	// We only really need token name for classes that have multiple tokens
 	// since barbarian only has rage, we won't check the token name value
 	if b.Rage.Available <= 0 {
-		logger.HandleInfo("Class token had no uses left")
+		logger.HandleInfo("Rage had no uses left")
 		return
 	}
 

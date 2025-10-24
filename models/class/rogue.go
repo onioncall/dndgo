@@ -87,6 +87,11 @@ func (r *Rogue) PrintClassDetails(c *models.Character) []string {
 	sneakAttackLine := fmt.Sprintf("*Sneak Attack*: %s\n\n", r.SneakAttack)
 	s = append(s, sneakAttackLine)
 
+	if r.Archetype != "" && c.Level > 3 {
+		archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
+		s = append(s, archetypeHeader)
+	}
+
 	if len(r.OtherFeatures) > 0 {
 		for _, detail := range r.OtherFeatures {
 			if detail.Level > c.Level {

@@ -75,7 +75,6 @@ func (d *Druid) validateCantripVersatility(c *models.Character) bool {
 		cantripVersatilityMax = 6 // +1 cantrip
 	case c.Level < 12:
 		cantripVersatilityMax = 8 // +2 ASI
-		fmt.Println("GOOD")
 	case c.Level < 16:
 		cantripVersatilityMax = 10 // +2 ASI
 	case c.Level < 20:
@@ -88,8 +87,6 @@ func (d *Druid) validateCantripVersatility(c *models.Character) bool {
 		return false
 	}
 
-	fmt.Println(cantripVersatilityMax)
-	fmt.Println(cantripCount + abilityImprovementTotal)
 	return true
 }
 
@@ -139,7 +136,7 @@ func (d *Druid) UseClassTokens(tokenName string) {
 	// We only really need slot name for classes that have multiple slots
 	// since druid only has wild shape, we won't check the slot name value
 	if d.WildShape.Available <= 0 {
-		logger.HandleInfo("No Bardic Inspiration tokens left")
+		logger.HandleInfo("Wild Shape had no uses left")
 		return
 	}
 
