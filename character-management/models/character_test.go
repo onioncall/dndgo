@@ -3,7 +3,7 @@ package models
 import (
 	"testing"
 
-	"github.com/onioncall/dndgo/types"
+	"github.com/onioncall/dndgo/character-management/types"
 )
 
 func TestCharacterCalculateAbilitiesFromBase(t *testing.T) {

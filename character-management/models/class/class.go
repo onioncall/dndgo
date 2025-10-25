@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/logger"
-	"github.com/onioncall/dndgo/models"
 )
 
 func executeExpertiseShared(c *models.Character, expertiseSkills []string) {

@@ -3,8 +3,8 @@ package cmd
 import (
 	"os"
 
-	"github.com/onioncall/dndgo/handlers"
 	"github.com/onioncall/dndgo/logger"
+	"github.com/onioncall/dndgo/search/handlers"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )

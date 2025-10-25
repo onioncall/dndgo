@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	defaultjsonconfigs "github.com/onioncall/dndgo/default-json-configs"
-	"github.com/onioncall/dndgo/models"
-	"github.com/onioncall/dndgo/models/class"
-	"github.com/onioncall/dndgo/types"
+	defaultjsonconfigs "github.com/onioncall/dndgo/character-management/default-json-configs"
+	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/character-management/models/class"
+	"github.com/onioncall/dndgo/character-management/types"
 )
 
 var ClassFileMap = map[string]string{

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/logger"
-	"github.com/onioncall/dndgo/models"
 )
 
 type Druid struct {
