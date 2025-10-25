@@ -11,3 +11,8 @@ type CharacterSpell struct {
 	IsRitual  bool   `json:"ritual"`
 	Name      string `json:"name"`
 }
+
+type Token struct {
+	Maximum   int `json:"maximum"`
+	Available int `json:"available"`
+}

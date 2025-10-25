@@ -128,7 +128,7 @@ func (b *Bard) UseClassTokens(tokenName string) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has bardic inspiration, we won't check the slot name value
 	if b.BardicInspiration.Available <= 0 {
-		logger.HandleInfo("No Bardic Inspiration tokens left")
+		logger.HandleInfo("Bardic Inpsiration had no uses left")
 		return
 	}
 
