@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/character-management/types"
 	"github.com/onioncall/dndgo/logger"
-	"github.com/onioncall/dndgo/models"
-	"github.com/onioncall/dndgo/types"
 )
 
 type Ranger struct {

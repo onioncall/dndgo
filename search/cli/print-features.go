@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/onioncall/dndgo/api/responses"
+	"github.com/onioncall/dndgo/search/api/responses"
 	"github.com/onioncall/wrapt"
 )
 

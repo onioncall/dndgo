@@ -3,8 +3,8 @@ package class
 import (
 	"testing"
 
-	"github.com/onioncall/dndgo/models"
-	"github.com/onioncall/dndgo/types"
+	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/character-management/types"
 )
 
 func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {

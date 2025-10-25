@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/onioncall/dndgo/api"
-	"github.com/onioncall/dndgo/api/responses"
-	"github.com/onioncall/dndgo/cli"
+	"github.com/onioncall/dndgo/search/api"
+	"github.com/onioncall/dndgo/search/api/responses"
+	"github.com/onioncall/dndgo/search/cli"
 )
 
 type EquipmentRequest api.BaseRequest

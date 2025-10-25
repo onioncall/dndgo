@@ -7,9 +7,10 @@ import (
 	"path/filepath"
 	"sort"
 
-	defaultjsonconfigs "github.com/onioncall/dndgo/default-json-configs"
-	"github.com/onioncall/dndgo/models"
-	"github.com/onioncall/dndgo/types"
+	defaultjsonconfigs "github.com/onioncall/dndgo/character-management/default-json-configs"
+	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/search/handlers"
 )
 
 const (
@@ -41,9 +42,9 @@ func HandleCharacter(c *models.Character) error {
 }
 
 func AddSpell(c *models.Character, spellQuery string) error {
-	r := SpellRequest{
+	r := handlers.SpellRequest{
 		Name:     spellQuery,
-		PathType: SpellType,
+		PathType: handlers.SpellType,
 	}
 
 	s, err := r.GetSingle()

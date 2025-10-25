@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/onioncall/dndgo/api/responses"
+	"github.com/onioncall/dndgo/search/api/responses"
 	"github.com/onioncall/wrapt"
 )
 

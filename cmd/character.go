@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/onioncall/dndgo/handlers"
+	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/logger"
 	"github.com/spf13/cobra"
 )
