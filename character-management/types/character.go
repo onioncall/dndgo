@@ -43,3 +43,10 @@ const (
 	RaceGithyanki    string = "githyanki"
 	RaceGithzerai    string = "githzerai"
 )
+
+const (
+	FightingStyleArchery           string = "archery"
+	FightingStyleDefense           string = "defense"
+	FightingStyleDueling           string = "dueling"
+	FightingStyleTwoWeaponFighting string = "two-weapon-fighting"
+)

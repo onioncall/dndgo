@@ -26,7 +26,7 @@
     {
       "name": "Extra Attack",
       "level": 5,
-      "details": "Beginning at 5th level, you can attack twice, instead of once, whenever you take the Attack action on your turn."
+      "details": "You can attack twice, instead of once, whenever you take the Attack action on your turn.\n"
     },
     {
       "name": "Fast Movement",

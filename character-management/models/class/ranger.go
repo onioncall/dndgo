@@ -11,26 +11,11 @@ import (
 )
 
 type Ranger struct {
-	Archetype            string                 `json:"archetype"`
-	FightingStyle        string                 `json:"fighting-style"`
-	FavoredEnemies       []string               `json:"favored-enemies"`
-	OtherFeatures        []models.ClassFeatures `json:"other-features"`
-	FightingStyleApplied bool                   `json:"-"`
+	Archetype      string                 `json:"archetype"`
+	FightingStyle  string                 `json:"fighting-style"`
+	FavoredEnemies []string               `json:"favored-enemies"`
+	OtherFeatures  []models.ClassFeatures `json:"other-features"`
 }
-
-// Fighting Styles
-const (
-	Archery           string = "archery"
-	Defense           string = "defense"
-	Dueling           string = "dueling"
-	TwoWeaponFighting string = "two-weapon-fighting"
-)
-
-// Weapon Ranges
-const (
-	Ranged string = "ranged"
-	Melee  string = "melee"
-)
 
 func LoadRanger(data []byte) (*Ranger, error) {
 	var ranger Ranger
@@ -63,6 +48,11 @@ func (r *Ranger) PrintClassDetails(c *models.Character) []string {
 	if r.Archetype != "" && c.Level > 3 {
 		archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
 		s = append(s, archetypeHeader)
+	}
+
+	if r.FightingStyle != "" && c.Level >= 2 {
+		fightingStyleHeader := fmt.Sprintf("Fighting Style: *%s*\n\n", r.FightingStyle)
+		s = append(s, fightingStyleHeader)
 	}
 
 	if len(r.FavoredEnemies) > 0 {
@@ -100,26 +90,38 @@ func (r *Ranger) executeFightingStyle(c *models.Character) {
 	}
 
 	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s",
-		r.FightingStyle, Archery, Defense, Dueling, TwoWeaponFighting)
+		r.FightingStyle,
+		types.FightingStyleArchery,
+		types.FightingStyleDefense,
+		types.FightingStyleDueling,
+		types.FightingStyleTwoWeaponFighting)
 
+	fightingStyleApplied := false
+	// There are more fighting styles, but these are the four available to rangers
 	switch r.FightingStyle {
-	case Archery:
-		r.FightingStyleApplied = applyArchery(c)
-	case Defense:
-		r.FightingStyleApplied = applyDefense(c)
-	case Dueling:
-		r.FightingStyleApplied = applyDueling(c)
-	case TwoWeaponFighting:
-		r.FightingStyleApplied = applyTwoWeaponFighting(c)
+	case types.FightingStyleArchery:
+		fightingStyleApplied = applyArchery(c)
+	case types.FightingStyleDefense:
+		fightingStyleApplied = applyDefense(c)
+	case types.FightingStyleDueling:
+		fightingStyleApplied = applyDueling(c)
+	case types.FightingStyleTwoWeaponFighting:
+		fightingStyleApplied = applyTwoWeaponFighting(c)
 	default:
 		logger.HandleInfo(invalidMsg)
+	}
+
+	if !fightingStyleApplied {
+		// TODO: in the methods for each fighting style, log more specific details for why
+		// the fight style bonus was not appied to the class
+		logger.HandleInfo(fmt.Sprintf("Fighting Style bonus '%s' was not applied", r.FightingStyle))
 	}
 }
 
 // Only to be called from executeFightingStyle
 func applyArchery(c *models.Character) bool {
 	for i, weapon := range c.Weapons {
-		if strings.ToLower(weapon.Range) == Ranged {
+		if strings.ToLower(weapon.Range) == types.WeaponRangeRanged {
 			c.Weapons[i].Bonus += 2
 			return true
 		}
@@ -145,7 +147,7 @@ func applyDueling(c *models.Character) bool {
 	// this applied to to be the first one they have, and that it will be equipped in combat.
 	// Maybe later we'll come up with a flag for the weapon being in use or something
 	for i, weapon := range c.Weapons {
-		if strings.ToLower(weapon.Range) != Melee {
+		if strings.ToLower(weapon.Range) != types.WeaponRangeMelee {
 			continue
 		}
 
@@ -203,7 +205,6 @@ func applyTwoWeaponFighting(c *models.Character) bool {
 			if primaryWeaponIndex != -1 {
 				break
 			}
-
 			continue
 		}
 

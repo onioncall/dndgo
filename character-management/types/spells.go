@@ -16,3 +16,9 @@ type Token struct {
 	Maximum   int `json:"maximum"`
 	Available int `json:"available"`
 }
+
+type NamedToken struct {
+	Name      string `json:"name"`
+	Maximum   int    `json:"maximum"`
+	Available int    `json:"available"`
+}
