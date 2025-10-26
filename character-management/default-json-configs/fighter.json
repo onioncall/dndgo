@@ -1,0 +1,33 @@
+{
+  "archetype": "",
+  "fighting-style": "",
+  "indomitable": {
+    "available": 1,
+    "maximum": 1
+  },
+  "action-surge": {
+    "available": 1,
+    "maximum": 1
+  },
+  "second-wind": {
+    "available": 1,
+    "maximum": 1
+  },
+  "other-features": [
+    {
+      "name": "Martial Versatility",
+      "level": 2,
+      "details": "Whenever you reach a level in this class that grants the Ability Score Improvement feature, you can do one of the following, as you shift the focus of your martial practice.\n- Replace a fighting style you know with another fighting style available to fighters.\n- If you know any maneuvers from the Battle Master archetype, you can replace one maneuver you know with a different maneuver.\n"
+    },
+    {
+      "name": "Extra Attack",
+      "level": 5,
+      "details": "You can attack twice, instead of once, whenever you take the Attack action on your turn. This increases to 3 at level 11 and four at level 20.\n"
+    },
+    {
+      "name": "Indomitable",
+      "level": 9,
+      "details": "You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a long rest. You can use this feature twice between long rests starting at 13th level and three times between long rests starting at 17th level.\n"
+    }
+  ]
+}

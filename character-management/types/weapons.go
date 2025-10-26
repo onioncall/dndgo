@@ -23,3 +23,9 @@ const (
 	WeaponPropertyVersatile  string = "versatile"
 	WeaponPropertyMonk       string = "monk"
 )
+
+// TODO: Weapon Range will be the normal/long range, and "IsRanged" boolean will represent this
+const (
+	WeaponRangeRanged string = "ranged"
+	WeaponRangeMelee  string = "melee"
+)

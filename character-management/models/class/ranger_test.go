@@ -273,7 +273,7 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 	}
 }
 
-func TestRanger_executeFightingStyle(t *testing.T) {
+func TestRangerExecuteFightingStyle(t *testing.T) {
 	tests := []struct {
 		name      string
 		character *models.Character
@@ -290,7 +290,7 @@ func TestRanger_executeFightingStyle(t *testing.T) {
 				},
 			},
 			ranger: &Ranger{
-				FightingStyle: Defense,
+				FightingStyle: types.FightingStyleDefense,
 			},
 			expected: models.Character{
 				AC:    15,
@@ -324,7 +324,7 @@ func TestRanger_executeFightingStyle(t *testing.T) {
 				},
 			},
 			ranger: &Ranger{
-				FightingStyle: Defense,
+				FightingStyle: types.FightingStyleDefense,
 			},
 			expected: models.Character{
 				AC:    16,
@@ -341,7 +341,7 @@ func TestRanger_executeFightingStyle(t *testing.T) {
 				},
 			},
 			ranger: &Ranger{
-				FightingStyle: Defense,
+				FightingStyle: types.FightingStyleDefense,
 			},
 			expected: models.Character{
 				AC:    15,
