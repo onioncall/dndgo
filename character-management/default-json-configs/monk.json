@@ -1,0 +1,14 @@
+{
+  "other-features": [
+    {
+      "name": "Martial Arts",
+      "level": 1,
+      "details": "Your practice of martial arts gives you mastery of combat styles that use unarmed strikes and monk weapons, which are shortswords and any simple melee weapons that don't have the two-handed or heavy property. You gain the following benefits while you are unarmed or wielding only monk weapons and you aren't wearing armor or wielding a shield:\n- You can use Dexterity instead of Strength for the attack and damage rolls of your unarmed strikes and monk weapons.\n- You can roll your martial arts die value in place of the normal damage of your unarmed strike or monk weapon. This die changes as you gain monk levels, as shown in the Martial Arts column of the Monk table.\n  - lvl 1: 1d4\n  - lvl 5: 1d6\n  - lvl 11: 1d8\n  - lvl 17: 1d10\n- When you use the Attack action with an unarmed strike or a monk weapon on your turn, you can make one unarmed strike as a bonus action. For example, if you take the Attack action and attack with a quarterstaff, you can also make an unarmed strike as a bonus action, assuming you haven't already taken a bonus action this turn.\n"
+    },
+    {
+      "name": "Ki",
+      "level": 2,
+      "details": "Your training allows you to harness the mystic energy of ki. Your access to this energy is represented by a number of ki points, which is equal to your level. When you spend a ki point, it is unavailable until you finish a short or long rest, at the end of which you draw all of your expended ki back into yourself. You must spend at least 30 minutes of the rest meditating to regain your ki points. Some of your ki features require your target to make a saving throw to resist the feature's effects."
+    }
+  ]
+}

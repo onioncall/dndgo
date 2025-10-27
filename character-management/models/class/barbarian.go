@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/character-management/types"
 	"github.com/onioncall/dndgo/logger"
 )
 
@@ -88,21 +89,12 @@ func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
 
 // If not wearing armor, Armor Class is boosted to 10 + dex mod + constitution mod
 func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
-	if c.WornEquipment.Armour != "" {
-		return
+	barbarianExpertiseAbilityModifiers := []string{
+		types.AbilityDexterity,
+		types.AbilityConstitution,
 	}
 
-	c.AC = 0
-
-	for _, a := range c.Abilities {
-		if strings.ToLower(a.Name) != "dexterity" && strings.ToLower(a.Name) != "constitution" {
-			continue
-		}
-
-		c.AC += a.AbilityModifier
-	}
-
-	c.AC += 10
+	executeUnarmoredDefenseShared(c, barbarianExpertiseAbilityModifiers)
 }
 
 func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
