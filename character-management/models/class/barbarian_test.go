@@ -19,28 +19,28 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 				AC: 0,
 				Abilities: []types.Abilities{
 					{
-						Name:            "Strength",
-						AbilityModifier: 4,
+						Name:            types.AbilityStrength,
+						AbilityModifier: 5,
 					},
 					{
-						Name:            "Dexterity",
+						Name:            types.AbilityDexterity,
 						AbilityModifier: 3,
 					},
 					{
-						Name:            "Constitution",
+						Name:            types.AbilityConstitution,
+						AbilityModifier: 4,
+					},
+					{
+						Name:            types.AbilityIntelligence,
 						AbilityModifier: 2,
 					},
 					{
-						Name:            "Intelligence",
-						AbilityModifier: 2,
+						Name:            types.AbilityWisdom,
+						AbilityModifier: 0,
 					},
 					{
-						Name:            "Wisdom",
-						AbilityModifier: 2,
-					},
-					{
-						Name:            "Charisma",
-						AbilityModifier: 2,
+						Name:            types.AbilityCharisma,
+						AbilityModifier: -1,
 					},
 				},
 				WornEquipment: types.WornEquipment{
@@ -55,27 +55,27 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 				AC: 0,
 				Abilities: []types.Abilities{
 					{
-						Name:            "Strength",
+						Name:            types.AbilityStrength,
 						AbilityModifier: 5,
 					},
 					{
-						Name:            "Dexterity",
+						Name:            types.AbilityDexterity,
 						AbilityModifier: 3,
 					},
 					{
-						Name:            "Constitution",
+						Name:            types.AbilityConstitution,
 						AbilityModifier: 4,
 					},
 					{
-						Name:            "Intelligence",
+						Name:            types.AbilityIntelligence,
 						AbilityModifier: 2,
 					},
 					{
-						Name:            "Wisdom",
+						Name:            types.AbilityWisdom,
 						AbilityModifier: 0,
 					},
 					{
-						Name:            "Charisma",
+						Name:            types.AbilityCharisma,
 						AbilityModifier: -1,
 					},
 				},
@@ -91,7 +91,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			barbarian := &Barbarian{}
 
-			barbarian.executeUnarmoredDefense(tt.character)
+			barbarian.PostCalculateUnarmoredDefense(tt.character)
 			result := tt.character.AC
 
 			if tt.expected != result {
@@ -134,7 +134,7 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.barbarian.executePrimalKnowledge(tt.character)
+			tt.barbarian.PostCalculatePrimalKnowledge(tt.character)
 
 			result := tt.character.Skills
 			for i, e := range tt.expected {
@@ -189,7 +189,7 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			barbarian := &Barbarian{}
 
-			barbarian.executePrimalChampion(tt.character)
+			barbarian.PreCalculatePrimalChampion(tt.character)
 
 			for i, e := range tt.expected {
 				result := tt.character.Abilities[i]

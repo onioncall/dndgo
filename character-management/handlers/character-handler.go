@@ -23,13 +23,13 @@ const (
 
 func HandleCharacter(c *models.Character) error {
 	if c.Class != nil {
-		c.Class.ExecutePreCalculateMethods(c)
+		c.ExecuteClassMethods(true)
 	}
 
 	c.CalculateCharacterStats()
 
 	if c.Class != nil {
-		c.Class.ExecutePostCalculateMethods(c)
+		c.ExecuteClassMethods(false)
 	}
 
 	res := c.BuildCharacter()

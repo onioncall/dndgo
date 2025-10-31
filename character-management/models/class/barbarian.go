@@ -36,23 +36,18 @@ func LoadBarbarian(data []byte) (*Barbarian, error) {
 func (b *Barbarian) ValidateMethods(c *models.Character) {
 }
 
-func (b *Barbarian) ExecutePostCalculateMethods(c *models.Character) {
-	models.PostCalculateMethods = append(models.PostCalculateMethods, b.executeUnarmoredDefense)
-	for _, m := range models.PostCalculateMethods {
-		m(c)
-	}
-}
-
-func (b *Barbarian) ExecutePreCalculateMethods(c *models.Character) {
-	models.PreCalculateMethods = append(models.PreCalculateMethods, b.executePrimalChampion)
-	for _, m := range models.PreCalculateMethods {
-		m(c)
-	}
-}
+// func (b *Barbarian) ExecutePostCalculateMethods(c *models.Character) {
+// 	b.PostCalculateUnarmoredDefense(c)
+// 	b.PostCalculatePrimalKnowledge(c)
+// }
+//
+// func (b *Barbarian) ExecutePreCalculateMethods(c *models.Character) {
+// 	b.PreCalculatePrimalChampion(c)
+// }
 
 // At level 3, You gain proficiency in one skill of your choice from the list of skills
 // available to barbarians at 1st level.
-func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
+func (b *Barbarian) PostCalculatePrimalKnowledge(c *models.Character) {
 	if c.Level < 3 {
 		return
 	}
@@ -88,7 +83,7 @@ func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
 }
 
 // If not wearing armor, Armor Class is boosted to 10 + dex mod + constitution mod
-func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
+func (b *Barbarian) PostCalculateUnarmoredDefense(c *models.Character) {
 	barbarianExpertiseAbilityModifiers := []string{
 		types.AbilityDexterity,
 		types.AbilityConstitution,
@@ -128,7 +123,7 @@ func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
 }
 
 // At level 20, your Strength and Constitution scores increase by 4. Your maximum for those scores is now 24.
-func (b *Barbarian) executePrimalChampion(c *models.Character) {
+func (b *Barbarian) PreCalculatePrimalChampion(c *models.Character) {
 	if c.Level < 20 {
 		return
 	}

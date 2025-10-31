@@ -1,12 +1,20 @@
 package types
 
 type Weapon struct {
-	Name       string   `json:"name"`
-	Bonus      int      `json:"bonus"`
-	Damage     string   `json:"damage"`
-	Range      string   `json:"range"`
-	Type       string   `json:"type"`
-	Properties []string `json:"properties"`
+	Name        string      `json:"name"`
+	Bonus       int         `json:"-"`
+	CustomBonus int         `json:"custom-bonus"`
+	Proficient  bool        `json:"proficient"`
+	Damage      string      `json:"damage"`
+	Ranged      bool        `json:"ranged"`
+	Range       WeaponRange `json:"range"`
+	Type        string      `json:"type"`
+	Properties  []string    `json:"properties"`
+}
+
+type WeaponRange struct {
+	NormalRange int `json:"normal-range"`
+	LongRange   int `json:"long-range"`
 }
 
 // Properties
@@ -22,10 +30,4 @@ const (
 	WeaponPropertyTwoHanded  string = "two-handed"
 	WeaponPropertyVersatile  string = "versatile"
 	WeaponPropertyMonk       string = "monk"
-)
-
-// TODO: Weapon Range will be the normal/long range, and "IsRanged" boolean will represent this
-const (
-	WeaponRangeRanged string = "ranged"
-	WeaponRangeMelee  string = "melee"
 )

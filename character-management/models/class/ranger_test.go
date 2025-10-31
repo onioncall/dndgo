@@ -18,13 +18,13 @@ func TestRangerAppliedArchery(t *testing.T) {
 			name: "No ranged weapon",
 			character: &models.Character{
 				Weapons: []types.Weapon{
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
-					{Name: "Dagger", Bonus: 2, Damage: "1d4", Range: "melee"},
+					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
+					{Name: "Dagger", Bonus: 2, Damage: "1d4", Ranged: false},
 				},
 			},
 			expected: []types.Weapon{
-				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
-				{Name: "Dagger", Bonus: 2, Damage: "1d4", Range: "melee"},
+				{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
+				{Name: "Dagger", Bonus: 2, Damage: "1d4", Ranged: false},
 			},
 			applied: false,
 		},
@@ -32,13 +32,13 @@ func TestRangerAppliedArchery(t *testing.T) {
 			name: "Range bonus applied",
 			character: &models.Character{
 				Weapons: []types.Weapon{
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
-					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged"},
+					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
+					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true},
 				},
 			},
 			expected: []types.Weapon{
-				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
-				{Name: "Longbow", Bonus: 4, Damage: "1d8", Range: "ranged"},
+				{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
+				{Name: "Longbow", Bonus: 4, Damage: "1d8", Ranged: true},
 			},
 			applied: true,
 		},
@@ -120,11 +120,11 @@ func TestRangerAppliedDueling(t *testing.T) {
 			name: "No melee weapon",
 			character: &models.Character{
 				Weapons: []types.Weapon{
-					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged"},
+					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true},
 				},
 			},
 			expected: []types.Weapon{
-				{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged"},
+				{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true},
 			},
 			applied: false,
 		},
@@ -132,13 +132,13 @@ func TestRangerAppliedDueling(t *testing.T) {
 			name: "Melee bonus applied",
 			character: &models.Character{
 				Weapons: []types.Weapon{
-					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
+					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
+					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 				},
 			},
 			expected: []types.Weapon{
-				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
-				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee"},
+				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
+				{Name: "Club", Bonus: 4, Damage: "1d4", Ranged: false},
 			},
 			applied: true,
 		},
@@ -146,15 +146,15 @@ func TestRangerAppliedDueling(t *testing.T) {
 			name: "Multiple valid weapons, one bonus",
 			character: &models.Character{
 				Weapons: []types.Weapon{
-					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
+					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
+					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
+					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 				},
 			},
 			expected: []types.Weapon{
-				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
-				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee"},
-				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
+				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
+				{Name: "Club", Bonus: 4, Damage: "1d4", Ranged: false},
+				{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 			},
 			applied: true,
 		},
@@ -192,13 +192,13 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
 				Weapons: []types.Weapon{
-					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
-					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string{"two-handed"}},
+					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
+					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 				},
 			},
 			expected: []types.Weapon{
-				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
-				{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string{"two-handed"}},
+				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
+				{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 			},
 			applied: false,
 		},
@@ -209,13 +209,13 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
 				Weapons: []types.Weapon{
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
-					{Name: "Longbow", Bonus: 2, Damage: "1d8", Range: "ranged", Properties: []string{"two-handed"}},
+					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
+					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 				},
 			},
 			expected: []types.Weapon{
-				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Range: "melee", Properties: []string{"two-handed"}},
-				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee"},
+				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
+				{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 			},
 			applied: false,
 		},
@@ -226,13 +226,13 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
 				Weapons: []types.Weapon{
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
+					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
+					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 				},
 			},
 			expected: []types.Weapon{
-				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
-				{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
+				{Name: "Club", Bonus: 4, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
+				{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 			},
 			applied: true,
 		},
@@ -243,13 +243,13 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
 				Weapons: []types.Weapon{
-					{Name: "Rapier", Bonus: 2, Damage: "1d8", Range: "melee", Properties: []string{"finesse"}},
-					{Name: "Club", Bonus: 2, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
+					{Name: "Rapier", Bonus: 2, Damage: "1d8", Ranged: false, Properties: []string{"finesse"}},
+					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 				},
 			},
 			expected: []types.Weapon{
-				{Name: "Rapier", Bonus: 2, Damage: "1d8", Range: "melee", Properties: []string{"finesse"}},
-				{Name: "Club", Bonus: 4, Damage: "1d4", Range: "melee", Properties: []string{"light"}},
+				{Name: "Rapier", Bonus: 2, Damage: "1d8", Ranged: false, Properties: []string{"finesse"}},
+				{Name: "Club", Bonus: 4, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 			},
 			applied: true,
 		},
@@ -352,7 +352,7 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.ranger.executeFightingStyle(tt.character)
+			tt.ranger.PostCalculateFightingStyle(tt.character)
 			result := tt.character
 
 			if tt.expected.AC != result.AC {
