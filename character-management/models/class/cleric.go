@@ -31,17 +31,11 @@ func (cl *Cleric) ValidateMethods(c *models.Character) {
 	}
 }
 
-func (cl *Cleric) ExecutePostCalculateMethods(c *models.Character) {
-	for _, m := range models.PostCalculateMethods {
-		m(c)
-	}
-}
-
-func (cl *Cleric) ExecutePreCalculateMethods(c *models.Character) {
-	for _, m := range models.PreCalculateMethods {
-		m(c)
-	}
-}
+// func (cl *Cleric) ExecutePostCalculateMethods(c *models.Character) {
+// }
+//
+// func (cl *Cleric) ExecutePreCalculateMethods(c *models.Character) {
+// }
 
 func (cl *Cleric) validateCantripVersatility(c *models.Character) bool {
 	// Even though this is functionally the same as the Druid version, the switch table is different,

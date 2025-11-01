@@ -117,7 +117,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.bard.executeExpertise(tt.character)
+			tt.bard.PostCalculateExpertise(tt.character)
 
 			if len(tt.character.Skills) != len(tt.expected) {
 				t.Errorf("Skills Count- Expected: %d, Result: %d", len(tt.expected), len(tt.character.Skills))
@@ -183,7 +183,7 @@ func TestBardExecuteJackOfAllTrades(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.bard.executeJackOfAllTrades(tt.character)
+			tt.bard.PostCalculateJackOfAllTrades(tt.character)
 			result := tt.character
 
 			if len(result.Skills) != len(tt.expected) {

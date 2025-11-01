@@ -30,7 +30,7 @@ func (r *Ranger) ValidateMethods(c *models.Character) {
 }
 
 func (r *Ranger) ExecutePostCalculateMethods(c *models.Character) {
-	models.PostCalculateMethods = append(models.PostCalculateMethods, r.executeFightingStyle)
+	models.PostCalculateMethods = append(models.PostCalculateMethods, r.PostCalculateFightingStyle)
 	for _, m := range models.PostCalculateMethods {
 		m(c)
 	}
@@ -84,7 +84,7 @@ func (r *Ranger) PrintClassDetails(c *models.Character) []string {
 
 // At level 2, Rangers adopt a fighting style as their specialty
 // only one of these styles can be selected
-func (r *Ranger) executeFightingStyle(c *models.Character) {
+func (r *Ranger) PostCalculateFightingStyle(c *models.Character) {
 	if c.Level < 2 {
 		return
 	}
@@ -121,7 +121,7 @@ func (r *Ranger) executeFightingStyle(c *models.Character) {
 // Only to be called from executeFightingStyle
 func applyArchery(c *models.Character) bool {
 	for i, weapon := range c.Weapons {
-		if strings.ToLower(weapon.Range) == types.WeaponRangeRanged {
+		if weapon.Ranged {
 			c.Weapons[i].Bonus += 2
 			return true
 		}
@@ -147,7 +147,7 @@ func applyDueling(c *models.Character) bool {
 	// this applied to to be the first one they have, and that it will be equipped in combat.
 	// Maybe later we'll come up with a flag for the weapon being in use or something
 	for i, weapon := range c.Weapons {
-		if strings.ToLower(weapon.Range) != types.WeaponRangeMelee {
+		if weapon.Ranged {
 			continue
 		}
 

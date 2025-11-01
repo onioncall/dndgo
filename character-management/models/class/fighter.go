@@ -32,17 +32,11 @@ func LoadFighter(data []byte) (*Fighter, error) {
 func (f *Fighter) ValidateMethods(c *models.Character) {
 }
 
-func (f *Fighter) ExecutePostCalculateMethods(c *models.Character) {
-	for _, m := range models.PostCalculateMethods {
-		m(c)
-	}
-}
-
-func (f *Fighter) ExecutePreCalculateMethods(c *models.Character) {
-	for _, m := range models.PreCalculateMethods {
-		m(c)
-	}
-}
+// func (f *Fighter) ExecutePostCalculateMethods(c *models.Character) {
+// }
+//
+// func (f *Fighter) ExecutePreCalculateMethods(c *models.Character) {
+// }
 
 func (f *Fighter) PrintClassDetails(c *models.Character) []string {
 	s := buildClassDetailsHeader()

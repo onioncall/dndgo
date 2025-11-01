@@ -208,9 +208,13 @@
   "weapons": [
     {
       "name": "",
-      "bonus": 0,
       "damage": "",
-      "range": "",
+      "proficient": false,
+      "ranged": false,
+      "range": {
+        "normal-range": 0,
+        "long-range": 0
+      },
       "type": "",
       "properties": [""]
     }

@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/types"
@@ -46,8 +47,8 @@ type GenericItem struct {
 
 type Class interface {
 	ValidateMethods(c *Character)
-	ExecutePostCalculateMethods(c *Character)
-	ExecutePreCalculateMethods(c *Character)
+	// ExecutePostCalculateMethods(c *Character)
+	// ExecutePreCalculateMethods(c *Character)
 	PrintClassDetails(c *Character) []string
 	UseClassTokens(string)
 	RecoverClassTokens(string, int)
@@ -69,6 +70,7 @@ func (c *Character) CalculateCharacterStats() {
 	c.calculateAbilitiesFromBase()
 	c.calculateAbilityScoreImprovement()
 	c.calculateSkillModifierFromBase()
+	c.calculateWeaponBonus()
 }
 
 func (c *Character) calculateAbilitiesFromBase() {
@@ -146,6 +148,58 @@ func (c *Character) calculateProficiencyBonusByLevel() {
 	} else if c.Level > 16 && c.Level <= 20 {
 		c.Proficiency = 6
 	}
+}
+
+func (c *Character) calculateWeaponBonus() {
+	for i, weapon := range c.Weapons {
+		dexMod := GetDexMod(c.Abilities)
+		strMod := GetStrMod(c.Abilities)
+		modApplied := false
+
+		for _, prop := range weapon.Properties {
+			// We'll prioritize the weapon properties that have a choice between dex and str mods
+			if prop == types.WeaponPropertyFinesse || prop == types.WeaponPropertyThrown {
+				c.Weapons[i].Bonus += max(dexMod, strMod)
+				modApplied = true
+			}
+		}
+
+		// If we haven't applied our mod from properties, we'll apply it based on range
+		if !modApplied {
+			if weapon.Ranged {
+				c.Weapons[i].Bonus += dexMod
+			} else {
+				c.Weapons[i].Bonus += strMod
+			}
+		}
+
+		if weapon.Proficient {
+			c.Weapons[i].Bonus += c.Proficiency
+		}
+
+		// Since custom weapons are sometimes a thing, we'll allow the user to specify a custom bonus
+		c.Weapons[i].Bonus += weapon.CustomBonus
+	}
+}
+
+func GetDexMod(abilities []types.Abilities) int {
+	for _, ability := range abilities {
+		if ability.Name == types.AbilityDexterity {
+			return ability.AbilityModifier
+		}
+	}
+
+	return 0
+}
+
+func GetStrMod(abilities []types.Abilities) int {
+	for _, ability := range abilities {
+		if ability.Name == types.AbilityStrength {
+			return ability.AbilityModifier
+		}
+	}
+
+	return 0
 }
 
 // Format Markdown
@@ -682,4 +736,22 @@ func (c *Character) UseClassTokens(name string) {
 
 func (c *Character) RecoverClassTokens(name string, quantity int) {
 	c.Class.RecoverClassTokens(name, quantity)
+}
+
+func (c *Character) ExecuteClassMethods(isPreCalculate bool) {
+	methodPrefix := "PostCalculate"
+
+	if isPreCalculate {
+		methodPrefix = "PreCalculate"
+	}
+
+	v := reflect.ValueOf(c.Class)
+
+	for i := range v.NumMethod() {
+		method := v.Type().Method(i)
+		if strings.HasPrefix(method.Name, methodPrefix) {
+			args := []reflect.Value{reflect.ValueOf(c)}
+			v.Method(i).Call(args)
+		}
+	}
 }

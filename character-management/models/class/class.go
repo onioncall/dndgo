@@ -39,6 +39,25 @@ func executeExpertiseShared(c *models.Character, expertiseSkills []string) {
 	}
 }
 
+// If not wearing armor, Armor Class is boosted to 10 + modifiers outlined by implementing class
+func executeUnarmoredDefenseShared(c *models.Character, abilities []string) {
+	if c.WornEquipment.Armour != "" {
+		return
+	}
+
+	c.AC = 0
+
+	for _, charAbility := range c.Abilities {
+		for _, classAbility := range abilities {
+			if charAbility.Name == classAbility {
+				c.AC += charAbility.AbilityModifier
+			}
+		}
+	}
+
+	c.AC += 10
+}
+
 func buildClassDetailsHeader() []string {
 	s := make([]string, 0, 100)
 	header := fmt.Sprintf("Class Details\n")

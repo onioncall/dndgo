@@ -27,23 +27,17 @@ func LoadRogue(data []byte) (*Rogue, error) {
 func (r *Rogue) ValidateMethods(c *models.Character) {
 }
 
-func (r *Rogue) ExecutePostCalculateMethods(c *models.Character) {
-	models.PostCalculateMethods = append(models.PostCalculateMethods, r.executeExpertise)
-	models.PostCalculateMethods = append(models.PostCalculateMethods, r.executeSneakAttack)
-	for _, m := range models.PostCalculateMethods {
-		m(c)
-	}
-}
-
-func (r *Rogue) ExecutePreCalculateMethods(c *models.Character) {
-	for _, m := range models.PreCalculateMethods {
-		m(c)
-	}
-}
+// func (r *Rogue) ExecutePostCalculateMethods(c *models.Character) {
+// 	r.PostCalculateExpertise(c)
+// 	r.PostCalculateSneakAttack(c)
+// }
+//
+// func (r *Rogue) ExecutePreCalculateMethods(c *models.Character) {
+// }
 
 // At level 1, rogues can pick two skills they are proficient in, and double the modifier.
 // They select two more at level 6
-func (r *Rogue) executeExpertise(c *models.Character) {
+func (r *Rogue) PostCalculateExpertise(c *models.Character) {
 	if c.Level < 6 && len(r.ExpertiseSkills) > 2 {
 		// We'll allow the user to specify more, but only the first two get taken for it to be ExpertiseSkills
 		r.ExpertiseSkills = r.ExpertiseSkills[:2]
@@ -56,7 +50,7 @@ func (r *Rogue) executeExpertise(c *models.Character) {
 	executeExpertiseShared(c, r.ExpertiseSkills)
 }
 
-func (r *Rogue) executeSneakAttack(c *models.Character) {
+func (r *Rogue) PostCalculateSneakAttack(c *models.Character) {
 	switch {
 	case c.Level < 3:
 		r.SneakAttack = "1d6"

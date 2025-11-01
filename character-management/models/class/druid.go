@@ -28,23 +28,16 @@ func LoadDruid(data []byte) (*Druid, error) {
 	return &druid, nil
 }
 
+// func (d *Druid) ExecutePostCalculateMethods(c *models.Character) {
+// }
+//
+// func (d *Druid) ExecutePreCalculateMethods(c *models.Character) {
+// }
+
 func (d *Druid) ValidateMethods(c *models.Character) {
 	isValid := d.validateCantripVersatility(c)
 	if isValid {
 		logger.HandleInfo("Cantrip Versatility: You have too many cantrips or ability score improvement bonuss for your level")
-	}
-}
-
-func (d *Druid) ExecutePostCalculateMethods(c *models.Character) {
-	models.PostCalculateMethods = append(models.PostCalculateMethods, d.executeArchDruid)
-	for _, m := range models.PostCalculateMethods {
-		m(c)
-	}
-}
-
-func (d *Druid) ExecutePreCalculateMethods(c *models.Character) {
-	for _, m := range models.PreCalculateMethods {
-		m(c)
 	}
 }
 
@@ -90,7 +83,7 @@ func (d *Druid) validateCantripVersatility(c *models.Character) bool {
 	return true
 }
 
-func (d *Druid) executeArchDruid(c *models.Character) {
+func (d *Druid) PostCalculateArchDruid(c *models.Character) {
 	if c.Level < 20 {
 		return
 	}

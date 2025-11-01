@@ -33,23 +33,17 @@ func LoadBard(data []byte) (*Bard, error) {
 func (b *Bard) ValidateMethods(c *models.Character) {
 }
 
-func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
-	models.PostCalculateMethods = append(models.PostCalculateMethods, b.executeJackOfAllTrades)
-	models.PostCalculateMethods = append(models.PostCalculateMethods, b.executeExpertise)
-	for _, m := range models.PostCalculateMethods {
-		m(c)
-	}
-}
-
-func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
-	for _, m := range models.PreCalculateMethods {
-		m(c)
-	}
-}
+// func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
+// 	b.PostCalculateJackOfAllTrades(c)
+// 	b.PostCalculateExpertise(c)
+// }
+//
+// func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
+// }
 
 // At level 3, bards can pick two skills they are proficient in, and double the modifier.
 // They select two more at level 10
-func (b *Bard) executeExpertise(c *models.Character) {
+func (b *Bard) PostCalculateExpertise(c *models.Character) {
 	if c.Level < 3 {
 		return
 	}
@@ -69,7 +63,7 @@ func (b *Bard) executeExpertise(c *models.Character) {
 
 // At level 2, bards can add half their proficiency bonus (rounded down) to any ability check
 // that doesn't already use their proficiency bonus.
-func (b *Bard) executeJackOfAllTrades(c *models.Character) {
+func (b *Bard) PostCalculateJackOfAllTrades(c *models.Character) {
 	if c.Level < 2 {
 		return
 	}

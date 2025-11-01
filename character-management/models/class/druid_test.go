@@ -50,7 +50,7 @@ func TestDruidExecuteArchDruid(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.druid.executeArchDruid(tt.character)
+			tt.druid.PostCalculateArchDruid(tt.character)
 			result := tt.druid.WildShape
 
 			if tt.expected.Maximum != result.Maximum {
