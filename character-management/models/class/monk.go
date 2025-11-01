@@ -11,7 +11,6 @@ import (
 
 type Monk struct {
 	MartialArts     string                 `json:"-"`
-	KiSpellSaveDC   int                    `json:"-"`
 	KiPoints        Ki                     `json:"ki-points"`
 	MosaicTradition string                 `json:"mosaic-tradition"`
 	DeflectMissles  int                    `json:"-"`
@@ -81,17 +80,21 @@ func (m *Monk) PostCalculateMartialArts(c *models.Character) {
 }
 
 func (m *Monk) PostCalculateKiPoints(c *models.Character) {
-	if c.Level > 1 {
-		m.KiPoints.Maximum = c.Level
-
-		widomMod := 0
-		for _, a := range c.Abilities {
-			if a.Name == types.AbilityWisdom {
-				widomMod = a.AbilityModifier
-			}
-		}
-		m.KiPoints.KiSpellSaveDC = 8 + c.Proficiency + widomMod
+	if c.Level < 2 {
+		return
 	}
+
+	m.KiPoints.Maximum = c.Level
+	m.KiPoints.Available = min(m.KiPoints.Available, m.KiPoints.Maximum)
+
+	widomMod := 0
+	for _, a := range c.Abilities {
+		if a.Name == types.AbilityWisdom {
+			widomMod = a.AbilityModifier
+		}
+	}
+
+	m.KiPoints.KiSpellSaveDC = 8 + c.Proficiency + widomMod
 }
 
 func (m *Monk) PostCalculateDeflectMissles(c *models.Character) {
