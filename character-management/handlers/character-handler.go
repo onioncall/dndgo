@@ -30,6 +30,7 @@ func HandleCharacter(c *models.Character) error {
 
 	if c.Class != nil {
 		c.ExecuteClassMethods(false)
+		c.Class.ValidateMethods(c)
 	}
 
 	res := c.BuildCharacter()

@@ -11,7 +11,7 @@ import (
 
 type Character struct {
 	Path                    string                              `json:"path"`
-	ValidationEnabled       bool                                `json:"validation-enabled"`
+	ValidationDisabled      bool                                `json:"validation-Disabled"`
 	Name                    string                              `json:"name"`
 	Level                   int                                 `json:"level"`
 	ClassName               string                              `json:"class-name"`
@@ -23,7 +23,8 @@ type Character struct {
 	PassivePerception       int                                 `json:"passive-perception"`
 	PassiveInsight          int                                 `json:"passive-insight"`
 	AC                      int                                 `json:"ac"`
-	SpellSaveDC             int                                 `json:"spell-save-dc"`
+	SpellSaveDC             int                                 `json:"-"`
+	SpellAttackMod          int                                 `json:"-"`
 	HPCurrent               int                                 `json:"hp-current"`
 	HPMax                   int                                 `json:"hp-max"`
 	Initiative              int                                 `json:"initiative"`
@@ -152,8 +153,8 @@ func (c *Character) calculateProficiencyBonusByLevel() {
 
 func (c *Character) calculateWeaponBonus() {
 	for i, weapon := range c.Weapons {
-		dexMod := GetDexMod(c.Abilities)
-		strMod := GetStrMod(c.Abilities)
+		dexMod := c.GetMod(types.AbilityDexterity)
+		strMod := c.GetMod(types.AbilityStrength)
 		modApplied := false
 
 		for _, prop := range weapon.Properties {
@@ -182,19 +183,9 @@ func (c *Character) calculateWeaponBonus() {
 	}
 }
 
-func GetDexMod(abilities []types.Abilities) int {
-	for _, ability := range abilities {
-		if ability.Name == types.AbilityDexterity {
-			return ability.AbilityModifier
-		}
-	}
-
-	return 0
-}
-
-func GetStrMod(abilities []types.Abilities) int {
-	for _, ability := range abilities {
-		if ability.Name == types.AbilityStrength {
+func (c *Character) GetMod(abilityName string) int {
+	for _, ability := range c.Abilities {
+		if ability.Name == abilityName {
 			return ability.AbilityModifier
 		}
 	}
@@ -453,8 +444,8 @@ func (c *Character) BuildSpells() []string {
 	spellHeader := fmt.Sprintf("*Spells*\n\n")
 	s = append(s, spellHeader)
 
-	spellTopRow := fmt.Sprintf("| Slot Level | Ritual | Spell |\n")
-	spellSpacer := fmt.Sprintf("| --- | --- | --- |\n")
+	spellTopRow := fmt.Sprintf("| Slot Level | Ritual | Spell | IsPrepared |\n")
+	spellSpacer := fmt.Sprintf("| --- | --- | --- | --- |\n")
 	s = append(s, spellTopRow)
 	s = append(s, spellSpacer)
 
@@ -464,7 +455,12 @@ func (c *Character) BuildSpells() []string {
 			rString = "*"
 		}
 
-		spellRow := fmt.Sprintf("| %d | %s | %s |\n", spell.SlotLevel, rString, spell.Name)
+		pString := " "
+		if spell.IsPrepared {
+			pString = "*"
+		}
+
+		spellRow := fmt.Sprintf("| %d | %s | %s | %s |\n", spell.SlotLevel, rString, spell.Name, pString)
 		s = append(s, spellRow)
 	}
 	s = append(s, nl)
@@ -579,6 +575,10 @@ func (c *Character) BuildAbilityScoreImprovement() []string {
 
 		// TODO: Make this more sophistocated so we don't need to loop through this twice
 		for _, ability := range c.AbilityScoreImprovement {
+			if ability.Ability == "" {
+				continue
+			}
+
 			expLine := fmt.Sprintf("- %s: +%d\n", ability.Ability, ability.Bonus)
 			s = append(s, expLine)
 		}

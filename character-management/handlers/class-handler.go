@@ -132,8 +132,7 @@ func loadClassData(classType string, classData []byte) (models.Class, error) {
 		c = nil
 		err = fmt.Errorf("%s not implemented yet", classType)
 	case types.ClassWizard:
-		c = nil
-		err = fmt.Errorf("%s not implemented yet", classType)
+		c, err = class.LoadWizard(classData)
 	default:
 		return nil, fmt.Errorf("Unsupported class type '%s'", classType)
 	}

@@ -6,6 +6,7 @@ import (
 	"math"
 
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/character-management/types"
 	"github.com/onioncall/dndgo/logger"
 )
 
@@ -40,6 +41,13 @@ func (b *Bard) ValidateMethods(c *models.Character) {
 //
 // func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
 // }
+
+func (b *Bard) PostCalculateSpellCastingAbility(c *models.Character) {
+	chrMod := c.GetMod(types.AbilityCharisma)
+
+	executeSpellSaveDC(c, chrMod)
+	executeSpellAttackMod(c, chrMod)
+}
 
 // At level 3, bards can pick two skills they are proficient in, and double the modifier.
 // They select two more at level 10

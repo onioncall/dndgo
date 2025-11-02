@@ -16,8 +16,8 @@ func TestClericValidateCantripVersatility(t *testing.T) {
 		{
 			name: "Below level 4, valid",
 			character: &models.Character{
-				Level:             3,
-				ValidationEnabled: true,
+				Level:              3,
+				ValidationDisabled: false,
 				Spells: []types.CharacterSpell{
 					{SlotLevel: 0, IsRitual: true},
 					{SlotLevel: 0, IsRitual: false},
@@ -30,8 +30,8 @@ func TestClericValidateCantripVersatility(t *testing.T) {
 		{
 			name: "Below level 12, valid",
 			character: &models.Character{
-				Level:             11,
-				ValidationEnabled: true,
+				Level:              11,
+				ValidationDisabled: false,
 				Spells: []types.CharacterSpell{
 					{SlotLevel: 0, IsRitual: true},
 					{SlotLevel: 0, IsRitual: false},
@@ -50,8 +50,8 @@ func TestClericValidateCantripVersatility(t *testing.T) {
 		{
 			name: "Below level 12, invalid",
 			character: &models.Character{
-				ValidationEnabled: true,
-				Level:             11,
+				ValidationDisabled: false,
+				Level:              11,
 				Spells: []types.CharacterSpell{
 					{SlotLevel: 0, IsRitual: true},
 					{SlotLevel: 0, IsRitual: false},
@@ -70,8 +70,8 @@ func TestClericValidateCantripVersatility(t *testing.T) {
 		{
 			name: "Below level 12, validation disabled",
 			character: &models.Character{
-				ValidationEnabled: false,
-				Level:             11,
+				ValidationDisabled: true,
+				Level:              11,
 				Spells: []types.CharacterSpell{
 					{SlotLevel: 0, IsRitual: true},
 					{SlotLevel: 0, IsRitual: false},

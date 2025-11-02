@@ -7,9 +7,10 @@ type SpellSlot struct {
 }
 
 type CharacterSpell struct {
-	SlotLevel int    `json:"slot-level"`
-	IsRitual  bool   `json:"ritual"`
-	Name      string `json:"name"`
+	SlotLevel  int    `json:"slot-level"`
+	IsRitual   bool   `json:"ritual"`
+	Name       string `json:"name"`
+	IsPrepared bool   `json:"-"`
 }
 
 type Token struct {
