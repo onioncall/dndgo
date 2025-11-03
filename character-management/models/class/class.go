@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
 	"github.com/onioncall/dndgo/logger"
 )
 
@@ -59,10 +58,10 @@ func executeUnarmoredDefenseShared(c *models.Character, abilities []string) {
 	c.AC += 10
 }
 
-func executePreparedSpellsShared(c *models.Character, preparedSpells []types.CharacterSpell) {
+func executePreparedSpellsShared(c *models.Character, preparedSpells []string) {
 	for i := range c.Spells {
 		for _, ps := range preparedSpells {
-			if strings.ToLower(ps.Name) == strings.ToLower(c.Spells[i].Name) {
+			if strings.ToLower(ps) == strings.ToLower(c.Spells[i].Name) {
 				c.Spells[i].IsPrepared = true
 			}
 		}

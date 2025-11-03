@@ -12,7 +12,7 @@ import (
 type Cleric struct {
 	ChannelDivinity types.Token            `json:"channel-divinity"`
 	Domain          string                 `json:"domain"`
-	PreparedSpells  []types.CharacterSpell `json:"prepared-spells"`
+	PreparedSpells  []string               `json:"prepared-spells"`
 	OtherFeatures   []models.ClassFeatures `json:"other-features"`
 }
 
@@ -91,10 +91,19 @@ func (cl *Cleric) PostCalculateSpellCastingAbility(c *models.Character) {
 
 func (cl *Cleric) PostCalculatePreparedSpells(c *models.Character) {
 	wisMod := c.GetMod(types.AbilityWisdom)
-	preparedSpellCount := wisMod + c.Level
+	preparedSpellsMax := wisMod + c.Level
 
-	preparedSpells := cl.PreparedSpells[:preparedSpellCount]
-	executePreparedSpellsShared(c, preparedSpells)
+	if !c.ValidationDisabled {
+		if len(cl.PreparedSpells) > preparedSpellsMax {
+			logger.HandleInfo(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
+				len(cl.PreparedSpells), preparedSpellsMax))
+		} else if len(cl.PreparedSpells) < preparedSpellsMax {
+			diff := preparedSpellsMax - len(cl.PreparedSpells)
+			logger.HandleInfo(fmt.Sprintf("You have %d prepared spells not being used", diff))
+		}
+	}
+
+	executePreparedSpellsShared(c, cl.PreparedSpells)
 }
 
 func (cl *Cleric) PrintClassDetails(c *models.Character) []string {

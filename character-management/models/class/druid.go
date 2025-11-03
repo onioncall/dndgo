@@ -12,7 +12,7 @@ import (
 type Druid struct {
 	WildShape      WildShape              `json:"wild-shape"`
 	Circle         string                 `json:"circle"`
-	PreparedSpells []types.CharacterSpell `json:"prepared-spells"`
+	PreparedSpells []string               `json:"prepared-spells"`
 	OtherFeatures  []models.ClassFeatures `json:"other-features"`
 }
 
@@ -94,10 +94,19 @@ func (d *Druid) PostCalculateSpellCastingAbility(c *models.Character) {
 
 func (d *Druid) PostCalculatePreparedSpells(c *models.Character) {
 	wisMod := c.GetMod(types.AbilityWisdom)
-	preparedSpellCount := wisMod + c.Level
+	preparedSpellsMax := wisMod + c.Level
 
-	preparedSpells := d.PreparedSpells[:preparedSpellCount]
-	executePreparedSpellsShared(c, preparedSpells)
+	if !c.ValidationDisabled {
+		if len(d.PreparedSpells) > preparedSpellsMax {
+			logger.HandleInfo(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
+				len(d.PreparedSpells), preparedSpellsMax))
+		} else if len(d.PreparedSpells) < preparedSpellsMax {
+			diff := preparedSpellsMax - len(d.PreparedSpells)
+			logger.HandleInfo(fmt.Sprintf("You have %d prepared spells not being used", diff))
+		}
+	}
+
+	executePreparedSpellsShared(c, d.PreparedSpells)
 }
 
 func (d *Druid) PostCalculateArchDruid(c *models.Character) {
