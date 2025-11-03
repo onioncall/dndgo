@@ -4,6 +4,7 @@
     "maximum": 1
   },
   "domain": "",
+  "prepared-spells": [""],
   "other-features": [
     {
       "name": "Harness Divine Power",

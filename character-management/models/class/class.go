@@ -41,7 +41,7 @@ func executeExpertiseShared(c *models.Character, expertiseSkills []string) {
 
 // If not wearing armor, Armor Class is boosted to 10 + modifiers outlined by implementing class
 func executeUnarmoredDefenseShared(c *models.Character, abilities []string) {
-	if c.WornEquipment.Armour != "" {
+	if c.WornEquipment.Armor != "" {
 		return
 	}
 

@@ -27,6 +27,7 @@ type Character struct {
 	SpellAttackMod          int                                 `json:"-"`
 	HPCurrent               int                                 `json:"hp-current"`
 	HPMax                   int                                 `json:"hp-max"`
+	HPTemp                  int                                 `json:"hp-temp"`
 	Initiative              int                                 `json:"initiative"`
 	Speed                   int                                 `json:"speed"`
 	HitDice                 string                              `json:"hit-dice"`
@@ -348,7 +349,12 @@ func (c *Character) BuildGeneralStats() []string {
 	ssdcLine := fmt.Sprintf("Spell Save DC: %d\n", c.SpellSaveDC)
 	initiativeLine := fmt.Sprintf("Initiative: %d\n", c.Initiative)
 	speedLine := fmt.Sprintf("Speed: %d\n", c.Speed)
-	hpMaxLine := fmt.Sprintf("HP: %d/%d\n", c.HPCurrent, c.HPMax)
+	hpLine := fmt.Sprintf("HP: %d/%d", c.HPCurrent, c.HPMax)
+
+	if c.HPTemp > 0 {
+		hpLine += fmt.Sprintf(" +%d", c.HPTemp)
+	}
+
 	hitDiceLine := fmt.Sprintf("Hit Dice: %s\n", c.HitDice)
 
 	s := []string{
@@ -360,7 +366,8 @@ func (c *Character) BuildGeneralStats() []string {
 		ssdcLine,
 		initiativeLine,
 		speedLine,
-		hpMaxLine,
+		hpLine,
+		nl,
 		hitDiceLine,
 	}
 
@@ -515,7 +522,7 @@ func (c *Character) BuildEquipment() []string {
 	head := fmt.Sprintf("	- Head: %s\n", c.WornEquipment.Head)
 	amulet := fmt.Sprintf("	- Amulet: %s\n", c.WornEquipment.Amulet)
 	cloak := fmt.Sprintf("	- Cloak: %s\n", c.WornEquipment.Cloak)
-	armor := fmt.Sprintf("	- Armor: %s\n", c.WornEquipment.Armour)
+	armor := fmt.Sprintf("	- Armor: %s\n", c.WornEquipment.Armor)
 	hands := fmt.Sprintf("	- Hands: %s\n", c.WornEquipment.HandsArms)
 	ring := fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring)
 	ring2 := fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring2)
@@ -649,7 +656,7 @@ func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
 	case types.WornEquipmentCloak:
 		c.WornEquipment.Cloak = equipmentName
 	case types.WornEquipmentArmour:
-		c.WornEquipment.Armour = equipmentName
+		c.WornEquipment.Armor = equipmentName
 	case types.WornEquipmentHandsArms:
 		c.WornEquipment.HandsArms = equipmentName
 	case types.WornEquipmentRing:
@@ -684,12 +691,27 @@ func (c *Character) DamageCharacter(hpDecr int) {
 		return
 	}
 
+	if c.HPTemp > 0 {
+		c.HPTemp -= hpDecr
+
+		if c.HPTemp > 0 {
+			return
+		}
+
+		hpDecr = (c.HPTemp * -1)
+		c.HPTemp = 0
+	}
+
 	c.HPCurrent -= hpDecr
 
 	// reset to zero if the decremented amount is greater than remaining health
 	if c.HPCurrent < 0 {
 		c.HPCurrent = 0
 	}
+}
+
+func (c *Character) AddTempHp(tempHP int) {
+	c.HPTemp += tempHP
 }
 
 func (c *Character) UseSpellSlot(level int) {

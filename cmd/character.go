@@ -26,6 +26,7 @@ var (
 			s, _ := cmd.Flags().GetString("spell")
 			ss, _ := cmd.Flags().GetInt("spell-slots")
 			q, _ := cmd.Flags().GetInt("quantity")
+			t, _ := cmd.Flags().GetInt("temp-hp")
 			n, _ := cmd.Flags().GetString("name")
 
 			c, err := handlers.LoadCharacter()
@@ -62,6 +63,9 @@ var (
 			if s != "" {
 				err = handlers.AddSpell(c, s)
 
+			}
+			if t != 0 {
+				c.AddTempHp(t)
 			}
 
 			err = handlers.SaveCharacterJson(c)
@@ -329,6 +333,7 @@ func init() {
 	addCmd.Flags().StringP("spell", "x", "", "Add spell to list of character spells")
 	addCmd.Flags().StringP("backpack", "b", "", "Item to add to backpack (use -q to specify quantity)")
 	addCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
+	addCmd.Flags().IntP("temp-hp", "t", 0, "Add temporary hp")
 	addCmd.Flags().StringP("name", "n", "", "Name of equipment to add")
 
 	removeCmd.Flags().StringP("language", "l", "", "Language to remove")

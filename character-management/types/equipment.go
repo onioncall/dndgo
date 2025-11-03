@@ -4,7 +4,7 @@ type WornEquipment struct {
 	Head      string `json:"head"`
 	Amulet    string `json:"amulet"`
 	Cloak     string `json:"cloak"`
-	Armour    string `json:"armour"`
+	Armor     string `json:"armour"`
 	HandsArms string `json:"hands-arms"`
 	Ring      string `json:"ring"`
 	Ring2     string `json:"ring2"`

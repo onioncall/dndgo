@@ -1,16 +1,7 @@
 {
   "arcane-tradition": "",
-  "expertise": [
-    ""
-  ],
   "signature-spells": [""],
-  "prepared-spells": [
-    {
-      "slot-level": 0,
-      "ritual": false,
-      "name": ""
-    }
-  ],
+  "prepared-spells": [""],
   "other-features": [
     {
       "name": "Spellbook",

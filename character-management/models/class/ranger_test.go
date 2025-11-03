@@ -74,7 +74,7 @@ func TestRangerAppliedDefense(t *testing.T) {
 			character: &models.Character{
 				AC: 15,
 				WornEquipment: types.WornEquipment{
-					Armour: "Light Armor",
+					Armor: "Light Armor",
 				},
 			},
 			expected: 15,
@@ -85,7 +85,7 @@ func TestRangerAppliedDefense(t *testing.T) {
 			character: &models.Character{
 				AC: 15,
 				WornEquipment: types.WornEquipment{
-					Armour: "",
+					Armor: "",
 				},
 			},
 			expected: 16,
@@ -286,7 +286,7 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 				AC:    15,
 				Level: 1,
 				WornEquipment: types.WornEquipment{
-					Armour: "",
+					Armor: "",
 				},
 			},
 			ranger: &Ranger{
@@ -303,7 +303,7 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 				AC:    15,
 				Level: 3,
 				WornEquipment: types.WornEquipment{
-					Armour: "",
+					Armor: "",
 				},
 			},
 			ranger: &Ranger{
@@ -320,7 +320,7 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 				AC:    15,
 				Level: 3,
 				WornEquipment: types.WornEquipment{
-					Armour: "",
+					Armor: "",
 				},
 			},
 			ranger: &Ranger{
@@ -337,7 +337,7 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 				AC:    15,
 				Level: 3,
 				WornEquipment: types.WornEquipment{
-					Armour: "light-armor",
+					Armor: "light-armor",
 				},
 			},
 			ranger: &Ranger{

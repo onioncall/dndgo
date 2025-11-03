@@ -4,6 +4,7 @@
     "maximum": 2
   },
   "circle": "",
+  "prepared-spells": [""],
   "other-features": [
     {
       "name": "Cantrip Versatility",

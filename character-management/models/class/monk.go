@@ -59,7 +59,7 @@ func (m *Monk) PostCalculateUnarmoredDefense(c *models.Character) {
 }
 
 func (m *Monk) PostCalculateUnarmoredMovement(c *models.Character) {
-	if c.WornEquipment.Armour != "" || c.Level < 2 {
+	if c.WornEquipment.Armor != "" || c.Level < 2 {
 		return
 	}
 

@@ -522,6 +522,34 @@ func TestCharacterDamageCharacter(t *testing.T) {
 				HPMax:     16,
 			},
 		},
+		{
+			name:   "Temp HP, with remainder",
+			damage: 4,
+			character: &Character{
+				HPCurrent: 11,
+				HPMax:     16,
+				HPTemp:    5,
+			},
+			expected: Character{
+				HPCurrent: 11,
+				HPMax:     16,
+				HPTemp:    1,
+			},
+		},
+		{
+			name:   "Temp HP, with damage left over",
+			damage: 7,
+			character: &Character{
+				HPCurrent: 11,
+				HPMax:     16,
+				HPTemp:    5,
+			},
+			expected: Character{
+				HPCurrent: 9,
+				HPMax:     16,
+				HPTemp:    0,
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -532,6 +560,10 @@ func TestCharacterDamageCharacter(t *testing.T) {
 			result := tt.character
 			if e.HPCurrent != result.HPCurrent {
 				t.Errorf("HPCurrent- Expected: %d, Result: %d", e.HPCurrent, result.HPCurrent)
+			}
+
+			if e.HPTemp != result.HPTemp {
+				t.Errorf("HPTemp- Expected: %d, Result: %d", e.HPTemp, result.HPTemp)
 			}
 
 			// We should never mutate the max HP
