@@ -133,7 +133,7 @@ func applyArchery(c *models.Character) bool {
 
 // Only to be called from executeFightingStyle
 func applyDefense(c *models.Character) bool {
-	if c.WornEquipment.Armour == "" {
+	if c.WornEquipment.Armor == "" {
 		c.AC += 1
 		return true
 	}

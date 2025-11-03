@@ -522,7 +522,7 @@ func (c *Character) BuildEquipment() []string {
 	head := fmt.Sprintf("	- Head: %s\n", c.WornEquipment.Head)
 	amulet := fmt.Sprintf("	- Amulet: %s\n", c.WornEquipment.Amulet)
 	cloak := fmt.Sprintf("	- Cloak: %s\n", c.WornEquipment.Cloak)
-	armor := fmt.Sprintf("	- Armor: %s\n", c.WornEquipment.Armour)
+	armor := fmt.Sprintf("	- Armor: %s\n", c.WornEquipment.Armor)
 	hands := fmt.Sprintf("	- Hands: %s\n", c.WornEquipment.HandsArms)
 	ring := fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring)
 	ring2 := fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring2)
@@ -656,7 +656,7 @@ func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
 	case types.WornEquipmentCloak:
 		c.WornEquipment.Cloak = equipmentName
 	case types.WornEquipmentArmour:
-		c.WornEquipment.Armour = equipmentName
+		c.WornEquipment.Armor = equipmentName
 	case types.WornEquipmentHandsArms:
 		c.WornEquipment.HandsArms = equipmentName
 	case types.WornEquipmentRing:

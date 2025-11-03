@@ -44,7 +44,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 					},
 				},
 				WornEquipment: types.WornEquipment{
-					Armour: "Leather Armor",
+					Armor: "Leather Armor",
 				},
 			},
 			expected: 0,
@@ -80,7 +80,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 					},
 				},
 				WornEquipment: types.WornEquipment{
-					Armour: "",
+					Armor: "",
 				},
 			},
 			expected: 17,

@@ -43,23 +43,21 @@ func (w *Warlock) PostCalculateSpellCastingAbility(c *models.Character) {
 	executeSpellAttackMod(c, chrMod)
 }
 
+// May implement more thoroughly in the future, but most of these invove game state that we can't mock
+// in this app. Will look into in the future when I know more about how this class plays
 func (w *Warlock) PostCalculateEldritchInvocations(c *models.Character) {
-	if c.Level > 2 {
-		return
-	}
-
-	switch w.Invocation {
-	case InvocationArmorOfShadows:
-	case InvocationFiendishVigor:
-	case InvocationGiftOfEverLivingOnes:
-	case InvocationAgonizingBlast:
-	case InvocationLifedrinker:
-	case InvocationImprovedPactWeapon:
-	}
+	// if c.Level > 2 {
+	// 	return
+	// }
+	//
+	// switch w.Invocation {
+	// case InvocationArmorOfShadows:
+	// 	applyArmorOfShadows(c)
+	// }
 }
 
 func applyArmorOfShadows(c *models.Character) bool {
-	if c.WornEquipment.Armour != "" {
+	if c.WornEquipment.Armor != "" {
 		return false
 	}
 
