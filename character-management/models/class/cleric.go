@@ -12,6 +12,7 @@ import (
 type Cleric struct {
 	ChannelDivinity types.Token            `json:"channel-divinity"`
 	Domain          string                 `json:"domain"`
+	PreparedSpells  []string               `json:"prepared-spells"`
 	OtherFeatures   []models.ClassFeatures `json:"other-features"`
 }
 
@@ -40,7 +41,7 @@ func (cl *Cleric) ValidateMethods(c *models.Character) {
 func (cl *Cleric) validateCantripVersatility(c *models.Character) bool {
 	// Even though this is functionally the same as the Druid version, the switch table is different,
 	// so we're going to have these exist separately
-	if !c.ValidationEnabled {
+	if c.ValidationDisabled {
 		return true
 	}
 
@@ -79,6 +80,30 @@ func (cl *Cleric) validateCantripVersatility(c *models.Character) bool {
 	}
 
 	return true
+}
+
+func (cl *Cleric) PostCalculateSpellCastingAbility(c *models.Character) {
+	wisMod := c.GetMod(types.AbilityWisdom)
+
+	executeSpellSaveDC(c, wisMod)
+	executeSpellAttackMod(c, wisMod)
+}
+
+func (cl *Cleric) PostCalculatePreparedSpells(c *models.Character) {
+	wisMod := c.GetMod(types.AbilityWisdom)
+	preparedSpellsMax := wisMod + c.Level
+
+	if !c.ValidationDisabled {
+		if len(cl.PreparedSpells) > preparedSpellsMax {
+			logger.HandleInfo(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
+				len(cl.PreparedSpells), preparedSpellsMax))
+		} else if len(cl.PreparedSpells) < preparedSpellsMax {
+			diff := preparedSpellsMax - len(cl.PreparedSpells)
+			logger.HandleInfo(fmt.Sprintf("You have %d prepared spells not being used", diff))
+		}
+	}
+
+	executePreparedSpellsShared(c, cl.PreparedSpells)
 }
 
 func (cl *Cleric) PrintClassDetails(c *models.Character) []string {

@@ -1,6 +1,5 @@
 {
   "path": ".config/dndgo",
-  "validation-enabled": true,
   "name": "",
   "level": 0,
   "class-name": "",
@@ -20,7 +19,6 @@
   "passive-perception": 0,
   "passive-insight": 0,
   "ac": 0,
-  "spell-save-dc": 0,
   "hp-current": 0,
   "hp-max": 0,
   "initiative": 0,
@@ -152,7 +150,6 @@
   ],
   "spells": [
     {
-      "is-caltrop": false,
       "slot-level": 0,
       "ritual": false,
       "name": ""
@@ -236,10 +233,4 @@
       "quantity": 0
     }
   ],
-  "ability-score-improvement": [
-    {
-      "ability": "",
-      "bonus": 0
-    }
-  ]
 }

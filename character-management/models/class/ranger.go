@@ -29,17 +29,18 @@ func LoadRanger(data []byte) (*Ranger, error) {
 func (r *Ranger) ValidateMethods(c *models.Character) {
 }
 
-func (r *Ranger) ExecutePostCalculateMethods(c *models.Character) {
-	models.PostCalculateMethods = append(models.PostCalculateMethods, r.PostCalculateFightingStyle)
-	for _, m := range models.PostCalculateMethods {
-		m(c)
-	}
-}
+// func (r *Ranger) ExecutePostCalculateMethods(c *models.Character) {
+// 	r.PostCalculateFightingStyle(c)
+// }
+//
+// func (r *Ranger) ExecutePreCalculateMethods(c *models.Character) {
+// }
 
-func (r *Ranger) ExecutePreCalculateMethods(c *models.Character) {
-	for _, m := range models.PreCalculateMethods {
-		m(c)
-	}
+func (r *Ranger) PostCalculateSpellAttackMod(c *models.Character) {
+	wisMod := c.GetMod(types.AbilityWisdom)
+
+	executeSpellSaveDC(c, wisMod)
+	executeSpellAttackMod(c, wisMod)
 }
 
 func (r *Ranger) PrintClassDetails(c *models.Character) []string {

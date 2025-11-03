@@ -5,13 +5,15 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/character-management/types"
 	"github.com/onioncall/dndgo/logger"
 )
 
 type Druid struct {
-	WildShape     WildShape              `json:"wild-shape"`
-	Circle        string                 `json:"circle"`
-	OtherFeatures []models.ClassFeatures `json:"other-features"`
+	WildShape      WildShape              `json:"wild-shape"`
+	Circle         string                 `json:"circle"`
+	PreparedSpells []string               `json:"prepared-spells"`
+	OtherFeatures  []models.ClassFeatures `json:"other-features"`
 }
 
 type WildShape struct {
@@ -42,7 +44,7 @@ func (d *Druid) ValidateMethods(c *models.Character) {
 }
 
 func (d *Druid) validateCantripVersatility(c *models.Character) bool {
-	if !c.ValidationEnabled {
+	if c.ValidationDisabled {
 		return true
 	}
 
@@ -81,6 +83,30 @@ func (d *Druid) validateCantripVersatility(c *models.Character) bool {
 	}
 
 	return true
+}
+
+func (d *Druid) PostCalculateSpellCastingAbility(c *models.Character) {
+	wisMod := c.GetMod(types.AbilityWisdom)
+
+	executeSpellSaveDC(c, wisMod)
+	executeSpellAttackMod(c, wisMod)
+}
+
+func (d *Druid) PostCalculatePreparedSpells(c *models.Character) {
+	wisMod := c.GetMod(types.AbilityWisdom)
+	preparedSpellsMax := wisMod + c.Level
+
+	if !c.ValidationDisabled {
+		if len(d.PreparedSpells) > preparedSpellsMax {
+			logger.HandleInfo(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
+				len(d.PreparedSpells), preparedSpellsMax))
+		} else if len(d.PreparedSpells) < preparedSpellsMax {
+			diff := preparedSpellsMax - len(d.PreparedSpells)
+			logger.HandleInfo(fmt.Sprintf("You have %d prepared spells not being used", diff))
+		}
+	}
+
+	executePreparedSpellsShared(c, d.PreparedSpells)
 }
 
 func (d *Druid) PostCalculateArchDruid(c *models.Character) {
