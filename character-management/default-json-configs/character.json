@@ -21,6 +21,7 @@
   "ac": 0,
   "hp-current": 0,
   "hp-max": 0,
+  "hp-temp": 0,
   "initiative": 0,
   "speed": 0,
   "hit-dice": "",
