@@ -30,6 +30,10 @@ func (w *Wizard) ValidateMethods(c *models.Character) {
 	w.validateSignatureSpells(c)
 }
 
+func (w *Wizard) CalculateHitDice(level int) string {
+	return fmt.Sprintf("%dd6", level)
+}
+
 func (w *Wizard) PostCalculatePreparedSpells(c *models.Character) {
 	intMod := c.GetMod(types.AbilityIntelligence)
 	preparedSpellsMax := intMod + c.Level

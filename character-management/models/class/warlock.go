@@ -36,6 +36,10 @@ func LoadWarlock(data []byte) (*Warlock, error) {
 func (w *Warlock) ValidateMethods(c *models.Character) {
 }
 
+func (w *Warlock) CalculateHitDice(level int) string {
+	return fmt.Sprintf("%dd8", level)
+}
+
 func (w *Warlock) PostCalculateSpellCastingAbility(c *models.Character) {
 	chrMod := c.GetMod(types.AbilityCharisma)
 
@@ -57,7 +61,7 @@ func (w *Warlock) PostCalculateEldritchInvocations(c *models.Character) {
 }
 
 func applyArmorOfShadows(c *models.Character) bool {
-	if c.WornEquipment.Armor != "" {
+	if c.WornEquipment.Armor.Name != "" {
 		return false
 	}
 

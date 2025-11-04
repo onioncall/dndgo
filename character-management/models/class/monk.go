@@ -48,6 +48,10 @@ func (m *Monk) ValidateMethods(c *models.Character) {
 // 	m.PreCalculateDiamondSoul(c)
 // }
 
+func (m *Monk) CalculateHitDice(level int) string {
+	return fmt.Sprintf("%dd8", level)
+}
+
 // If not wearing armor, Armor Class is boosted to 10 + dex mod + wisdom mod
 func (m *Monk) PostCalculateUnarmoredDefense(c *models.Character) {
 	monkExpertiseAbilityModifiers := []string{
@@ -59,7 +63,7 @@ func (m *Monk) PostCalculateUnarmoredDefense(c *models.Character) {
 }
 
 func (m *Monk) PostCalculateUnarmoredMovement(c *models.Character) {
-	if c.WornEquipment.Armor != "" || c.Level < 2 {
+	if c.WornEquipment.Armor.Name != "" || c.Level < 2 {
 		return
 	}
 

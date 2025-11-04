@@ -19,7 +19,9 @@ func TestWarlockAppliedArmorOfShadows(t *testing.T) {
 			character: &models.Character{
 				AC: 15,
 				WornEquipment: types.WornEquipment{
-					Armor: "Light Armor",
+					Armor: types.Armor{
+						Name: "Leather Armor",
+					},
 				},
 			},
 			expected: 15,
@@ -33,7 +35,9 @@ func TestWarlockAppliedArmorOfShadows(t *testing.T) {
 					{Name: types.AbilityDexterity, AbilityModifier: 4},
 				},
 				WornEquipment: types.WornEquipment{
-					Armor: "",
+					Armor: types.Armor{
+						Name: "",
+					},
 				},
 			},
 			expected: 17,

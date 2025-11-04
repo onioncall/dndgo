@@ -38,6 +38,10 @@ func (f *Fighter) ValidateMethods(c *models.Character) {
 // func (f *Fighter) ExecutePreCalculateMethods(c *models.Character) {
 // }
 
+func (f *Fighter) CalculateHitDice(level int) string {
+	return fmt.Sprintf("%dd10", level)
+}
+
 func (f *Fighter) PrintClassDetails(c *models.Character) []string {
 	s := buildClassDetailsHeader()
 

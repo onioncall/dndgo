@@ -36,6 +36,8 @@ type Character struct {
 	Spells                  []types.CharacterSpell              `json:"spells"`
 	SpellSlots              []types.SpellSlot                   `json:"spell-slots"`
 	Weapons                 []types.Weapon                      `json:"weapons"`
+	PrimaryEquipped         string                              `json:"primary-equipped"`
+	SecondaryEquipped       string                              `json:"secondary-equipped"`
 	WornEquipment           types.WornEquipment                 `json:"body-equipment"`
 	Backpack                []types.BackpackItem                `json:"backpack"`
 	AbilityScoreImprovement []types.AbilityScoreImprovementItem `json:"ability-score-improvement"`
@@ -49,6 +51,7 @@ type GenericItem struct {
 
 type Class interface {
 	ValidateMethods(c *Character)
+	CalculateHitDice(int) string
 	// ExecutePostCalculateMethods(c *Character)
 	// ExecutePreCalculateMethods(c *Character)
 	PrintClassDetails(c *Character) []string
@@ -72,6 +75,8 @@ func (c *Character) CalculateCharacterStats() {
 	c.calculateAbilitiesFromBase()
 	c.calculateAbilityScoreImprovement()
 	c.calculateSkillModifierFromBase()
+	c.calculateAC()
+	c.calculatePassiveStats()
 	c.calculateWeaponBonus()
 }
 
@@ -152,6 +157,43 @@ func (c *Character) calculateProficiencyBonusByLevel() {
 	}
 }
 
+func (c *Character) calculateAC() {
+	c.AC = c.WornEquipment.Armor.Class
+
+	switch c.WornEquipment.Armor.Type {
+	case types.LightArmor:
+		c.AC += c.GetMod(types.AbilityDexterity)
+	case types.MediumArmor:
+		c.AC += min(c.GetMod(types.AbilityDexterity), 2)
+	case types.HeavyArmor:
+		// this just uses the armor class which we've already accounted for
+	case "":
+		c.AC += 10 + c.GetMod(types.AbilityDexterity)
+	}
+
+	if strings.ToLower(c.PrimaryEquipped) == strings.ToLower(c.WornEquipment.Shield) ||
+		strings.ToLower(c.SecondaryEquipped) == strings.ToLower(c.WornEquipment.Shield) {
+		c.AC += 2
+	}
+}
+
+func (c *Character) calculatePassiveStats() {
+	wisMod := c.GetMod(types.AbilityWisdom)
+	c.PassivePerception = 10 + wisMod
+
+	for _, skill := range c.Skills {
+		if strings.ToLower(skill.Name) == types.SkillPerception {
+			if skill.Proficient {
+				c.PassivePerception += c.Proficiency
+			}
+		} else if strings.ToLower(skill.Name) == types.SkillInsight {
+			if skill.Proficient {
+				c.PassiveInsight += c.Proficiency
+			}
+		}
+	}
+}
+
 func (c *Character) calculateWeaponBonus() {
 	for i, weapon := range c.Weapons {
 		dexMod := c.GetMod(types.AbilityDexterity)
@@ -160,6 +202,7 @@ func (c *Character) calculateWeaponBonus() {
 
 		for _, prop := range weapon.Properties {
 			// We'll prioritize the weapon properties that have a choice between dex and str mods
+			prop = strings.ToLower(prop)
 			if prop == types.WeaponPropertyFinesse || prop == types.WeaponPropertyThrown {
 				c.Weapons[i].Bonus += max(dexMod, strMod)
 				modApplied = true
@@ -186,7 +229,7 @@ func (c *Character) calculateWeaponBonus() {
 
 func (c *Character) GetMod(abilityName string) int {
 	for _, ability := range c.Abilities {
-		if ability.Name == abilityName {
+		if strings.ToLower(ability.Name) == strings.ToLower(abilityName) {
 			return ability.AbilityModifier
 		}
 	}
@@ -476,6 +519,10 @@ func (c *Character) BuildSpells() []string {
 	s = append(s, spellSlots)
 
 	for _, spellSlot := range c.SpellSlots {
+		if spellSlot.Maximum == 0 {
+			continue
+		}
+
 		fullCircle := strings.Repeat("● ", spellSlot.Available)
 		hollowCircle := strings.Repeat("○ ", (spellSlot.Maximum - spellSlot.Available))
 		slotRow := fmt.Sprintf("	- Level %d: %s%s\n", spellSlot.Level, fullCircle, hollowCircle)
@@ -490,10 +537,14 @@ func (c *Character) BuildWeapons() []string {
 	weaponsHeader := fmt.Sprintf("*Weapons*\n\n")
 	s = append(s, weaponsHeader)
 
-	weaponTopRow := fmt.Sprintf("| Weapon | Bonus | Damage | Type | Properties |\n")
-	weaponSpacer := fmt.Sprintf("| --- | --- | --- | --- | --- |\n")
+	weaponTopRow := fmt.Sprintf("| Weapon | Bonus | Damage | Type | Properties | Equipped |\n")
+	weaponSpacer := fmt.Sprintf("| --- | --- | --- | --- | --- | --- |\n")
 	s = append(s, weaponTopRow)
 	s = append(s, weaponSpacer)
+
+	// this is basically only used in cases where you have two of the same kind of Weapons
+	// and both of them are equipped
+	primaryEquippedChecked := false
 
 	for _, weapon := range c.Weapons {
 		wBonusString := ""
@@ -501,14 +552,25 @@ func (c *Character) BuildWeapons() []string {
 			wBonusString = "+"
 		}
 
+		equippedString := ""
+
+		if strings.ToLower(c.PrimaryEquipped) == strings.ToLower(weapon.Name) && !primaryEquippedChecked {
+			equippedString = "Primary"
+			primaryEquippedChecked = true
+		} else if strings.ToLower(c.SecondaryEquipped) == strings.ToLower(weapon.Name) {
+			equippedString = "Secondary"
+		}
+
 		wBonusString = fmt.Sprintf("%s%d", wBonusString, weapon.Bonus)
 		weaponRow := fmt.Sprintf(
-			"| %s | %s | %s | %s | %s |\n",
+			"| %s | %s | %s | %s | %s | %s |\n",
 			weapon.Name,
 			wBonusString,
 			weapon.Damage,
 			weapon.Type,
-			strings.Join(weapon.Properties, ", "))
+			strings.Join(weapon.Properties, ", "),
+			equippedString)
+
 		s = append(s, weaponRow)
 	}
 
@@ -516,31 +578,46 @@ func (c *Character) BuildWeapons() []string {
 }
 
 func (c *Character) BuildEquipment() []string {
+	s := []string{}
 	equipmentHeader := fmt.Sprintf("*Equipment*\n\n")
-
 	bodyEquipment := fmt.Sprintf("- Body Equipment\n")
-	head := fmt.Sprintf("	- Head: %s\n", c.WornEquipment.Head)
-	amulet := fmt.Sprintf("	- Amulet: %s\n", c.WornEquipment.Amulet)
-	cloak := fmt.Sprintf("	- Cloak: %s\n", c.WornEquipment.Cloak)
-	armor := fmt.Sprintf("	- Armor: %s\n", c.WornEquipment.Armor)
-	hands := fmt.Sprintf("	- Hands: %s\n", c.WornEquipment.HandsArms)
-	ring := fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring)
-	ring2 := fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring2)
-	belt := fmt.Sprintf("	- Belt: %s\n", c.WornEquipment.Belt)
-	boots := fmt.Sprintf("	- Boots: %s\n", c.WornEquipment.Boots)
+	s = append(s, equipmentHeader)
+	s = append(s, bodyEquipment)
 
-	s := []string{
-		equipmentHeader,
-		bodyEquipment,
-		head,
-		amulet,
-		cloak,
-		armor,
-		hands,
-		ring,
-		ring2,
-		belt,
-		boots,
+	if c.WornEquipment.Head != "" {
+		s = append(s, fmt.Sprintf("	- Head: %s\n", c.WornEquipment.Head))
+	}
+	if c.WornEquipment.Amulet != "" {
+		s = append(s, fmt.Sprintf("	- Amulet: %s\n", c.WornEquipment.Amulet))
+	}
+	if c.WornEquipment.Cloak != "" {
+		s = append(s, fmt.Sprintf("	- Cloak: %s\n", c.WornEquipment.Cloak))
+	}
+	if c.WornEquipment.Armor.Name != "" {
+		s = append(s, fmt.Sprintf("	- Armor: %s\n", c.WornEquipment.Armor.Name))
+	}
+	if c.WornEquipment.HandsArms != "" {
+		s = append(s, fmt.Sprintf("	- Hands: %s\n", c.WornEquipment.HandsArms))
+	}
+	if c.WornEquipment.Ring != "" {
+		s = append(s, fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring))
+	}
+	if c.WornEquipment.Ring2 != "" {
+		s = append(s, fmt.Sprintf("	- Ring: %s\n", c.WornEquipment.Ring2))
+	}
+	if c.WornEquipment.Belt != "" {
+		s = append(s, fmt.Sprintf("	- Belt: %s\n", c.WornEquipment.Belt))
+	}
+	if c.WornEquipment.Boots != "" {
+		s = append(s, fmt.Sprintf("	- Boots: %s\n", c.WornEquipment.Boots))
+	}
+	if c.WornEquipment.Shield != "" {
+		shield := fmt.Sprintf("	- Shield: %s", c.WornEquipment.Shield)
+		if strings.ToLower(c.WornEquipment.Shield) == strings.ToLower(c.PrimaryEquipped) ||
+			strings.ToLower(c.WornEquipment.Shield) == strings.ToLower(c.SecondaryEquipped) {
+			shield += " (equipped)"
+		}
+		s = append(s, shield+"\n")
 	}
 
 	return s
@@ -656,7 +733,7 @@ func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
 	case types.WornEquipmentCloak:
 		c.WornEquipment.Cloak = equipmentName
 	case types.WornEquipmentArmour:
-		c.WornEquipment.Armor = equipmentName
+		c.WornEquipment.Armor.Name = equipmentName
 	case types.WornEquipmentHandsArms:
 		c.WornEquipment.HandsArms = equipmentName
 	case types.WornEquipmentRing:
@@ -758,6 +835,55 @@ func (c *Character) UseClassTokens(name string) {
 
 func (c *Character) RecoverClassTokens(name string, quantity int) {
 	c.Class.RecoverClassTokens(name, quantity)
+}
+
+func (c *Character) Equip(isPrimary bool, name string) {
+	lowerName := strings.ToLower(name)
+	equipmentFound := false
+
+	weaponCount := 0
+	for _, weapon := range c.Weapons {
+		if strings.ToLower(weapon.Name) == lowerName {
+			equipmentFound = true
+			weaponCount++
+			continue // not breaking here to verify if using the same weapon in each hand
+		}
+	}
+
+	if !equipmentFound {
+		if strings.ToLower(c.WornEquipment.Shield) == lowerName {
+			equipmentFound = true
+		}
+	}
+
+	if !equipmentFound {
+		logger.HandleInfo(fmt.Sprintf("Weapon or shield '%s' not found, check spelling", name))
+		return
+	}
+
+	if isPrimary {
+		// unequip secondary weapon if they only have one and it's already equipped
+		if strings.ToLower(c.SecondaryEquipped) == lowerName && weaponCount < 2 {
+			c.SecondaryEquipped = ""
+		}
+
+		c.PrimaryEquipped = name
+	} else {
+		// unequip secondary weapon if they only have one and it's already equipped
+		if strings.ToLower(c.PrimaryEquipped) == lowerName && weaponCount < 2 {
+			c.PrimaryEquipped = ""
+		}
+
+		c.SecondaryEquipped = name
+	}
+}
+
+func (c *Character) Unequip(isPrimary bool) {
+	if isPrimary {
+		c.PrimaryEquipped = ""
+	} else {
+		c.SecondaryEquipped = ""
+	}
 }
 
 func (c *Character) ExecuteClassMethods(isPreCalculate bool) {

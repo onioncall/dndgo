@@ -23,6 +23,7 @@ const (
 
 func HandleCharacter(c *models.Character) error {
 	if c.Class != nil {
+		c.HitDice = c.Class.CalculateHitDice(c.Level)
 		c.ExecuteClassMethods(true)
 	}
 

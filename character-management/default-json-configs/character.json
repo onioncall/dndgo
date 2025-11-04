@@ -217,21 +217,30 @@
       "properties": [""]
     }
   ],
+  "primary-equipped": "",
+  "secondary-equipped": "",
   "body-equipment": {
     "head": "",
     "amulet": "",
     "cloak": "",
-    "armour": "",
+    "armor": {
+      "name": "",
+      "proficient": true,
+      "class": 0,
+      "modifier": "dexterity"
+      "type": "light"
+    },
     "hands-arms": "",
     "ring": "",
     "ring2": "",
     "belt": "",
-    "boots": ""
+    "boots": "",
+    "shield": ""
   },
   "backpack": [
     {
       "name": "Gold",
       "quantity": 0
     }
-  ],
+  ]
 }

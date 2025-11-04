@@ -36,6 +36,10 @@ func (r *Ranger) ValidateMethods(c *models.Character) {
 // func (r *Ranger) ExecutePreCalculateMethods(c *models.Character) {
 // }
 
+func (r *Ranger) CalculateHitDice(level int) string {
+	return fmt.Sprintf("%dd10", level)
+}
+
 func (r *Ranger) PostCalculateSpellAttackMod(c *models.Character) {
 	wisMod := c.GetMod(types.AbilityWisdom)
 
@@ -133,7 +137,7 @@ func applyArchery(c *models.Character) bool {
 
 // Only to be called from executeFightingStyle
 func applyDefense(c *models.Character) bool {
-	if c.WornEquipment.Armor == "" {
+	if c.WornEquipment.Armor.Name == "" {
 		c.AC += 1
 		return true
 	}
@@ -143,11 +147,18 @@ func applyDefense(c *models.Character) bool {
 
 // Only to be called from executeFightingStyle
 func applyDueling(c *models.Character) bool {
-	// this is less defined, since it depends on us knowing what weapons are currently
-	// in the characters hand. We'll assume that they have which ever weapon they want
-	// this applied to to be the first one they have, and that it will be equipped in combat.
-	// Maybe later we'll come up with a flag for the weapon being in use or something
+	// If both primary and secondary are equipped, or neither are equipped, this won't apply
+	if c.PrimaryEquipped != "" && c.SecondaryEquipped != "" {
+		return false
+	} else if c.PrimaryEquipped == "" && c.SecondaryEquipped == "" {
+		return false
+	}
+
 	for i, weapon := range c.Weapons {
+		if strings.ToLower(c.PrimaryEquipped+c.SecondaryEquipped) != strings.ToLower(weapon.Name) {
+			continue
+		}
+
 		if weapon.Ranged {
 			continue
 		}
@@ -179,12 +190,22 @@ func applyTwoWeaponFighting(c *models.Character) bool {
 	// criteria the "secondary" weapon, and the the next one to meet just the one handed criteria
 	// the primary. We'll only apply the bonus if both primary and secondary weapons are found
 
+	// If one of these isn't equipped no need to add the bonus
+	if c.PrimaryEquipped == "" || c.SecondaryEquipped == "" {
+		return false
+	}
+
 	secondaryWeaponIndex := -1
 	primaryWeaponIndex := -1
 
 	for i, weapon := range c.Weapons {
 		isLight := false
 		isOneHanded := true
+
+		if strings.ToLower(c.PrimaryEquipped) != strings.ToLower(weapon.Name) &&
+			strings.ToLower(c.SecondaryEquipped) != strings.ToLower(weapon.Name) {
+			continue
+		}
 
 		for _, prop := range weapon.Properties {
 			if strings.ToLower(prop) == types.WeaponPropertyTwoHanded {
@@ -200,7 +221,9 @@ func applyTwoWeaponFighting(c *models.Character) bool {
 			continue
 		}
 
-		// We'll take the first secondary weapon that meets these criteria
+		// We'll take the first secondary weapon that meets these criteria since I'm not sure
+		// that primary vs secondary weapons really matter for this distinction as long
+		// as the requirements are met
 		if isOneHanded && isLight && secondaryWeaponIndex == -1 {
 			secondaryWeaponIndex = i
 			if primaryWeaponIndex != -1 {
