@@ -36,6 +36,10 @@ func LoadDruid(data []byte) (*Druid, error) {
 // func (d *Druid) ExecutePreCalculateMethods(c *models.Character) {
 // }
 
+func (d *Druid) CalculateHitDice(level int) string {
+	return fmt.Sprintf("%dd8", level)
+}
+
 func (d *Druid) ValidateMethods(c *models.Character) {
 	isValid := d.validateCantripVersatility(c)
 	if isValid {

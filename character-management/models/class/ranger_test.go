@@ -74,7 +74,9 @@ func TestRangerAppliedDefense(t *testing.T) {
 			character: &models.Character{
 				AC: 15,
 				WornEquipment: types.WornEquipment{
-					Armor: "Light Armor",
+					Armor: types.Armor{
+						Name: "Leather Armor",
+					},
 				},
 			},
 			expected: 15,
@@ -85,7 +87,9 @@ func TestRangerAppliedDefense(t *testing.T) {
 			character: &models.Character{
 				AC: 15,
 				WornEquipment: types.WornEquipment{
-					Armor: "",
+					Armor: types.Armor{
+						Name: "",
+					},
 				},
 			},
 			expected: 16,
@@ -122,6 +126,7 @@ func TestRangerAppliedDueling(t *testing.T) {
 				Weapons: []types.Weapon{
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true},
 				},
+				PrimaryEquipped: "Longbow",
 			},
 			expected: []types.Weapon{
 				{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true},
@@ -135,6 +140,7 @@ func TestRangerAppliedDueling(t *testing.T) {
 					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 				},
+				PrimaryEquipped: "Club",
 			},
 			expected: []types.Weapon{
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
@@ -150,6 +156,7 @@ func TestRangerAppliedDueling(t *testing.T) {
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 				},
+				PrimaryEquipped: "Club",
 			},
 			expected: []types.Weapon{
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
@@ -195,6 +202,7 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 				},
+				PrimaryEquipped: "Greataxe",
 			},
 			expected: []types.Weapon{
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
@@ -212,10 +220,11 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 				},
+				PrimaryEquipped: "Longbow",
 			},
 			expected: []types.Weapon{
-				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
 				{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
+				{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 			},
 			applied: false,
 		},
@@ -229,6 +238,8 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 				},
+				PrimaryEquipped:   "Club",
+				SecondaryEquipped: "Club",
 			},
 			expected: []types.Weapon{
 				{Name: "Club", Bonus: 4, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
@@ -246,6 +257,8 @@ func TestRangerAppliedTwoWeaponFighting(t *testing.T) {
 					{Name: "Rapier", Bonus: 2, Damage: "1d8", Ranged: false, Properties: []string{"finesse"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 				},
+				PrimaryEquipped:   "Rapier",
+				SecondaryEquipped: "Club",
 			},
 			expected: []types.Weapon{
 				{Name: "Rapier", Bonus: 2, Damage: "1d8", Ranged: false, Properties: []string{"finesse"}},
@@ -286,7 +299,9 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 				AC:    15,
 				Level: 1,
 				WornEquipment: types.WornEquipment{
-					Armor: "",
+					Armor: types.Armor{
+						Name: "",
+					},
 				},
 			},
 			ranger: &Ranger{
@@ -303,7 +318,9 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 				AC:    15,
 				Level: 3,
 				WornEquipment: types.WornEquipment{
-					Armor: "",
+					Armor: types.Armor{
+						Name: "",
+					},
 				},
 			},
 			ranger: &Ranger{
@@ -320,7 +337,9 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 				AC:    15,
 				Level: 3,
 				WornEquipment: types.WornEquipment{
-					Armor: "",
+					Armor: types.Armor{
+						Name: "",
+					},
 				},
 			},
 			ranger: &Ranger{
@@ -337,7 +356,9 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 				AC:    15,
 				Level: 3,
 				WornEquipment: types.WornEquipment{
-					Armor: "light-armor",
+					Armor: types.Armor{
+						Name: "Leather Armor",
+					},
 				},
 			},
 			ranger: &Ranger{

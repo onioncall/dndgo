@@ -44,7 +44,9 @@ func TestMonkExecuteUnarmoredDefense(t *testing.T) {
 					},
 				},
 				WornEquipment: types.WornEquipment{
-					Armor: "Leather Armor",
+					Armor: types.Armor{
+						Name: "Leather Armor",
+					},
 				},
 			},
 			expected: 0,
@@ -80,7 +82,9 @@ func TestMonkExecuteUnarmoredDefense(t *testing.T) {
 					},
 				},
 				WornEquipment: types.WornEquipment{
-					Armor: "",
+					Armor: types.Armor{
+						Name: "",
+					},
 				},
 			},
 			expected: 16,
@@ -113,7 +117,9 @@ func TestMonkExecuteUnarmoredMovement(t *testing.T) {
 				Speed: 0,
 				Level: 3,
 				WornEquipment: types.WornEquipment{
-					Armor: "Leather Armor",
+					Armor: types.Armor{
+						Name: "Leather Armor",
+					},
 				},
 			},
 			expected: 0,
@@ -124,7 +130,9 @@ func TestMonkExecuteUnarmoredMovement(t *testing.T) {
 				Speed: 16,
 				Level: 3,
 				WornEquipment: types.WornEquipment{
-					Armor: "",
+					Armor: types.Armor{
+						Name: "",
+					},
 				},
 			},
 			expected: 26,

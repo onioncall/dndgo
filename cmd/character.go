@@ -151,12 +151,6 @@ var (
 				panic(err)
 			}
 
-			err = handlers.SaveClassHandler(c.Class)
-			if err != nil {
-				logger.HandleInfo("Failed to save class data")
-				panic(err)
-			}
-
 			err = handlers.HandleCharacter(c)
 			if err != nil {
 				logger.HandleInfo("Failed to process character")
@@ -321,10 +315,82 @@ var (
 			logger.HandleInfo("Character Creation Successful")
 		},
 	}
+
+	equipCmd = &cobra.Command{
+		Use:   "equip",
+		Short: "Equips a weapon or shield",
+		Run: func(cmd *cobra.Command, args []string) {
+			p, _ := cmd.Flags().GetString("primary")
+			s, _ := cmd.Flags().GetString("secondary")
+
+			c, err := handlers.LoadCharacter()
+			if err != nil {
+				logger.HandleInfo("Failed to save character data")
+				panic(err)
+			}
+
+			if p != "" {
+				c.Equip(true, p)
+			}
+			if s != "" {
+				c.Equip(false, s)
+			}
+
+			err = handlers.SaveCharacterJson(c)
+			if err != nil {
+				logger.HandleInfo("Failed to save character data")
+				panic(err)
+			}
+
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.HandleInfo("Failed to process character")
+				panic(err)
+			}
+
+			logger.HandleInfo("Character Update Successful")
+		},
+	}
+
+	unequipCmd = &cobra.Command{
+		Use:   "unequip",
+		Short: "Unequips a weapon or shield",
+		Run: func(cmd *cobra.Command, args []string) {
+			p, _ := cmd.Flags().GetBool("primary")
+			s, _ := cmd.Flags().GetBool("secondary")
+
+			c, err := handlers.LoadCharacter()
+			if err != nil {
+				logger.HandleInfo("Failed to save character data")
+				panic(err)
+			}
+
+			if p == true {
+				c.Unequip(true)
+			}
+			if s == true {
+				c.Unequip(false)
+			}
+
+			err = handlers.SaveCharacterJson(c)
+			if err != nil {
+				logger.HandleInfo("Failed to save character data")
+				panic(err)
+			}
+
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.HandleInfo("Failed to process character")
+				panic(err)
+			}
+
+			logger.HandleInfo("Character Update Successful")
+		},
+	}
 )
 
 func init() {
-	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd, initCmd, getCmd)
+	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd, initCmd, getCmd, equipCmd, unequipCmd)
 
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
 	addCmd.Flags().StringP("language", "l", "", "Language to add")
@@ -355,6 +421,11 @@ func init() {
 	initCmd.Flags().StringP("class", "c", "", "Name of character class")
 	initCmd.Flags().StringP("name", "n", "", "Name of character")
 	initCmd.MarkFlagRequired("name")
+
+	equipCmd.Flags().StringP("primary", "p", "", "Equip primary weapon or shield")
+	equipCmd.Flags().StringP("secondary", "s", "", "Equip secondary weapon or shield")
+	unequipCmd.Flags().BoolP("primary", "p", false, "Equip primary weapon or shield")
+	unequipCmd.Flags().BoolP("secondary", "s", false, "Equip secondary weapon or shield")
 
 	getCmd.Flags().StringP("path", "p", "", "Get config or markdown path")
 }

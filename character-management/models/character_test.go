@@ -321,6 +321,280 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 	}
 }
 
+func TestCharacterCalculateAC(t *testing.T) {
+	tests := []struct {
+		name      string
+		character *Character
+		expected  int
+	}{
+		{
+			name: "Light armor, no shield",
+			character: &Character{
+				Abilities: []types.Abilities{
+					{Name: types.AbilityDexterity, AbilityModifier: 2},
+				},
+				AC: 0,
+				WornEquipment: types.WornEquipment{
+					Armor: types.Armor{
+						Type:       types.LightArmor,
+						Name:       "Leather Armor",
+						Class:      11,
+						Proficient: true,
+					},
+				},
+			},
+			expected: 13,
+		},
+		{
+			name: "Light armor, with shield",
+			character: &Character{
+				Abilities: []types.Abilities{
+					{Name: types.AbilityDexterity, AbilityModifier: 2},
+				},
+				AC:              0,
+				PrimaryEquipped: "sOmE SHieLd",
+				WornEquipment: types.WornEquipment{
+					Armor: types.Armor{
+						Type:       types.LightArmor,
+						Name:       "Leather Armor",
+						Class:      11,
+						Proficient: true,
+					},
+					Shield: "Some Shield",
+				},
+			},
+			expected: 15,
+		},
+		{
+			name: "Medium armor, no shield",
+			character: &Character{
+				Abilities: []types.Abilities{
+					{Name: types.AbilityDexterity, AbilityModifier: 4},
+				},
+				AC: 0,
+				WornEquipment: types.WornEquipment{
+					Armor: types.Armor{
+						Type:       types.MediumArmor,
+						Name:       "Scale Mail",
+						Class:      14,
+						Proficient: true,
+					},
+				},
+			},
+			expected: 16,
+		},
+		{
+			name: "Heavy armor, no shield",
+			character: &Character{
+				Abilities: []types.Abilities{
+					{Name: types.AbilityDexterity, AbilityModifier: 4},
+				},
+				AC: 0,
+				WornEquipment: types.WornEquipment{
+					Armor: types.Armor{
+						Type:       types.HeavyArmor,
+						Name:       "Chain Mail",
+						Class:      16,
+						Proficient: true,
+					},
+				},
+			},
+			expected: 16,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.character.calculateAC()
+			result := tt.character.AC
+
+			if tt.expected != result {
+				t.Errorf("AC- Expected: %d, Result: %d", tt.expected, result)
+			}
+		})
+	}
+}
+
+func TestCharacterCalculateWeaponBonus(t *testing.T) {
+	tests := []struct {
+		name      string
+		character *Character
+		expected  []types.Weapon
+	}{
+		{
+			name: "Proficient finesse weapon",
+			character: &Character{
+				Proficiency: 2,
+				Abilities: []types.Abilities{
+					{Name: types.AbilityDexterity, AbilityModifier: 2},
+					{Name: types.AbilityStrength, AbilityModifier: 1},
+				},
+				Weapons: []types.Weapon{
+					{Name: "Rapier", Bonus: 0, Proficient: true, Properties: []string{types.WeaponPropertyFinesse}},
+				},
+			},
+			expected: []types.Weapon{
+				{Name: "Rapier", Bonus: 4, Proficient: true, Properties: []string{types.WeaponPropertyFinesse}},
+			},
+		},
+		{
+			name: "Non-proficient finesse weapon",
+			character: &Character{
+				Proficiency: 2,
+				Abilities: []types.Abilities{
+					{Name: types.AbilityDexterity, AbilityModifier: 2},
+					{Name: types.AbilityStrength, AbilityModifier: 1},
+				},
+				Weapons: []types.Weapon{
+					{Name: "Rapier", Bonus: 0, Proficient: false, Properties: []string{types.WeaponPropertyFinesse}},
+				},
+			},
+			expected: []types.Weapon{
+				{Name: "Rapier", Bonus: 2, Proficient: false, Properties: []string{types.WeaponPropertyFinesse}},
+			},
+		},
+		{
+			name: "Proficient finesse weapon, higher strength mod",
+			character: &Character{
+				Proficiency: 2,
+				Abilities: []types.Abilities{
+					{Name: types.AbilityDexterity, AbilityModifier: 2},
+					{Name: types.AbilityStrength, AbilityModifier: 3},
+				},
+				Weapons: []types.Weapon{
+					{Name: "Rapier", Bonus: 0, Proficient: true, Properties: []string{types.WeaponPropertyFinesse}},
+				},
+			},
+			expected: []types.Weapon{
+				{Name: "Rapier", Bonus: 5, Proficient: true, Properties: []string{types.WeaponPropertyFinesse}},
+			},
+		},
+		{
+			name: "Proficient ranged weapon",
+			character: &Character{
+				Proficiency: 2,
+				Abilities: []types.Abilities{
+					{Name: types.AbilityDexterity, AbilityModifier: 2},
+					{Name: types.AbilityStrength, AbilityModifier: 3},
+				},
+				Weapons: []types.Weapon{
+					{Name: "Sling", Bonus: 0, Proficient: true, Ranged: true},
+				},
+			},
+			expected: []types.Weapon{
+				{Name: "Sling", Bonus: 4, Proficient: true, Ranged: true},
+			},
+		},
+		{
+			name: "Proficient melee weapon",
+			character: &Character{
+				Proficiency: 2,
+				Abilities: []types.Abilities{
+					{Name: types.AbilityDexterity, AbilityModifier: 3},
+					{Name: types.AbilityStrength, AbilityModifier: 2},
+				},
+				Weapons: []types.Weapon{
+					{Name: "Club", Bonus: 0, Proficient: true, Ranged: false},
+				},
+			},
+			expected: []types.Weapon{
+				{Name: "Club", Bonus: 4, Proficient: true, Ranged: false},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.character.calculateWeaponBonus()
+
+			for i, e := range tt.expected {
+				result := tt.character.Weapons[i].Bonus
+				if e.Bonus != result {
+					t.Errorf("Weapon Bonus '%s'- Expected: %d, Result: %d", e.Name, e.Bonus, result)
+				}
+			}
+		})
+	}
+}
+
+func TestCharacterCalculatePassiveStats(t *testing.T) {
+	tests := []struct {
+		name      string
+		character *Character
+		expected  Character
+	}{
+		{
+			name: "Proficient perception, non-proficient insight",
+			character: &Character{
+				Proficiency: 2,
+				Abilities: []types.Abilities{
+					{Name: types.AbilityWisdom, AbilityModifier: 4},
+				},
+				Skills: []types.Skill{
+					{Name: types.SkillPerception, SkillModifier: 2, Proficient: true},
+					{Name: types.SkillInsight, SkillModifier: 3, Proficient: false},
+				},
+			},
+			expected: Character{
+				PassivePerception: 16,
+				PassiveInsight:    14,
+			},
+		},
+		{
+			name: "Proficient perception, non-proficient insight",
+			character: &Character{
+				Proficiency: 2,
+				Abilities: []types.Abilities{
+					{Name: types.AbilityWisdom, AbilityModifier: 4},
+				},
+				Skills: []types.Skill{
+					{Name: types.SkillPerception, SkillModifier: 2, Proficient: false},
+					{Name: types.SkillInsight, SkillModifier: 3, Proficient: true},
+				},
+			},
+			expected: Character{
+				PassivePerception: 14,
+				PassiveInsight:    16,
+			},
+		},
+		{
+			name: "Non-proficient perception, non-proficient insight",
+			character: &Character{
+				Proficiency: 2,
+				Abilities: []types.Abilities{
+					{Name: types.AbilityWisdom, AbilityModifier: 4},
+				},
+				Skills: []types.Skill{
+					{Name: types.SkillPerception, SkillModifier: 2, Proficient: false},
+					{Name: types.SkillInsight, SkillModifier: 3, Proficient: false},
+				},
+			},
+			expected: Character{
+				PassivePerception: 14,
+				PassiveInsight:    14,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.character.calculatePassiveStats()
+
+			resultPerception := tt.character.PassivePerception
+			resultInsight := tt.character.PassiveInsight
+			expectedPerception := tt.expected.PassivePerception
+			expectedInsight := tt.expected.PassiveInsight
+
+			if expectedPerception != resultPerception {
+				t.Errorf("Passive Perception- Expected: %d, Result: %d", expectedPerception, resultPerception)
+			}
+			if expectedInsight != resultInsight {
+				t.Errorf("Passive resultInsight- Expected: %d, Result: %d", expectedInsight, resultInsight)
+			}
+		})
+	}
+}
+
 func TestCharacterRecover(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -798,6 +1072,186 @@ func TestCharacterAddItemToBackpack(t *testing.T) {
 				if e != result {
 					t.Errorf("Item Quantity %s- Expected: %d, Result: %d", e.Name, e.Quantity, result.Quantity)
 				}
+			}
+		})
+	}
+}
+
+func TestCharacterEquip(t *testing.T) {
+	tests := []struct {
+		name       string
+		character  *Character
+		itemName   string
+		isPrimary  bool
+		ePrimary   string
+		eSecondary string
+	}{
+		{
+			name: "No items equipped, equip primary weapon",
+			character: &Character{
+				PrimaryEquipped:   "",
+				SecondaryEquipped: "",
+				Weapons: []types.Weapon{
+					{Name: "Rapier"},
+					{Name: "Dagger"},
+					{Name: "Club"},
+				},
+				WornEquipment: types.WornEquipment{
+					Shield: "Some Shield",
+				},
+			},
+			itemName:   "Rapier",
+			isPrimary:  true,
+			ePrimary:   "Rapier",
+			eSecondary: "",
+		},
+		{
+			name: "No items equipped, equip primary shield",
+			character: &Character{
+				PrimaryEquipped:   "",
+				SecondaryEquipped: "",
+				Weapons: []types.Weapon{
+					{Name: "Rapier"},
+					{Name: "Dagger"},
+					{Name: "Club"},
+				},
+				WornEquipment: types.WornEquipment{
+					Shield: "Some Shield",
+				},
+			},
+			itemName:   "Some Shield",
+			isPrimary:  true,
+			ePrimary:   "Some Shield",
+			eSecondary: "",
+		},
+		{
+			name: "No items equipped, equip secondary weapon",
+			character: &Character{
+				PrimaryEquipped:   "",
+				SecondaryEquipped: "",
+				Weapons: []types.Weapon{
+					{Name: "Rapier"},
+					{Name: "dagger"}, // testing casing
+					{Name: "Club"},
+				},
+				WornEquipment: types.WornEquipment{
+					Shield: "Some Shield",
+				},
+			},
+			itemName:   "Dagger",
+			isPrimary:  false,
+			ePrimary:   "",
+			eSecondary: "Dagger",
+		},
+		{
+			name: "Primary equipped, equip secondary weapon",
+			character: &Character{
+				PrimaryEquipped:   "Rapier",
+				SecondaryEquipped: "",
+				Weapons: []types.Weapon{
+					{Name: "Rapier"},
+					{Name: "Dagger"},
+					{Name: "Club"},
+				},
+				WornEquipment: types.WornEquipment{
+					Shield: "Some Shield",
+				},
+			},
+			itemName:   "Dagger",
+			isPrimary:  false,
+			ePrimary:   "Rapier",
+			eSecondary: "Dagger",
+		},
+		{
+			name: "Both equipped, equip secondary weapon as primary",
+			character: &Character{
+				PrimaryEquipped:   "Rapier",
+				SecondaryEquipped: "Club",
+				Weapons: []types.Weapon{
+					{Name: "Rapier"},
+					{Name: "Dagger"},
+					{Name: "Club"},
+				},
+				WornEquipment: types.WornEquipment{
+					Shield: "Some Shield",
+				},
+			},
+			itemName:   "Club",
+			isPrimary:  true,
+			ePrimary:   "Club",
+			eSecondary: "",
+		},
+		{
+			name: "Equipping already equipped primary as secondary",
+			character: &Character{
+				PrimaryEquipped:   "Rapier",
+				SecondaryEquipped: "",
+				Weapons: []types.Weapon{
+					{Name: "Rapier"},
+					{Name: "Dagger"},
+					{Name: "Club"},
+				},
+				WornEquipment: types.WornEquipment{
+					Shield: "Some Shield",
+				},
+			},
+			itemName:   "Rapier",
+			isPrimary:  false,
+			ePrimary:   "",
+			eSecondary: "Rapier",
+		},
+		{
+			name: "Equipping weapon we have two of as primary and secondary",
+			character: &Character{
+				PrimaryEquipped:   "Rapier",
+				SecondaryEquipped: "Club",
+				Weapons: []types.Weapon{
+					{Name: "Rapier"},
+					{Name: "Club"},
+					{Name: "Club"},
+				},
+				WornEquipment: types.WornEquipment{
+					Shield: "Some Shield",
+				},
+			},
+			itemName:   "Club",
+			isPrimary:  true,
+			ePrimary:   "Club",
+			eSecondary: "Club",
+		},
+		{
+			name: "Equipment not found",
+			character: &Character{
+				PrimaryEquipped:   "",
+				SecondaryEquipped: "",
+				Weapons: []types.Weapon{
+					{Name: "Rapier"},
+					{Name: "Club"},
+					{Name: "Dagger"},
+				},
+				WornEquipment: types.WornEquipment{
+					Shield: "Some Shield",
+				},
+			},
+			itemName:   "Longbow",
+			isPrimary:  true,
+			ePrimary:   "",
+			eSecondary: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.character.Equip(tt.isPrimary, tt.itemName)
+
+			rPrimary := tt.character.PrimaryEquipped
+			rSecondary := tt.character.SecondaryEquipped
+
+			if tt.ePrimary != rPrimary {
+				t.Errorf("Primary- Expected: %s, Result: %s", tt.ePrimary, rPrimary)
+			}
+			if tt.eSecondary != rSecondary {
+				t.Errorf("Secondary- Expected: %s, Result: %s", tt.eSecondary, rSecondary)
 			}
 		})
 	}

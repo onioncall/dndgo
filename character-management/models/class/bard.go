@@ -22,6 +22,8 @@ type BardicInspiration struct {
 	Maximum   int `json:"maximum"`
 }
 
+const bardSpellCastingAbility string = types.AbilityCharisma
+
 func LoadBard(data []byte) (*Bard, error) {
 	var bard Bard
 	if err := json.Unmarshal(data, &bard); err != nil {
@@ -42,8 +44,12 @@ func (b *Bard) ValidateMethods(c *models.Character) {
 // func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
 // }
 
+func (b *Bard) CalculateHitDice(level int) string {
+	return fmt.Sprintf("%dd8", level)
+}
+
 func (b *Bard) PostCalculateSpellCastingAbility(c *models.Character) {
-	chrMod := c.GetMod(types.AbilityCharisma)
+	chrMod := c.GetMod(bardSpellCastingAbility)
 
 	executeSpellSaveDC(c, chrMod)
 	executeSpellAttackMod(c, chrMod)

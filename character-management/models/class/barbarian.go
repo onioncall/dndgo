@@ -45,6 +45,10 @@ func (b *Barbarian) ValidateMethods(c *models.Character) {
 // 	b.PreCalculatePrimalChampion(c)
 // }
 
+func (b *Barbarian) CalculateHitDice(level int) string {
+	return fmt.Sprintf("%dd12", level)
+}
+
 // At level 3, You gain proficiency in one skill of your choice from the list of skills
 // available to barbarians at 1st level.
 func (b *Barbarian) PostCalculatePrimalKnowledge(c *models.Character) {

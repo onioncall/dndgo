@@ -27,6 +27,10 @@ func LoadRogue(data []byte) (*Rogue, error) {
 func (r *Rogue) ValidateMethods(c *models.Character) {
 }
 
+func (r *Rogue) CalculateHitDice(level int) string {
+	return fmt.Sprintf("%dd8", level)
+}
+
 // func (r *Rogue) ExecutePostCalculateMethods(c *models.Character) {
 // 	r.PostCalculateExpertise(c)
 // 	r.PostCalculateSneakAttack(c)

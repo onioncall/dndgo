@@ -32,6 +32,10 @@ func (cl *Cleric) ValidateMethods(c *models.Character) {
 	}
 }
 
+func (cl *Cleric) CalculateHitDice(level int) string {
+	return fmt.Sprintf("%dd8", level)
+}
+
 // func (cl *Cleric) ExecutePostCalculateMethods(c *models.Character) {
 // }
 //
