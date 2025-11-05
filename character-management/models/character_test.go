@@ -1219,6 +1219,25 @@ func TestCharacterEquip(t *testing.T) {
 			ePrimary:   "Club",
 			eSecondary: "Club",
 		},
+		{
+			name: "Equipment not found",
+			character: &Character{
+				PrimaryEquipped:   "",
+				SecondaryEquipped: "",
+				Weapons: []types.Weapon{
+					{Name: "Rapier"},
+					{Name: "Club"},
+					{Name: "Dagger"},
+				},
+				WornEquipment: types.WornEquipment{
+					Shield: "Some Shield",
+				},
+			},
+			itemName:   "Longbow",
+			isPrimary:  true,
+			ePrimary:   "",
+			eSecondary: "",
+		},
 	}
 
 	for _, tt := range tests {
