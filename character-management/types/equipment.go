@@ -17,7 +17,6 @@ type Armor struct {
 	Name       string `json:"name"`
 	Proficient bool   `json:"proficient"`
 	Class      int    `json:"class"`
-	Modifier   string `json:"modifier"`
 	Type       string `json:"type"`
 }
 
@@ -44,7 +43,7 @@ const (
 	WornEquipmentHead      string = "head"
 	WornEquipmentAmulet    string = "amulet"
 	WornEquipmentCloak     string = "cloak"
-	WornEquipmentArmour    string = "armor"
+	WornEquipmentArmor     string = "armor"
 	WornEquipmentHandsArms string = "hands-arms"
 	WornEquipmentRing      string = "ring"
 	WornEquipmentRing2     string = "ring2"

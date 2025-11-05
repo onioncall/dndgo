@@ -171,15 +171,18 @@ func (c *Character) calculateAC() {
 		c.AC += 10 + c.GetMod(types.AbilityDexterity)
 	}
 
-	if strings.ToLower(c.PrimaryEquipped) == strings.ToLower(c.WornEquipment.Shield) ||
-		strings.ToLower(c.SecondaryEquipped) == strings.ToLower(c.WornEquipment.Shield) {
-		c.AC += 2
+	if c.WornEquipment.Shield != "" {
+		if strings.ToLower(c.PrimaryEquipped) == strings.ToLower(c.WornEquipment.Shield) ||
+			strings.ToLower(c.SecondaryEquipped) == strings.ToLower(c.WornEquipment.Shield) {
+			c.AC += 2
+		}
 	}
 }
 
 func (c *Character) calculatePassiveStats() {
 	wisMod := c.GetMod(types.AbilityWisdom)
 	c.PassivePerception = 10 + wisMod
+	c.PassiveInsight = 10 + wisMod
 
 	for _, skill := range c.Skills {
 		if strings.ToLower(skill.Name) == types.SkillPerception {
@@ -732,7 +735,7 @@ func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
 		c.WornEquipment.Amulet = equipmentName
 	case types.WornEquipmentCloak:
 		c.WornEquipment.Cloak = equipmentName
-	case types.WornEquipmentArmour:
+	case types.WornEquipmentArmor:
 		c.WornEquipment.Armor.Name = equipmentName
 	case types.WornEquipmentHandsArms:
 		c.WornEquipment.HandsArms = equipmentName
