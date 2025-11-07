@@ -10,10 +10,11 @@ import (
 )
 
 type Ranger struct {
-	Archetype      string                `json:"archetype"`
-	FightingStyle  string                `json:"fighting-style"`
-	FavoredEnemies []string              `json:"favored-enemies"`
-	OtherFeatures  []models.ClassFeature `json:"other-features"`
+	Archetype            string                `json:"archetype"`
+	FightingStyle        string                `json:"fighting-style"`
+	FightingStyleFeature FightingStyleFeature  `json:"-"`
+	FavoredEnemies       []string              `json:"favored-enemies"`
+	OtherFeatures        []models.ClassFeature `json:"other-features"`
 }
 
 func LoadRanger(data []byte) (*Ranger, error) {
@@ -54,9 +55,16 @@ func (r *Ranger) PrintClassDetails(c *models.Character) []string {
 		s = append(s, archetypeHeader)
 	}
 
-	if r.FightingStyle != "" && c.Level >= 2 {
-		fightingStyleHeader := fmt.Sprintf("Fighting Style: *%s*\n\n", r.FightingStyle)
+	if r.FightingStyleFeature.Name != "" && c.Level >= 2 {
+		appliedText := "Requirements for fighting style not met."
+		if r.FightingStyleFeature.IsApplied {
+			appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
+		}
+
+		fightingStyleHeader := fmt.Sprintf("**Fighting Style**: *%s*\n", r.FightingStyleFeature.Name)
+		fightingStyleDetail := fmt.Sprintf("%s\n%s\n\n", r.FightingStyleFeature.Details, appliedText)
 		s = append(s, fightingStyleHeader)
+		s = append(s, fightingStyleDetail)
 	}
 
 	if len(r.FavoredEnemies) > 0 {
@@ -100,26 +108,26 @@ func (r *Ranger) executeFightingStyle(c *models.Character) {
 		types.FightingStyleDueling,
 		types.FightingStyleTwoWeaponFighting)
 
-	fightingStyleApplied := false
-	// There are more fighting styles, but these are the four available to rangers
 	switch r.FightingStyle {
 	case types.FightingStyleArchery:
-		fightingStyleApplied = applyArchery(c)
+		r.FightingStyleFeature = applyArchery(c)
 	case types.FightingStyleDefense:
-		fightingStyleApplied = applyDefense(c)
+		r.FightingStyleFeature = applyDefense(c)
 	case types.FightingStyleDueling:
-		fightingStyleApplied = applyDueling(c)
+		r.FightingStyleFeature = applyDueling(c)
 	case types.FightingStyleTwoWeaponFighting:
-		fightingStyleApplied = applyTwoWeaponFighting(c)
+		r.FightingStyleFeature = applyTwoWeaponFighting(c)
 	default:
 		logger.HandleInfo(invalidMsg)
 	}
+}
 
-	if !fightingStyleApplied {
-		// TODO: in the methods for each fighting style, log more specific details for why
-		// the fight style bonus was not appied to the class
-		logger.HandleInfo(fmt.Sprintf("Fighting Style bonus '%s' was not applied", r.FightingStyle))
-	}
+func (r *Ranger) AddFightingStyleFeature(feature models.ClassFeature) {
+
+}
+
+func (r *Ranger) RemoveFightingStyleFeature(feature models.ClassFeature) {
+
 }
 
 // CLI

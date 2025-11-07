@@ -87,35 +87,54 @@ func buildClassDetailsHeader() []string {
 	return s
 }
 
-// Only to be called from executeFightingStyle
-func applyArchery(c *models.Character) bool {
+// Applies bonus for fighting style, and returns feature with details and weather or not the feature was applied
+func applyArchery(c *models.Character) FightingStyleFeature {
+	feature := FightingStyleFeature{
+		Name:      "Archery",
+		Details:   "You gain a +2 bonus to attack rolls you make with ranged weapons.\n",
+		IsApplied: false,
+	}
+
 	for i, weapon := range c.Weapons {
 		if weapon.Ranged {
 			c.Weapons[i].Bonus += 2
-			return true
+			feature.IsApplied = true
+			break
 		}
 	}
 
-	return false
+	return feature
 }
 
-// Only to be called from executeFightingStyle
-func applyDefense(c *models.Character) bool {
-	if c.WornEquipment.Armor.Name == "" {
-		c.AC += 1
-		return true
+// Applies bonus for fighting style, and returns feature with details and weather or not the feature was applied
+func applyDefense(c *models.Character) FightingStyleFeature {
+	feature := FightingStyleFeature{
+		Name:      "Defense",
+		Details:   "While you are wearing armor, you gain a +1 bonus to AC.\n",
+		IsApplied: false,
 	}
 
-	return false
+	if c.WornEquipment.Armor.Name == "" {
+		c.AC += 1
+		feature.IsApplied = true
+	}
+
+	return feature
 }
 
-// Only to be called from executeFightingStyle
-func applyDueling(c *models.Character) bool {
+// Applies bonus for fighting style, and returns feature with details and weather or not the feature was applied
+func applyDueling(c *models.Character) FightingStyleFeature {
+	feature := FightingStyleFeature{
+		Name:      "Dueling",
+		Details:   "When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon.\n",
+		IsApplied: false,
+	}
+
 	// If both primary and secondary are equipped, or neither are equipped, this won't apply
 	if c.PrimaryEquipped != "" && c.SecondaryEquipped != "" {
-		return false
+		return feature
 	} else if c.PrimaryEquipped == "" && c.SecondaryEquipped == "" {
-		return false
+		return feature
 	}
 
 	for i, weapon := range c.Weapons {
@@ -137,15 +156,16 @@ func applyDueling(c *models.Character) bool {
 
 		if !isTwoHanded {
 			c.Weapons[i].Bonus += 2
-			return true
+			feature.IsApplied = true
+			break
 		}
 	}
 
-	return false
+	return feature
 }
 
-// Only to be called from executeFightingStyle
-func applyTwoWeaponFighting(c *models.Character) bool {
+// Applies bonus for fighting style, and returns feature with details and weather or not the feature was applied
+func applyTwoWeaponFighting(c *models.Character) FightingStyleFeature {
 	// This is somewhat nuanced, so I'm just going to document how this works for clarity
 	// When dual wielding, there is a primary weapon that must be one handed, and an off hand
 	// weapon that must be one handed and have the "light" property. The primary weapon can be
@@ -153,10 +173,15 @@ func applyTwoWeaponFighting(c *models.Character) bool {
 	// off hand weapon. For our purposes, we'll consider the first weapon that meets both
 	// criteria the "secondary" weapon, and the the next one to meet just the one handed criteria
 	// the primary. We'll only apply the bonus if both primary and secondary weapons are found
+	feature := FightingStyleFeature{
+		Name:      "Two Weapon Fighting",
+		Details:   "When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack.\n",
+		IsApplied: false,
+	}
 
 	// If one of these isn't equipped no need to add the bonus
 	if c.PrimaryEquipped == "" || c.SecondaryEquipped == "" {
-		return false
+		return feature
 	}
 
 	secondaryWeaponIndex := -1
@@ -208,28 +233,51 @@ func applyTwoWeaponFighting(c *models.Character) bool {
 	}
 
 	if primaryWeaponIndex == -1 || secondaryWeaponIndex == -1 {
-		return false
+		return feature
 	}
 
 	for _, mod := range c.Abilities {
 		if strings.ToLower(mod.Name) == types.AbilityDexterity {
 			c.Weapons[secondaryWeaponIndex].Bonus += mod.AbilityModifier
-			return true
+			feature.IsApplied = true
+			break
 		}
 	}
 
-	return false
+	return feature
 }
 
-// Add one to AC if the character does not have heavy armor or a shield equipped
-func applyMariner(c *models.Character) bool {
-	if c.WornEquipment.Armor.Type == types.HeavyArmor ||
-		c.WornEquipment.Shield == c.PrimaryEquipped ||
-		c.WornEquipment.Shield == c.SecondaryEquipped {
-		return false
+// Applies bonus for fighting style, and returns feature with details and weather or not the feature was applied
+func applyGreatWeaponFighting(c *models.Character) FightingStyleFeature {
+	feature := FightingStyleFeature{
+		Name:      "Great Weapon Fighting",
+		Details:   "When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2. The weapon must have the two-handed or versatile property for you to gain this benefit.\n",
+		IsApplied: false,
 	}
 
-	c.AC += 1
+	for _, weapon := range c.Weapons {
+		if weapon.Name == c.PrimaryEquipped || weapon.Name == c.SecondaryEquipped {
+			for _, prop := range weapon.Properties {
+				if prop == types.WeaponPropertyTwoHanded {
+					feature.IsApplied = true
+				}
+			}
+		}
+	}
 
-	return true
+	return feature
+}
+
+func applyProtection(c *models.Character) FightingStyleFeature {
+	feature := FightingStyleFeature{
+		Name:      "Protection",
+		Details:   "When a creature you can see attacks a target other than you that is within 5 feet of you, you can use your reaction to impose disadvantage on the attack roll. You must be wielding a shield.\n",
+		IsApplied: false,
+	}
+
+	if c.WornEquipment.Shield == c.PrimaryEquipped || c.WornEquipment.Shield == c.SecondaryEquipped {
+		feature.IsApplied = true
+	}
+
+	return feature
 }
