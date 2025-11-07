@@ -133,7 +133,7 @@ func TestClericExecuteSpellCastingAbility(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cleric := &Cleric{}
-			cleric.PostCalculateSpellCastingAbility(tt.character)
+			cleric.executeSpellCastingAbility(tt.character)
 
 			expectedDC := tt.expected.SpellSaveDC
 			expectedAttackMod := tt.expected.SpellAttackMod
@@ -190,7 +190,7 @@ func TestClericExecutePreparedSpells(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.cleric.PostCalculatePreparedSpells(tt.character)
+			tt.cleric.executePreparedSpells(tt.character)
 
 			for _, e := range tt.expected.Spells {
 				for _, r := range tt.character.Spells {

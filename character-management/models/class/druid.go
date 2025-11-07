@@ -10,10 +10,10 @@ import (
 )
 
 type Druid struct {
-	WildShape      WildShape              `json:"wild-shape"`
-	Circle         string                 `json:"circle"`
-	PreparedSpells []string               `json:"prepared-spells"`
-	OtherFeatures  []models.ClassFeatures `json:"other-features"`
+	WildShape      WildShape             `json:"wild-shape"`
+	Circle         string                `json:"circle"`
+	PreparedSpells []string              `json:"prepared-spells"`
+	OtherFeatures  []models.ClassFeature `json:"other-features"`
 }
 
 type WildShape struct {
@@ -30,11 +30,14 @@ func LoadDruid(data []byte) (*Druid, error) {
 	return &druid, nil
 }
 
-// func (d *Druid) ExecutePostCalculateMethods(c *models.Character) {
-// }
-//
-// func (d *Druid) ExecutePreCalculateMethods(c *models.Character) {
-// }
+func (d *Druid) ExecutePostCalculateMethods(c *models.Character) {
+	d.executeSpellCastingAbility(c)
+	d.executePreparedSpells(c)
+	d.executeArchDruid(c)
+}
+
+func (d *Druid) ExecutePreCalculateMethods(c *models.Character) {
+}
 
 func (d *Druid) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
@@ -89,14 +92,14 @@ func (d *Druid) validateCantripVersatility(c *models.Character) bool {
 	return true
 }
 
-func (d *Druid) PostCalculateSpellCastingAbility(c *models.Character) {
+func (d *Druid) executeSpellCastingAbility(c *models.Character) {
 	wisMod := c.GetMod(types.AbilityWisdom)
 
 	executeSpellSaveDC(c, wisMod)
 	executeSpellAttackMod(c, wisMod)
 }
 
-func (d *Druid) PostCalculatePreparedSpells(c *models.Character) {
+func (d *Druid) executePreparedSpells(c *models.Character) {
 	wisMod := c.GetMod(types.AbilityWisdom)
 	preparedSpellsMax := wisMod + c.Level
 
@@ -113,7 +116,7 @@ func (d *Druid) PostCalculatePreparedSpells(c *models.Character) {
 	executePreparedSpellsShared(c, d.PreparedSpells)
 }
 
-func (d *Druid) PostCalculateArchDruid(c *models.Character) {
+func (d *Druid) executeArchDruid(c *models.Character) {
 	if c.Level < 20 {
 		return
 	}

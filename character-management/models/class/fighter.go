@@ -11,13 +11,13 @@ import (
 )
 
 type Fighter struct {
-	Archetype            string                 `json:"archetype"`
-	FightingStyle        string                 `json:"fighting-style"`
-	OtherFeatures        []models.ClassFeatures `json:"other-features"`
-	ActionSurge          types.NamedToken       `json:"action-surge"`
-	SecondWind           types.NamedToken       `json:"second-wind"`
-	Indomitable          types.NamedToken       `json:"indomitable"`
-	FightingStyleApplied bool                   `json:"-"`
+	Archetype            string                `json:"archetype"`
+	FightingStyle        string                `json:"fighting-style"`
+	OtherFeatures        []models.ClassFeature `json:"other-features"`
+	ActionSurge          types.NamedToken      `json:"action-surge"`
+	SecondWind           types.NamedToken      `json:"second-wind"`
+	Indomitable          types.NamedToken      `json:"indomitable"`
+	FightingStyleApplied bool                  `json:"-"`
 }
 
 func LoadFighter(data []byte) (*Fighter, error) {
@@ -32,14 +32,47 @@ func LoadFighter(data []byte) (*Fighter, error) {
 func (f *Fighter) ValidateMethods(c *models.Character) {
 }
 
-// func (f *Fighter) ExecutePostCalculateMethods(c *models.Character) {
-// }
-//
-// func (f *Fighter) ExecutePreCalculateMethods(c *models.Character) {
-// }
+func (f *Fighter) ExecutePostCalculateMethods(c *models.Character) {
+	f.executerFightingStyle(c)
+}
+
+func (f *Fighter) ExecutePreCalculateMethods(c *models.Character) {
+}
 
 func (f *Fighter) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd10", level)
+}
+
+func (f *Fighter) executerFightingStyle(c *models.Character) {
+	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s",
+		f.FightingStyle,
+		types.FightingStyleArchery,
+		types.FightingStyleDefense,
+		types.FightingStyleDueling,
+		types.FightingStyleTwoWeaponFighting)
+
+	fightingStyleApplied := false
+	// There are more fighting styles, but these are the four available to rangers
+	switch f.FightingStyle {
+	case types.FightingStyleArchery:
+		fightingStyleApplied = applyArchery(c)
+	case types.FightingStyleDefense:
+		fightingStyleApplied = applyDefense(c)
+	case types.FightingStyleDueling:
+		fightingStyleApplied = applyDueling(c)
+	case types.FightingStyleTwoWeaponFighting:
+		fightingStyleApplied = applyTwoWeaponFighting(c)
+	case types.FightingtStyleThrownWeaponFighting:
+	case types.FightingSyleMariner:
+	default:
+		logger.HandleInfo(invalidMsg)
+	}
+
+	if !fightingStyleApplied {
+		// TODO: in the methods for each fighting style, log more specific details for why
+		// the fight style bonus was not appied to the class
+		logger.HandleInfo(fmt.Sprintf("Fighting Style bonus '%s' was not applied", f.FightingStyle))
+	}
 }
 
 func (f *Fighter) PrintClassDetails(c *models.Character) []string {

@@ -1,4 +1,10 @@
 {
+  "ki-points": {
+    "spell-save-dc": 0,
+    "maximum": 1,
+    "available": 1
+  },
+  "mosaic-tradition": "",
   "other-features": [
     {
       "name": "Martial Arts",

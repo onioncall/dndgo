@@ -9,10 +9,10 @@ import (
 )
 
 type Rogue struct {
-	ExpertiseSkills []string               `json:"expertise"`
-	Archetype       string                 `json:"archetype"`
-	SneakAttack     string                 `json:"-"`
-	OtherFeatures   []models.ClassFeatures `json:"other-features"`
+	ExpertiseSkills []string              `json:"expertise"`
+	Archetype       string                `json:"archetype"`
+	SneakAttack     string                `json:"-"`
+	OtherFeatures   []models.ClassFeature `json:"other-features"`
 }
 
 func LoadRogue(data []byte) (*Rogue, error) {
@@ -31,17 +31,17 @@ func (r *Rogue) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }
 
-// func (r *Rogue) ExecutePostCalculateMethods(c *models.Character) {
-// 	r.PostCalculateExpertise(c)
-// 	r.PostCalculateSneakAttack(c)
-// }
-//
-// func (r *Rogue) ExecutePreCalculateMethods(c *models.Character) {
-// }
+func (r *Rogue) ExecutePostCalculateMethods(c *models.Character) {
+	r.executeExpertise(c)
+	r.executeSneakAttack(c)
+}
+
+func (r *Rogue) ExecutePreCalculateMethods(c *models.Character) {
+}
 
 // At level 1, rogues can pick two skills they are proficient in, and double the modifier.
 // They select two more at level 6
-func (r *Rogue) PostCalculateExpertise(c *models.Character) {
+func (r *Rogue) executeExpertise(c *models.Character) {
 	if c.Level < 6 && len(r.ExpertiseSkills) > 2 {
 		// We'll allow the user to specify more, but only the first two get taken for it to be ExpertiseSkills
 		r.ExpertiseSkills = r.ExpertiseSkills[:2]
@@ -54,7 +54,7 @@ func (r *Rogue) PostCalculateExpertise(c *models.Character) {
 	executeExpertiseShared(c, r.ExpertiseSkills)
 }
 
-func (r *Rogue) PostCalculateSneakAttack(c *models.Character) {
+func (r *Rogue) executeSneakAttack(c *models.Character) {
 	switch {
 	case c.Level < 3:
 		r.SneakAttack = "1d6"

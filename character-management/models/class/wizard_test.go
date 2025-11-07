@@ -39,7 +39,7 @@ func TestWizardExecuteSpellCastingAbility(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			wizard := &Wizard{}
-			wizard.PostCalculateSpellCastingAbility(tt.character)
+			wizard.executeSpellCastingAbility(tt.character)
 
 			expectedDC := tt.expected.SpellSaveDC
 			expectedAttackMod := tt.expected.SpellAttackMod
@@ -96,7 +96,7 @@ func TestWizardExecutePreparedSpells(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.wizard.PostCalculatePreparedSpells(tt.character)
+			tt.wizard.executePreparedSpells(tt.character)
 
 			for _, e := range tt.expected.Spells {
 				for _, r := range tt.character.Spells {

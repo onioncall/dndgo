@@ -50,7 +50,7 @@ func TestDruidExecuteArchDruid(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.druid.PostCalculateArchDruid(tt.character)
+			tt.druid.executeArchDruid(tt.character)
 			result := tt.druid.WildShape
 
 			if tt.expected.Maximum != result.Maximum {
@@ -185,7 +185,7 @@ func TestDruidExecuteSpellCastingAbility(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			druid := &Druid{}
-			druid.PostCalculateSpellCastingAbility(tt.character)
+			druid.executeSpellCastingAbility(tt.character)
 
 			expectedDC := tt.expected.SpellSaveDC
 			expectedAttackMod := tt.expected.SpellAttackMod
@@ -242,7 +242,7 @@ func TestDruidExecutePreparedSpells(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.druid.PostCalculatePreparedSpells(tt.character)
+			tt.druid.executePreparedSpells(tt.character)
 
 			for _, e := range tt.expected.Spells {
 				for _, r := range tt.character.Spells {

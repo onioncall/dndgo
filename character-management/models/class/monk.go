@@ -10,17 +10,17 @@ import (
 )
 
 type Monk struct {
-	MartialArts     string                 `json:"-"`
-	KiPoints        Ki                     `json:"ki-points"`
-	MosaicTradition string                 `json:"mosaic-tradition"`
-	DeflectMissles  int                    `json:"-"`
-	OtherFeatures   []models.ClassFeatures `json:"other-features"`
+	MartialArts     string                `json:"-"`
+	KiPoints        Ki                    `json:"ki-points"`
+	MosaicTradition string                `json:"mosaic-tradition"`
+	DeflectMissles  int                   `json:"-"`
+	OtherFeatures   []models.ClassFeature `json:"other-features"`
 }
 
 type Ki struct {
-	KiSpellSaveDC int
-	Maximum       int
-	Available     int
+	KiSpellSaveDC int `json:"spell-save-dc"`
+	Maximum       int `json:"maximum"`
+	Available     int `json:"available"`
 }
 
 func LoadMonk(data []byte) (*Monk, error) {
@@ -36,24 +36,24 @@ func LoadMonk(data []byte) (*Monk, error) {
 func (m *Monk) ValidateMethods(c *models.Character) {
 }
 
-// func (m *Monk) ExecutePostCalculateMethods(c *models.Character) {
-// 	m.PostCalculateUnarmoredDefense(c)
-// 	m.PostCalculateMartialArts(c)
-// 	m.PostCalculateUnarmoredMovement(c)
-// 	m.PostCalculateDeflectMissles(c)
-// 	m.PostCalculateKiPoints(c)
-// }
-//
-// func (m *Monk) ExecutePreCalculateMethods(c *models.Character) {
-// 	m.PreCalculateDiamondSoul(c)
-// }
+func (m *Monk) ExecutePostCalculateMethods(c *models.Character) {
+	m.executeUnarmoredDefense(c)
+	m.executeMartialArts(c)
+	m.executeUnarmoredMovement(c)
+	m.executeDeflectMissles(c)
+	m.executeKiPoints(c)
+}
+
+func (m *Monk) ExecutePreCalculateMethods(c *models.Character) {
+	m.executeDiamondSoul(c)
+}
 
 func (m *Monk) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }
 
 // If not wearing armor, Armor Class is boosted to 10 + dex mod + wisdom mod
-func (m *Monk) PostCalculateUnarmoredDefense(c *models.Character) {
+func (m *Monk) executeUnarmoredDefense(c *models.Character) {
 	monkExpertiseAbilityModifiers := []string{
 		types.AbilityDexterity,
 		types.AbilityWisdom,
@@ -62,7 +62,7 @@ func (m *Monk) PostCalculateUnarmoredDefense(c *models.Character) {
 	executeUnarmoredDefenseShared(c, monkExpertiseAbilityModifiers)
 }
 
-func (m *Monk) PostCalculateUnarmoredMovement(c *models.Character) {
+func (m *Monk) executeUnarmoredMovement(c *models.Character) {
 	if c.WornEquipment.Armor.Name != "" || c.Level < 2 {
 		return
 	}
@@ -70,7 +70,7 @@ func (m *Monk) PostCalculateUnarmoredMovement(c *models.Character) {
 	c.Speed += 10
 }
 
-func (m *Monk) PostCalculateMartialArts(c *models.Character) {
+func (m *Monk) executeMartialArts(c *models.Character) {
 	switch {
 	case c.Level < 5:
 		m.MartialArts = "1d4"
@@ -83,7 +83,7 @@ func (m *Monk) PostCalculateMartialArts(c *models.Character) {
 	}
 }
 
-func (m *Monk) PostCalculateKiPoints(c *models.Character) {
+func (m *Monk) executeKiPoints(c *models.Character) {
 	if c.Level < 2 {
 		return
 	}
@@ -91,17 +91,12 @@ func (m *Monk) PostCalculateKiPoints(c *models.Character) {
 	m.KiPoints.Maximum = c.Level
 	m.KiPoints.Available = min(m.KiPoints.Available, m.KiPoints.Maximum)
 
-	widomMod := 0
-	for _, a := range c.Abilities {
-		if a.Name == types.AbilityWisdom {
-			widomMod = a.AbilityModifier
-		}
-	}
+	wisMod := c.GetMod(types.AbilityWisdom)
 
-	m.KiPoints.KiSpellSaveDC = 8 + c.Proficiency + widomMod
+	m.KiPoints.KiSpellSaveDC = 8 + c.Proficiency + wisMod
 }
 
-func (m *Monk) PostCalculateDeflectMissles(c *models.Character) {
+func (m *Monk) executeDeflectMissles(c *models.Character) {
 	if c.Level < 3 {
 		return
 	}
@@ -109,7 +104,7 @@ func (m *Monk) PostCalculateDeflectMissles(c *models.Character) {
 	m.DeflectMissles = (10 + c.Proficiency + c.Level) * -1
 }
 
-func (m *Monk) PreCalculateDiamondSoul(c *models.Character) {
+func (m *Monk) executeDiamondSoul(c *models.Character) {
 	if c.Level < 14 {
 		return
 	}

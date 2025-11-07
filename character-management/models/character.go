@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/types"
@@ -20,9 +19,9 @@ type Character struct {
 	Feats                   []GenericItem                       `json:"feats"`
 	Languages               []string                            `json:"languages"`
 	Proficiency             int                                 `json:"-"`
-	PassivePerception       int                                 `json:"passive-perception"`
-	PassiveInsight          int                                 `json:"passive-insight"`
-	AC                      int                                 `json:"ac"`
+	PassivePerception       int                                 `json:"-"`
+	PassiveInsight          int                                 `json:"-"`
+	AC                      int                                 `json:"-"`
 	SpellSaveDC             int                                 `json:"-"`
 	SpellAttackMod          int                                 `json:"-"`
 	HPCurrent               int                                 `json:"hp-current"`
@@ -30,7 +29,7 @@ type Character struct {
 	HPTemp                  int                                 `json:"hp-temp"`
 	Initiative              int                                 `json:"initiative"`
 	Speed                   int                                 `json:"speed"`
-	HitDice                 string                              `json:"hit-dice"`
+	HitDice                 string                              `json:"-"`
 	Abilities               []types.Abilities                   `json:"abilities"`
 	Skills                  []types.Skill                       `json:"skills"`
 	Spells                  []types.CharacterSpell              `json:"spells"`
@@ -52,14 +51,14 @@ type GenericItem struct {
 type Class interface {
 	ValidateMethods(c *Character)
 	CalculateHitDice(int) string
-	// ExecutePostCalculateMethods(c *Character)
-	// ExecutePreCalculateMethods(c *Character)
+	ExecutePostCalculateMethods(c *Character)
+	ExecutePreCalculateMethods(c *Character)
 	PrintClassDetails(c *Character) []string
 	UseClassTokens(string)
 	RecoverClassTokens(string, int)
 }
 
-type ClassFeatures struct {
+type ClassFeature struct {
 	Name    string `json:"name"`
 	Level   int    `json:"level"`
 	Details string `json:"details"`
@@ -886,23 +885,5 @@ func (c *Character) Unequip(isPrimary bool) {
 		c.PrimaryEquipped = ""
 	} else {
 		c.SecondaryEquipped = ""
-	}
-}
-
-func (c *Character) ExecuteClassMethods(isPreCalculate bool) {
-	methodPrefix := "PostCalculate"
-
-	if isPreCalculate {
-		methodPrefix = "PreCalculate"
-	}
-
-	v := reflect.ValueOf(c.Class)
-
-	for i := range v.NumMethod() {
-		method := v.Type().Method(i)
-		if strings.HasPrefix(method.Name, methodPrefix) {
-			args := []reflect.Value{reflect.ValueOf(c)}
-			v.Method(i).Call(args)
-		}
 	}
 }

@@ -11,10 +11,10 @@ import (
 )
 
 type Barbarian struct {
-	Path            string                 `json:"path"`
-	OtherFeatures   []models.ClassFeatures `json:"other-features"`
-	Rage            Rage                   `json:"rage"`
-	PrimalKnowledge []string               `json:"primal-knowledge"`
+	Path            string                `json:"path"`
+	OtherFeatures   []models.ClassFeature `json:"other-features"`
+	Rage            Rage                  `json:"rage"`
+	PrimalKnowledge []string              `json:"primal-knowledge"`
 }
 
 type Rage struct {
@@ -36,14 +36,14 @@ func LoadBarbarian(data []byte) (*Barbarian, error) {
 func (b *Barbarian) ValidateMethods(c *models.Character) {
 }
 
-// func (b *Barbarian) ExecutePostCalculateMethods(c *models.Character) {
-// 	b.PostCalculateUnarmoredDefense(c)
-// 	b.PostCalculatePrimalKnowledge(c)
-// }
-//
-// func (b *Barbarian) ExecutePreCalculateMethods(c *models.Character) {
-// 	b.PreCalculatePrimalChampion(c)
-// }
+func (b *Barbarian) ExecutePostCalculateMethods(c *models.Character) {
+	b.executeUnarmoredDefense(c)
+	b.executePrimalKnowledge(c)
+}
+
+func (b *Barbarian) ExecutePreCalculateMethods(c *models.Character) {
+	b.executePrimalChampion(c)
+}
 
 func (b *Barbarian) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd12", level)
@@ -51,7 +51,7 @@ func (b *Barbarian) CalculateHitDice(level int) string {
 
 // At level 3, You gain proficiency in one skill of your choice from the list of skills
 // available to barbarians at 1st level.
-func (b *Barbarian) PostCalculatePrimalKnowledge(c *models.Character) {
+func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
 	if c.Level < 3 {
 		return
 	}
@@ -87,7 +87,7 @@ func (b *Barbarian) PostCalculatePrimalKnowledge(c *models.Character) {
 }
 
 // If not wearing armor, Armor Class is boosted to 10 + dex mod + constitution mod
-func (b *Barbarian) PostCalculateUnarmoredDefense(c *models.Character) {
+func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 	barbarianExpertiseAbilityModifiers := []string{
 		types.AbilityDexterity,
 		types.AbilityConstitution,
@@ -127,7 +127,7 @@ func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
 }
 
 // At level 20, your Strength and Constitution scores increase by 4. Your maximum for those scores is now 24.
-func (b *Barbarian) PreCalculatePrimalChampion(c *models.Character) {
+func (b *Barbarian) executePrimalChampion(c *models.Character) {
 	if c.Level < 20 {
 		return
 	}

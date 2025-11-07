@@ -129,8 +129,7 @@ func loadClassData(classType string, classData []byte) (models.Class, error) {
 		c = nil
 		err = fmt.Errorf("%s not implemented yet", classType)
 	case types.ClassWarlock:
-		c = nil
-		err = fmt.Errorf("%s not implemented yet", classType)
+		c, err = class.LoadWarlock(classData)
 	case types.ClassWizard:
 		c, err = class.LoadWizard(classData)
 	default:

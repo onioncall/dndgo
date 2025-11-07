@@ -11,10 +11,10 @@ import (
 )
 
 type Wizard struct {
-	SignatureSpells []string               `json:"signature-spells"`
-	ArcaneTradition string                 `json:"arcane-tradition"`
-	PreparedSpells  []string               `json:"prepared-spells"`
-	OtherFeatures   []models.ClassFeatures `json:"other-features"`
+	SignatureSpells []string              `json:"signature-spells"`
+	ArcaneTradition string                `json:"arcane-tradition"`
+	PreparedSpells  []string              `json:"prepared-spells"`
+	OtherFeatures   []models.ClassFeature `json:"other-features"`
 }
 
 func LoadWizard(data []byte) (*Wizard, error) {
@@ -26,6 +26,14 @@ func LoadWizard(data []byte) (*Wizard, error) {
 	return &wizard, nil
 }
 
+func (w *Wizard) ExecutePostCalculateMethods(c *models.Character) {
+	w.executeSpellCastingAbility(c)
+	w.executePreparedSpells(c)
+}
+
+func (w *Wizard) ExecutePreCalculateMethods(c *models.Character) {
+}
+
 func (w *Wizard) ValidateMethods(c *models.Character) {
 	w.validateSignatureSpells(c)
 }
@@ -34,7 +42,7 @@ func (w *Wizard) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd6", level)
 }
 
-func (w *Wizard) PostCalculatePreparedSpells(c *models.Character) {
+func (w *Wizard) executePreparedSpells(c *models.Character) {
 	intMod := c.GetMod(types.AbilityIntelligence)
 	preparedSpellsMax := intMod + c.Level
 
@@ -51,7 +59,7 @@ func (w *Wizard) PostCalculatePreparedSpells(c *models.Character) {
 	executePreparedSpellsShared(c, w.PreparedSpells)
 }
 
-func (w *Wizard) PostCalculateSpellCastingAbility(c *models.Character) {
+func (w *Wizard) executeSpellCastingAbility(c *models.Character) {
 	intMod := c.GetMod(types.AbilityIntelligence)
 
 	executeSpellSaveDC(c, intMod)

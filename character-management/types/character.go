@@ -45,8 +45,10 @@ const (
 )
 
 const (
-	FightingStyleArchery           string = "archery"
-	FightingStyleDefense           string = "defense"
-	FightingStyleDueling           string = "dueling"
-	FightingStyleTwoWeaponFighting string = "two-weapon-fighting"
+	FightingStyleArchery               string = "archery"
+	FightingStyleDefense               string = "defense"
+	FightingStyleDueling               string = "dueling"
+	FightingStyleTwoWeaponFighting     string = "two-weapon-fighting"
+	FightingtStyleThrownWeaponFighting string = "thrown-weapon-fighting"
+	FightingSyleMariner                string = "Mariner"
 )
