@@ -10,10 +10,10 @@ import (
 )
 
 type Cleric struct {
-	ChannelDivinity types.Token            `json:"channel-divinity"`
-	Domain          string                 `json:"domain"`
-	PreparedSpells  []string               `json:"prepared-spells"`
-	OtherFeatures   []models.ClassFeatures `json:"other-features"`
+	ChannelDivinity types.Token           `json:"channel-divinity"`
+	Domain          string                `json:"domain"`
+	PreparedSpells  []string              `json:"prepared-spells"`
+	OtherFeatures   []models.ClassFeature `json:"other-features"`
 }
 
 func LoadCleric(data []byte) (*Cleric, error) {
@@ -36,11 +36,13 @@ func (cl *Cleric) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }
 
-// func (cl *Cleric) ExecutePostCalculateMethods(c *models.Character) {
-// }
-//
-// func (cl *Cleric) ExecutePreCalculateMethods(c *models.Character) {
-// }
+func (cl *Cleric) ExecutePostCalculateMethods(c *models.Character) {
+	cl.executeSpellCastingAbility(c)
+	cl.executePreparedSpells(c)
+}
+
+func (cl *Cleric) ExecutePreCalculateMethods(c *models.Character) {
+}
 
 func (cl *Cleric) validateCantripVersatility(c *models.Character) bool {
 	// Even though this is functionally the same as the Druid version, the switch table is different,
@@ -86,14 +88,14 @@ func (cl *Cleric) validateCantripVersatility(c *models.Character) bool {
 	return true
 }
 
-func (cl *Cleric) PostCalculateSpellCastingAbility(c *models.Character) {
+func (cl *Cleric) executeSpellCastingAbility(c *models.Character) {
 	wisMod := c.GetMod(types.AbilityWisdom)
 
 	executeSpellSaveDC(c, wisMod)
 	executeSpellAttackMod(c, wisMod)
 }
 
-func (cl *Cleric) PostCalculatePreparedSpells(c *models.Character) {
+func (cl *Cleric) executePreparedSpells(c *models.Character) {
 	wisMod := c.GetMod(types.AbilityWisdom)
 	preparedSpellsMax := wisMod + c.Level
 

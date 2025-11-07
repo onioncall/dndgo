@@ -55,7 +55,7 @@ var (
 				c.AddItemToPack(bp, q)
 			}
 			if il {
-				// c.AddLevel()
+				c.AddLevel()
 			}
 			if ss > 0 {
 				// add spell slot for level

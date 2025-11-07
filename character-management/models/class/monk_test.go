@@ -95,7 +95,7 @@ func TestMonkExecuteUnarmoredDefense(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			monk := &Monk{}
 
-			monk.PostCalculateUnarmoredDefense(tt.character)
+			monk.executeUnarmoredDefense(tt.character)
 			result := tt.character.AC
 
 			if tt.expected != result {
@@ -143,7 +143,7 @@ func TestMonkExecuteUnarmoredMovement(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			monk := &Monk{}
 
-			monk.PostCalculateUnarmoredMovement(tt.character)
+			monk.executeUnarmoredMovement(tt.character)
 			result := tt.character.Speed
 
 			if tt.expected != result {
@@ -186,7 +186,7 @@ func TestMonkExecuteMartialArts(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			monk := &Monk{}
 
-			monk.PostCalculateMartialArts(tt.character)
+			monk.executeMartialArts(tt.character)
 			result := monk.MartialArts
 
 			if tt.expected != result {
@@ -238,7 +238,7 @@ func TestMonkExecuteKiPoints(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			monk := &Monk{}
 
-			monk.PostCalculateKiPoints(tt.character)
+			monk.executeKiPoints(tt.character)
 
 			maxPointResult := monk.KiPoints.Maximum
 			spellSaveDCResult := monk.KiPoints.KiSpellSaveDC
@@ -287,7 +287,7 @@ func TestMonkExecuteDeflectMissles(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			monk := &Monk{}
 
-			monk.PostCalculateDeflectMissles(tt.character)
+			monk.executeDeflectMissles(tt.character)
 			result := monk.DeflectMissles
 
 			if tt.expected != result {
@@ -352,7 +352,7 @@ func TestMonkExecuteDiamond(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			monk := &Monk{}
-			monk.PreCalculateDiamondSoul(tt.character)
+			monk.executeDiamondSoul(tt.character)
 
 			for i, e := range tt.expected {
 				result := tt.character.Abilities[i].SavingThrowsProficient

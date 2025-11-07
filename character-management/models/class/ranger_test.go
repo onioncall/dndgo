@@ -373,7 +373,7 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.ranger.PostCalculateFightingStyle(tt.character)
+			tt.ranger.executeFightingStyle(tt.character)
 			result := tt.character
 
 			if tt.expected.AC != result.AC {

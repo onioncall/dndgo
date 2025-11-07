@@ -161,7 +161,7 @@ func TestClassExecuteSpellCastingAbility(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			wizard := &Wizard{}
-			wizard.PostCalculateSpellCastingAbility(tt.character)
+			wizard.executeSpellCastingAbility(tt.character)
 
 			expectedDC := tt.expected.SpellSaveDC
 			expectedAttackMod := tt.expected.SpellAttackMod

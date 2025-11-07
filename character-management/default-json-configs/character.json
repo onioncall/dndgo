@@ -16,9 +16,6 @@
   "languages": [
     "Common"
   ],
-  "passive-perception": 0,
-  "passive-insight": 0,
-  "ac": 0,
   "hp-current": 0,
   "hp-max": 0,
   "hp-temp": 0,
@@ -227,8 +224,8 @@
       "name": "",
       "proficient": true,
       "class": 0,
-      "modifier": "dexterity"
-      "type": "light"
+      "modifier": "",
+      "type": ""
     },
     "hands-arms": "",
     "ring": "",

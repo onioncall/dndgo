@@ -120,7 +120,7 @@ func TestRogueExecuteExpertise(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.rogue.PostCalculateExpertise(tt.character)
+			tt.rogue.executeExpertise(tt.character)
 
 			if len(tt.character.Skills) != len(tt.expected) {
 				t.Errorf("Skills Count- Expected: %d, Result: %d", len(tt.expected), len(tt.character.Skills))
@@ -166,7 +166,7 @@ func TestRogueExecuteSneakAttack(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rogue := &Rogue{}
-			rogue.PostCalculateSneakAttack(tt.character)
+			rogue.executeSneakAttack(tt.character)
 
 			result := rogue.SneakAttack
 			if tt.expected != result {

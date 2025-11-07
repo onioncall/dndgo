@@ -95,7 +95,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			barbarian := &Barbarian{}
 
-			barbarian.PostCalculateUnarmoredDefense(tt.character)
+			barbarian.executeUnarmoredDefense(tt.character)
 			result := tt.character.AC
 
 			if tt.expected != result {
@@ -138,7 +138,7 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.barbarian.PostCalculatePrimalKnowledge(tt.character)
+			tt.barbarian.executePrimalKnowledge(tt.character)
 
 			result := tt.character.Skills
 			for i, e := range tt.expected {
@@ -193,7 +193,7 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			barbarian := &Barbarian{}
 
-			barbarian.PreCalculatePrimalChampion(tt.character)
+			barbarian.executePrimalChampion(tt.character)
 
 			for i, e := range tt.expected {
 				result := tt.character.Abilities[i]

@@ -11,10 +11,10 @@ import (
 )
 
 type Bard struct {
-	ExpertiseSkills   []string               `json:"expertise"`
-	College           string                 `json:"college"`
-	OtherFeatures     []models.ClassFeatures `json:"other-features"`
-	BardicInspiration BardicInspiration      `json:"bardic-inspiration"`
+	ExpertiseSkills   []string              `json:"expertise"`
+	College           string                `json:"college"`
+	OtherFeatures     []models.ClassFeature `json:"other-features"`
+	BardicInspiration BardicInspiration     `json:"bardic-inspiration"`
 }
 
 type BardicInspiration struct {
@@ -36,19 +36,20 @@ func LoadBard(data []byte) (*Bard, error) {
 func (b *Bard) ValidateMethods(c *models.Character) {
 }
 
-// func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
-// 	b.PostCalculateJackOfAllTrades(c)
-// 	b.PostCalculateExpertise(c)
-// }
-//
-// func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
-// }
+func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
+	b.executeJackOfAllTrades(c)
+	b.executeExpertise(c)
+	b.executeSpellCastingAbility(c)
+}
+
+func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
+}
 
 func (b *Bard) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }
 
-func (b *Bard) PostCalculateSpellCastingAbility(c *models.Character) {
+func (b *Bard) executeSpellCastingAbility(c *models.Character) {
 	chrMod := c.GetMod(bardSpellCastingAbility)
 
 	executeSpellSaveDC(c, chrMod)
@@ -57,7 +58,7 @@ func (b *Bard) PostCalculateSpellCastingAbility(c *models.Character) {
 
 // At level 3, bards can pick two skills they are proficient in, and double the modifier.
 // They select two more at level 10
-func (b *Bard) PostCalculateExpertise(c *models.Character) {
+func (b *Bard) executeExpertise(c *models.Character) {
 	if c.Level < 3 {
 		return
 	}
@@ -77,7 +78,7 @@ func (b *Bard) PostCalculateExpertise(c *models.Character) {
 
 // At level 2, bards can add half their proficiency bonus (rounded down) to any ability check
 // that doesn't already use their proficiency bonus.
-func (b *Bard) PostCalculateJackOfAllTrades(c *models.Character) {
+func (b *Bard) executeJackOfAllTrades(c *models.Character) {
 	if c.Level < 2 {
 		return
 	}
