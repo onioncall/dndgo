@@ -37,7 +37,7 @@ type Character struct {
 	Weapons                 []types.Weapon                      `json:"weapons"`
 	PrimaryEquipped         string                              `json:"primary-equipped"`
 	SecondaryEquipped       string                              `json:"secondary-equipped"`
-	WornEquipment           types.WornEquipment                 `json:"body-equipment"`
+	WornEquipment           types.WornEquipment                 `json:"worn-equipment"`
 	Backpack                []types.BackpackItem                `json:"backpack"`
 	AbilityScoreImprovement []types.AbilityScoreImprovementItem `json:"ability-score-improvement"`
 	Class                   Class                               `json:"-"`

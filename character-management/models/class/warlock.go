@@ -20,7 +20,7 @@ const (
 
 type Warlock struct {
 	OtherworldlyPatron string                `json:"otherworldly-patron"`
-	Invocation         string                `json:"invocation"`
+	Invocations        []string              `json:"invocations"`
 	OtherFeatures      []models.ClassFeature `json:"other-features"`
 }
 
@@ -95,8 +95,11 @@ func (w *Warlock) PrintClassDetails(c *models.Character) []string {
 		s = append(s, fmt.Sprintf("Otherwordly Patron: *%s*\n\n", w.OtherworldlyPatron))
 	}
 
-	if w.Invocation != "" && c.Level > 3 {
-		s = append(s, fmt.Sprintf("Invocation: *%s*\n\n", w.Invocation))
+	if len(w.Invocations) > 0 && c.Level > 3 {
+		s = append(s, "Invocation:\n\n")
+		for _, invocation := range w.Invocations {
+			s = append(s, fmt.Sprintf("%s\n", invocation))
+		}
 	}
 
 	if len(w.OtherFeatures) > 0 {
