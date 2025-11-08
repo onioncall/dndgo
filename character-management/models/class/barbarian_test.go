@@ -232,7 +232,7 @@ func TestBarbarianUseSlots(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.barbarian.UseClassTokens(tt.tokenName)
+			tt.barbarian.UseClassTokens(tt.tokenName, 1)
 
 			result := tt.barbarian.Rage.Available
 			e := tt.expected.Available

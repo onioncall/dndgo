@@ -206,7 +206,8 @@ var (
 			} else if s > 0 {
 				c.UseSpellSlot(s)
 			} else if ct != "" {
-				c.UseClassTokens(ct)
+				q = max(q, 1) // If q isn't provided with a valid value, we use one by default
+				c.UseClassTokens(ct, q)
 			}
 
 			err = handlers.SaveCharacterJson(c)

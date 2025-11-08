@@ -231,7 +231,7 @@ func TestBardUseClassSlots(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.bard.UseClassTokens(tt.tokenName)
+			tt.bard.UseClassTokens(tt.tokenName, 1)
 
 			result := tt.bard.BardicInspiration.Available
 			e := tt.expected.Available

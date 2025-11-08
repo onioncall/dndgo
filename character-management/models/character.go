@@ -54,7 +54,7 @@ type Class interface {
 	ExecutePostCalculateMethods(c *Character)
 	ExecutePreCalculateMethods(c *Character)
 	PrintClassDetails(c *Character) []string
-	UseClassTokens(string)
+	UseClassTokens(string, int)
 	RecoverClassTokens(string, int)
 }
 
@@ -831,8 +831,8 @@ func (c *Character) Recover() {
 	}
 }
 
-func (c *Character) UseClassTokens(name string) {
-	c.Class.UseClassTokens(name)
+func (c *Character) UseClassTokens(name string, quantity int) {
+	c.Class.UseClassTokens(name, quantity)
 }
 
 func (c *Character) RecoverClassTokens(name string, quantity int) {

@@ -143,7 +143,7 @@ func (b *Barbarian) executePrimalChampion(c *models.Character) {
 
 // CLI
 
-func (b *Barbarian) UseClassTokens(tokenName string) {
+func (b *Barbarian) UseClassTokens(tokenName string, quantity int) {
 	// We only really need token name for classes that have multiple tokens
 	// since barbarian only has rage, we won't check the token name value
 	if b.Rage.Available <= 0 {
@@ -151,7 +151,7 @@ func (b *Barbarian) UseClassTokens(tokenName string) {
 		return
 	}
 
-	b.Rage.Available--
+	b.Rage.Available -= quantity
 }
 
 func (b *Barbarian) RecoverClassTokens(tokenName string, quantity int) {

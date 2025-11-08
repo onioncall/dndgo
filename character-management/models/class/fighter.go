@@ -139,7 +139,7 @@ func (f *Fighter) RemoveFightingStyleFeature(feature models.ClassFeature) {
 
 // CLI
 
-func (f *Fighter) UseClassTokens(tokenName string) {
+func (f *Fighter) UseClassTokens(tokenName string, quantity int) {
 	token := f.getToken(tokenName)
 
 	if token == nil {
@@ -152,7 +152,7 @@ func (f *Fighter) UseClassTokens(tokenName string) {
 		return
 	}
 
-	token.Available--
+	token.Available -= quantity
 }
 
 func (f *Fighter) RecoverClassTokens(tokenName string, quantity int) {

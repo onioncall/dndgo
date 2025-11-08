@@ -120,12 +120,12 @@ func (w *Warlock) PrintClassDetails(c *models.Character) []string {
 
 // CLI
 
-func (w *Warlock) UseClassTokens(tokenName string) {
+func (w *Warlock) UseClassTokens(tokenName string, quantity int) {
 	// Not sure Warlocks have a token like system to implement
-	logger.HandleInfo("No token set up for Rogue class")
+	logger.HandleInfo("No token set up for Warlock class")
 }
 
 func (w *Warlock) RecoverClassTokens(tokenName string, quantity int) {
 	// Not sure Warlocks have a token like system to implement
-	logger.HandleInfo("No token set up for Rogue class")
+	logger.HandleInfo("No token set up for Warlock class")
 }

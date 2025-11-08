@@ -154,7 +154,7 @@ func (m *Monk) PrintClassDetails(c *models.Character) []string {
 
 // CLI
 
-func (m *Monk) UseClassTokens(tokenName string) {
+func (m *Monk) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since monk only has ki points, we won't check the slot name value
 	if m.KiPoints.Available <= 0 {
@@ -162,7 +162,7 @@ func (m *Monk) UseClassTokens(tokenName string) {
 		return
 	}
 
-	m.KiPoints.Available--
+	m.KiPoints.Available -= quantity
 }
 
 func (m *Monk) RecoverClassTokens(tokenName string, quantity int) {

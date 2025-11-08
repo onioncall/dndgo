@@ -1,0 +1,37 @@
+{
+  "sorcerous-origin": "",
+  "sorcery-points": {
+    "available": 4,
+    "maximum": 4
+  },
+  "meta-magic": [
+    {
+      "name": "",
+      "level": 3,
+      "details": ""
+    }
+  ],
+  "other-features": [
+    {
+      "name": "Font of Magic",
+      "level": 2,
+      "details": "You tap into a deep wellspring of magic within yourself. This wellspring is represented by sorcery points, which allow you to create a variety of magical effects. You regain all sorcery points on a long rest.\n"
+    },
+    {
+      "name": "Flexible Casting",
+      "level": 2,
+      "details": "You can use your sorcery points to gain additional spell slots, or sacrifice spell slots to gain additional sorcery points.\n\nYou can transform unexpended sorcery points into one spell slot as a bonus action on your turn. The created spell slots vanish at the end of a long rest. The Creating Spell Slots table shows the cost of creating a spell slot of a given level. You can create spell slots no higher in level than 5th.\n- slot lvl 1: 2\n- slot lvl 2: 3\n- slot lvl 3: 5\n- slot lvl 4: 5\n- slot lvl 5: 7\n\nAs a bonus action on your turn, you can expend one spell slot and gain a number of sorcery points equal to the slot's level.\n"
+    },
+    {
+      "name": "Metamagic",
+      "level": 3,
+      "details": "You gain the ability to twist your spells to suit your needs. You gain two of the following Metamagic options of your choice. You gain another one at 10th and 17th level. You can use only one Metamagic option on a spell when you cast it, unless otherwise noted.\n"
+    },
+    {
+      "name": "Sorcerous Restoration",
+      "level": 20,
+      "details": "You regain 4 expended sorcery points whenever you finish a short rest.\n"
+    }
+  ]
+}
+
