@@ -12,6 +12,7 @@ import (
 type Sorcerer struct {
 	SorcerousOrigin string                `json:"sorcerous-origin"`
 	SorceryPoints   types.Token           `json:"sorcery-points"`
+	MetaMagicSpells []models.ClassFeature `json:"meta-magic-spells"`
 	OtherFeatures   []models.ClassFeature `json:"other-features"`
 }
 
@@ -49,6 +50,47 @@ func (s *Sorcerer) executeSpellCastingAbility(c *models.Character) {
 func (s *Sorcerer) executeSorceryPoints(c *models.Character) {
 	s.SorceryPoints.Maximum = 2
 	s.SorceryPoints.Maximum += c.Level
+}
+
+func (s *Sorcerer) PrintClassDetails(c *models.Character) []string {
+	sb := buildClassDetailsHeader()
+
+	if s.SorcerousOrigin != "" {
+		sb = append(sb, fmt.Sprintf("Sorcerous Origin: *%s*\n\n", s.SorcerousOrigin))
+	}
+
+	if c.Level >= 2 {
+		points := fmt.Sprintf("*Sorcery Points*: %d/%d\n\n", s.SorceryPoints.Available, s.SorceryPoints.Maximum)
+		sb = append(sb, points)
+	}
+
+	if len(s.MetaMagicSpells) > 0 && c.Level >= 3 {
+		mmHeader := fmt.Sprintf("Meta Magic Spells:\n")
+		sb = append(sb, mmHeader)
+
+		for _, spell := range s.MetaMagicSpells {
+			spellLine := fmt.Sprintf("*%s*\n", spell.Name)
+			sb = append(sb, fmt.Sprintf("*%s*\n", spell.Name))
+			sb = append(sb, fmt.Sprintf("%s\n\n", spell.Details))
+			sb = append(sb, spellLine)
+		}
+		sb = append(sb, "\n")
+	}
+
+	if len(s.OtherFeatures) > 0 {
+		for _, detail := range s.OtherFeatures {
+			if detail.Level > c.Level {
+				continue
+			}
+
+			detailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
+			sb = append(sb, detailName)
+			details := fmt.Sprintf("%s\n", detail.Details)
+			sb = append(sb, details)
+		}
+	}
+
+	return sb
 }
 
 // CLI
