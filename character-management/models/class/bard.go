@@ -133,7 +133,7 @@ func (b *Bard) PrintClassDetails(c *models.Character) []string {
 
 // CLI
 
-func (b *Bard) UseClassTokens(tokenName string) {
+func (b *Bard) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has bardic inspiration, we won't check the slot name value
 	if b.BardicInspiration.Available <= 0 {
@@ -141,7 +141,7 @@ func (b *Bard) UseClassTokens(tokenName string) {
 		return
 	}
 
-	b.BardicInspiration.Available--
+	b.BardicInspiration.Available -= quantity
 }
 
 func (b *Bard) RecoverClassTokens(tokenName string, quantity int) {

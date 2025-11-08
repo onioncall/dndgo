@@ -144,7 +144,7 @@ func (cl *Cleric) PrintClassDetails(c *models.Character) []string {
 
 // CLI
 
-func (cl *Cleric) UseClassTokens(tokenName string) {
+func (cl *Cleric) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has channel divinity, we won't check the slot name value
 	if cl.ChannelDivinity.Available <= 0 {
@@ -152,7 +152,7 @@ func (cl *Cleric) UseClassTokens(tokenName string) {
 		return
 	}
 
-	cl.ChannelDivinity.Available--
+	cl.ChannelDivinity.Available -= quantity
 }
 
 func (cl *Cleric) RecoverClassTokens(tokenName string, quantity int) {

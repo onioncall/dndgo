@@ -108,7 +108,7 @@ func (r *Rogue) PrintClassDetails(c *models.Character) []string {
 
 // CLI
 
-func (r *Rogue) UseClassTokens(tokenName string) {
+func (r *Rogue) UseClassTokens(tokenName string, quantity int) {
 	// Not sure Rogues have a token like system to implement
 	logger.HandleInfo("No token set up for Rogue class")
 }

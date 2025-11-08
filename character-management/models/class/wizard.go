@@ -123,12 +123,12 @@ func (w *Wizard) PrintClassDetails(c *models.Character) []string {
 
 // CLI
 
-func (w *Wizard) UseClassTokens(tokenName string) {
+func (w *Wizard) UseClassTokens(tokenName string, quantity int) {
 	// Not sure Wizards have a token like system to implement
-	logger.HandleInfo("No token set up for Rogue class")
+	logger.HandleInfo("No token set up for Wizard class")
 }
 
 func (w *Wizard) RecoverClassTokens(tokenName string, quantity int) {
 	// Not sure Wizards have a token like system to implement
-	logger.HandleInfo("No token set up for Rogue class")
+	logger.HandleInfo("No token set up for Wizard class")
 }

@@ -158,7 +158,7 @@ func (d *Druid) PrintClassDetails(c *models.Character) []string {
 
 // CLI
 
-func (d *Druid) UseClassTokens(tokenName string) {
+func (d *Druid) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since druid only has wild shape, we won't check the slot name value
 	if d.WildShape.Available <= 0 {
@@ -166,7 +166,7 @@ func (d *Druid) UseClassTokens(tokenName string) {
 		return
 	}
 
-	d.WildShape.Available--
+	d.WildShape.Available -= quantity
 }
 
 func (d *Druid) RecoverClassTokens(tokenName string, quantity int) {
