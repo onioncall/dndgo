@@ -281,3 +281,21 @@ func applyProtection(c *models.Character) FightingStyleFeature {
 
 	return feature
 }
+
+// this is only used for classes that have mutliple tokens types to implement
+func fullTokenRecovery(tokens []types.NamedToken) {
+	for i := range tokens {
+		tokens[i].Available = tokens[i].Maximum
+	}
+}
+
+// this is only used for classes that have mutliple tokens types to implement
+func getToken(tokenName string, tokens []types.NamedToken) *types.NamedToken {
+	for i := range tokens {
+		if tokens[i].Name == tokenName {
+			return &tokens[i]
+		}
+	}
+
+	return nil
+}

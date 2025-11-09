@@ -1,18 +1,23 @@
 {
   "archetype": "",
   "fighting-style": "",
-  "indomitable": {
-    "available": 1,
-    "maximum": 1
-  },
-  "action-surge": {
-    "available": 1,
-    "maximum": 1
-  },
-  "second-wind": {
-    "available": 1,
-    "maximum": 1
-  },
+  "class-tokens": [
+    {
+      "name": "indomitable",
+      "level": 9,
+      "available": 1
+    },
+    {
+      "name": "action-surge",
+      "level": 2,
+      "available": 1
+    },
+    {
+      "name": "second-wind",
+      "level": 0,
+      "available": 1
+    }
+  ],
   "other-features": [
     {
       "name": "Martial Versatility",

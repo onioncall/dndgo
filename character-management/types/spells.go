@@ -18,8 +18,14 @@ type Token struct {
 	Available int `json:"available"`
 }
 
+type PreSetToken struct {
+	Maximum   int `json:"-"`
+	Available int `json:"available"`
+}
+
 type NamedToken struct {
 	Name      string `json:"name"`
-	Maximum   int    `json:"maximum"`
+	Maximum   int    `json:"-"`
 	Available int    `json:"available"`
+	Level     int    `json:"level"`
 }

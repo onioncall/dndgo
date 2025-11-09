@@ -11,7 +11,7 @@ import (
 
 type Sorcerer struct {
 	SorcerousOrigin string                `json:"sorcerous-origin"`
-	SorceryPoints   types.Token           `json:"sorcery-points"`
+	SorceryPoints   types.PreSetToken     `json:"sorcery-points"`
 	MetaMagicSpells []models.ClassFeature `json:"meta-magic-spells"`
 	OtherFeatures   []models.ClassFeature `json:"other-features"`
 }

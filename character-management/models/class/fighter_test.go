@@ -16,28 +16,25 @@ func TestFighterUseClassTokens(t *testing.T) {
 		{
 			name: "One removed successfully, mixed case",
 			fighter: &Fighter{
-				Indomitable: types.NamedToken{
-					Name:      "indomitable",
-					Available: 1,
-					Maximum:   1,
-				},
-				SecondWind: types.NamedToken{
-					Name:      "second-wind",
-					Available: 1,
-					Maximum:   1,
+				ClassTokens: []types.NamedToken{
+					{Name: "indomitable", Available: 1, Maximum: 1, Level: 1},
+					{Name: "second-wind", Available: 1, Maximum: 1, Level: 1},
 				},
 			},
 			tokenName: "Indomitable",
 			expected:  0,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.fighter.UseClassTokens(tt.tokenName, 1)
-			result := tt.fighter.Indomitable.Available
-
-			if tt.expected != result {
-				t.Errorf("Token- Expected: %d, Result: %d", tt.expected, result)
+			for _, token := range tt.fighter.ClassTokens {
+				if tt.tokenName == token.Name {
+					if tt.expected != token.Available {
+						t.Errorf("Token- Expected: %d, Result: %d", tt.expected, token.Available)
+					}
+				}
 			}
 		})
 	}
@@ -54,15 +51,9 @@ func TestFighterRecoverClassTokens(t *testing.T) {
 		{
 			name: "One recovered successfully, mixed case",
 			fighter: &Fighter{
-				Indomitable: types.NamedToken{
-					Name:      "indomitable",
-					Available: 1,
-					Maximum:   3,
-				},
-				SecondWind: types.NamedToken{
-					Name:      "second-wind",
-					Available: 1,
-					Maximum:   1,
+				ClassTokens: []types.NamedToken{
+					{Name: "indomitable", Available: 1, Maximum: 1, Level: 1},
+					{Name: "second-wind", Available: 1, Maximum: 1, Level: 1},
 				},
 			},
 			tokenName: "Indomitable",
@@ -72,15 +63,9 @@ func TestFighterRecoverClassTokens(t *testing.T) {
 		{
 			name: "Multiple recovered successfully, mixed case",
 			fighter: &Fighter{
-				Indomitable: types.NamedToken{
-					Name:      "indomitable",
-					Available: 0,
-					Maximum:   3,
-				},
-				SecondWind: types.NamedToken{
-					Name:      "second-wind",
-					Available: 1,
-					Maximum:   1,
+				ClassTokens: []types.NamedToken{
+					{Name: "indomitable", Available: 1, Maximum: 1, Level: 1},
+					{Name: "second-wind", Available: 1, Maximum: 1, Level: 1},
 				},
 			},
 			tokenName: "Indomitable",
@@ -91,10 +76,12 @@ func TestFighterRecoverClassTokens(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.fighter.RecoverClassTokens(tt.tokenName, tt.quantity)
-			result := tt.fighter.Indomitable.Available
-
-			if tt.expected != result {
-				t.Errorf("Token- Expected: %d, Result: %d", tt.expected, result)
+			for _, token := range tt.fighter.ClassTokens {
+				if tt.tokenName == token.Name {
+					if tt.expected != token.Available {
+						t.Errorf("Token- Expected: %d, Result: %d", tt.expected, token.Available)
+					}
+				}
 			}
 		})
 	}

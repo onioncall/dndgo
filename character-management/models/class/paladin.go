@@ -1,0 +1,212 @@
+package class
+
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/logger"
+)
+
+type Paladin struct {
+	DivineSense          types.NamedToken      `json:"devine-sense-available"`
+	LayOnHands           types.NamedToken      `json:"lay-on-hands"`
+	OtherFeatures        []models.ClassFeature `json:"other-features"`
+	PreparedSpells       []string              `json:"prepared-spells"`
+	OathSpells           []string              `json:"oath-spells"`
+	ClassTokens          []types.NamedToken    `json:"class-tokens"`
+	FightingStyle        string                `json:"fighting-style"`
+	FightingStyleFeature FightingStyleFeature  `json:"-"`
+	SacredOath           string                `json:"sacred-oath"`
+}
+
+func LoadPaladin(data []byte) (*Paladin, error) {
+	var paladin Paladin
+	if err := json.Unmarshal(data, &paladin); err != nil {
+		return &paladin, fmt.Errorf("Failed to parse class data: %w", err)
+	}
+
+	return &paladin, nil
+}
+
+func (p *Paladin) ExecutePostCalculateMethods(c *models.Character) {
+	p.executeSpellCastingAbility(c)
+	p.executePreparedSpells(c)
+	p.executeClassTokens(c)
+	p.executeFightingStyle(c)
+	p.executeOathSpells(c)
+}
+
+func (p *Paladin) ExecutePreCalculateMethods(c *models.Character) {
+}
+
+func (p *Paladin) ValidateMethods(c *models.Character) {
+}
+
+func (p *Paladin) CalculateHitDice(level int) string {
+	return fmt.Sprintf("%dd10", level)
+}
+
+func (s *Paladin) executeSpellCastingAbility(c *models.Character) {
+	chrMod := c.GetMod(types.AbilityCharisma)
+
+	executeSpellSaveDC(c, chrMod)
+	executeSpellAttackMod(c, chrMod)
+}
+
+func (p *Paladin) executeClassTokens(c *models.Character) {
+	p.DivineSense.Maximum = 1 + c.GetMod(types.AbilityCharisma)
+	p.LayOnHands.Maximum = 5 * c.Level
+}
+
+// At level 2, Paladins adopt a fighting style as their specialty
+// only one of these styles can be selected
+func (p *Paladin) executeFightingStyle(c *models.Character) {
+	if c.Level < 2 {
+		return
+	}
+
+	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s",
+		p.FightingStyle,
+		types.FightingStyleGreatWeaponFighting,
+		types.FightingStyleDefense,
+		types.FightingStyleDueling,
+		types.FightingStyleProtection)
+
+	switch p.FightingStyle {
+	case types.FightingStyleGreatWeaponFighting:
+		p.FightingStyleFeature = applyGreatWeaponFighting(c)
+	case types.FightingStyleDefense:
+		p.FightingStyleFeature = applyDefense(c)
+	case types.FightingStyleDueling:
+		p.FightingStyleFeature = applyDueling(c)
+	case types.FightingStyleProtection:
+		p.FightingStyleFeature = applyProtection(c)
+	default:
+		logger.HandleInfo(invalidMsg)
+	}
+}
+
+func (p *Paladin) executePreparedSpells(c *models.Character) {
+	chrMod := c.GetMod(types.AbilityCharisma)
+	preparedSpellsMax := chrMod + (c.Level / 2)
+
+	if !c.ValidationDisabled {
+		if len(p.PreparedSpells) > preparedSpellsMax {
+			logger.HandleInfo(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
+				len(p.PreparedSpells), preparedSpellsMax))
+		} else if len(p.PreparedSpells) < preparedSpellsMax {
+			diff := preparedSpellsMax - len(p.PreparedSpells)
+			logger.HandleInfo(fmt.Sprintf("You have %d prepared spells not being used", diff))
+		}
+	}
+
+	executePreparedSpellsShared(c, p.PreparedSpells)
+}
+
+func (p *Paladin) executeOathSpells(c *models.Character) {
+	oathSpellsMax := 0
+	switch {
+	case c.Level < 3:
+		oathSpellsMax = 0
+	case c.Level < 5:
+		oathSpellsMax = 2
+	case c.Level < 9:
+		oathSpellsMax = 4
+	case c.Level < 13:
+		oathSpellsMax = 6
+	case c.Level < 17:
+		oathSpellsMax = 8
+	case c.Level >= 17:
+		oathSpellsMax = 10
+	}
+
+	if !c.ValidationDisabled {
+		if len(p.OathSpells) > oathSpellsMax {
+			logger.HandleInfo(fmt.Sprintf("%d exceeds the maximum amount of oath spells (%d)",
+				len(p.OathSpells), oathSpellsMax))
+		} else if len(p.OathSpells) < oathSpellsMax {
+			diff := oathSpellsMax - len(p.OathSpells)
+			logger.HandleInfo(fmt.Sprintf("You have %d oath spells not being used", diff))
+		}
+	}
+
+	executePreparedSpellsShared(c, p.OathSpells)
+}
+
+func (p *Paladin) PrintClassDetails(c *models.Character) []string {
+	s := buildClassDetailsHeader()
+
+	if p.LayOnHands.Maximum > 0 {
+		s = append(s, fmt.Sprintf("*Lay On Hands*: %d/%d\n\n", p.LayOnHands.Available, p.LayOnHands.Maximum))
+	}
+
+	if p.DivineSense.Maximum > 0 {
+		s = append(s, fmt.Sprintf("*Divine Sense*: %d/%d\n\n", p.DivineSense.Available, p.DivineSense.Maximum))
+	}
+
+	if p.FightingStyleFeature.Name != "" && c.Level >= 2 {
+		appliedText := "Requirements for fighting style not met."
+		if p.FightingStyleFeature.IsApplied {
+			appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
+		}
+
+		fightingStyleHeader := fmt.Sprintf("**Fighting Style**: *%s*\n", p.FightingStyleFeature.Name)
+		fightingStyleDetail := fmt.Sprintf("%s\n%s\n\n", p.FightingStyleFeature.Details, appliedText)
+		s = append(s, fightingStyleHeader)
+		s = append(s, fightingStyleDetail)
+	}
+
+	if len(p.OtherFeatures) > 0 {
+		for _, detail := range p.OtherFeatures {
+			if detail.Level > c.Level {
+				continue
+			}
+
+			detailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
+			s = append(s, detailName)
+			details := fmt.Sprintf("%s\n", detail.Details)
+			s = append(s, details)
+		}
+	}
+
+	return s
+}
+
+// CLI
+
+func (p *Paladin) UseClassTokens(tokenName string, quantity int) {
+	token := getToken(tokenName, p.ClassTokens)
+
+	if token == nil {
+		logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", tokenName))
+		return
+	}
+
+	if token.Available <= 0 {
+		logger.HandleInfo(fmt.Sprintf("%s had no uses left", tokenName))
+		return
+	}
+
+	token.Available -= quantity
+}
+
+func (p *Paladin) RecoverClassTokens(tokenName string, quantity int) {
+	if tokenName == "all" {
+		fullTokenRecovery(p.ClassTokens)
+		return
+	}
+
+	token := getToken(tokenName, p.ClassTokens)
+
+	if token == nil {
+		logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", tokenName))
+		return
+	}
+
+	// if no quantity is provided, or the new value exceeds the max we will perform a full recover
+	if quantity == 0 || token.Available > token.Maximum {
+		token.Available = token.Maximum
+	}
+}
