@@ -175,3 +175,9 @@ func (m *Monk) RecoverClassTokens(tokenName string, quantity int) {
 		m.KiPoints.Available = m.KiPoints.Maximum
 	}
 }
+
+func (m *Monk) GetTokens() []string {
+	return []string{
+		"ki-points",
+	}
+}

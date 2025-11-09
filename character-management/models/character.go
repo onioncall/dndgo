@@ -54,6 +54,7 @@ type Class interface {
 	ExecutePostCalculateMethods(c *Character)
 	ExecutePreCalculateMethods(c *Character)
 	PrintClassDetails(c *Character) []string
+	GetTokens() []string
 	UseClassTokens(string, int)
 	RecoverClassTokens(string, int)
 }

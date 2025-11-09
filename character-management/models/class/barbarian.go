@@ -164,3 +164,9 @@ func (b *Barbarian) RecoverClassTokens(tokenName string, quantity int) {
 		b.Rage.Available = b.Rage.Maximum
 	}
 }
+
+func (b *Barbarian) GetTokens() []string {
+	return []string{
+		"any",
+	}
+}

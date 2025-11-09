@@ -117,3 +117,7 @@ func (r *Rogue) RecoverClassTokens(tokenName string, quantity int) {
 	// Not sure Rogues have a token like system to implement
 	logger.HandleInfo("No token set up for Rogue class")
 }
+
+func (r *Rogue) GetTokens() []string {
+	return []string{}
+}

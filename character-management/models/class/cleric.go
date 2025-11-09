@@ -165,3 +165,9 @@ func (cl *Cleric) RecoverClassTokens(tokenName string, quantity int) {
 		cl.ChannelDivinity.Available = cl.ChannelDivinity.Maximum
 	}
 }
+
+func (cl *Cleric) GetTokens() []string {
+	return []string{
+		"channel-divinity",
+	}
+}

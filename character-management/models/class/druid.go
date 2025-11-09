@@ -179,3 +179,9 @@ func (d *Druid) RecoverClassTokens(tokenName string, quantity int) {
 		d.WildShape.Available = d.WildShape.Maximum
 	}
 }
+
+func (d *Druid) GetTokens() []string {
+	return []string{
+		"wild-shape",
+	}
+}

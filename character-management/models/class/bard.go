@@ -154,3 +154,9 @@ func (b *Bard) RecoverClassTokens(tokenName string, quantity int) {
 		b.BardicInspiration.Available = b.BardicInspiration.Maximum
 	}
 }
+
+func (b *Bard) GetTokens() []string {
+	return []string{
+		"bardic-inspiration",
+	}
+}

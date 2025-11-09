@@ -210,3 +210,13 @@ func (p *Paladin) RecoverClassTokens(tokenName string, quantity int) {
 		token.Available = token.Maximum
 	}
 }
+
+func (p *Paladin) GetTokens() []string {
+	s := []string{}
+
+	for _, token := range p.ClassTokens {
+		s = append(s, token.Name)
+	}
+
+	return s
+}

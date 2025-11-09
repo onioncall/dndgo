@@ -116,3 +116,9 @@ func (s *Sorcerer) RecoverClassTokens(tokenName string, quantity int) {
 		s.SorceryPoints.Available = s.SorceryPoints.Maximum
 	}
 }
+
+func (s *Sorcerer) GetTokens() []string {
+	return []string{
+		"sorcery-points",
+	}
+}
