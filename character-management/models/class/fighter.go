@@ -15,9 +15,7 @@ type Fighter struct {
 	FightingStyle        string                `json:"fighting-style"`
 	FightingStyleFeature FightingStyleFeature  `json:"-"`
 	OtherFeatures        []models.ClassFeature `json:"other-features"`
-	ActionSurge          types.NamedToken      `json:"action-surge"`
-	SecondWind           types.NamedToken      `json:"second-wind"`
-	Indomitable          types.NamedToken      `json:"indomitable"`
+	ClassTokens          []types.NamedToken    `json:"class-tokens"`
 }
 
 type FightingStyleFeature struct {
@@ -39,7 +37,8 @@ func (f *Fighter) ValidateMethods(c *models.Character) {
 }
 
 func (f *Fighter) ExecutePostCalculateMethods(c *models.Character) {
-	f.executerFightingStyle(c)
+	f.executeFightingStyle(c)
+	f.executeClassTokens()
 }
 
 func (f *Fighter) ExecutePreCalculateMethods(c *models.Character) {
@@ -49,7 +48,13 @@ func (f *Fighter) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd10", level)
 }
 
-func (f *Fighter) executerFightingStyle(c *models.Character) {
+func (f *Fighter) executeClassTokens() {
+	for i := range f.ClassTokens {
+		f.ClassTokens[i].Maximum = 1
+	}
+}
+
+func (f *Fighter) executeFightingStyle(c *models.Character) {
 	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s",
 		f.FightingStyle,
 		types.FightingStyleArchery,
@@ -66,9 +71,9 @@ func (f *Fighter) executerFightingStyle(c *models.Character) {
 		f.FightingStyleFeature = applyDueling(c)
 	case types.FightingStyleTwoWeaponFighting:
 		f.FightingStyleFeature = applyTwoWeaponFighting(c)
-	case types.FightingtStyleGreatWeaponFighting:
+	case types.FightingStyleGreatWeaponFighting:
 		f.FightingStyleFeature = applyGreatWeaponFighting(c)
-	case types.FightingSyleProtection:
+	case types.FightingStyleProtection:
 		f.FightingStyleFeature = applyProtection(c)
 	default:
 		logger.HandleInfo(invalidMsg)
@@ -95,22 +100,26 @@ func (f *Fighter) PrintClassDetails(c *models.Character) []string {
 		s = append(s, fightingStyleDetail)
 	}
 
-	if f.ActionSurge.Available != 0 && f.ActionSurge.Maximum != 0 && c.Level >= 2 {
-		actionSurgeSlots := c.GetSlots(f.ActionSurge.Available, f.ActionSurge.Maximum)
-		line := fmt.Sprintf("**Action Surge**: %s\n\n", actionSurgeSlots)
-		s = append(s, line)
-	}
+	for _, token := range f.ClassTokens {
+		tokenHeader := ""
 
-	if f.SecondWind.Available != 0 && f.SecondWind.Maximum != 0 {
-		secondWindSlots := c.GetSlots(f.SecondWind.Available, f.SecondWind.Maximum)
-		line := fmt.Sprintf("**Second Wind**: %s\n\n", secondWindSlots)
-		s = append(s, line)
-	}
+		switch token.Name {
+		case "action-surge":
+			tokenHeader = "Action Surge"
+		case "second-wind":
+			tokenHeader = "Second Wind"
+		case "indomitable":
+			tokenHeader = "Indomitable"
+		default:
+			logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", token.Name))
+			continue
+		}
 
-	if f.Indomitable.Available != 0 && f.Indomitable.Maximum != 0 && c.Level >= 9 {
-		indomitableSlots := c.GetSlots(f.Indomitable.Available, f.Indomitable.Maximum)
-		line := fmt.Sprintf("**Indomitable**: %s\n\n", indomitableSlots)
-		s = append(s, line)
+		if token.Maximum != 0 && c.Level >= token.Level {
+			actionSurgeSlots := c.GetSlots(token.Available, token.Maximum)
+			line := fmt.Sprintf("**%s**: %s\n\n", tokenHeader, actionSurgeSlots)
+			s = append(s, line)
+		}
 	}
 
 	if len(f.OtherFeatures) > 0 {
@@ -140,7 +149,7 @@ func (f *Fighter) RemoveFightingStyleFeature(feature models.ClassFeature) {
 // CLI
 
 func (f *Fighter) UseClassTokens(tokenName string, quantity int) {
-	token := f.getToken(tokenName)
+	token := getToken(tokenName, f.ClassTokens)
 
 	if token == nil {
 		logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", tokenName))
@@ -156,7 +165,12 @@ func (f *Fighter) UseClassTokens(tokenName string, quantity int) {
 }
 
 func (f *Fighter) RecoverClassTokens(tokenName string, quantity int) {
-	token := f.getToken(tokenName)
+	if tokenName == "all" {
+		fullTokenRecovery(f.ClassTokens)
+		return
+	}
+
+	token := getToken(tokenName, f.ClassTokens)
 
 	if token == nil {
 		logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", tokenName))
@@ -166,18 +180,5 @@ func (f *Fighter) RecoverClassTokens(tokenName string, quantity int) {
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover
 	if quantity == 0 || token.Available > token.Maximum {
 		token.Available = token.Maximum
-	}
-}
-
-func (f *Fighter) getToken(tokenName string) *types.NamedToken {
-	switch strings.ToLower(tokenName) {
-	case f.SecondWind.Name:
-		return &f.SecondWind
-	case f.ActionSurge.Name:
-		return &f.ActionSurge
-	case f.Indomitable.Name:
-		return &f.Indomitable
-	default:
-		return nil
 	}
 }

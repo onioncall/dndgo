@@ -119,15 +119,13 @@ func loadClassData(classType string, classData []byte) (models.Class, error) {
 	case types.ClassMonk:
 		c, err = class.LoadMonk(classData)
 	case types.ClassPaladin:
-		c = nil
-		err = fmt.Errorf("%s not implemented yet", classType)
+		c, err = class.LoadPaladin(classData)
 	case types.ClassRanger:
 		c, err = class.LoadRanger(classData)
 	case types.ClassRogue:
 		c, err = class.LoadRogue(classData)
 	case types.ClassSorcerer:
-		c = nil
-		err = fmt.Errorf("%s not implemented yet", classType)
+		c, err = class.LoadSorcerer(classData)
 	case types.ClassWarlock:
 		c, err = class.LoadWarlock(classData)
 	case types.ClassWizard:
