@@ -10,11 +10,13 @@ import (
 )
 
 type Cleric struct {
-	ChannelDivinity types.Token           `json:"channel-divinity"`
-	Domain          string                `json:"domain"`
-	PreparedSpells  []string              `json:"prepared-spells"`
-	OtherFeatures   []models.ClassFeature `json:"other-features"`
+	ClassToken     types.NamedToken      `json:"class-token"`
+	Domain         string                `json:"domain"`
+	PreparedSpells []string              `json:"prepared-spells"`
+	OtherFeatures  []models.ClassFeature `json:"other-features"`
 }
+
+const channelDivinityToken string = "channel-divinity"
 
 func LoadCleric(data []byte) (*Cleric, error) {
 	var cleric Cleric
@@ -39,9 +41,30 @@ func (cl *Cleric) CalculateHitDice(level int) string {
 func (cl *Cleric) ExecutePostCalculateMethods(c *models.Character) {
 	cl.executeSpellCastingAbility(c)
 	cl.executePreparedSpells(c)
+	cl.executeChannelDiversity(c)
 }
 
 func (cl *Cleric) ExecutePreCalculateMethods(c *models.Character) {
+}
+
+func (cl *Cleric) executeChannelDiversity(c *models.Character) {
+	if cl.ClassToken.Name == "" {
+		return
+	} else if cl.ClassToken.Name != channelDivinityToken {
+		logger.HandleInfo("Invalid Class Token Name")
+		return
+	}
+
+	switch {
+	case c.Level < 2:
+		cl.ClassToken.Maximum = 0
+	case c.Level < 6:
+		cl.ClassToken.Maximum = 1
+	case c.Level < 18:
+		cl.ClassToken.Maximum = 2
+	case c.Level >= 18:
+		cl.ClassToken.Maximum = 3
+	}
 }
 
 func (cl *Cleric) validateCantripVersatility(c *models.Character) bool {
@@ -120,8 +143,8 @@ func (cl *Cleric) PrintClassDetails(c *models.Character) []string {
 		s = append(s, domainHeader)
 	}
 
-	if cl.ChannelDivinity.Available != 0 && cl.ChannelDivinity.Maximum != 0 {
-		channelDivinitySlots := c.GetSlots(cl.ChannelDivinity.Available, cl.ChannelDivinity.Maximum)
+	if cl.ClassToken.Maximum != 0 && cl.ClassToken.Name == channelDivinityToken {
+		channelDivinitySlots := c.GetSlots(cl.ClassToken.Available, cl.ClassToken.Maximum)
 		biLine := fmt.Sprintf("**Channel Divinity**: %s\n\n", channelDivinitySlots)
 		s = append(s, biLine)
 	}
@@ -147,27 +170,27 @@ func (cl *Cleric) PrintClassDetails(c *models.Character) []string {
 func (cl *Cleric) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has channel divinity, we won't check the slot name value
-	if cl.ChannelDivinity.Available <= 0 {
+	if cl.ClassToken.Available <= 0 {
 		logger.HandleInfo("Channel Divinity had no uses left")
 		return
 	}
 
-	cl.ChannelDivinity.Available -= quantity
+	cl.ClassToken.Available -= quantity
 }
 
 func (cl *Cleric) RecoverClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has channel divinity, we won't check the slot name value
-	cl.ChannelDivinity.Available += quantity
+	cl.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover
-	if quantity == 0 || cl.ChannelDivinity.Available > cl.ChannelDivinity.Maximum {
-		cl.ChannelDivinity.Available = cl.ChannelDivinity.Maximum
+	if quantity == 0 || cl.ClassToken.Available > cl.ClassToken.Maximum {
+		cl.ClassToken.Available = cl.ClassToken.Maximum
 	}
 }
 
 func (cl *Cleric) GetTokens() []string {
 	return []string{
-		"channel-divinity",
+		channelDivinityToken,
 	}
 }

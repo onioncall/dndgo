@@ -1,7 +1,8 @@
 {
-  "wild-shape": {
-    "available": 2,
-    "maximum": 2
+  "class-token": {
+    "name": "wild-shape",
+    "level": 2,
+    "available": 1
   },
   "circle": "",
   "prepared-spells": [""],

@@ -1,16 +1,14 @@
 # Bard Setup
 
-### `college`
-**Description:**
-College is the subclass for Bard. It can be any string and is not case sensitive
+### `class-token`
 
-### `bardic-inspiration`
 **Description:**
-Bards have a tracked number of Bardic Inspiration dice they can use before a rest.
+Class Token is a way to track class specific tokens/charges/points. The token available to the bard class is bardic-inspiration
 
 **Fields:**
-- `available`: int, current charges/tokens
-- `maximum`: int, maximum charges/tokens (equal to your Charisma modifier)
+- `name`: "bardic-inspiration", (the only token available to this class is bardic-inpsiration)
+- `available`: 0, (current charges/tokens. Use `dndgo ctr recover` to set to maximum available to your level )
+- `level`: 1, (bardic-inspiration is available from level 1)
 
 ### `expertise`
 **Description:**

@@ -10,16 +10,13 @@ import (
 )
 
 type Druid struct {
-	WildShape      WildShape             `json:"wild-shape"`
+	ClassToken     types.NamedToken      `json:"class-token"`
 	Circle         string                `json:"circle"`
 	PreparedSpells []string              `json:"prepared-spells"`
 	OtherFeatures  []models.ClassFeature `json:"other-features"`
 }
 
-type WildShape struct {
-	Available int `json:"available"`
-	Maximum   int `json:"maximum"`
-}
+const wildShapeToken string = "wild-shape"
 
 func LoadDruid(data []byte) (*Druid, error) {
 	var druid Druid
@@ -34,6 +31,7 @@ func (d *Druid) ExecutePostCalculateMethods(c *models.Character) {
 	d.executeSpellCastingAbility(c)
 	d.executePreparedSpells(c)
 	d.executeArchDruid(c)
+	d.executeWildShape(c)
 }
 
 func (d *Druid) ExecutePreCalculateMethods(c *models.Character) {
@@ -41,6 +39,17 @@ func (d *Druid) ExecutePreCalculateMethods(c *models.Character) {
 
 func (d *Druid) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
+}
+
+func (d *Druid) executeWildShape(c *models.Character) {
+	if c.Level < 2 || d.ClassToken.Name == "" {
+		return
+	} else if d.ClassToken.Name != wildShapeToken {
+		logger.HandleInfo("Invalid Class Token Name")
+		return
+	}
+
+	d.ClassToken.Maximum = 2
 }
 
 func (d *Druid) ValidateMethods(c *models.Character) {
@@ -122,8 +131,8 @@ func (d *Druid) executeArchDruid(c *models.Character) {
 	}
 
 	// These are now unlimited, no need to track them anymore
-	d.WildShape.Available = 0
-	d.WildShape.Maximum = 0
+	d.ClassToken.Available = 0
+	d.ClassToken.Maximum = 0
 }
 
 func (d *Druid) PrintClassDetails(c *models.Character) []string {
@@ -134,8 +143,8 @@ func (d *Druid) PrintClassDetails(c *models.Character) []string {
 		s = append(s, collegeHeader)
 	}
 
-	if d.WildShape.Available != 0 && d.WildShape.Maximum != 0 {
-		wildShapeSlots := c.GetSlots(d.WildShape.Available, d.WildShape.Maximum)
+	if d.ClassToken.Maximum != 0 && d.ClassToken.Name == wildShapeToken {
+		wildShapeSlots := c.GetSlots(d.ClassToken.Available, d.ClassToken.Maximum)
 		biLine := fmt.Sprintf("**Wild Shape Transformations**: %s\n\n", wildShapeSlots)
 		s = append(s, biLine)
 	}
@@ -161,27 +170,27 @@ func (d *Druid) PrintClassDetails(c *models.Character) []string {
 func (d *Druid) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since druid only has wild shape, we won't check the slot name value
-	if d.WildShape.Available <= 0 {
+	if d.ClassToken.Available <= 0 {
 		logger.HandleInfo("Wild Shape had no uses left")
 		return
 	}
 
-	d.WildShape.Available -= quantity
+	d.ClassToken.Available -= quantity
 }
 
 func (d *Druid) RecoverClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since druid only has wild shape, we won't check the slot name value
-	d.WildShape.Available += quantity
+	d.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover
-	if quantity == 0 || d.WildShape.Available > d.WildShape.Maximum {
-		d.WildShape.Available = d.WildShape.Maximum
+	if quantity == 0 || d.ClassToken.Available > d.ClassToken.Maximum {
+		d.ClassToken.Available = d.ClassToken.Maximum
 	}
 }
 
 func (d *Druid) GetTokens() []string {
 	return []string{
-		"wild-shape",
+		wildShapeToken,
 	}
 }

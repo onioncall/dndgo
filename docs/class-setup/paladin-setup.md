@@ -18,11 +18,10 @@ At 1st level, you adopt a particular style of fighting as your specialty. Choose
 Paladins can prepare a number of spells equal to their Intelligence modifier + paladin level (minimum of 1). Prepared spells are chosen from your spellbook and can be changed after each long rest. Prepared spells must be in the list of your known spells in your character config and be spelled the same.
 
 **Examples**: *not a comprehensive list*
-- "Fireball"
-- "Counterspell"
-- "Misty Step"
-- "Shield"
-- "Magic Missile"
+- "Aid"
+- "Find Steed"
+- "Lesser Restoration"
+- "Magic Weapon"
 
 ### `oath-spells`
 **Description:**

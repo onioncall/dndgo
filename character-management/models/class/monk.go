@@ -11,17 +11,14 @@ import (
 
 type Monk struct {
 	MartialArts     string                `json:"-"`
-	KiPoints        Ki                    `json:"ki-points"`
+	ClassToken      types.NamedToken      `json:"class-token"`
+	KiSpellSaveDC   int                   `json:"-"`
 	MosaicTradition string                `json:"mosaic-tradition"`
 	DeflectMissles  int                   `json:"-"`
 	OtherFeatures   []models.ClassFeature `json:"other-features"`
 }
 
-type Ki struct {
-	KiSpellSaveDC int `json:"spell-save-dc"`
-	Maximum       int `json:"maximum"`
-	Available     int `json:"available"`
-}
+const kiPointsToken string = "ki-points"
 
 func LoadMonk(data []byte) (*Monk, error) {
 	var monk Monk
@@ -52,7 +49,6 @@ func (m *Monk) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }
 
-// If not wearing armor, Armor Class is boosted to 10 + dex mod + wisdom mod
 func (m *Monk) executeUnarmoredDefense(c *models.Character) {
 	monkExpertiseAbilityModifiers := []string{
 		types.AbilityDexterity,
@@ -84,16 +80,19 @@ func (m *Monk) executeMartialArts(c *models.Character) {
 }
 
 func (m *Monk) executeKiPoints(c *models.Character) {
-	if c.Level < 2 {
+	if c.Level < 2 || m.ClassToken.Name == "" {
+		return
+	} else if m.ClassToken.Name != kiPointsToken {
+		logger.HandleInfo("Invalid Class Token Name")
 		return
 	}
 
-	m.KiPoints.Maximum = c.Level
-	m.KiPoints.Available = min(m.KiPoints.Available, m.KiPoints.Maximum)
+	m.ClassToken.Maximum = c.Level
+	m.ClassToken.Available = min(m.ClassToken.Available, m.ClassToken.Maximum)
 
 	wisMod := c.GetMod(types.AbilityWisdom)
 
-	m.KiPoints.KiSpellSaveDC = 8 + c.Proficiency + wisMod
+	m.KiSpellSaveDC = 8 + c.Proficiency + wisMod
 }
 
 func (m *Monk) executeDeflectMissles(c *models.Character) {
@@ -120,11 +119,10 @@ func (m *Monk) PrintClassDetails(c *models.Character) []string {
 	martialArts := fmt.Sprintf("*Martial Arts*: %s\n\n", m.MartialArts)
 	s = append(s, martialArts)
 
-	kiPoints := fmt.Sprintf("*Ki Points*: %d/%d\n\n", m.KiPoints.Available, m.KiPoints.Maximum)
-	s = append(s, kiPoints)
-
-	kiSpellSaveDC := fmt.Sprintf("*Ki Spell Save DC*: %d\n\n", m.KiPoints.KiSpellSaveDC)
-	s = append(s, kiSpellSaveDC)
+	if m.ClassToken.Maximum != 0 && m.ClassToken.Name == kiPointsToken {
+		s = append(s, fmt.Sprintf("*Ki Points*: %d/%d\n\n", m.ClassToken.Available, m.ClassToken.Maximum))
+		s = append(s, fmt.Sprintf("*Ki Spell Save DC*: %d\n\n", m.KiSpellSaveDC))
+	}
 
 	if m.DeflectMissles > 0 {
 		deflectMissles := fmt.Sprintf("*Deflect Missles Damage Reduction*: %d", m.DeflectMissles)
@@ -157,27 +155,27 @@ func (m *Monk) PrintClassDetails(c *models.Character) []string {
 func (m *Monk) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since monk only has ki points, we won't check the slot name value
-	if m.KiPoints.Available <= 0 {
+	if m.ClassToken.Available <= 0 {
 		logger.HandleInfo("No Ki Points Available")
 		return
 	}
 
-	m.KiPoints.Available -= quantity
+	m.ClassToken.Available -= quantity
 }
 
 func (m *Monk) RecoverClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since monk only has ki points, we won't check the slot name value
-	m.KiPoints.Available += quantity
+	m.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover
-	if quantity == 0 || m.KiPoints.Available > m.KiPoints.Maximum {
-		m.KiPoints.Available = m.KiPoints.Maximum
+	if quantity == 0 || m.ClassToken.Available > m.ClassToken.Maximum {
+		m.ClassToken.Available = m.ClassToken.Maximum
 	}
 }
 
 func (m *Monk) GetTokens() []string {
 	return []string{
-		"ki-points",
+		kiPointsToken,
 	}
 }

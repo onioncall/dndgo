@@ -838,6 +838,7 @@ func (c *Character) UseClassTokens(name string, quantity int) {
 }
 
 func (c *Character) RecoverClassTokens(name string, quantity int) {
+	c.CalculateCharacterStats()
 	c.Class.ExecutePostCalculateMethods(c)
 	c.Class.RecoverClassTokens(name, quantity)
 }

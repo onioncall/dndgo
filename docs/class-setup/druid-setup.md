@@ -4,13 +4,15 @@
 **Description:**
 Circle is the subclass for Druid. It can be any string and is not case sensitive
 
-### `wild-shape`
+### `class-token`
+
 **Description:**
-Starting at 2nd level, you can use your action to magically assume the shape of a beast that you have seen before. You can use this feature twice. You regain expended uses when you finish a short or long rest. At higher levels, you can transform into more powerful beasts and stay in beast form for longer.
+Class Token is a way to track class specific tokens/charges/points. The token available to the druid class is wild-shape
 
 **Fields:**
-- `available`: int, current uses
-- `maximum`: int, maximum uses (always 2, recharges on short or long rest)
+- `name`: "wild-shape", (the only token available to this class is wild-shape)
+- `available`: int, current charges/tokens. Feel free to set this to 0, and use `dndgo ctr recover` to set to maximum available to your level 
+- `level`: 1, (wild-shape is available from level 1)
 
 ### `prepared-spells`
 **Description:**

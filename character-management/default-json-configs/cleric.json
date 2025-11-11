@@ -1,7 +1,8 @@
 {
-  "channel-divinity": {
-    "available": 1,
-    "maximum": 1
+  "class-token": {
+    "name": "channel-divinity",
+    "level": 2,
+    "available": 1
   },
   "domain": "",
   "prepared-spells": [""],
