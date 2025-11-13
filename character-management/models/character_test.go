@@ -729,10 +729,11 @@ func TestCharacterUseSpellSlot(t *testing.T) {
 
 func TestCharacterRecoverSpellSlots(t *testing.T) {
 	tests := []struct {
-		name      string
-		character *Character
-		level     int
-		expected  []types.SpellSlot
+		name            string
+		character       *Character
+		level           int
+		recoverQuantity int
+		expected        []types.SpellSlot
 	}{
 		{
 			name:  "Recover Level 1 Slot",
@@ -747,12 +748,28 @@ func TestCharacterRecoverSpellSlots(t *testing.T) {
 				{Level: 1, Maximum: 6, Available: 6},
 				{Level: 2, Maximum: 3, Available: 3},
 			},
+			recoverQuantity: 0, // full recover
+		},
+		{
+			name:  "Recover Level 1 Slot by 1",
+			level: 1,
+			character: &Character{
+				SpellSlots: []types.SpellSlot{
+					{Level: 1, Maximum: 6, Available: 3},
+					{Level: 2, Maximum: 3, Available: 3},
+				},
+			},
+			expected: []types.SpellSlot{
+				{Level: 1, Maximum: 6, Available: 4},
+				{Level: 2, Maximum: 3, Available: 3},
+			},
+			recoverQuantity: 1,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.character.RecoverSpellSlots(tt.level)
+			tt.character.RecoverSpellSlots(tt.level, tt.recoverQuantity)
 
 			for i, e := range tt.expected {
 				result := tt.character.SpellSlots[i]
