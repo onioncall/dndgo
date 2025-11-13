@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	// "runtime/trace"
 
 	"github.com/onioncall/dndgo/cmd"
 	"github.com/onioncall/dndgo/logger"
@@ -12,10 +11,6 @@ import (
 var profile bool
 
 func main() {
-	// f, _ := os.Create("trace.out")
-	// trace.Start(f)
-	// defer trace.Stop()
-
 	logger.NewLogger()
 	defer logger.HandleLogs()
 

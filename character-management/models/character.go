@@ -10,7 +10,7 @@ import (
 
 type Character struct {
 	Path                    string                              `json:"path"`
-	ValidationDisabled      bool                                `json:"validation-Disabled"`
+	ValidationDisabled      bool                                `json:"validation-disabled"`
 	Name                    string                              `json:"name"`
 	Level                   int                                 `json:"level"`
 	ClassName               string                              `json:"class-name"`
