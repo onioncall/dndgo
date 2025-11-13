@@ -1,7 +1,8 @@
 {
-  "bardic-inspiration": {
-    "available": 4,
-    "maximum": 4
+  "class-token": {
+    "name": "bardic-inspiration",
+    "level": 1,
+    "available": 0
   },
   "college":  "Bardic School of Creation",
   "expertise": [

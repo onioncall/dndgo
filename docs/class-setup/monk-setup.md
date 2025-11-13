@@ -4,11 +4,12 @@
 **Description:**
 Monastic Tradition is the subclass for Monk. It can be any string and is not case sensitive
 
-### `ki-points`
+### `class-token`
+
 **Description:**
-Starting at 2nd level, your training allows you to harness the mystic energy of ki. You have a number of ki points equal to your monk level. You can spend these points to fuel various ki features.
+Class Token is a way to track class specific tokens/charges/points. The token available to the monk class is ki-points
 
 **Fields:**
-- `available`: int, current ki points
-- `maximum`: int, maximum ki points (equal to your monk level, and set at runtime)
-- `spell-save-dc`: int, the DC for ki abilities that require a saving throw (8 + proficiency bonus + Wisdom modifier)
+- `name`: "ki-points", (the only token available to this class is ki-points)
+- `available`: int, current charges/tokens. Feel free to set this to 0, and use `dndgo ctr recover` to set to maximum available to your level 
+- `level`: 1, (ki-points is available from level 1)

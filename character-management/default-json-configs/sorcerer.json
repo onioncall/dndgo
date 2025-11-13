@@ -1,7 +1,9 @@
 {
   "sorcerous-origin": "",
-  "sorcery-points": {
-    "available": 4
+  "class-token": {
+    "name": "sorcery-points",
+    "level": 2,
+    "available": 0
   },
   "meta-magic": [
     {

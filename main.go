@@ -8,6 +8,8 @@ import (
 	"github.com/onioncall/dndgo/logger"
 )
 
+var profile bool
+
 func main() {
 	logger.NewLogger()
 	defer logger.HandleLogs()

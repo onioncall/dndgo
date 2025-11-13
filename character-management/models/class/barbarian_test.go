@@ -211,21 +211,23 @@ func TestBarbarianUseSlots(t *testing.T) {
 		tokenName string
 		character *models.Character
 		barbarian *Barbarian
-		expected  Rage
+		expected  types.NamedToken
 	}{
 		{
 			name:      "One use, success",
 			tokenName: "rage",
 			character: &models.Character{},
 			barbarian: &Barbarian{
-				Rage: Rage{
-					Maximum:   4,
+				ClassToken: types.NamedToken{
+					Name:      "Rage",
 					Available: 4,
+					Maximum:   4,
 				},
 			},
-			expected: Rage{
-				Maximum:   4,
+			expected: types.NamedToken{
+				Name:      "Rage",
 				Available: 3,
+				Maximum:   4,
 			},
 		},
 	}
@@ -234,7 +236,7 @@ func TestBarbarianUseSlots(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.barbarian.UseClassTokens(tt.tokenName, 1)
 
-			result := tt.barbarian.Rage.Available
+			result := tt.barbarian.ClassToken.Available
 			e := tt.expected.Available
 
 			if e != result {
@@ -251,7 +253,7 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 		recover   int
 		character *models.Character
 		barbarian *Barbarian
-		expected  Rage
+		expected  types.NamedToken
 	}{
 		{
 			name:      "Recover by 1",
@@ -259,14 +261,16 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 			recover:   1,
 			character: &models.Character{},
 			barbarian: &Barbarian{
-				Rage: Rage{
-					Maximum:   4,
+				ClassToken: types.NamedToken{
+					Name:      "Rage",
 					Available: 2,
+					Maximum:   4,
 				},
 			},
-			expected: Rage{
-				Maximum:   4,
+			expected: types.NamedToken{
+				Name:      "Rage",
 				Available: 3,
+				Maximum:   4,
 			},
 		},
 		{
@@ -274,14 +278,16 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 			tokenName: "rage",
 			recover:   0,
 			barbarian: &Barbarian{
-				Rage: Rage{
-					Maximum:   4,
+				ClassToken: types.NamedToken{
+					Name:      "Rage",
 					Available: 2,
+					Maximum:   4,
 				},
 			},
-			expected: Rage{
-				Maximum:   4,
+			expected: types.NamedToken{
+				Name:      "Rage",
 				Available: 4,
+				Maximum:   4,
 			},
 		},
 	}
@@ -290,7 +296,7 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.barbarian.RecoverClassTokens(tt.tokenName, tt.recover)
 
-			result := tt.barbarian.Rage.Available
+			result := tt.barbarian.ClassToken.Available
 			e := tt.expected.Available
 
 			if e != result {

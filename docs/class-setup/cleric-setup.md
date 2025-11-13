@@ -4,13 +4,15 @@
 **Description:**
 Domain is the subclass for Cleric. It can be any string and is not case sensitive
 
-### `channel-divinity`
+### `class-token`
+
 **Description:**
-Clerics have a tracked number of Channel Divinity uses they can expend before a rest. Channel Divinity is a special ability granted by your divine domain.
+Class Token is a way to track class specific tokens/charges/points. The token available to the cleric class is channel-divinity
 
 **Fields:**
-- `available`: int, current charges/tokens
-- `maximum`: int, maximum charges/tokens (1 at levels 2-5, 2 at levels 6-17, 3 at level 18+)
+- `name`: "channel-divinity", (the only token available to this class is channel-divinity)
+- `available`: 0, (current charges/tokens. Use `dndgo ctr recover` to set to maximum available to your level )
+- `level`: 1, (channel-divinity is available from level 1)
 
 ### `prepared-spells`
 **Description:**

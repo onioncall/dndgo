@@ -5,16 +5,15 @@
 **Description:**
 Path is the subclass for Barbarian. It can be any string and is not case sensitive
 
-### `rage`
+### `class-token`
 
 **Description:**
-Barbarians have a tracked number of rages they can use before a rest.
-
+Class Token is a way to track class specific tokens/charges/points. The token available to the barbarian class is rage
 
 **Fields:**
-- `available`: int, current charges/tokens
-- `maximum`: int, maximum charges/tokens
-- `damage`: int, attack bonus to add to your melee weapons while raging
+- `name`: "rage", (the only token available to this class is rage)
+- `available`: int, current charges/tokens. Feel free to set this to 0, and use `dndgo ctr recover` to set to maximum available to your level 
+- `level`: 1, (rage is available from level 1)
 
 ### `primal-knowledge`
 

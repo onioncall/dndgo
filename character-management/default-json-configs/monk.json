@@ -1,8 +1,8 @@
 {
-  "ki-points": {
-    "spell-save-dc": 0,
-    "maximum": 1,
-    "available": 1
+  "class-token": {
+    "name": "ki-points",
+    "level": 2,
+    "available": 0
   },
   "mosaic-tradition": "",
   "other-features": [

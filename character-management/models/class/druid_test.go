@@ -12,7 +12,7 @@ func TestDruidExecuteArchDruid(t *testing.T) {
 		name      string
 		character *models.Character
 		druid     *Druid
-		expected  WildShape
+		expected  types.NamedToken
 	}{
 		{
 			name: "Below level 20",
@@ -20,12 +20,12 @@ func TestDruidExecuteArchDruid(t *testing.T) {
 				Level: 16,
 			},
 			druid: &Druid{
-				WildShape: WildShape{
+				ClassToken: types.NamedToken{
 					Available: 2,
 					Maximum:   2,
 				},
 			},
-			expected: WildShape{
+			expected: types.NamedToken{
 				Available: 2,
 				Maximum:   2,
 			},
@@ -36,12 +36,12 @@ func TestDruidExecuteArchDruid(t *testing.T) {
 				Level: 21,
 			},
 			druid: &Druid{
-				WildShape: WildShape{
+				ClassToken: types.NamedToken{
 					Available: 2,
 					Maximum:   2,
 				},
 			},
-			expected: WildShape{
+			expected: types.NamedToken{
 				Available: 0,
 				Maximum:   0,
 			},
@@ -51,7 +51,7 @@ func TestDruidExecuteArchDruid(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.druid.executeArchDruid(tt.character)
-			result := tt.druid.WildShape
+			result := tt.druid.ClassToken
 
 			if tt.expected.Maximum != result.Maximum {
 				t.Errorf("Wild Shape Max- Expected: %d, Result: %d", tt.expected.Maximum, result.Maximum)

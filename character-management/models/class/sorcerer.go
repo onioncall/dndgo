@@ -11,10 +11,12 @@ import (
 
 type Sorcerer struct {
 	SorcerousOrigin string                `json:"sorcerous-origin"`
-	SorceryPoints   types.PreSetToken     `json:"sorcery-points"`
+	ClassToken      types.NamedToken      `json:"class-token"`
 	MetaMagicSpells []models.ClassFeature `json:"meta-magic-spells"`
 	OtherFeatures   []models.ClassFeature `json:"other-features"`
 }
+
+const sorceryPointsToken string = "sorcery-points"
 
 func LoadSorcerer(data []byte) (*Sorcerer, error) {
 	var sorcerer Sorcerer
@@ -48,8 +50,8 @@ func (s *Sorcerer) executeSpellCastingAbility(c *models.Character) {
 }
 
 func (s *Sorcerer) executeSorceryPoints(c *models.Character) {
-	s.SorceryPoints.Maximum = 2
-	s.SorceryPoints.Maximum += c.Level
+	s.ClassToken.Maximum = 2
+	s.ClassToken.Maximum += c.Level
 }
 
 func (s *Sorcerer) PrintClassDetails(c *models.Character) []string {
@@ -59,9 +61,8 @@ func (s *Sorcerer) PrintClassDetails(c *models.Character) []string {
 		sb = append(sb, fmt.Sprintf("Sorcerous Origin: *%s*\n\n", s.SorcerousOrigin))
 	}
 
-	if c.Level >= 2 {
-		points := fmt.Sprintf("*Sorcery Points*: %d/%d\n\n", s.SorceryPoints.Available, s.SorceryPoints.Maximum)
-		sb = append(sb, points)
+	if c.Level >= 2 && s.ClassToken.Name == sorceryPointsToken {
+		sb = append(sb, fmt.Sprintf("*Sorcery Points*: %d/%d\n\n", s.ClassToken.Available, s.ClassToken.Maximum))
 	}
 
 	if len(s.MetaMagicSpells) > 0 && c.Level >= 3 {
@@ -98,21 +99,27 @@ func (s *Sorcerer) PrintClassDetails(c *models.Character) []string {
 func (s *Sorcerer) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since sorcerer only has sorcery points, we won't check the slot name value
-	if s.SorceryPoints.Available <= 0 {
+	if s.ClassToken.Available <= 0 {
 		logger.HandleInfo("There were no sorcery points left")
 		return
 	}
 
-	s.SorceryPoints.Available -= quantity
+	s.ClassToken.Available -= quantity
 }
 
 func (s *Sorcerer) RecoverClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since sorcerer only has sorcery points, we won't check the slot name value
-	s.SorceryPoints.Available += quantity
+	s.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover
-	if quantity == 0 || s.SorceryPoints.Available > s.SorceryPoints.Maximum {
-		s.SorceryPoints.Available = s.SorceryPoints.Maximum
+	if quantity == 0 || s.ClassToken.Available > s.ClassToken.Maximum {
+		s.ClassToken.Available = s.ClassToken.Maximum
+	}
+}
+
+func (s *Sorcerer) GetTokens() []string {
+	return []string{
+		sorceryPointsToken,
 	}
 }

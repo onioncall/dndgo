@@ -10,7 +10,7 @@ import (
 
 type Character struct {
 	Path                    string                              `json:"path"`
-	ValidationDisabled      bool                                `json:"validation-Disabled"`
+	ValidationDisabled      bool                                `json:"validation-disabled"`
 	Name                    string                              `json:"name"`
 	Level                   int                                 `json:"level"`
 	ClassName               string                              `json:"class-name"`
@@ -54,6 +54,7 @@ type Class interface {
 	ExecutePostCalculateMethods(c *Character)
 	ExecutePreCalculateMethods(c *Character)
 	PrintClassDetails(c *Character) []string
+	GetTokens() []string
 	UseClassTokens(string, int)
 	RecoverClassTokens(string, int)
 }
@@ -837,6 +838,7 @@ func (c *Character) UseClassTokens(name string, quantity int) {
 }
 
 func (c *Character) RecoverClassTokens(name string, quantity int) {
+	c.CalculateCharacterStats()
 	c.Class.ExecutePostCalculateMethods(c)
 	c.Class.RecoverClassTokens(name, quantity)
 }

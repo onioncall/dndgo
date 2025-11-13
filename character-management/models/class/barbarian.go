@@ -13,15 +13,12 @@ import (
 type Barbarian struct {
 	Path            string                `json:"path"`
 	OtherFeatures   []models.ClassFeature `json:"other-features"`
-	Rage            Rage                  `json:"rage"`
+	ClassToken      types.NamedToken      `json:"class-token"`
+	RageDamage      int                   `json:"-"`
 	PrimalKnowledge []string              `json:"primal-knowledge"`
 }
 
-type Rage struct {
-	Available int `json:"available"`
-	Maximum   int `json:"maximum"`
-	Damage    int `json:"damage"`
-}
+const rageToken string = "rage"
 
 func LoadBarbarian(data []byte) (*Barbarian, error) {
 	var barbarian Barbarian
@@ -37,6 +34,7 @@ func (b *Barbarian) ValidateMethods(c *models.Character) {
 }
 
 func (b *Barbarian) ExecutePostCalculateMethods(c *models.Character) {
+	b.executeRage(c)
 	b.executeUnarmoredDefense(c)
 	b.executePrimalKnowledge(c)
 }
@@ -47,6 +45,40 @@ func (b *Barbarian) ExecutePreCalculateMethods(c *models.Character) {
 
 func (b *Barbarian) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd12", level)
+}
+
+func (b *Barbarian) executeRage(c *models.Character) {
+	if b.ClassToken.Name == "" {
+		return
+	} else if b.ClassToken.Name != rageToken {
+		logger.HandleInfo("Invalid Class Token Name")
+		return
+	}
+
+	switch {
+	case c.Level < 3:
+		b.ClassToken.Maximum = 2
+	case c.Level < 6:
+		b.ClassToken.Maximum = 3
+	case c.Level < 12:
+		b.ClassToken.Maximum = 4
+	case c.Level < 17:
+		b.ClassToken.Maximum = 5
+	case c.Level < 20:
+		b.ClassToken.Maximum = 6
+	case c.Level >= 20:
+		b.ClassToken.Maximum = 0 //unlimited
+	}
+
+	// Unfortunately these don't line up and putting them in the same switch is gross
+	switch {
+	case c.Level < 9:
+		b.RageDamage = 2
+	case c.Level < 16:
+		b.RageDamage = 3
+	case c.Level > 12:
+		b.RageDamage = 4
+	}
 }
 
 // At level 3, You gain proficiency in one skill of your choice from the list of skills
@@ -99,9 +131,9 @@ func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
 	s := buildClassDetailsHeader()
 
-	if b.Rage.Available != 0 && b.Rage.Maximum != 0 {
-		rageSlots := c.GetSlots(b.Rage.Available, b.Rage.Maximum)
-		rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n\n", rageSlots, b.Rage.Damage)
+	if b.ClassToken.Maximum != 0 && b.ClassToken.Name == rageToken {
+		rageSlots := c.GetSlots(b.ClassToken.Available, b.ClassToken.Maximum)
+		rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n\n", rageSlots, b.RageDamage)
 		s = append(s, rageLine)
 	}
 
@@ -146,21 +178,27 @@ func (b *Barbarian) executePrimalChampion(c *models.Character) {
 func (b *Barbarian) UseClassTokens(tokenName string, quantity int) {
 	// We only really need token name for classes that have multiple tokens
 	// since barbarian only has rage, we won't check the token name value
-	if b.Rage.Available <= 0 {
+	if b.ClassToken.Available <= 0 {
 		logger.HandleInfo("Rage had no uses left")
 		return
 	}
 
-	b.Rage.Available -= quantity
+	b.ClassToken.Available -= quantity
 }
 
 func (b *Barbarian) RecoverClassTokens(tokenName string, quantity int) {
 	// We only really need token name for classes that have multiple tokens
 	// since barbarian only has rage, we won't check the token name value
-	b.Rage.Available += quantity
+	b.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover
-	if quantity == 0 || b.Rage.Available > b.Rage.Maximum {
-		b.Rage.Available = b.Rage.Maximum
+	if quantity == 0 || b.ClassToken.Available > b.ClassToken.Maximum {
+		b.ClassToken.Available = b.ClassToken.Maximum
+	}
+}
+
+func (b *Barbarian) GetTokens() []string {
+	return []string{
+		"rage",
 	}
 }

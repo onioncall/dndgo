@@ -210,19 +210,19 @@ func TestBardUseClassSlots(t *testing.T) {
 		tokenName string
 		character *models.Character
 		bard      *Bard
-		expected  BardicInspiration
+		expected  types.NamedToken
 	}{
 		{
 			name:      "One use, single slot",
 			tokenName: "bardic inspiration",
 			character: &models.Character{},
 			bard: &Bard{
-				BardicInspiration: BardicInspiration{
+				ClassToken: types.NamedToken{
 					Maximum:   4,
 					Available: 4,
 				},
 			},
-			expected: BardicInspiration{
+			expected: types.NamedToken{
 				Maximum:   4,
 				Available: 3,
 			},
@@ -233,7 +233,7 @@ func TestBardUseClassSlots(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.bard.UseClassTokens(tt.tokenName, 1)
 
-			result := tt.bard.BardicInspiration.Available
+			result := tt.bard.ClassToken.Available
 			e := tt.expected.Available
 
 			if e != result {
@@ -250,19 +250,19 @@ func TestBardRecoverClassSlots(t *testing.T) {
 		recover   int
 		character *models.Character
 		bard      *Bard
-		expected  BardicInspiration
+		expected  types.NamedToken
 	}{
 		{
 			name:      "Recover by 1",
 			tokenName: "bardic inspiration",
 			recover:   1,
 			bard: &Bard{
-				BardicInspiration: BardicInspiration{
+				ClassToken: types.NamedToken{
 					Maximum:   4,
 					Available: 2,
 				},
 			},
-			expected: BardicInspiration{
+			expected: types.NamedToken{
 				Maximum:   4,
 				Available: 3,
 			},
@@ -272,12 +272,12 @@ func TestBardRecoverClassSlots(t *testing.T) {
 			tokenName: "bardic inspiration",
 			recover:   0,
 			bard: &Bard{
-				BardicInspiration: BardicInspiration{
+				ClassToken: types.NamedToken{
 					Maximum:   4,
 					Available: 2,
 				},
 			},
-			expected: BardicInspiration{
+			expected: types.NamedToken{
 				Maximum:   4,
 				Available: 4,
 			},
@@ -288,7 +288,7 @@ func TestBardRecoverClassSlots(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.bard.RecoverClassTokens(tt.tokenName, tt.recover)
 
-			result := tt.bard.BardicInspiration.Available
+			result := tt.bard.ClassToken.Available
 			e := tt.expected.Available
 
 			if e != result {

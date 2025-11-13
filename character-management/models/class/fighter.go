@@ -182,3 +182,13 @@ func (f *Fighter) RecoverClassTokens(tokenName string, quantity int) {
 		token.Available = token.Maximum
 	}
 }
+
+func (f *Fighter) GetTokens() []string {
+	s := []string{}
+
+	for _, token := range f.ClassTokens {
+		s = append(s, token.Name)
+	}
+
+	return s
+}

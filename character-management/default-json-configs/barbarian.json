@@ -1,9 +1,9 @@
 {
   "path": "Berserker",
-  "rage": {
-    "available": 2,
-    "maximum": 2,
-    "damage": 2
+  "class-token": {
+    "name": "rage",
+    "level": 1,
+    "available": 2
   },
   "primal-knowledge": [
     ""

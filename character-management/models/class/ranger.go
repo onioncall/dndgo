@@ -141,3 +141,7 @@ func (r *Ranger) RecoverClassTokens(tokenName string, quantity int) {
 	// Not sure Rangers have a token like system to implement
 	logger.HandleInfo("No token set up for Ranger class")
 }
+
+func (r *Ranger) GetTokens() []string {
+	return []string{}
+}

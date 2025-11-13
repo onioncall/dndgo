@@ -95,6 +95,7 @@ var (
 		Short: "get character specific data",
 		Run: func(cmd *cobra.Command, args []string) {
 			p, _ := cmd.Flags().GetString("path")
+			t, _ := cmd.Flags().GetBool("tokens")
 
 			if p != "" {
 				var path string
@@ -122,6 +123,33 @@ var (
 				}
 
 				fmt.Printf("Path: %s\n", path)
+			}
+
+			if t {
+				c, err := handlers.LoadCharacter()
+				if err != nil {
+					logger.HandleInfo("Failed to save character data")
+					panic(err)
+				}
+
+				if c.Class == nil {
+					fmt.Println("Class not properly configured")
+					return
+				}
+
+				tokens := c.Class.GetTokens()
+
+				if len(tokens) == 0 {
+					fmt.Println("Class has no tokens implemented")
+				} else if len(tokens) == 1 {
+					fmt.Println("(class only has one token, when modifying token values for this class you may enter any value)")
+					fmt.Printf("-> %s\n", tokens[0])
+				} else {
+					fmt.Println("Tokens:")
+					for _, token := range tokens {
+						fmt.Printf("%s\n", token)
+					}
+				}
 			}
 		},
 	}
@@ -429,4 +457,5 @@ func init() {
 	unequipCmd.Flags().BoolP("secondary", "s", false, "Equip secondary weapon or shield")
 
 	getCmd.Flags().StringP("path", "p", "", "Get config or markdown path")
+	getCmd.Flags().BoolP("tokens", "t", false, "Get class tokens")
 }

@@ -10,8 +10,6 @@ import (
 )
 
 type Paladin struct {
-	DivineSense          types.NamedToken      `json:"devine-sense-available"`
-	LayOnHands           types.NamedToken      `json:"lay-on-hands"`
 	OtherFeatures        []models.ClassFeature `json:"other-features"`
 	PreparedSpells       []string              `json:"prepared-spells"`
 	OathSpells           []string              `json:"oath-spells"`
@@ -56,8 +54,13 @@ func (s *Paladin) executeSpellCastingAbility(c *models.Character) {
 }
 
 func (p *Paladin) executeClassTokens(c *models.Character) {
-	p.DivineSense.Maximum = 1 + c.GetMod(types.AbilityCharisma)
-	p.LayOnHands.Maximum = 5 * c.Level
+	for i, token := range p.ClassTokens {
+		if token.Name == "divine-sense" {
+			p.ClassTokens[i].Maximum = 1 + c.GetMod(types.AbilityCharisma)
+		} else if token.Name == "lay-on-hands" {
+			p.ClassTokens[i].Maximum = 5 * c.Level
+		}
+	}
 }
 
 // At level 2, Paladins adopt a fighting style as their specialty
@@ -138,12 +141,21 @@ func (p *Paladin) executeOathSpells(c *models.Character) {
 func (p *Paladin) PrintClassDetails(c *models.Character) []string {
 	s := buildClassDetailsHeader()
 
-	if p.LayOnHands.Maximum > 0 {
-		s = append(s, fmt.Sprintf("*Lay On Hands*: %d/%d\n\n", p.LayOnHands.Available, p.LayOnHands.Maximum))
-	}
+	for _, token := range p.ClassTokens {
+		if token.Maximum == 0 || c.Level < token.Level {
+			continue
+		}
 
-	if p.DivineSense.Maximum > 0 {
-		s = append(s, fmt.Sprintf("*Divine Sense*: %d/%d\n\n", p.DivineSense.Available, p.DivineSense.Maximum))
+		switch token.Name {
+		case "divine-sense":
+			tokenSlots := c.GetSlots(token.Available, token.Maximum)
+			s = append(s, fmt.Sprintf("*%s*: %s\n\n", "Divine Sense", tokenSlots))
+		case "lay-on-hands":
+			s = append(s, fmt.Sprintf("*Lay On Hands*: %d/%d\n\n", token.Available, token.Maximum))
+		default:
+			logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", token.Name))
+			continue
+		}
 	}
 
 	if p.FightingStyleFeature.Name != "" && c.Level >= 2 {
@@ -209,4 +221,14 @@ func (p *Paladin) RecoverClassTokens(tokenName string, quantity int) {
 	if quantity == 0 || token.Available > token.Maximum {
 		token.Available = token.Maximum
 	}
+}
+
+func (p *Paladin) GetTokens() []string {
+	s := []string{}
+
+	for _, token := range p.ClassTokens {
+		s = append(s, token.Name)
+	}
+
+	return s
 }

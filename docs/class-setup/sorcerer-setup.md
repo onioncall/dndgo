@@ -4,13 +4,15 @@
 **Description:**
 Sorcerous Origin is the subclass for Sorcerer. It can be any string and is not case sensitive
 
-### `sorcery-points`
+### `class-token`
+
 **Description:**
-At 2nd level, you tap into a deep wellspring of magic within yourself. This wellspring is represented by sorcery points, which allow you to create a variety of magical effects. You have a number of sorcery points equal to your sorcerer level.
+Class Token is a way to track class specific tokens/charges/points. The token available to the sorcery class is sorcery-points
 
 **Fields:**
-- `available`: int, current sorcery points
-- `maximum`: int, maximum sorcery points, these are calculated at runtime
+- `name`: "sorcery-points", (the only token available to this class is sorcery-points)
+- `available`: int, current charges/tokens. Feel free to set this to 0, and use `dndgo ctr recover` to set to maximum available to your level 
+- `level`: 1, (sorcery-points is available from level 1)
 
 ### `meta-magic-spells`
 **Description:**

@@ -11,16 +11,13 @@ import (
 )
 
 type Bard struct {
-	ExpertiseSkills   []string              `json:"expertise"`
-	College           string                `json:"college"`
-	OtherFeatures     []models.ClassFeature `json:"other-features"`
-	BardicInspiration BardicInspiration     `json:"bardic-inspiration"`
+	ExpertiseSkills []string              `json:"expertise"`
+	College         string                `json:"college"`
+	OtherFeatures   []models.ClassFeature `json:"other-features"`
+	ClassToken      types.NamedToken      `json:"class-token"`
 }
 
-type BardicInspiration struct {
-	Available int `json:"available"`
-	Maximum   int `json:"maximum"`
-}
+const bardicInspirationToken string = "bardic-inspiration"
 
 const bardSpellCastingAbility string = types.AbilityCharisma
 
@@ -40,6 +37,7 @@ func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
 	b.executeJackOfAllTrades(c)
 	b.executeExpertise(c)
 	b.executeSpellCastingAbility(c)
+	b.executeBardicInspiration(c)
 }
 
 func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
@@ -54,6 +52,17 @@ func (b *Bard) executeSpellCastingAbility(c *models.Character) {
 
 	executeSpellSaveDC(c, chrMod)
 	executeSpellAttackMod(c, chrMod)
+}
+
+func (b *Bard) executeBardicInspiration(c *models.Character) {
+	if b.ClassToken.Name == "" {
+		return
+	} else if b.ClassToken.Name != bardicInspirationToken {
+		logger.HandleInfo("Invalid Class Token Name")
+		return
+	}
+
+	b.ClassToken.Maximum = c.GetMod(types.AbilityCharisma)
 }
 
 // At level 3, bards can pick two skills they are proficient in, and double the modifier.
@@ -98,10 +107,9 @@ func (b *Bard) PrintClassDetails(c *models.Character) []string {
 		s = append(s, collegeHeader)
 	}
 
-	if b.BardicInspiration.Available != 0 && b.BardicInspiration.Maximum != 0 {
-		bardicSlots := c.GetSlots(b.BardicInspiration.Available, b.BardicInspiration.Maximum)
-		biLine := fmt.Sprintf("**Bardic Inspiration**: %s\n\n", bardicSlots)
-		s = append(s, biLine)
+	if b.ClassToken.Maximum != 0 && b.ClassToken.Name == bardicInspirationToken {
+		bardicSlots := c.GetSlots(b.ClassToken.Available, b.ClassToken.Maximum)
+		s = append(s, fmt.Sprintf("**Bardic Inspiration**: %s\n\n", bardicSlots))
 	}
 
 	if len(b.ExpertiseSkills) > 0 && c.Level >= 3 {
@@ -136,21 +144,27 @@ func (b *Bard) PrintClassDetails(c *models.Character) []string {
 func (b *Bard) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has bardic inspiration, we won't check the slot name value
-	if b.BardicInspiration.Available <= 0 {
+	if b.ClassToken.Available <= 0 {
 		logger.HandleInfo("Bardic Inpsiration had no uses left")
 		return
 	}
 
-	b.BardicInspiration.Available -= quantity
+	b.ClassToken.Available -= quantity
 }
 
 func (b *Bard) RecoverClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has bardic inspiration, we won't check the slot name value
-	b.BardicInspiration.Available += quantity
+	b.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover
-	if quantity == 0 || b.BardicInspiration.Available > b.BardicInspiration.Maximum {
-		b.BardicInspiration.Available = b.BardicInspiration.Maximum
+	if quantity == 0 || b.ClassToken.Available > b.ClassToken.Maximum {
+		b.ClassToken.Available = b.ClassToken.Maximum
+	}
+}
+
+func (b *Bard) GetTokens() []string {
+	return []string{
+		bardicInspirationToken,
 	}
 }

@@ -198,9 +198,11 @@ func TestMonkExecuteMartialArts(t *testing.T) {
 
 func TestMonkExecuteKiPoints(t *testing.T) {
 	tests := []struct {
-		name      string
-		character *models.Character
-		expected  Ki
+		name       string
+		character  *models.Character
+		monk       *Monk
+		expected   types.NamedToken
+		expectedDC int
 	}{
 		{
 			name: "Below level 2",
@@ -211,10 +213,14 @@ func TestMonkExecuteKiPoints(t *testing.T) {
 					{Name: types.AbilityDexterity, AbilityModifier: 4},
 				},
 			},
-			expected: Ki{
-				Available:     0,
-				Maximum:       0,
-				KiSpellSaveDC: 0,
+			monk: &Monk{
+				ClassToken: types.NamedToken{
+					Name: "ki-points",
+				},
+			},
+			expected: types.NamedToken{
+				Available: 0,
+				Maximum:   0,
 			},
 		},
 		{
@@ -226,24 +232,29 @@ func TestMonkExecuteKiPoints(t *testing.T) {
 					{Name: types.AbilityWisdom, AbilityModifier: 4},
 				},
 			},
-			expected: Ki{
-				Available:     4,
-				Maximum:       4,
-				KiSpellSaveDC: 15,
+			monk: &Monk{
+				ClassToken: types.NamedToken{
+					Name: "ki-points",
+				},
 			},
+			expected: types.NamedToken{
+				Available: 4,
+				Maximum:   4,
+				Name:      "ki-points",
+			},
+			expectedDC: 15,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			monk := &Monk{}
 
-			monk.executeKiPoints(tt.character)
+			tt.monk.executeKiPoints(tt.character)
 
-			maxPointResult := monk.KiPoints.Maximum
-			spellSaveDCResult := monk.KiPoints.KiSpellSaveDC
+			maxPointResult := tt.monk.ClassToken.Maximum
+			spellSaveDCResult := tt.monk.KiSpellSaveDC
 			expectedMax := tt.expected.Maximum
-			expectedDC := tt.expected.KiSpellSaveDC
+			expectedDC := tt.expectedDC
 
 			if expectedMax != maxPointResult {
 				t.Errorf("Ki Point Max- Expected: %d, Result: %d", expectedMax, maxPointResult)
