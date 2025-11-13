@@ -280,7 +280,7 @@ var (
 			if a {
 				c.Recover()
 			} else if ss > 0 {
-				c.RecoverSpellSlots(ss)
+				c.RecoverSpellSlots(ss, q)
 			} else if hp > 0 {
 				c.HealCharacter(hp)
 			} else if ct != "" {
