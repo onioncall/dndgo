@@ -812,10 +812,15 @@ func (c *Character) UseSpellSlot(level int) {
 	logger.HandleInfo("Invalid level, must be 1-9")
 }
 
-func (c *Character) RecoverSpellSlots(level int) {
+func (c *Character) RecoverSpellSlots(level int, quantity int) {
 	for i := range c.SpellSlots {
 		if c.SpellSlots[i].Level == level {
-			c.SpellSlots[i].Available = c.SpellSlots[i].Maximum
+			if quantity == 0 {
+				c.SpellSlots[i].Available = c.SpellSlots[i].Maximum
+				return
+			}
+
+			c.SpellSlots[i].Available += quantity
 		}
 	}
 }
