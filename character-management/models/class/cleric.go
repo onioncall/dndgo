@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
 type Cleric struct {
-	ClassToken     types.NamedToken      `json:"class-token"`
+	ClassToken     shared.NamedToken     `json:"class-token"`
 	Domain         string                `json:"domain"`
 	PreparedSpells []string              `json:"prepared-spells"`
 	OtherFeatures  []models.ClassFeature `json:"other-features"`
@@ -112,14 +112,14 @@ func (cl *Cleric) validateCantripVersatility(c *models.Character) bool {
 }
 
 func (cl *Cleric) executeSpellCastingAbility(c *models.Character) {
-	wisMod := c.GetMod(types.AbilityWisdom)
+	wisMod := c.GetMod(shared.AbilityWisdom)
 
 	executeSpellSaveDC(c, wisMod)
 	executeSpellAttackMod(c, wisMod)
 }
 
 func (cl *Cleric) executePreparedSpells(c *models.Character) {
-	wisMod := c.GetMod(types.AbilityWisdom)
+	wisMod := c.GetMod(shared.AbilityWisdom)
 	preparedSpellsMax := wisMod + c.Level
 
 	if !c.ValidationDisabled {

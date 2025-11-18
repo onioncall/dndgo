@@ -44,4 +44,5 @@ func Execute() error {
 func init() {
 	rootCmd.AddCommand(characterCmd)
 	rootCmd.AddCommand(searchCmd)
+	rootCmd.AddCommand(tuiCmd)
 }

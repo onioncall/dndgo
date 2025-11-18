@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
@@ -41,7 +41,7 @@ func (r *Ranger) CalculateHitDice(level int) string {
 }
 
 func (r *Ranger) PostCalculateSpellAttackMod(c *models.Character) {
-	wisMod := c.GetMod(types.AbilityWisdom)
+	wisMod := c.GetMod(shared.AbilityWisdom)
 
 	executeSpellSaveDC(c, wisMod)
 	executeSpellAttackMod(c, wisMod)
@@ -103,19 +103,19 @@ func (r *Ranger) executeFightingStyle(c *models.Character) {
 
 	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s",
 		r.FightingStyle,
-		types.FightingStyleArchery,
-		types.FightingStyleDefense,
-		types.FightingStyleDueling,
-		types.FightingStyleTwoWeaponFighting)
+		shared.FightingStyleArchery,
+		shared.FightingStyleDefense,
+		shared.FightingStyleDueling,
+		shared.FightingStyleTwoWeaponFighting)
 
 	switch r.FightingStyle {
-	case types.FightingStyleArchery:
+	case shared.FightingStyleArchery:
 		r.FightingStyleFeature = applyArchery(c)
-	case types.FightingStyleDefense:
+	case shared.FightingStyleDefense:
 		r.FightingStyleFeature = applyDefense(c)
-	case types.FightingStyleDueling:
+	case shared.FightingStyleDueling:
 		r.FightingStyleFeature = applyDueling(c)
-	case types.FightingStyleTwoWeaponFighting:
+	case shared.FightingStyleTwoWeaponFighting:
 		r.FightingStyleFeature = applyTwoWeaponFighting(c)
 	default:
 		logger.HandleInfo(invalidMsg)

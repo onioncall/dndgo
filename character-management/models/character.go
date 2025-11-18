@@ -4,43 +4,43 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
 type Character struct {
-	Path                    string                              `json:"path"`
-	ValidationDisabled      bool                                `json:"validation-disabled"`
-	Name                    string                              `json:"name"`
-	Level                   int                                 `json:"level"`
-	ClassName               string                              `json:"class-name"`
-	Race                    string                              `json:"race"`
-	Background              string                              `json:"background"`
-	Feats                   []GenericItem                       `json:"feats"`
-	Languages               []string                            `json:"languages"`
-	Proficiency             int                                 `json:"-"`
-	PassivePerception       int                                 `json:"-"`
-	PassiveInsight          int                                 `json:"-"`
-	AC                      int                                 `json:"-"`
-	SpellSaveDC             int                                 `json:"-"`
-	SpellAttackMod          int                                 `json:"-"`
-	HPCurrent               int                                 `json:"hp-current"`
-	HPMax                   int                                 `json:"hp-max"`
-	HPTemp                  int                                 `json:"hp-temp"`
-	Initiative              int                                 `json:"initiative"`
-	Speed                   int                                 `json:"speed"`
-	HitDice                 string                              `json:"-"`
-	Abilities               []types.Abilities                   `json:"abilities"`
-	Skills                  []types.Skill                       `json:"skills"`
-	Spells                  []types.CharacterSpell              `json:"spells"`
-	SpellSlots              []types.SpellSlot                   `json:"spell-slots"`
-	Weapons                 []types.Weapon                      `json:"weapons"`
-	PrimaryEquipped         string                              `json:"primary-equipped"`
-	SecondaryEquipped       string                              `json:"secondary-equipped"`
-	WornEquipment           types.WornEquipment                 `json:"worn-equipment"`
-	Backpack                []types.BackpackItem                `json:"backpack"`
-	AbilityScoreImprovement []types.AbilityScoreImprovementItem `json:"ability-score-improvement"`
-	Class                   Class                               `json:"-"`
+	Path                    string                               `json:"path"`
+	ValidationDisabled      bool                                 `json:"validation-disabled"`
+	Name                    string                               `json:"name"`
+	Level                   int                                  `json:"level"`
+	ClassName               string                               `json:"class-name"`
+	Race                    string                               `json:"race"`
+	Background              string                               `json:"background"`
+	Feats                   []GenericItem                        `json:"feats"`
+	Languages               []string                             `json:"languages"`
+	Proficiency             int                                  `json:"-"`
+	PassivePerception       int                                  `json:"-"`
+	PassiveInsight          int                                  `json:"-"`
+	AC                      int                                  `json:"-"`
+	SpellSaveDC             int                                  `json:"-"`
+	SpellAttackMod          int                                  `json:"-"`
+	HPCurrent               int                                  `json:"hp-current"`
+	HPMax                   int                                  `json:"hp-max"`
+	HPTemp                  int                                  `json:"hp-temp"`
+	Initiative              int                                  `json:"initiative"`
+	Speed                   int                                  `json:"speed"`
+	HitDice                 string                               `json:"-"`
+	Abilities               []shared.Abilities                   `json:"abilities"`
+	Skills                  []shared.Skill                       `json:"skills"`
+	Spells                  []shared.CharacterSpell              `json:"spells"`
+	SpellSlots              []shared.SpellSlot                   `json:"spell-slots"`
+	Weapons                 []shared.Weapon                      `json:"weapons"`
+	PrimaryEquipped         string                               `json:"primary-equipped"`
+	SecondaryEquipped       string                               `json:"secondary-equipped"`
+	WornEquipment           shared.WornEquipment                 `json:"worn-equipment"`
+	Backpack                []shared.BackpackItem                `json:"backpack"`
+	AbilityScoreImprovement []shared.AbilityScoreImprovementItem `json:"ability-score-improvement"`
+	Class                   Class                                `json:"-"`
 }
 
 type GenericItem struct {
@@ -161,14 +161,14 @@ func (c *Character) calculateAC() {
 	c.AC = c.WornEquipment.Armor.Class
 
 	switch c.WornEquipment.Armor.Type {
-	case types.LightArmor:
-		c.AC += c.GetMod(types.AbilityDexterity)
-	case types.MediumArmor:
-		c.AC += min(c.GetMod(types.AbilityDexterity), 2)
-	case types.HeavyArmor:
+	case shared.LightArmor:
+		c.AC += c.GetMod(shared.AbilityDexterity)
+	case shared.MediumArmor:
+		c.AC += min(c.GetMod(shared.AbilityDexterity), 2)
+	case shared.HeavyArmor:
 		// this just uses the armor class which we've already accounted for
 	case "":
-		c.AC += 10 + c.GetMod(types.AbilityDexterity)
+		c.AC += 10 + c.GetMod(shared.AbilityDexterity)
 	}
 
 	if c.WornEquipment.Shield != "" {
@@ -180,16 +180,16 @@ func (c *Character) calculateAC() {
 }
 
 func (c *Character) calculatePassiveStats() {
-	wisMod := c.GetMod(types.AbilityWisdom)
+	wisMod := c.GetMod(shared.AbilityWisdom)
 	c.PassivePerception = 10 + wisMod
 	c.PassiveInsight = 10 + wisMod
 
 	for _, skill := range c.Skills {
-		if strings.ToLower(skill.Name) == types.SkillPerception {
+		if strings.ToLower(skill.Name) == shared.SkillPerception {
 			if skill.Proficient {
 				c.PassivePerception += c.Proficiency
 			}
-		} else if strings.ToLower(skill.Name) == types.SkillInsight {
+		} else if strings.ToLower(skill.Name) == shared.SkillInsight {
 			if skill.Proficient {
 				c.PassiveInsight += c.Proficiency
 			}
@@ -199,14 +199,14 @@ func (c *Character) calculatePassiveStats() {
 
 func (c *Character) calculateWeaponBonus() {
 	for i, weapon := range c.Weapons {
-		dexMod := c.GetMod(types.AbilityDexterity)
-		strMod := c.GetMod(types.AbilityStrength)
+		dexMod := c.GetMod(shared.AbilityDexterity)
+		strMod := c.GetMod(shared.AbilityStrength)
 		modApplied := false
 
 		for _, prop := range weapon.Properties {
 			// We'll prioritize the weapon properties that have a choice between dex and str mods
 			prop = strings.ToLower(prop)
-			if prop == types.WeaponPropertyFinesse || prop == types.WeaponPropertyThrown {
+			if prop == shared.WeaponPropertyFinesse || prop == shared.WeaponPropertyThrown {
 				c.Weapons[i].Bonus += max(dexMod, strMod)
 				modApplied = true
 			}
@@ -692,7 +692,7 @@ func (c *Character) AddItemToPack(item string, quantity int) {
 		}
 	}
 
-	newItem := types.BackpackItem{
+	newItem := shared.BackpackItem{
 		Name:     item,
 		Quantity: quantity,
 	}
@@ -729,23 +729,23 @@ func (c *Character) AddLanguage(language string) {
 func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
 	equipmentName = strings.ToLower(equipmentName)
 	switch equipmentType {
-	case types.WornEquipmentHead:
+	case shared.WornEquipmentHead:
 		c.WornEquipment.Head = equipmentName
-	case types.WornEquipmentAmulet:
+	case shared.WornEquipmentAmulet:
 		c.WornEquipment.Amulet = equipmentName
-	case types.WornEquipmentCloak:
+	case shared.WornEquipmentCloak:
 		c.WornEquipment.Cloak = equipmentName
-	case types.WornEquipmentArmor:
+	case shared.WornEquipmentArmor:
 		c.WornEquipment.Armor.Name = equipmentName
-	case types.WornEquipmentHandsArms:
+	case shared.WornEquipmentHandsArms:
 		c.WornEquipment.HandsArms = equipmentName
-	case types.WornEquipmentRing:
+	case shared.WornEquipmentRing:
 		c.WornEquipment.Ring = equipmentName
-	case types.WornEquipmentRing2:
+	case shared.WornEquipmentRing2:
 		c.WornEquipment.Ring2 = equipmentName
-	case types.WornEquipmentBelt:
+	case shared.WornEquipmentBelt:
 		c.WornEquipment.Belt = equipmentName
-	case types.WornEquipmentBoots:
+	case shared.WornEquipmentBoots:
 		c.WornEquipment.Boots = equipmentName
 	default:
 		info := fmt.Sprintf("Invalid Equipment Type: %s", equipmentType)

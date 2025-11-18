@@ -9,7 +9,7 @@ import (
 
 	defaultjsonconfigs "github.com/onioncall/dndgo/character-management/default-json-configs"
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/search/handlers"
 )
 
@@ -54,7 +54,7 @@ func AddSpell(c *models.Character, spellQuery string) error {
 		return fmt.Errorf("Failed To get spell (%s) to add: %w", spellQuery, err)
 	}
 
-	cs := types.CharacterSpell{
+	cs := shared.CharacterSpell{
 		SlotLevel: s.Level,
 		IsRitual:  s.Ritual,
 		Name:      s.Name,

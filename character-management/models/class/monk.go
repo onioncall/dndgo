@@ -5,13 +5,13 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
 type Monk struct {
 	MartialArts     string                `json:"-"`
-	ClassToken      types.NamedToken      `json:"class-token"`
+	ClassToken      shared.NamedToken     `json:"class-token"`
 	KiSpellSaveDC   int                   `json:"-"`
 	MosaicTradition string                `json:"mosaic-tradition"`
 	DeflectMissles  int                   `json:"-"`
@@ -51,8 +51,8 @@ func (m *Monk) CalculateHitDice(level int) string {
 
 func (m *Monk) executeUnarmoredDefense(c *models.Character) {
 	monkExpertiseAbilityModifiers := []string{
-		types.AbilityDexterity,
-		types.AbilityWisdom,
+		shared.AbilityDexterity,
+		shared.AbilityWisdom,
 	}
 
 	executeUnarmoredDefenseShared(c, monkExpertiseAbilityModifiers)
@@ -90,7 +90,7 @@ func (m *Monk) executeKiPoints(c *models.Character) {
 	m.ClassToken.Maximum = c.Level
 	m.ClassToken.Available = min(m.ClassToken.Available, m.ClassToken.Maximum)
 
-	wisMod := c.GetMod(types.AbilityWisdom)
+	wisMod := c.GetMod(shared.AbilityWisdom)
 
 	m.KiSpellSaveDC = 8 + c.Proficiency + wisMod
 }

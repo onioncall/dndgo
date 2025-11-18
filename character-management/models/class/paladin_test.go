@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 func TestPaladinExecuteFightingStyle(t *testing.T) {
@@ -19,14 +19,14 @@ func TestPaladinExecuteFightingStyle(t *testing.T) {
 			character: &models.Character{
 				AC:    15,
 				Level: 1,
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "",
 					},
 				},
 			},
 			paladin: &Paladin{
-				FightingStyle: types.FightingStyleDefense,
+				FightingStyle: shared.FightingStyleDefense,
 			},
 			expected: models.Character{
 				AC:    15,
@@ -38,8 +38,8 @@ func TestPaladinExecuteFightingStyle(t *testing.T) {
 			character: &models.Character{
 				AC:    15,
 				Level: 3,
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "",
 					},
 				},
@@ -57,14 +57,14 @@ func TestPaladinExecuteFightingStyle(t *testing.T) {
 			character: &models.Character{
 				AC:    15,
 				Level: 3,
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "",
 					},
 				},
 			},
 			paladin: &Paladin{
-				FightingStyle: types.FightingStyleDefense,
+				FightingStyle: shared.FightingStyleDefense,
 			},
 			expected: models.Character{
 				AC:    16,
@@ -76,14 +76,14 @@ func TestPaladinExecuteFightingStyle(t *testing.T) {
 			character: &models.Character{
 				AC:    15,
 				Level: 3,
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "Leather Armor",
 					},
 				},
 			},
 			paladin: &Paladin{
-				FightingStyle: types.FightingStyleDefense,
+				FightingStyle: shared.FightingStyleDefense,
 			},
 			expected: models.Character{
 				AC:    15,
@@ -121,10 +121,10 @@ func TestPaladinExecutePreparedSpells(t *testing.T) {
 			name: "One Prepared Spell",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: false},
 					{Name: "Different Spell", IsPrepared: false},
 				},
@@ -136,10 +136,10 @@ func TestPaladinExecutePreparedSpells(t *testing.T) {
 			},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: true},
 					{Name: "Different Spell", IsPrepared: false},
 				},
@@ -175,10 +175,10 @@ func TestPaladinExecuteOathSpells(t *testing.T) {
 			name: "One Oath Spell",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: false},
 					{Name: "Different Spell", IsPrepared: false},
 				},
@@ -190,10 +190,10 @@ func TestPaladinExecuteOathSpells(t *testing.T) {
 			},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: true},
 					{Name: "Different Spell", IsPrepared: false},
 				},

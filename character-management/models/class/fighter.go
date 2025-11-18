@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
@@ -15,7 +15,7 @@ type Fighter struct {
 	FightingStyle        string                `json:"fighting-style"`
 	FightingStyleFeature FightingStyleFeature  `json:"-"`
 	OtherFeatures        []models.ClassFeature `json:"other-features"`
-	ClassTokens          []types.NamedToken    `json:"class-tokens"`
+	ClassTokens          []shared.NamedToken   `json:"class-tokens"`
 }
 
 type FightingStyleFeature struct {
@@ -57,23 +57,23 @@ func (f *Fighter) executeClassTokens() {
 func (f *Fighter) executeFightingStyle(c *models.Character) {
 	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s",
 		f.FightingStyle,
-		types.FightingStyleArchery,
-		types.FightingStyleDefense,
-		types.FightingStyleDueling,
-		types.FightingStyleTwoWeaponFighting)
+		shared.FightingStyleArchery,
+		shared.FightingStyleDefense,
+		shared.FightingStyleDueling,
+		shared.FightingStyleTwoWeaponFighting)
 
 	switch strings.ToLower(f.FightingStyle) {
-	case types.FightingStyleArchery:
+	case shared.FightingStyleArchery:
 		f.FightingStyleFeature = applyArchery(c)
-	case types.FightingStyleDefense:
+	case shared.FightingStyleDefense:
 		f.FightingStyleFeature = applyDefense(c)
-	case types.FightingStyleDueling:
+	case shared.FightingStyleDueling:
 		f.FightingStyleFeature = applyDueling(c)
-	case types.FightingStyleTwoWeaponFighting:
+	case shared.FightingStyleTwoWeaponFighting:
 		f.FightingStyleFeature = applyTwoWeaponFighting(c)
-	case types.FightingStyleGreatWeaponFighting:
+	case shared.FightingStyleGreatWeaponFighting:
 		f.FightingStyleFeature = applyGreatWeaponFighting(c)
-	case types.FightingStyleProtection:
+	case shared.FightingStyleProtection:
 		f.FightingStyleFeature = applyProtection(c)
 	default:
 		logger.HandleInfo(invalidMsg)

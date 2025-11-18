@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
@@ -43,7 +43,7 @@ func (w *Wizard) CalculateHitDice(level int) string {
 }
 
 func (w *Wizard) executePreparedSpells(c *models.Character) {
-	intMod := c.GetMod(types.AbilityIntelligence)
+	intMod := c.GetMod(shared.AbilityIntelligence)
 	preparedSpellsMax := intMod + c.Level
 
 	if !c.ValidationDisabled {
@@ -60,7 +60,7 @@ func (w *Wizard) executePreparedSpells(c *models.Character) {
 }
 
 func (w *Wizard) executeSpellCastingAbility(c *models.Character) {
-	intMod := c.GetMod(types.AbilityIntelligence)
+	intMod := c.GetMod(shared.AbilityIntelligence)
 
 	executeSpellSaveDC(c, intMod)
 	executeSpellAttackMod(c, intMod)

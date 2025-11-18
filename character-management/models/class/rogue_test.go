@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 func TestRogueExecuteExpertise(t *testing.T) {
@@ -12,14 +12,14 @@ func TestRogueExecuteExpertise(t *testing.T) {
 		name      string
 		character *models.Character
 		rogue     *Rogue
-		expected  []types.Skill
+		expected  []shared.Skill
 	}{
 		{
 			name: "Level 1, two skill proficiencies doubled",
 			character: &models.Character{
 				Level:       1,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "dexterity", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -31,7 +31,7 @@ func TestRogueExecuteExpertise(t *testing.T) {
 					"deception",
 				},
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "dexterity", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 4, Proficient: false},
 				{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -42,7 +42,7 @@ func TestRogueExecuteExpertise(t *testing.T) {
 			character: &models.Character{
 				Level:       3,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -54,7 +54,7 @@ func TestRogueExecuteExpertise(t *testing.T) {
 					"deception",
 				},
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "nature", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 6, Proficient: false},
 				{Name: "deception", SkillModifier: 5, Proficient: false},
@@ -65,7 +65,7 @@ func TestRogueExecuteExpertise(t *testing.T) {
 			character: &models.Character{
 				Level:       3,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -78,7 +78,7 @@ func TestRogueExecuteExpertise(t *testing.T) {
 					"nature",
 				},
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "nature", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 6, Proficient: false},
 				{Name: "deception", SkillModifier: 5, Proficient: false},
@@ -89,7 +89,7 @@ func TestRogueExecuteExpertise(t *testing.T) {
 			character: &models.Character{
 				Level:       10,
 				Proficiency: 4,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -107,7 +107,7 @@ func TestRogueExecuteExpertise(t *testing.T) {
 					"perception",
 				},
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "nature", SkillModifier: 9, Proficient: false},
 				{Name: "persuasion", SkillModifier: 8, Proficient: false},
 				{Name: "deception", SkillModifier: 7, Proficient: false},

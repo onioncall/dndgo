@@ -5,13 +5,13 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
 type Sorcerer struct {
 	SorcerousOrigin string                `json:"sorcerous-origin"`
-	ClassToken      types.NamedToken      `json:"class-token"`
+	ClassToken      shared.NamedToken     `json:"class-token"`
 	MetaMagicSpells []models.ClassFeature `json:"meta-magic-spells"`
 	OtherFeatures   []models.ClassFeature `json:"other-features"`
 }
@@ -43,7 +43,7 @@ func (s *Sorcerer) CalculateHitDice(level int) string {
 }
 
 func (s *Sorcerer) executeSpellCastingAbility(c *models.Character) {
-	chrMod := c.GetMod(types.AbilityCharisma)
+	chrMod := c.GetMod(shared.AbilityCharisma)
 
 	executeSpellSaveDC(c, chrMod)
 	executeSpellAttackMod(c, chrMod)
