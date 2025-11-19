@@ -30,7 +30,7 @@ func (m Model) renderMenu() string {
 
 	var content strings.Builder
 
-	// Center the text vertically
+	// For centering vertically
 	textLines := 3 // pageText + empty line + buttons
 	topPadding := (m.height - textLines) / 2
 
@@ -38,13 +38,12 @@ func (m Model) renderMenu() string {
 		content.WriteString("\n")
 	}
 
-	// Center and write page text
+	// For centering horizontally
 	leftPadding := max((m.width-len(m.pageText))/2, 0)
 	content.WriteString(strings.Repeat(" ", leftPadding))
 	content.WriteString(m.pageText)
 	content.WriteString("\n\n")
 
-	// Build buttons line
 	var buttonsLine strings.Builder
 	for i, btn := range m.buttons {
 		if i == m.selectedBtn {
@@ -57,7 +56,6 @@ func (m Model) renderMenu() string {
 		}
 	}
 
-	// Center buttons
 	btnLeftPadding := max((m.width-buttonsLine.Len())/2, 0)
 	content.WriteString(strings.Repeat(" ", btnLeftPadding))
 	content.WriteString(buttonsLine.String())

@@ -21,7 +21,7 @@ type Model struct {
 func New() Model {
 	return Model{
 		selectedBtn: 1,
-		buttons:     []string{"Create Character", "Manage Character", "Search"},
+		buttons:     []string{"Create", "Manage", "Search"},
 		pageText:    "dndgo",
 		currentPage: "menu",
 		createPage:  create.NewModel(),
