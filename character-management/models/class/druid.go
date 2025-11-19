@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
 type Druid struct {
-	ClassToken     types.NamedToken      `json:"class-token"`
+	ClassToken     shared.NamedToken     `json:"class-token"`
 	Circle         string                `json:"circle"`
 	PreparedSpells []string              `json:"prepared-spells"`
 	OtherFeatures  []models.ClassFeature `json:"other-features"`
@@ -102,14 +102,14 @@ func (d *Druid) validateCantripVersatility(c *models.Character) bool {
 }
 
 func (d *Druid) executeSpellCastingAbility(c *models.Character) {
-	wisMod := c.GetMod(types.AbilityWisdom)
+	wisMod := c.GetMod(shared.AbilityWisdom)
 
 	executeSpellSaveDC(c, wisMod)
 	executeSpellAttackMod(c, wisMod)
 }
 
 func (d *Druid) executePreparedSpells(c *models.Character) {
-	wisMod := c.GetMod(types.AbilityWisdom)
+	wisMod := c.GetMod(shared.AbilityWisdom)
 	preparedSpellsMax := wisMod + c.Level
 
 	if !c.ValidationDisabled {

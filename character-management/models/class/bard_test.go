@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 func TestBardExecuteExpertise(t *testing.T) {
@@ -12,14 +12,14 @@ func TestBardExecuteExpertise(t *testing.T) {
 		name      string
 		character *models.Character
 		bard      *Bard
-		expected  []types.Skill
+		expected  []shared.Skill
 	}{
 		{
 			name: "Below level requirement",
 			character: &models.Character{
 				Level:       2,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "dexterity", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -31,7 +31,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 					"deception",
 				},
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "dexterity", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 4, Proficient: false},
 				{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -42,7 +42,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 			character: &models.Character{
 				Level:       3,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -54,7 +54,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 					"deception",
 				},
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "nature", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 6, Proficient: false},
 				{Name: "deception", SkillModifier: 5, Proficient: false},
@@ -65,7 +65,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 			character: &models.Character{
 				Level:       3,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -78,7 +78,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 					"nature",
 				},
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "nature", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 6, Proficient: false},
 				{Name: "deception", SkillModifier: 5, Proficient: false},
@@ -89,7 +89,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 			character: &models.Character{
 				Level:       10,
 				Proficiency: 4,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -105,7 +105,7 @@ func TestBardExecuteExpertise(t *testing.T) {
 					"religion",
 				},
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "nature", SkillModifier: 9, Proficient: false},
 				{Name: "persuasion", SkillModifier: 8, Proficient: false},
 				{Name: "deception", SkillModifier: 7, Proficient: false},
@@ -143,20 +143,20 @@ func TestBardExecuteJackOfAllTrades(t *testing.T) {
 		name      string
 		character *models.Character
 		bard      *Bard
-		expected  []types.Skill
+		expected  []shared.Skill
 	}{
 		{
 			name: "Level 1 character - no bonus applied",
 			character: &models.Character{
 				Level:       1,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{SkillModifier: 5, Proficient: false},
 					{SkillModifier: 3, Proficient: false},
 				},
 			},
 			bard: &Bard{},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{SkillModifier: 5, Proficient: false},
 				{SkillModifier: 3, Proficient: false},
 			},
@@ -166,14 +166,14 @@ func TestBardExecuteJackOfAllTrades(t *testing.T) {
 			character: &models.Character{
 				Level:       2,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{SkillModifier: 5, Proficient: false},
 					{SkillModifier: 3, Proficient: false},
 					{SkillModifier: 1, Proficient: false},
 				},
 			},
 			bard: &Bard{},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{SkillModifier: 6, Proficient: false},
 				{SkillModifier: 4, Proficient: false},
 				{SkillModifier: 2, Proficient: false},
@@ -210,19 +210,19 @@ func TestBardUseClassSlots(t *testing.T) {
 		tokenName string
 		character *models.Character
 		bard      *Bard
-		expected  types.NamedToken
+		expected  shared.NamedToken
 	}{
 		{
 			name:      "One use, single slot",
 			tokenName: "bardic inspiration",
 			character: &models.Character{},
 			bard: &Bard{
-				ClassToken: types.NamedToken{
+				ClassToken: shared.NamedToken{
 					Maximum:   4,
 					Available: 4,
 				},
 			},
-			expected: types.NamedToken{
+			expected: shared.NamedToken{
 				Maximum:   4,
 				Available: 3,
 			},
@@ -250,19 +250,19 @@ func TestBardRecoverClassSlots(t *testing.T) {
 		recover   int
 		character *models.Character
 		bard      *Bard
-		expected  types.NamedToken
+		expected  shared.NamedToken
 	}{
 		{
 			name:      "Recover by 1",
 			tokenName: "bardic inspiration",
 			recover:   1,
 			bard: &Bard{
-				ClassToken: types.NamedToken{
+				ClassToken: shared.NamedToken{
 					Maximum:   4,
 					Available: 2,
 				},
 			},
-			expected: types.NamedToken{
+			expected: shared.NamedToken{
 				Maximum:   4,
 				Available: 3,
 			},
@@ -272,12 +272,12 @@ func TestBardRecoverClassSlots(t *testing.T) {
 			tokenName: "bardic inspiration",
 			recover:   0,
 			bard: &Bard{
-				ClassToken: types.NamedToken{
+				ClassToken: shared.NamedToken{
 					Maximum:   4,
 					Available: 2,
 				},
 			},
-			expected: types.NamedToken{
+			expected: shared.NamedToken{
 				Maximum:   4,
 				Available: 4,
 			},

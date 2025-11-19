@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
@@ -149,7 +149,7 @@ func applyDueling(c *models.Character) FightingStyleFeature {
 		isTwoHanded := false
 
 		for _, prop := range weapon.Properties {
-			if prop == types.WeaponPropertyTwoHanded {
+			if prop == shared.WeaponPropertyTwoHanded {
 				isTwoHanded = true
 			}
 		}
@@ -197,11 +197,11 @@ func applyTwoWeaponFighting(c *models.Character) FightingStyleFeature {
 		}
 
 		for _, prop := range weapon.Properties {
-			if strings.ToLower(prop) == types.WeaponPropertyTwoHanded {
+			if strings.ToLower(prop) == shared.WeaponPropertyTwoHanded {
 				isOneHanded = false
 				break
 			}
-			if strings.ToLower(prop) == types.WeaponPropertyLight {
+			if strings.ToLower(prop) == shared.WeaponPropertyLight {
 				isLight = true
 			}
 		}
@@ -237,7 +237,7 @@ func applyTwoWeaponFighting(c *models.Character) FightingStyleFeature {
 	}
 
 	for _, mod := range c.Abilities {
-		if strings.ToLower(mod.Name) == types.AbilityDexterity {
+		if strings.ToLower(mod.Name) == shared.AbilityDexterity {
 			c.Weapons[secondaryWeaponIndex].Bonus += mod.AbilityModifier
 			feature.IsApplied = true
 			break
@@ -258,7 +258,7 @@ func applyGreatWeaponFighting(c *models.Character) FightingStyleFeature {
 	for _, weapon := range c.Weapons {
 		if weapon.Name == c.PrimaryEquipped || weapon.Name == c.SecondaryEquipped {
 			for _, prop := range weapon.Properties {
-				if prop == types.WeaponPropertyTwoHanded {
+				if prop == shared.WeaponPropertyTwoHanded {
 					feature.IsApplied = true
 				}
 			}
@@ -283,14 +283,14 @@ func applyProtection(c *models.Character) FightingStyleFeature {
 }
 
 // this is only used for classes that have mutliple tokens types to implement
-func fullTokenRecovery(tokens []types.NamedToken) {
+func fullTokenRecovery(tokens []shared.NamedToken) {
 	for i := range tokens {
 		tokens[i].Available = tokens[i].Maximum
 	}
 }
 
 // this is only used for classes that have mutliple tokens types to implement
-func getToken(tokenName string, tokens []types.NamedToken) *types.NamedToken {
+func getToken(tokenName string, tokens []shared.NamedToken) *shared.NamedToken {
 	for i := range tokens {
 		if tokens[i].Name == tokenName {
 			return &tokens[i]

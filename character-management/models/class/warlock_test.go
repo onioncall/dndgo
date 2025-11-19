@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 func TestWarlockAppliedArmorOfShadows(t *testing.T) {
@@ -18,8 +18,8 @@ func TestWarlockAppliedArmorOfShadows(t *testing.T) {
 			name: "Armor equiped, early return",
 			character: &models.Character{
 				AC: 15,
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "Leather Armor",
 					},
 				},
@@ -31,11 +31,11 @@ func TestWarlockAppliedArmorOfShadows(t *testing.T) {
 			name: "Armor not equiped, bonus added",
 			character: &models.Character{
 				AC: 15,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityDexterity, AbilityModifier: 4},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityDexterity, AbilityModifier: 4},
 				},
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "",
 					},
 				},

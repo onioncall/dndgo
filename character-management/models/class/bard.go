@@ -6,7 +6,7 @@ import (
 	"math"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
@@ -14,12 +14,12 @@ type Bard struct {
 	ExpertiseSkills []string              `json:"expertise"`
 	College         string                `json:"college"`
 	OtherFeatures   []models.ClassFeature `json:"other-features"`
-	ClassToken      types.NamedToken      `json:"class-token"`
+	ClassToken      shared.NamedToken     `json:"class-token"`
 }
 
 const bardicInspirationToken string = "bardic-inspiration"
 
-const bardSpellCastingAbility string = types.AbilityCharisma
+const bardSpellCastingAbility string = shared.AbilityCharisma
 
 func LoadBard(data []byte) (*Bard, error) {
 	var bard Bard
@@ -62,7 +62,7 @@ func (b *Bard) executeBardicInspiration(c *models.Character) {
 		return
 	}
 
-	b.ClassToken.Maximum = c.GetMod(types.AbilityCharisma)
+	b.ClassToken.Maximum = c.GetMod(shared.AbilityCharisma)
 }
 
 // At level 3, bards can pick two skills they are proficient in, and double the modifier.

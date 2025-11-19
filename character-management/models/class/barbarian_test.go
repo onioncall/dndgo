@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
@@ -17,34 +17,34 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 			name: "Armor equiped, early return",
 			character: &models.Character{
 				AC: 0,
-				Abilities: []types.Abilities{
+				Abilities: []shared.Abilities{
 					{
-						Name:            types.AbilityStrength,
+						Name:            shared.AbilityStrength,
 						AbilityModifier: 5,
 					},
 					{
-						Name:            types.AbilityDexterity,
+						Name:            shared.AbilityDexterity,
 						AbilityModifier: 3,
 					},
 					{
-						Name:            types.AbilityConstitution,
+						Name:            shared.AbilityConstitution,
 						AbilityModifier: 4,
 					},
 					{
-						Name:            types.AbilityIntelligence,
+						Name:            shared.AbilityIntelligence,
 						AbilityModifier: 2,
 					},
 					{
-						Name:            types.AbilityWisdom,
+						Name:            shared.AbilityWisdom,
 						AbilityModifier: 0,
 					},
 					{
-						Name:            types.AbilityCharisma,
+						Name:            shared.AbilityCharisma,
 						AbilityModifier: -1,
 					},
 				},
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "Leather Armor",
 					},
 				},
@@ -55,34 +55,34 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 			name: "No armor, valid",
 			character: &models.Character{
 				AC: 0,
-				Abilities: []types.Abilities{
+				Abilities: []shared.Abilities{
 					{
-						Name:            types.AbilityStrength,
+						Name:            shared.AbilityStrength,
 						AbilityModifier: 5,
 					},
 					{
-						Name:            types.AbilityDexterity,
+						Name:            shared.AbilityDexterity,
 						AbilityModifier: 3,
 					},
 					{
-						Name:            types.AbilityConstitution,
+						Name:            shared.AbilityConstitution,
 						AbilityModifier: 4,
 					},
 					{
-						Name:            types.AbilityIntelligence,
+						Name:            shared.AbilityIntelligence,
 						AbilityModifier: 2,
 					},
 					{
-						Name:            types.AbilityWisdom,
+						Name:            shared.AbilityWisdom,
 						AbilityModifier: 0,
 					},
 					{
-						Name:            types.AbilityCharisma,
+						Name:            shared.AbilityCharisma,
 						AbilityModifier: -1,
 					},
 				},
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "",
 					},
 				},
@@ -110,14 +110,14 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 		name      string
 		character *models.Character
 		barbarian Barbarian
-		expected  []types.Skill
+		expected  []shared.Skill
 	}{
 		{
 			name: "Below level requirement",
 			character: &models.Character{
 				Level:       2,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "athletics", SkillModifier: 5, Proficient: false},
 					{Name: "intimidation", SkillModifier: 4, Proficient: true},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -128,7 +128,7 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 					"athletics",
 				},
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "athletics", SkillModifier: 5, Proficient: false},
 				{Name: "intimidation", SkillModifier: 4, Proficient: true},
 				{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -157,18 +157,18 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 	tests := []struct {
 		name      string
 		character *models.Character
-		expected  []types.Abilities
+		expected  []shared.Abilities
 	}{
 		{
 			name: "Below level threshold",
 			character: &models.Character{
 				Level: 15,
-				Abilities: []types.Abilities{
+				Abilities: []shared.Abilities{
 					{Name: "Strength", Base: 16},
 					{Name: "Constitution", Base: 16},
 				},
 			},
-			expected: []types.Abilities{
+			expected: []shared.Abilities{
 				{Name: "Strength", Base: 16},
 				{Name: "Constitution", Base: 16},
 			},
@@ -177,12 +177,12 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 			name: "Meets level requirements, valid configuration",
 			character: &models.Character{
 				Level: 20,
-				Abilities: []types.Abilities{
+				Abilities: []shared.Abilities{
 					{Name: "Strength", Base: 17},
 					{Name: "Constitution", Base: 17},
 				},
 			},
-			expected: []types.Abilities{
+			expected: []shared.Abilities{
 				{Name: "Strength", Base: 21},
 				{Name: "Constitution", Base: 21},
 			},
@@ -211,20 +211,20 @@ func TestBarbarianUseSlots(t *testing.T) {
 		tokenName string
 		character *models.Character
 		barbarian *Barbarian
-		expected  types.NamedToken
+		expected  shared.NamedToken
 	}{
 		{
 			name:      "One use, success",
 			tokenName: "rage",
 			character: &models.Character{},
 			barbarian: &Barbarian{
-				ClassToken: types.NamedToken{
+				ClassToken: shared.NamedToken{
 					Name:      "Rage",
 					Available: 4,
 					Maximum:   4,
 				},
 			},
-			expected: types.NamedToken{
+			expected: shared.NamedToken{
 				Name:      "Rage",
 				Available: 3,
 				Maximum:   4,
@@ -253,7 +253,7 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 		recover   int
 		character *models.Character
 		barbarian *Barbarian
-		expected  types.NamedToken
+		expected  shared.NamedToken
 	}{
 		{
 			name:      "Recover by 1",
@@ -261,13 +261,13 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 			recover:   1,
 			character: &models.Character{},
 			barbarian: &Barbarian{
-				ClassToken: types.NamedToken{
+				ClassToken: shared.NamedToken{
 					Name:      "Rage",
 					Available: 2,
 					Maximum:   4,
 				},
 			},
-			expected: types.NamedToken{
+			expected: shared.NamedToken{
 				Name:      "Rage",
 				Available: 3,
 				Maximum:   4,
@@ -278,13 +278,13 @@ func TestBarbarianRecoverClassSlots(t *testing.T) {
 			tokenName: "rage",
 			recover:   0,
 			barbarian: &Barbarian{
-				ClassToken: types.NamedToken{
+				ClassToken: shared.NamedToken{
 					Name:      "Rage",
 					Available: 2,
 					Maximum:   4,
 				},
 			},
-			expected: types.NamedToken{
+			expected: shared.NamedToken{
 				Name:      "Rage",
 				Available: 4,
 				Maximum:   4,

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
@@ -49,7 +49,7 @@ func (w *Warlock) CalculateHitDice(level int) string {
 }
 
 func (w *Warlock) executeSpellCastingAbility(c *models.Character) {
-	chrMod := c.GetMod(types.AbilityCharisma)
+	chrMod := c.GetMod(shared.AbilityCharisma)
 
 	executeSpellSaveDC(c, chrMod)
 	executeSpellAttackMod(c, chrMod)
@@ -73,7 +73,7 @@ func applyArmorOfShadows(c *models.Character) bool {
 		return false
 	}
 
-	dexMod := c.GetMod(types.AbilityDexterity)
+	dexMod := c.GetMod(shared.AbilityDexterity)
 	armorOfShadows := 13 + dexMod
 
 	if !c.ValidationDisabled {

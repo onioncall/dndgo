@@ -6,14 +6,14 @@ import (
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
 type Barbarian struct {
 	Path            string                `json:"path"`
 	OtherFeatures   []models.ClassFeature `json:"other-features"`
-	ClassToken      types.NamedToken      `json:"class-token"`
+	ClassToken      shared.NamedToken     `json:"class-token"`
 	RageDamage      int                   `json:"-"`
 	PrimalKnowledge []string              `json:"primal-knowledge"`
 }
@@ -121,8 +121,8 @@ func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
 // If not wearing armor, Armor Class is boosted to 10 + dex mod + constitution mod
 func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 	barbarianExpertiseAbilityModifiers := []string{
-		types.AbilityDexterity,
-		types.AbilityConstitution,
+		shared.AbilityDexterity,
+		shared.AbilityConstitution,
 	}
 
 	executeUnarmoredDefenseShared(c, barbarianExpertiseAbilityModifiers)

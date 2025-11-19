@@ -3,7 +3,7 @@ package class
 import (
 	"testing"
 
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 func TestFighterUseClassTokens(t *testing.T) {
@@ -16,7 +16,7 @@ func TestFighterUseClassTokens(t *testing.T) {
 		{
 			name: "One removed successfully, mixed case",
 			fighter: &Fighter{
-				ClassTokens: []types.NamedToken{
+				ClassTokens: []shared.NamedToken{
 					{Name: "indomitable", Available: 1, Maximum: 1, Level: 1},
 					{Name: "second-wind", Available: 1, Maximum: 1, Level: 1},
 				},
@@ -51,7 +51,7 @@ func TestFighterRecoverClassTokens(t *testing.T) {
 		{
 			name: "One recovered successfully, mixed case",
 			fighter: &Fighter{
-				ClassTokens: []types.NamedToken{
+				ClassTokens: []shared.NamedToken{
 					{Name: "indomitable", Available: 1, Maximum: 1, Level: 1},
 					{Name: "second-wind", Available: 1, Maximum: 1, Level: 1},
 				},
@@ -63,7 +63,7 @@ func TestFighterRecoverClassTokens(t *testing.T) {
 		{
 			name: "Multiple recovered successfully, mixed case",
 			fighter: &Fighter{
-				ClassTokens: []types.NamedToken{
+				ClassTokens: []shared.NamedToken{
 					{Name: "indomitable", Available: 1, Maximum: 1, Level: 1},
 					{Name: "second-wind", Available: 1, Maximum: 1, Level: 1},
 				},

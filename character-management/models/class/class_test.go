@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 func TestClassExecuteExpertiseShared(t *testing.T) {
@@ -12,14 +12,14 @@ func TestClassExecuteExpertiseShared(t *testing.T) {
 		name            string
 		character       *models.Character
 		expertiseSkills []string
-		expected        []types.Skill
+		expected        []shared.Skill
 	}{
 		{
 			name: "Below level requirement",
 			character: &models.Character{
 				Level:       2,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "dexterity", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -29,7 +29,7 @@ func TestClassExecuteExpertiseShared(t *testing.T) {
 				"persuasion",
 				"deception",
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "dexterity", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 4, Proficient: false},
 				{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -40,7 +40,7 @@ func TestClassExecuteExpertiseShared(t *testing.T) {
 			character: &models.Character{
 				Level:       3,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -50,7 +50,7 @@ func TestClassExecuteExpertiseShared(t *testing.T) {
 				"persuasion",
 				"deception",
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "nature", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 6, Proficient: false},
 				{Name: "deception", SkillModifier: 5, Proficient: false},
@@ -61,7 +61,7 @@ func TestClassExecuteExpertiseShared(t *testing.T) {
 			character: &models.Character{
 				Level:       3,
 				Proficiency: 2,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -71,7 +71,7 @@ func TestClassExecuteExpertiseShared(t *testing.T) {
 				"persuasion",
 				"deception",
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "nature", SkillModifier: 5, Proficient: false},
 				{Name: "persuasion", SkillModifier: 6, Proficient: false},
 				{Name: "deception", SkillModifier: 5, Proficient: false},
@@ -82,7 +82,7 @@ func TestClassExecuteExpertiseShared(t *testing.T) {
 			character: &models.Character{
 				Level:       10,
 				Proficiency: 4,
-				Skills: []types.Skill{
+				Skills: []shared.Skill{
 					{Name: "nature", SkillModifier: 5, Proficient: false},
 					{Name: "persuasion", SkillModifier: 4, Proficient: false},
 					{Name: "deception", SkillModifier: 3, Proficient: false},
@@ -96,7 +96,7 @@ func TestClassExecuteExpertiseShared(t *testing.T) {
 				"nature",
 				"religion",
 			},
-			expected: []types.Skill{
+			expected: []shared.Skill{
 				{Name: "nature", SkillModifier: 9, Proficient: false},
 				{Name: "persuasion", SkillModifier: 8, Proficient: false},
 				{Name: "deception", SkillModifier: 7, Proficient: false},
@@ -140,8 +140,8 @@ func TestClassExecuteSpellCastingAbility(t *testing.T) {
 			character: &models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				SpellSaveDC:    0,
 				SpellAttackMod: 0,
@@ -149,8 +149,8 @@ func TestClassExecuteSpellCastingAbility(t *testing.T) {
 			expected: models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				SpellSaveDC:    12,
 				SpellAttackMod: 4,
@@ -190,10 +190,10 @@ func TestClassExecutePreparedSpells(t *testing.T) {
 			name: "No Prepared Spells",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: false},
 					{Name: "Different Spell", IsPrepared: false},
 				},
@@ -201,10 +201,10 @@ func TestClassExecutePreparedSpells(t *testing.T) {
 			preparedSpells: []string{},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: false},
 					{Name: "Different Spell", IsPrepared: false},
 				},
@@ -214,10 +214,10 @@ func TestClassExecutePreparedSpells(t *testing.T) {
 			name: "One Prepared Spell",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: false},
 					{Name: "Different Spell", IsPrepared: false},
 				},
@@ -227,10 +227,10 @@ func TestClassExecutePreparedSpells(t *testing.T) {
 			},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: true},
 					{Name: "Different Spell", IsPrepared: false},
 				},
@@ -259,18 +259,18 @@ func TestClassAppliedArchery(t *testing.T) {
 	tests := []struct {
 		name      string
 		character *models.Character
-		expected  []types.Weapon
+		expected  []shared.Weapon
 		applied   bool
 	}{
 		{
 			name: "No ranged weapon",
 			character: &models.Character{
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 					{Name: "Dagger", Bonus: 2, Damage: "1d4", Ranged: false},
 				},
 			},
-			expected: []types.Weapon{
+			expected: []shared.Weapon{
 				{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 				{Name: "Dagger", Bonus: 2, Damage: "1d4", Ranged: false},
 			},
@@ -279,12 +279,12 @@ func TestClassAppliedArchery(t *testing.T) {
 		{
 			name: "Range bonus applied",
 			character: &models.Character{
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true},
 				},
 			},
-			expected: []types.Weapon{
+			expected: []shared.Weapon{
 				{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 				{Name: "Longbow", Bonus: 4, Damage: "1d8", Ranged: true},
 			},
@@ -321,8 +321,8 @@ func TestClassAppliedDefense(t *testing.T) {
 			name: "Armor equiped, early return",
 			character: &models.Character{
 				AC: 15,
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "Leather Armor",
 					},
 				},
@@ -334,8 +334,8 @@ func TestClassAppliedDefense(t *testing.T) {
 			name: "Armor not equiped, bonus added",
 			character: &models.Character{
 				AC: 15,
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "",
 					},
 				},
@@ -365,18 +365,18 @@ func TestClassAppliedDueling(t *testing.T) {
 	tests := []struct {
 		name      string
 		character *models.Character
-		expected  []types.Weapon
+		expected  []shared.Weapon
 		applied   bool
 	}{
 		{
 			name: "No melee weapon",
 			character: &models.Character{
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true},
 				},
 				PrimaryEquipped: "Longbow",
 			},
-			expected: []types.Weapon{
+			expected: []shared.Weapon{
 				{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true},
 			},
 			applied: false,
@@ -384,13 +384,13 @@ func TestClassAppliedDueling(t *testing.T) {
 		{
 			name: "Melee bonus applied",
 			character: &models.Character{
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 				},
 				PrimaryEquipped: "Club",
 			},
-			expected: []types.Weapon{
+			expected: []shared.Weapon{
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
 				{Name: "Club", Bonus: 4, Damage: "1d4", Ranged: false},
 			},
@@ -399,14 +399,14 @@ func TestClassAppliedDueling(t *testing.T) {
 		{
 			name: "Multiple valid weapons, one bonus",
 			character: &models.Character{
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 				},
 				PrimaryEquipped: "Club",
 			},
-			expected: []types.Weapon{
+			expected: []shared.Weapon{
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
 				{Name: "Club", Bonus: 4, Damage: "1d4", Ranged: false},
 				{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
@@ -437,22 +437,22 @@ func TestClassAppliedTwoWeaponFighting(t *testing.T) {
 	tests := []struct {
 		name      string
 		character *models.Character
-		expected  []types.Weapon
+		expected  []shared.Weapon
 		applied   bool
 	}{
 		{
 			name: "No applicable weapons, bonus not applied",
 			character: &models.Character{
-				Abilities: []types.Abilities{
+				Abilities: []shared.Abilities{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 				},
 				PrimaryEquipped: "Greataxe",
 			},
-			expected: []types.Weapon{
+			expected: []shared.Weapon{
 				{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
 				{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 			},
@@ -461,16 +461,16 @@ func TestClassAppliedTwoWeaponFighting(t *testing.T) {
 		{
 			name: "One applicable weapon, bonus not applied",
 			character: &models.Character{
-				Abilities: []types.Abilities{
+				Abilities: []shared.Abilities{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 				},
 				PrimaryEquipped: "Longbow",
 			},
-			expected: []types.Weapon{
+			expected: []shared.Weapon{
 				{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 				{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 			},
@@ -479,17 +479,17 @@ func TestClassAppliedTwoWeaponFighting(t *testing.T) {
 		{
 			name: "Two applicable light weapons, bonus applied",
 			character: &models.Character{
-				Abilities: []types.Abilities{
+				Abilities: []shared.Abilities{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 				},
 				PrimaryEquipped:   "Club",
 				SecondaryEquipped: "Club",
 			},
-			expected: []types.Weapon{
+			expected: []shared.Weapon{
 				{Name: "Club", Bonus: 4, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 				{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 			},
@@ -498,17 +498,17 @@ func TestClassAppliedTwoWeaponFighting(t *testing.T) {
 		{
 			name: "Two applicable weapons, one light, both one handed, bonus applied",
 			character: &models.Character{
-				Abilities: []types.Abilities{
+				Abilities: []shared.Abilities{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Rapier", Bonus: 2, Damage: "1d8", Ranged: false, Properties: []string{"finesse"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 				},
 				PrimaryEquipped:   "Rapier",
 				SecondaryEquipped: "Club",
 			},
-			expected: []types.Weapon{
+			expected: []shared.Weapon{
 				{Name: "Rapier", Bonus: 2, Damage: "1d8", Ranged: false, Properties: []string{"finesse"}},
 				{Name: "Club", Bonus: 4, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 			},
@@ -543,7 +543,7 @@ func TestClassAppliedGreatWeaponFighting(t *testing.T) {
 		{
 			name: "Two handed equipped, bonus applied",
 			character: &models.Character{
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Greataxe", Bonus: 2, Damage: "1d12", Ranged: false, Properties: []string{"two-handed"}},
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 				},
@@ -554,7 +554,7 @@ func TestClassAppliedGreatWeaponFighting(t *testing.T) {
 		{
 			name: "Two handed secondary equipped, bonus applied",
 			character: &models.Character{
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false},
 					{Name: "Longbow", Bonus: 2, Damage: "1d8", Ranged: true, Properties: []string{"two-handed"}},
 				},
@@ -565,7 +565,7 @@ func TestClassAppliedGreatWeaponFighting(t *testing.T) {
 		{
 			name: "No applicable weapons, bonus not applied",
 			character: &models.Character{
-				Weapons: []types.Weapon{
+				Weapons: []shared.Weapon{
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 					{Name: "Club", Bonus: 2, Damage: "1d4", Ranged: false, Properties: []string{"light"}},
 				},
@@ -597,7 +597,7 @@ func TestClassAppliedProtection(t *testing.T) {
 			name: "Shield equipped, bonus applied",
 			character: &models.Character{
 				PrimaryEquipped: "Some Shield",
-				WornEquipment: types.WornEquipment{
+				WornEquipment: shared.WornEquipment{
 					Shield: "Some Shield",
 				},
 			},
@@ -608,7 +608,7 @@ func TestClassAppliedProtection(t *testing.T) {
 			character: &models.Character{
 				PrimaryEquipped:   "",
 				SecondaryEquipped: "",
-				WornEquipment: types.WornEquipment{
+				WornEquipment: shared.WornEquipment{
 					Shield: "Some Shield",
 				},
 			},

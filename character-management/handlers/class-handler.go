@@ -10,22 +10,22 @@ import (
 	defaultjsonconfigs "github.com/onioncall/dndgo/character-management/default-json-configs"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/models/class"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 var ClassFileMap = map[string]string{
-	types.ClassBarbarian: "barbarian.json",
-	types.ClassBard:      "bard.json",
-	types.ClassCleric:    "cleric.json",
-	types.ClassDruid:     "druid.json",
-	types.ClassFighter:   "fighter.json",
-	types.ClassMonk:      "monk.json",
-	types.ClassPaladin:   "paladin.json",
-	types.ClassRanger:    "ranger.json",
-	types.ClassRogue:     "rogue.json",
-	types.ClassSorcerer:  "sorcerer.json",
-	types.ClassWarlock:   "warlock.json",
-	types.ClassWizard:    "wizard.json",
+	shared.ClassBarbarian: "barbarian.json",
+	shared.ClassBard:      "bard.json",
+	shared.ClassCleric:    "cleric.json",
+	shared.ClassDruid:     "druid.json",
+	shared.ClassFighter:   "fighter.json",
+	shared.ClassMonk:      "monk.json",
+	shared.ClassPaladin:   "paladin.json",
+	shared.ClassRanger:    "ranger.json",
+	shared.ClassRogue:     "rogue.json",
+	shared.ClassSorcerer:  "sorcerer.json",
+	shared.ClassWarlock:   "warlock.json",
+	shared.ClassWizard:    "wizard.json",
 }
 
 func LoadClass(classType string) (models.Class, error) {
@@ -106,29 +106,29 @@ func loadClassData(classType string, classData []byte) (models.Class, error) {
 	var err error
 
 	switch strings.ToLower(classType) {
-	case types.ClassBarbarian:
+	case shared.ClassBarbarian:
 		c, err = class.LoadBarbarian(classData)
-	case types.ClassBard:
+	case shared.ClassBard:
 		c, err = class.LoadBard(classData)
-	case types.ClassCleric:
+	case shared.ClassCleric:
 		c, err = class.LoadCleric(classData)
-	case types.ClassDruid:
+	case shared.ClassDruid:
 		c, err = class.LoadDruid(classData)
-	case types.ClassFighter:
+	case shared.ClassFighter:
 		c, err = class.LoadFighter(classData)
-	case types.ClassMonk:
+	case shared.ClassMonk:
 		c, err = class.LoadMonk(classData)
-	case types.ClassPaladin:
+	case shared.ClassPaladin:
 		c, err = class.LoadPaladin(classData)
-	case types.ClassRanger:
+	case shared.ClassRanger:
 		c, err = class.LoadRanger(classData)
-	case types.ClassRogue:
+	case shared.ClassRogue:
 		c, err = class.LoadRogue(classData)
-	case types.ClassSorcerer:
+	case shared.ClassSorcerer:
 		c, err = class.LoadSorcerer(classData)
-	case types.ClassWarlock:
+	case shared.ClassWarlock:
 		c, err = class.LoadWarlock(classData)
-	case types.ClassWizard:
+	case shared.ClassWizard:
 		c, err = class.LoadWizard(classData)
 	default:
 		return nil, fmt.Errorf("Unsupported class type '%s'", classType)

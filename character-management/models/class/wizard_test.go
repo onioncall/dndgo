@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 func TestWizardExecuteSpellCastingAbility(t *testing.T) {
@@ -18,8 +18,8 @@ func TestWizardExecuteSpellCastingAbility(t *testing.T) {
 			character: &models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				SpellSaveDC:    0,
 				SpellAttackMod: 0,
@@ -27,8 +27,8 @@ func TestWizardExecuteSpellCastingAbility(t *testing.T) {
 			expected: models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				SpellSaveDC:    12,
 				SpellAttackMod: 4,
@@ -68,10 +68,10 @@ func TestWizardExecutePreparedSpells(t *testing.T) {
 			name: "One Prepared Spell",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: false},
 					{Name: "Different Spell", IsPrepared: false},
 				},
@@ -83,10 +83,10 @@ func TestWizardExecutePreparedSpells(t *testing.T) {
 			},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityIntelligence, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: true},
 					{Name: "Different Spell", IsPrepared: false},
 				},

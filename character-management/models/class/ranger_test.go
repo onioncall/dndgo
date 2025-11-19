@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 func TestRangerExecuteFightingStyle(t *testing.T) {
@@ -19,14 +19,14 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 			character: &models.Character{
 				AC:    15,
 				Level: 1,
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "",
 					},
 				},
 			},
 			ranger: &Ranger{
-				FightingStyle: types.FightingStyleDefense,
+				FightingStyle: shared.FightingStyleDefense,
 			},
 			expected: models.Character{
 				AC:    15,
@@ -38,8 +38,8 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 			character: &models.Character{
 				AC:    15,
 				Level: 3,
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "",
 					},
 				},
@@ -57,14 +57,14 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 			character: &models.Character{
 				AC:    15,
 				Level: 3,
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "",
 					},
 				},
 			},
 			ranger: &Ranger{
-				FightingStyle: types.FightingStyleDefense,
+				FightingStyle: shared.FightingStyleDefense,
 			},
 			expected: models.Character{
 				AC:    16,
@@ -76,14 +76,14 @@ func TestRangerExecuteFightingStyle(t *testing.T) {
 			character: &models.Character{
 				AC:    15,
 				Level: 3,
-				WornEquipment: types.WornEquipment{
-					Armor: types.Armor{
+				WornEquipment: shared.WornEquipment{
+					Armor: shared.Armor{
 						Name: "Leather Armor",
 					},
 				},
 			},
 			ranger: &Ranger{
-				FightingStyle: types.FightingStyleDefense,
+				FightingStyle: shared.FightingStyleDefense,
 			},
 			expected: models.Character{
 				AC:    15,

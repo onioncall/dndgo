@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
@@ -13,7 +13,7 @@ type Paladin struct {
 	OtherFeatures        []models.ClassFeature `json:"other-features"`
 	PreparedSpells       []string              `json:"prepared-spells"`
 	OathSpells           []string              `json:"oath-spells"`
-	ClassTokens          []types.NamedToken    `json:"class-tokens"`
+	ClassTokens          []shared.NamedToken   `json:"class-tokens"`
 	FightingStyle        string                `json:"fighting-style"`
 	FightingStyleFeature FightingStyleFeature  `json:"-"`
 	SacredOath           string                `json:"sacred-oath"`
@@ -47,7 +47,7 @@ func (p *Paladin) CalculateHitDice(level int) string {
 }
 
 func (s *Paladin) executeSpellCastingAbility(c *models.Character) {
-	chrMod := c.GetMod(types.AbilityCharisma)
+	chrMod := c.GetMod(shared.AbilityCharisma)
 
 	executeSpellSaveDC(c, chrMod)
 	executeSpellAttackMod(c, chrMod)
@@ -56,7 +56,7 @@ func (s *Paladin) executeSpellCastingAbility(c *models.Character) {
 func (p *Paladin) executeClassTokens(c *models.Character) {
 	for i, token := range p.ClassTokens {
 		if token.Name == "divine-sense" {
-			p.ClassTokens[i].Maximum = 1 + c.GetMod(types.AbilityCharisma)
+			p.ClassTokens[i].Maximum = 1 + c.GetMod(shared.AbilityCharisma)
 		} else if token.Name == "lay-on-hands" {
 			p.ClassTokens[i].Maximum = 5 * c.Level
 		}
@@ -72,19 +72,19 @@ func (p *Paladin) executeFightingStyle(c *models.Character) {
 
 	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s",
 		p.FightingStyle,
-		types.FightingStyleGreatWeaponFighting,
-		types.FightingStyleDefense,
-		types.FightingStyleDueling,
-		types.FightingStyleProtection)
+		shared.FightingStyleGreatWeaponFighting,
+		shared.FightingStyleDefense,
+		shared.FightingStyleDueling,
+		shared.FightingStyleProtection)
 
 	switch p.FightingStyle {
-	case types.FightingStyleGreatWeaponFighting:
+	case shared.FightingStyleGreatWeaponFighting:
 		p.FightingStyleFeature = applyGreatWeaponFighting(c)
-	case types.FightingStyleDefense:
+	case shared.FightingStyleDefense:
 		p.FightingStyleFeature = applyDefense(c)
-	case types.FightingStyleDueling:
+	case shared.FightingStyleDueling:
 		p.FightingStyleFeature = applyDueling(c)
-	case types.FightingStyleProtection:
+	case shared.FightingStyleProtection:
 		p.FightingStyleFeature = applyProtection(c)
 	default:
 		logger.HandleInfo(invalidMsg)
@@ -92,7 +92,7 @@ func (p *Paladin) executeFightingStyle(c *models.Character) {
 }
 
 func (p *Paladin) executePreparedSpells(c *models.Character) {
-	chrMod := c.GetMod(types.AbilityCharisma)
+	chrMod := c.GetMod(shared.AbilityCharisma)
 	preparedSpellsMax := chrMod + (c.Level / 2)
 
 	if !c.ValidationDisabled {

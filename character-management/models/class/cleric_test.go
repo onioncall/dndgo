@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 func TestClericValidateCantripVersatility(t *testing.T) {
@@ -18,12 +18,12 @@ func TestClericValidateCantripVersatility(t *testing.T) {
 			character: &models.Character{
 				Level:              3,
 				ValidationDisabled: false,
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{SlotLevel: 0, IsRitual: true},
 					{SlotLevel: 0, IsRitual: false},
 					{SlotLevel: 0, IsRitual: false},
 				},
-				AbilityScoreImprovement: []types.AbilityScoreImprovementItem{},
+				AbilityScoreImprovement: []shared.AbilityScoreImprovementItem{},
 			},
 			expected: true,
 		},
@@ -32,17 +32,17 @@ func TestClericValidateCantripVersatility(t *testing.T) {
 			character: &models.Character{
 				Level:              11,
 				ValidationDisabled: false,
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{SlotLevel: 0, IsRitual: true},
 					{SlotLevel: 0, IsRitual: false},
 					{SlotLevel: 0, IsRitual: true},
 					{SlotLevel: 0, IsRitual: false},
 					{SlotLevel: 0, IsRitual: false},
 				},
-				AbilityScoreImprovement: []types.AbilityScoreImprovementItem{
-					{Ability: types.AbilityDexterity, Bonus: 2},
-					{Ability: types.AbilityStrength, Bonus: 2},
-					{Ability: types.AbilityStrength, Bonus: 1},
+				AbilityScoreImprovement: []shared.AbilityScoreImprovementItem{
+					{Ability: shared.AbilityDexterity, Bonus: 2},
+					{Ability: shared.AbilityStrength, Bonus: 2},
+					{Ability: shared.AbilityStrength, Bonus: 1},
 				},
 			},
 			expected: true,
@@ -52,17 +52,17 @@ func TestClericValidateCantripVersatility(t *testing.T) {
 			character: &models.Character{
 				ValidationDisabled: false,
 				Level:              11,
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{SlotLevel: 0, IsRitual: true},
 					{SlotLevel: 0, IsRitual: false},
 					{SlotLevel: 0, IsRitual: true},
 					{SlotLevel: 0, IsRitual: false},
 					{SlotLevel: 0, IsRitual: false},
 				},
-				AbilityScoreImprovement: []types.AbilityScoreImprovementItem{
-					{Ability: types.AbilityDexterity, Bonus: 2},
-					{Ability: types.AbilityStrength, Bonus: 2},
-					{Ability: types.AbilityWisdom, Bonus: 2},
+				AbilityScoreImprovement: []shared.AbilityScoreImprovementItem{
+					{Ability: shared.AbilityDexterity, Bonus: 2},
+					{Ability: shared.AbilityStrength, Bonus: 2},
+					{Ability: shared.AbilityWisdom, Bonus: 2},
 				},
 			},
 			expected: false,
@@ -72,17 +72,17 @@ func TestClericValidateCantripVersatility(t *testing.T) {
 			character: &models.Character{
 				ValidationDisabled: true,
 				Level:              11,
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{SlotLevel: 0, IsRitual: true},
 					{SlotLevel: 0, IsRitual: false},
 					{SlotLevel: 0, IsRitual: true},
 					{SlotLevel: 0, IsRitual: false},
 					{SlotLevel: 0, IsRitual: false},
 				},
-				AbilityScoreImprovement: []types.AbilityScoreImprovementItem{
-					{Ability: types.AbilityDexterity, Bonus: 2},
-					{Ability: types.AbilityStrength, Bonus: 2},
-					{Ability: types.AbilityWisdom, Bonus: 1},
+				AbilityScoreImprovement: []shared.AbilityScoreImprovementItem{
+					{Ability: shared.AbilityDexterity, Bonus: 2},
+					{Ability: shared.AbilityStrength, Bonus: 2},
+					{Ability: shared.AbilityWisdom, Bonus: 1},
 				},
 			},
 			expected: true,
@@ -112,8 +112,8 @@ func TestClericExecuteSpellCastingAbility(t *testing.T) {
 			character: &models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityWisdom, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
 				SpellSaveDC:    0,
 				SpellAttackMod: 0,
@@ -121,8 +121,8 @@ func TestClericExecuteSpellCastingAbility(t *testing.T) {
 			expected: models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityWisdom, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
 				SpellSaveDC:    12,
 				SpellAttackMod: 4,
@@ -162,10 +162,10 @@ func TestClericExecutePreparedSpells(t *testing.T) {
 			name: "One Prepared Spell",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityWisdom, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: false},
 					{Name: "Different Spell", IsPrepared: false},
 				},
@@ -177,10 +177,10 @@ func TestClericExecutePreparedSpells(t *testing.T) {
 			},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityWisdom, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
-				Spells: []types.CharacterSpell{
+				Spells: []shared.CharacterSpell{
 					{Name: "Some Spell", IsPrepared: true},
 					{Name: "Different Spell", IsPrepared: false},
 				},

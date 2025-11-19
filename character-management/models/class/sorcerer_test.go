@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/character-management/types"
+	"github.com/onioncall/dndgo/character-management/shared"
 )
 
 func TestSorcererExecuteSpellCastingAbility(t *testing.T) {
@@ -18,8 +18,8 @@ func TestSorcererExecuteSpellCastingAbility(t *testing.T) {
 			character: &models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityCharisma, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityCharisma, AbilityModifier: 2},
 				},
 				SpellSaveDC:    0,
 				SpellAttackMod: 0,
@@ -27,8 +27,8 @@ func TestSorcererExecuteSpellCastingAbility(t *testing.T) {
 			expected: models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []types.Abilities{
-					{Name: types.AbilityCharisma, AbilityModifier: 2},
+				Abilities: []shared.Abilities{
+					{Name: shared.AbilityCharisma, AbilityModifier: 2},
 				},
 				SpellSaveDC:    12,
 				SpellAttackMod: 4,
