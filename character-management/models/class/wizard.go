@@ -32,9 +32,6 @@ func (w *Wizard) ExecutePostCalculateMethods(c *models.Character) {
 	w.executeSignatureSpellValidation(c)
 }
 
-func (w *Wizard) ExecutePreCalculateMethods(c *models.Character) {
-}
-
 func (w *Wizard) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd6", level)
 }
@@ -116,20 +113,4 @@ func (w *Wizard) PrintClassDetails(c *models.Character) []string {
 	}
 
 	return s
-}
-
-// CLI
-
-func (w *Wizard) UseClassTokens(tokenName string, quantity int) {
-	// Not sure Wizards have a token like system to implement
-	logger.HandleInfo("No token set up for Wizard class")
-}
-
-func (w *Wizard) RecoverClassTokens(tokenName string, quantity int) {
-	// Not sure Wizards have a token like system to implement
-	logger.HandleInfo("No token set up for Wizard class")
-}
-
-func (w *Wizard) GetTokens() []string {
-	return []string{}
 }

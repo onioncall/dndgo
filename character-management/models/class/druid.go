@@ -35,9 +35,6 @@ func (d *Druid) ExecutePostCalculateMethods(c *models.Character) {
 	d.executeCantripVersatility(c)
 }
 
-func (d *Druid) ExecutePreCalculateMethods(c *models.Character) {
-}
-
 func (d *Druid) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }

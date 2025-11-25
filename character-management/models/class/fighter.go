@@ -38,9 +38,6 @@ func (f *Fighter) ExecutePostCalculateMethods(c *models.Character) {
 	f.executeClassTokens()
 }
 
-func (f *Fighter) ExecutePreCalculateMethods(c *models.Character) {
-}
-
 func (f *Fighter) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd10", level)
 }

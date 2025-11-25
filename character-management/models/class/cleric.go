@@ -38,9 +38,6 @@ func (cl *Cleric) ExecutePostCalculateMethods(c *models.Character) {
 	cl.executeCantripVersatility(c)
 }
 
-func (cl *Cleric) ExecutePreCalculateMethods(c *models.Character) {
-}
-
 func (cl *Cleric) executeChannelDiversity(c *models.Character) {
 	if cl.ClassToken.Name == "" {
 		return

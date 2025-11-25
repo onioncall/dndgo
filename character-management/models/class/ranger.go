@@ -30,9 +30,6 @@ func (r *Ranger) ExecutePostCalculateMethods(c *models.Character) {
 	r.executeFightingStyle(c)
 }
 
-func (r *Ranger) ExecutePreCalculateMethods(c *models.Character) {
-}
-
 func (r *Ranger) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd10", level)
 }
@@ -117,28 +114,4 @@ func (r *Ranger) executeFightingStyle(c *models.Character) {
 	default:
 		logger.HandleInfo(invalidMsg)
 	}
-}
-
-func (r *Ranger) AddFightingStyleFeature(feature models.ClassFeature) {
-
-}
-
-func (r *Ranger) RemoveFightingStyleFeature(feature models.ClassFeature) {
-
-}
-
-// CLI
-
-func (r *Ranger) UseClassTokens(tokenName string, quantity int) {
-	// Not sure Rangers have a token like system to implement
-	logger.HandleInfo("No token set up for Ranger class")
-}
-
-func (r *Ranger) RecoverClassTokens(tokenName string, quantity int) {
-	// Not sure Rangers have a token like system to implement
-	logger.HandleInfo("No token set up for Ranger class")
-}
-
-func (r *Ranger) GetTokens() []string {
-	return []string{}
 }

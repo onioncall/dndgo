@@ -36,9 +36,6 @@ func (p *Paladin) ExecutePostCalculateMethods(c *models.Character) {
 	p.executeOathSpells(c)
 }
 
-func (p *Paladin) ExecutePreCalculateMethods(c *models.Character) {
-}
-
 func (p *Paladin) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd10", level)
 }

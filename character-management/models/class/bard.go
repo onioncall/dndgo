@@ -37,9 +37,6 @@ func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
 	b.executeBardicInspiration(c)
 }
 
-func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
-}
-
 func (b *Bard) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }
