@@ -24,14 +24,18 @@ const (
 func HandleCharacter(c *models.Character) error {
 	if c.Class != nil {
 		c.HitDice = c.Class.CalculateHitDice(c.Level)
-		c.Class.ExecutePreCalculateMethods(c)
+
+		if preCalculater, ok := c.Class.(models.PreCalculator); ok {
+			preCalculater.ExecutePreCalculateMethods(c)
+		}
 	}
 
 	c.CalculateCharacterStats()
 
 	if c.Class != nil {
-		c.Class.ExecutePostCalculateMethods(c)
-		c.Class.ValidateMethods(c)
+		if postCalculater, ok := c.Class.(models.PostCalculator); ok {
+			postCalculater.ExecutePostCalculateMethods(c)
+		}
 	}
 
 	res := c.BuildCharacter()

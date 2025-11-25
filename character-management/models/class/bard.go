@@ -30,9 +30,6 @@ func LoadBard(data []byte) (*Bard, error) {
 	return &bard, nil
 }
 
-func (b *Bard) ValidateMethods(c *models.Character) {
-}
-
 func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
 	b.executeJackOfAllTrades(c)
 	b.executeExpertise(c)

@@ -26,9 +26,6 @@ func LoadRanger(data []byte) (*Ranger, error) {
 	return &ranger, nil
 }
 
-func (r *Ranger) ValidateMethods(c *models.Character) {
-}
-
 func (r *Ranger) ExecutePostCalculateMethods(c *models.Character) {
 	r.executeFightingStyle(c)
 }

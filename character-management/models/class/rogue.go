@@ -24,9 +24,6 @@ func LoadRogue(data []byte) (*Rogue, error) {
 	return &ranger, nil
 }
 
-func (r *Rogue) ValidateMethods(c *models.Character) {
-}
-
 func (r *Rogue) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }

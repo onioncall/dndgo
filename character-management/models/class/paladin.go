@@ -39,9 +39,6 @@ func (p *Paladin) ExecutePostCalculateMethods(c *models.Character) {
 func (p *Paladin) ExecutePreCalculateMethods(c *models.Character) {
 }
 
-func (p *Paladin) ValidateMethods(c *models.Character) {
-}
-
 func (p *Paladin) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd10", level)
 }

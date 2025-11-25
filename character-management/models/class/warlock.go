@@ -41,9 +41,6 @@ func (w *Warlock) ExecutePostCalculateMethods(c *models.Character) {
 func (w *Warlock) ExecutePreCalculateMethods(c *models.Character) {
 }
 
-func (w *Warlock) ValidateMethods(c *models.Character) {
-}
-
 func (w *Warlock) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }

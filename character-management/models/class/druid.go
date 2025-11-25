@@ -32,6 +32,7 @@ func (d *Druid) ExecutePostCalculateMethods(c *models.Character) {
 	d.executePreparedSpells(c)
 	d.executeArchDruid(c)
 	d.executeWildShape(c)
+	d.executeCantripVersatility(c)
 }
 
 func (d *Druid) ExecutePreCalculateMethods(c *models.Character) {
@@ -52,16 +53,9 @@ func (d *Druid) executeWildShape(c *models.Character) {
 	d.ClassToken.Maximum = 2
 }
 
-func (d *Druid) ValidateMethods(c *models.Character) {
-	isValid := d.validateCantripVersatility(c)
-	if isValid {
-		logger.HandleInfo("Cantrip Versatility: You have too many cantrips or ability score improvement bonuss for your level")
-	}
-}
-
-func (d *Druid) validateCantripVersatility(c *models.Character) bool {
+func (d *Druid) executeCantripVersatility(c *models.Character) {
 	if c.ValidationDisabled {
-		return true
+		return
 	}
 
 	cantripCount := 0
@@ -95,10 +89,8 @@ func (d *Druid) validateCantripVersatility(c *models.Character) bool {
 	}
 
 	if cantripVersatilityMax < cantripCount+abilityImprovementTotal {
-		return false
+		logger.HandleInfo("Cantrip Versatility: You have too many cantrips or ability score improvement bonuss for your level")
 	}
-
-	return true
 }
 
 func (d *Druid) executeSpellCastingAbility(c *models.Character) {

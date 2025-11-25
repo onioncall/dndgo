@@ -30,9 +30,6 @@ func LoadMonk(data []byte) (*Monk, error) {
 	return &monk, nil
 }
 
-func (m *Monk) ValidateMethods(c *models.Character) {
-}
-
 func (m *Monk) ExecutePostCalculateMethods(c *models.Character) {
 	m.executeUnarmoredDefense(c)
 	m.executeMartialArts(c)
