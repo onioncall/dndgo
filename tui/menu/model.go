@@ -1,7 +1,7 @@
 package menu
 
 import (
-	"github.com/onioncall/dndgo/tui/create"
+	create "github.com/onioncall/dndgo/tui/create"
 	"github.com/onioncall/dndgo/tui/manage"
 	"github.com/onioncall/dndgo/tui/search"
 )

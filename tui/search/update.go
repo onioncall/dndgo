@@ -19,7 +19,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "esc":
-			return m, func() tea.Msg { return shared.NavigateMsg{Page: shared.MenuPage} }
+			return m, func() tea.Msg { return shared.MenuPage }
 		}
 	}
 

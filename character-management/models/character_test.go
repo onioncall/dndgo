@@ -10,19 +10,19 @@ func TestCharacterCalculateAbilitiesFromBase(t *testing.T) {
 	tests := []struct {
 		name      string
 		character *Character
-		expected  []shared.Abilities
+		expected  []shared.Ability
 	}{
 		{
 			name: "Ability mod round down",
 			character: &Character{
 				Level: 3,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Strength", AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},
 					{Name: "Dexterity", AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
 					{Name: "Constitution", AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},
 				},
 			},
-			expected: []shared.Abilities{
+			expected: []shared.Ability{
 				{Name: "Strength", AbilityModifier: 2, Base: 14, SavingThrowsProficient: true},
 				{Name: "Dexterity", AbilityModifier: 1, Base: 12, SavingThrowsProficient: false},
 				{Name: "Constitution", AbilityModifier: 2, Base: 15, SavingThrowsProficient: true},
@@ -58,7 +58,7 @@ func TestCharacterCalculateSkillModifierFromBase(t *testing.T) {
 					{Name: "persuasion", SkillModifier: 0, Proficient: false, Ability: "charisma"},
 					{Name: "deception", SkillModifier: 0, Proficient: false, Ability: "charisma"},
 				},
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Strength", AbilityModifier: 2, Base: 14, SavingThrowsProficient: true},
 					{Name: "Dexterity", AbilityModifier: 1, Base: 12, SavingThrowsProficient: false},
 					{Name: "Constitution", AbilityModifier: 2, Base: 15, SavingThrowsProficient: true},
@@ -144,13 +144,13 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 	tests := []struct {
 		name      string
 		character *Character
-		expected  []shared.Abilities
+		expected  []shared.Ability
 	}{
 		{
 			name: "Level not high enough",
 			character: &Character{
 				Level: 3,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -162,7 +162,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Strength", Bonus: 2},
 				},
 			},
-			expected: []shared.Abilities{
+			expected: []shared.Ability{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -175,7 +175,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			name: "Level 4, one ability increased by two",
 			character: &Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -187,7 +187,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Dexterity", Bonus: 2},
 				},
 			},
-			expected: []shared.Abilities{
+			expected: []shared.Ability{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -200,7 +200,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			name: "Level 4, two abilities increased by one",
 			character: &Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -213,7 +213,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Charisma", Bonus: 1},
 				},
 			},
-			expected: []shared.Abilities{
+			expected: []shared.Ability{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 11, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -226,7 +226,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			name: "Level 4, two abilities increased by two (failure)",
 			character: &Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -239,7 +239,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Charisma", Bonus: 2},
 				},
 			},
-			expected: []shared.Abilities{
+			expected: []shared.Ability{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -252,7 +252,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			name: "Level 8, one ability increased by two, and two abilities increased by one",
 			character: &Character{
 				Level: 8,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -266,7 +266,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Wisdom", Bonus: 1},
 				},
 			},
-			expected: []shared.Abilities{
+			expected: []shared.Ability{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -279,7 +279,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			name: "Level 20, one ability over maximum",
 			character: &Character{
 				Level: 20,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 					{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
 					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -295,7 +295,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 					{Ability: "Dexterity", Bonus: 2},
 				},
 			},
-			expected: []shared.Abilities{
+			expected: []shared.Ability{
 				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 20, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
@@ -330,7 +330,7 @@ func TestCharacterCalculateAC(t *testing.T) {
 		{
 			name: "Light armor, no shield",
 			character: &Character{
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 2},
 				},
 				AC: 0,
@@ -348,7 +348,7 @@ func TestCharacterCalculateAC(t *testing.T) {
 		{
 			name: "Light armor, with shield",
 			character: &Character{
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 2},
 				},
 				AC:              0,
@@ -368,7 +368,7 @@ func TestCharacterCalculateAC(t *testing.T) {
 		{
 			name: "Medium armor, no shield",
 			character: &Character{
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 4},
 				},
 				AC: 0,
@@ -386,7 +386,7 @@ func TestCharacterCalculateAC(t *testing.T) {
 		{
 			name: "Heavy armor, no shield",
 			character: &Character{
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 4},
 				},
 				AC: 0,
@@ -425,7 +425,7 @@ func TestCharacterCalculateWeaponBonus(t *testing.T) {
 			name: "Proficient finesse weapon",
 			character: &Character{
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 2},
 					{Name: shared.AbilityStrength, AbilityModifier: 1},
 				},
@@ -441,7 +441,7 @@ func TestCharacterCalculateWeaponBonus(t *testing.T) {
 			name: "Non-proficient finesse weapon",
 			character: &Character{
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 2},
 					{Name: shared.AbilityStrength, AbilityModifier: 1},
 				},
@@ -457,7 +457,7 @@ func TestCharacterCalculateWeaponBonus(t *testing.T) {
 			name: "Proficient finesse weapon, higher strength mod",
 			character: &Character{
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 2},
 					{Name: shared.AbilityStrength, AbilityModifier: 3},
 				},
@@ -473,7 +473,7 @@ func TestCharacterCalculateWeaponBonus(t *testing.T) {
 			name: "Proficient ranged weapon",
 			character: &Character{
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 2},
 					{Name: shared.AbilityStrength, AbilityModifier: 3},
 				},
@@ -489,7 +489,7 @@ func TestCharacterCalculateWeaponBonus(t *testing.T) {
 			name: "Proficient melee weapon",
 			character: &Character{
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 3},
 					{Name: shared.AbilityStrength, AbilityModifier: 2},
 				},
@@ -527,7 +527,7 @@ func TestCharacterCalculatePassiveStats(t *testing.T) {
 			name: "Proficient perception, non-proficient insight",
 			character: &Character{
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 4},
 				},
 				Skills: []shared.Skill{
@@ -544,7 +544,7 @@ func TestCharacterCalculatePassiveStats(t *testing.T) {
 			name: "Proficient perception, non-proficient insight",
 			character: &Character{
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 4},
 				},
 				Skills: []shared.Skill{
@@ -561,7 +561,7 @@ func TestCharacterCalculatePassiveStats(t *testing.T) {
 			name: "Non-proficient perception, non-proficient insight",
 			character: &Character{
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 4},
 				},
 				Skills: []shared.Skill{

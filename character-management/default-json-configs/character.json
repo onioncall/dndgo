@@ -11,17 +11,13 @@
       "description": ""
     }
   ],
-  "class-features": [
-  ],
   "languages": [
     "Common"
   ],
   "hp-current": 0,
   "hp-max": 0,
   "hp-temp": 0,
-  "initiative": 0,
   "speed": 0,
-  "hit-dice": "",
   "abilities": [
     {
       "name": "Strength",

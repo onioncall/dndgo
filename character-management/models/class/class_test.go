@@ -140,7 +140,7 @@ func TestClassExecuteSpellCastingAbility(t *testing.T) {
 			character: &models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				SpellSaveDC:    0,
@@ -149,7 +149,7 @@ func TestClassExecuteSpellCastingAbility(t *testing.T) {
 			expected: models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				SpellSaveDC:    12,
@@ -190,7 +190,7 @@ func TestClassExecutePreparedSpells(t *testing.T) {
 			name: "No Prepared Spells",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{
@@ -201,7 +201,7 @@ func TestClassExecutePreparedSpells(t *testing.T) {
 			preparedSpells: []string{},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{
@@ -214,7 +214,7 @@ func TestClassExecutePreparedSpells(t *testing.T) {
 			name: "One Prepared Spell",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{
@@ -227,7 +227,7 @@ func TestClassExecutePreparedSpells(t *testing.T) {
 			},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{
@@ -443,7 +443,7 @@ func TestClassAppliedTwoWeaponFighting(t *testing.T) {
 		{
 			name: "No applicable weapons, bonus not applied",
 			character: &models.Character{
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
 				Weapons: []shared.Weapon{
@@ -461,7 +461,7 @@ func TestClassAppliedTwoWeaponFighting(t *testing.T) {
 		{
 			name: "One applicable weapon, bonus not applied",
 			character: &models.Character{
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
 				Weapons: []shared.Weapon{
@@ -479,7 +479,7 @@ func TestClassAppliedTwoWeaponFighting(t *testing.T) {
 		{
 			name: "Two applicable light weapons, bonus applied",
 			character: &models.Character{
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
 				Weapons: []shared.Weapon{
@@ -498,7 +498,7 @@ func TestClassAppliedTwoWeaponFighting(t *testing.T) {
 		{
 			name: "Two applicable weapons, one light, both one handed, bonus applied",
 			character: &models.Character{
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Dexterity", Base: 14, AbilityModifier: 2},
 				},
 				Weapons: []shared.Weapon{
