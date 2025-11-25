@@ -18,7 +18,7 @@ func TestSorcererExecuteSpellCastingAbility(t *testing.T) {
 			character: &models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityCharisma, AbilityModifier: 2},
 				},
 				SpellSaveDC:    0,
@@ -27,7 +27,7 @@ func TestSorcererExecuteSpellCastingAbility(t *testing.T) {
 			expected: models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityCharisma, AbilityModifier: 2},
 				},
 				SpellSaveDC:    12,

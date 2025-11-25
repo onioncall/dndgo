@@ -17,7 +17,7 @@ func TestMonkExecuteUnarmoredDefense(t *testing.T) {
 			name: "Armor equiped, early return",
 			character: &models.Character{
 				AC: 0,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{
 						Name:            shared.AbilityStrength,
 						AbilityModifier: 5,
@@ -55,7 +55,7 @@ func TestMonkExecuteUnarmoredDefense(t *testing.T) {
 			name: "No armor, valid",
 			character: &models.Character{
 				AC: 0,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{
 						Name:            shared.AbilityStrength,
 						AbilityModifier: 1,
@@ -209,7 +209,7 @@ func TestMonkExecuteKiPoints(t *testing.T) {
 			character: &models.Character{
 				Level:       1,
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 4},
 				},
 			},
@@ -228,7 +228,7 @@ func TestMonkExecuteKiPoints(t *testing.T) {
 			character: &models.Character{
 				Level:       4,
 				Proficiency: 3,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 4},
 				},
 			},
@@ -278,7 +278,7 @@ func TestMonkExecuteDeflectMissles(t *testing.T) {
 			character: &models.Character{
 				Level:       2,
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 4},
 				},
 			},
@@ -312,13 +312,13 @@ func TestMonkExecuteDiamond(t *testing.T) {
 	tests := []struct {
 		name      string
 		character *models.Character
-		expected  []shared.Abilities
+		expected  []shared.Ability
 	}{
 		{
 			name: "Below level 14",
 			character: &models.Character{
 				Level: 10,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityStrength, AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},
 					{Name: shared.AbilityDexterity, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
 					{Name: shared.AbilityConstitution, AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},
@@ -327,7 +327,7 @@ func TestMonkExecuteDiamond(t *testing.T) {
 					{Name: shared.AbilityCharisma, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
 				},
 			},
-			expected: []shared.Abilities{
+			expected: []shared.Ability{
 				{Name: shared.AbilityStrength, AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},
 				{Name: shared.AbilityDexterity, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
 				{Name: shared.AbilityConstitution, AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},
@@ -340,7 +340,7 @@ func TestMonkExecuteDiamond(t *testing.T) {
 			name: "Level 14",
 			character: &models.Character{
 				Level: 14,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityStrength, AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},
 					{Name: shared.AbilityDexterity, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
 					{Name: shared.AbilityConstitution, AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},
@@ -349,7 +349,7 @@ func TestMonkExecuteDiamond(t *testing.T) {
 					{Name: shared.AbilityCharisma, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
 				},
 			},
-			expected: []shared.Abilities{
+			expected: []shared.Ability{
 				{Name: shared.AbilityStrength, AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},
 				{Name: shared.AbilityDexterity, AbilityModifier: 0, Base: 12, SavingThrowsProficient: true},
 				{Name: shared.AbilityConstitution, AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},

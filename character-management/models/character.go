@@ -27,10 +27,9 @@ type Character struct {
 	HPCurrent               int                                  `json:"hp-current"`
 	HPMax                   int                                  `json:"hp-max"`
 	HPTemp                  int                                  `json:"hp-temp"`
-	Initiative              int                                  `json:"initiative"`
 	Speed                   int                                  `json:"speed"`
 	HitDice                 string                               `json:"-"`
-	Abilities               []shared.Abilities                   `json:"abilities"`
+	Abilities               []shared.Ability                     `json:"abilities"`
 	Skills                  []shared.Skill                       `json:"skills"`
 	Spells                  []shared.CharacterSpell              `json:"spells"`
 	SpellSlots              []shared.SpellSlot                   `json:"spell-slots"`
@@ -393,7 +392,6 @@ func (c *Character) BuildGeneralStats() []string {
 
 	acLine := fmt.Sprintf("AC: %d\n", c.AC)
 	ssdcLine := fmt.Sprintf("Spell Save DC: %d\n", c.SpellSaveDC)
-	initiativeLine := fmt.Sprintf("Initiative: %d\n", c.Initiative)
 	speedLine := fmt.Sprintf("Speed: %d\n", c.Speed)
 	hpLine := fmt.Sprintf("HP: %d/%d", c.HPCurrent, c.HPMax)
 
@@ -410,7 +408,6 @@ func (c *Character) BuildGeneralStats() []string {
 		nl,
 		acLine,
 		ssdcLine,
-		initiativeLine,
 		speedLine,
 		hpLine,
 		nl,

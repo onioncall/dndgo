@@ -112,7 +112,7 @@ func TestClericExecuteSpellCastingAbility(t *testing.T) {
 			character: &models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
 				SpellSaveDC:    0,
@@ -121,7 +121,7 @@ func TestClericExecuteSpellCastingAbility(t *testing.T) {
 			expected: models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
 				SpellSaveDC:    12,
@@ -162,7 +162,7 @@ func TestClericExecutePreparedSpells(t *testing.T) {
 			name: "One Prepared Spell",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{
@@ -177,7 +177,7 @@ func TestClericExecutePreparedSpells(t *testing.T) {
 			},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{

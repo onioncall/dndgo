@@ -121,7 +121,7 @@ func TestPaladinExecutePreparedSpells(t *testing.T) {
 			name: "One Prepared Spell",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{
@@ -136,7 +136,7 @@ func TestPaladinExecutePreparedSpells(t *testing.T) {
 			},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{
@@ -175,7 +175,7 @@ func TestPaladinExecuteOathSpells(t *testing.T) {
 			name: "One Oath Spell",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{
@@ -190,7 +190,7 @@ func TestPaladinExecuteOathSpells(t *testing.T) {
 			},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityIntelligence, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{

@@ -31,7 +31,7 @@ func TestWarlockAppliedArmorOfShadows(t *testing.T) {
 			name: "Armor not equiped, bonus added",
 			character: &models.Character{
 				AC: 15,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityDexterity, AbilityModifier: 4},
 				},
 				WornEquipment: shared.WornEquipment{

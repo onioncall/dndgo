@@ -17,7 +17,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 			name: "Armor equiped, early return",
 			character: &models.Character{
 				AC: 0,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{
 						Name:            shared.AbilityStrength,
 						AbilityModifier: 5,
@@ -55,7 +55,7 @@ func TestBarbarianExecuteUnarmoredDefense(t *testing.T) {
 			name: "No armor, valid",
 			character: &models.Character{
 				AC: 0,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{
 						Name:            shared.AbilityStrength,
 						AbilityModifier: 5,
@@ -157,18 +157,18 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 	tests := []struct {
 		name      string
 		character *models.Character
-		expected  []shared.Abilities
+		expected  []shared.Ability
 	}{
 		{
 			name: "Below level threshold",
 			character: &models.Character{
 				Level: 15,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Strength", Base: 16},
 					{Name: "Constitution", Base: 16},
 				},
 			},
-			expected: []shared.Abilities{
+			expected: []shared.Ability{
 				{Name: "Strength", Base: 16},
 				{Name: "Constitution", Base: 16},
 			},
@@ -177,12 +177,12 @@ func TestBarbarianExecutePrimalChampion(t *testing.T) {
 			name: "Meets level requirements, valid configuration",
 			character: &models.Character{
 				Level: 20,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: "Strength", Base: 17},
 					{Name: "Constitution", Base: 17},
 				},
 			},
-			expected: []shared.Abilities{
+			expected: []shared.Ability{
 				{Name: "Strength", Base: 21},
 				{Name: "Constitution", Base: 21},
 			},

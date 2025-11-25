@@ -164,7 +164,7 @@ func TestDruidExecuteSpellCastingAbility(t *testing.T) {
 			character: &models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
 				SpellSaveDC:    0,
@@ -173,7 +173,7 @@ func TestDruidExecuteSpellCastingAbility(t *testing.T) {
 			expected: models.Character{
 				Level:       4,
 				Proficiency: 2,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
 				SpellSaveDC:    12,
@@ -214,7 +214,7 @@ func TestDruidExecutePreparedSpells(t *testing.T) {
 			name: "One Prepared Spell",
 			character: &models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{
@@ -229,7 +229,7 @@ func TestDruidExecutePreparedSpells(t *testing.T) {
 			},
 			expected: models.Character{
 				Level: 4,
-				Abilities: []shared.Abilities{
+				Abilities: []shared.Ability{
 					{Name: shared.AbilityWisdom, AbilityModifier: 2},
 				},
 				Spells: []shared.CharacterSpell{

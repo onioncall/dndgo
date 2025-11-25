@@ -1,6 +1,6 @@
 package shared
 
-type Abilities struct {
+type Ability struct {
 	Name                   string `json:"name"`
 	Base                   int    `json:"base"`
 	Adjusted               int    `json:"-"`
@@ -17,7 +17,7 @@ const (
 	AbilityStrength     string = "strength"
 	AbilityDexterity    string = "dexterity"
 	AbilityConstitution string = "constitution"
-	AbilityIntelligence string = "Intelligence"
+	AbilityIntelligence string = "intelligence"
 	AbilityWisdom       string = "wisdom"
 	AbilityCharisma     string = "charisma"
 )
