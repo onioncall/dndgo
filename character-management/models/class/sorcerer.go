@@ -32,12 +32,6 @@ func (s *Sorcerer) ExecutePostCalculateMethods(c *models.Character) {
 	s.executeSorceryPoints(c)
 }
 
-func (s *Sorcerer) ExecutePreCalculateMethods(c *models.Character) {
-}
-
-func (s *Sorcerer) ValidateMethods(c *models.Character) {
-}
-
 func (s *Sorcerer) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd6", level)
 }

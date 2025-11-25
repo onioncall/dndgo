@@ -48,11 +48,19 @@ type GenericItem struct {
 }
 
 type Class interface {
-	ValidateMethods(c *Character)
 	CalculateHitDice(int) string
-	ExecutePostCalculateMethods(c *Character)
-	ExecutePreCalculateMethods(c *Character)
 	PrintClassDetails(c *Character) []string
+}
+
+type PostCalculator interface {
+	ExecutePostCalculateMethods(c *Character)
+}
+
+type PreCalculator interface {
+	ExecutePreCalculateMethods(c *Character)
+}
+
+type TokenClass interface {
 	GetTokens() []string
 	UseClassTokens(string, int)
 	RecoverClassTokens(string, int)
@@ -829,20 +837,29 @@ func (c *Character) Recover() {
 		c.SpellSlots[i].Available = c.SpellSlots[i].Maximum
 	}
 
-	if c.Class != nil {
-		c.Class.ExecutePostCalculateMethods(c)
-		c.Class.RecoverClassTokens("", 0)
+	if c.Class == nil {
+		return
 	}
+
+	c.RecoverClassTokens("", 0)
 }
 
 func (c *Character) UseClassTokens(name string, quantity int) {
-	c.Class.UseClassTokens(name, quantity)
+	if tokenClass, ok := c.Class.(TokenClass); ok {
+		tokenClass.UseClassTokens(name, quantity)
+	}
 }
 
 func (c *Character) RecoverClassTokens(name string, quantity int) {
 	c.CalculateCharacterStats()
-	c.Class.ExecutePostCalculateMethods(c)
-	c.Class.RecoverClassTokens(name, quantity)
+
+	if tokenClass, ok := c.Class.(TokenClass); ok {
+		if postCalculater, ok := c.Class.(PostCalculator); ok {
+			postCalculater.ExecutePostCalculateMethods(c)
+		}
+
+		tokenClass.RecoverClassTokens("", 0)
+	}
 }
 
 func (c *Character) Equip(isPrimary bool, name string) {

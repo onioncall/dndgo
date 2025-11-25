@@ -30,9 +30,6 @@ func LoadBarbarian(data []byte) (*Barbarian, error) {
 	return &barbarian, nil
 }
 
-func (b *Barbarian) ValidateMethods(c *models.Character) {
-}
-
 func (b *Barbarian) ExecutePostCalculateMethods(c *models.Character) {
 	b.executeRage(c)
 	b.executeUnarmoredDefense(c)

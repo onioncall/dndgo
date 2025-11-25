@@ -38,12 +38,6 @@ func (w *Warlock) ExecutePostCalculateMethods(c *models.Character) {
 	w.executeEldritchInvocations(c)
 }
 
-func (w *Warlock) ExecutePreCalculateMethods(c *models.Character) {
-}
-
-func (w *Warlock) ValidateMethods(c *models.Character) {
-}
-
 func (w *Warlock) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }
@@ -116,20 +110,4 @@ func (w *Warlock) PrintClassDetails(c *models.Character) []string {
 	}
 
 	return s
-}
-
-// CLI
-
-func (w *Warlock) UseClassTokens(tokenName string, quantity int) {
-	// Not sure Warlocks have a token like system to implement
-	logger.HandleInfo("No token set up for Warlock class")
-}
-
-func (w *Warlock) RecoverClassTokens(tokenName string, quantity int) {
-	// Not sure Warlocks have a token like system to implement
-	logger.HandleInfo("No token set up for Warlock class")
-}
-
-func (w *Warlock) GetTokens() []string {
-	return []string{}
 }

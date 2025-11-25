@@ -30,17 +30,11 @@ func LoadBard(data []byte) (*Bard, error) {
 	return &bard, nil
 }
 
-func (b *Bard) ValidateMethods(c *models.Character) {
-}
-
 func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
 	b.executeJackOfAllTrades(c)
 	b.executeExpertise(c)
 	b.executeSpellCastingAbility(c)
 	b.executeBardicInspiration(c)
-}
-
-func (b *Bard) ExecutePreCalculateMethods(c *models.Character) {
 }
 
 func (b *Bard) CalculateHitDice(level int) string {

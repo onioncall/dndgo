@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/character-management/handlers"
+	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/logger"
 	"github.com/spf13/cobra"
 )
@@ -137,12 +138,18 @@ var (
 					return
 				}
 
-				tokens := c.Class.GetTokens()
+				var tokenClass models.TokenClass
+				tokenClass, ok := c.Class.(models.TokenClass)
+				if !ok {
+					fmt.Println("Class does not implement TokenClass")
+					return
+				}
 
+				tokens := tokenClass.GetTokens()
 				if len(tokens) == 0 {
 					fmt.Println("Class has no tokens implemented")
 				} else if len(tokens) == 1 {
-					fmt.Println("(class only has one token, when modifying token values for this class you may enter any value)")
+					fmt.Println("(Class only has one token, when modifying token values for this class you may enter any value)")
 					fmt.Printf("-> %s\n", tokens[0])
 				} else {
 					fmt.Println("Tokens:")

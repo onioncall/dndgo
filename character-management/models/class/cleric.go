@@ -27,13 +27,6 @@ func LoadCleric(data []byte) (*Cleric, error) {
 	return &cleric, nil
 }
 
-func (cl *Cleric) ValidateMethods(c *models.Character) {
-	isValid := cl.validateCantripVersatility(c)
-	if isValid {
-		logger.HandleInfo("Cantrip Versatility: You have too many cantrips or ability score improvement bonuss for your level")
-	}
-}
-
 func (cl *Cleric) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }
@@ -42,9 +35,7 @@ func (cl *Cleric) ExecutePostCalculateMethods(c *models.Character) {
 	cl.executeSpellCastingAbility(c)
 	cl.executePreparedSpells(c)
 	cl.executeChannelDiversity(c)
-}
-
-func (cl *Cleric) ExecutePreCalculateMethods(c *models.Character) {
+	cl.executeCantripVersatility(c)
 }
 
 func (cl *Cleric) executeChannelDiversity(c *models.Character) {
@@ -67,11 +58,11 @@ func (cl *Cleric) executeChannelDiversity(c *models.Character) {
 	}
 }
 
-func (cl *Cleric) validateCantripVersatility(c *models.Character) bool {
+func (cl *Cleric) executeCantripVersatility(c *models.Character) {
 	// Even though this is functionally the same as the Druid version, the switch table is different,
 	// so we're going to have these exist separately
 	if c.ValidationDisabled {
-		return true
+		return
 	}
 
 	cantripCount := 0
@@ -105,10 +96,8 @@ func (cl *Cleric) validateCantripVersatility(c *models.Character) bool {
 	}
 
 	if cantripVersatilityMax < cantripCount+abilityImprovementTotal {
-		return false
+		logger.HandleInfo("Cantrip Versatility: You have too many cantrips or ability score improvement bonuss for your level")
 	}
-
-	return true
 }
 
 func (cl *Cleric) executeSpellCastingAbility(c *models.Character) {

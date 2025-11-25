@@ -33,15 +33,9 @@ func LoadFighter(data []byte) (*Fighter, error) {
 	return &fighter, nil
 }
 
-func (f *Fighter) ValidateMethods(c *models.Character) {
-}
-
 func (f *Fighter) ExecutePostCalculateMethods(c *models.Character) {
 	f.executeFightingStyle(c)
 	f.executeClassTokens()
-}
-
-func (f *Fighter) ExecutePreCalculateMethods(c *models.Character) {
 }
 
 func (f *Fighter) CalculateHitDice(level int) string {

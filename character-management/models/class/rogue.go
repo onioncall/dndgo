@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/logger"
 )
 
 type Rogue struct {
@@ -24,9 +23,6 @@ func LoadRogue(data []byte) (*Rogue, error) {
 	return &ranger, nil
 }
 
-func (r *Rogue) ValidateMethods(c *models.Character) {
-}
-
 func (r *Rogue) CalculateHitDice(level int) string {
 	return fmt.Sprintf("%dd8", level)
 }
@@ -34,9 +30,6 @@ func (r *Rogue) CalculateHitDice(level int) string {
 func (r *Rogue) ExecutePostCalculateMethods(c *models.Character) {
 	r.executeExpertise(c)
 	r.executeSneakAttack(c)
-}
-
-func (r *Rogue) ExecutePreCalculateMethods(c *models.Character) {
 }
 
 // At level 1, rogues can pick two skills they are proficient in, and double the modifier.
@@ -104,20 +97,4 @@ func (r *Rogue) PrintClassDetails(c *models.Character) []string {
 	}
 
 	return s
-}
-
-// CLI
-
-func (r *Rogue) UseClassTokens(tokenName string, quantity int) {
-	// Not sure Rogues have a token like system to implement
-	logger.HandleInfo("No token set up for Rogue class")
-}
-
-func (r *Rogue) RecoverClassTokens(tokenName string, quantity int) {
-	// Not sure Rogues have a token like system to implement
-	logger.HandleInfo("No token set up for Rogue class")
-}
-
-func (r *Rogue) GetTokens() []string {
-	return []string{}
 }
