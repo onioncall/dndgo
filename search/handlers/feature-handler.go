@@ -6,7 +6,7 @@ import (
 
 	"github.com/onioncall/dndgo/search/api"
 	"github.com/onioncall/dndgo/search/api/responses"
-	"github.com/onioncall/dndgo/search/cli"
+	"github.com/onioncall/dndgo/search/format"
 )
 
 type FeatureRequest api.BaseRequest
@@ -24,7 +24,7 @@ func HandleFeatureRequest(featureQuery string, termWidth int) (string, error) {
 		return "", fmt.Errorf("Failed to handle feature request (%s): %w", featureQuery, err)
 	}
 
-	result := cli.FormatFeatureSingle(f, termWidth)
+	result := format.FormatFeatureSingle(f, termWidth)
 	return result, nil
 }
 
@@ -38,7 +38,7 @@ func HandleFeatureListRequest() (string, error) {
 		return "", fmt.Errorf("Failed to handle feature request list: %w", err)
 	}
 
-	result := cli.FormatFeatureList(fl)
+	result := format.FormatFeatureList(fl)
 	return result, nil
 }
 

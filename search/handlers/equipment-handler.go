@@ -6,7 +6,7 @@ import (
 
 	"github.com/onioncall/dndgo/search/api"
 	"github.com/onioncall/dndgo/search/api/responses"
-	"github.com/onioncall/dndgo/search/cli"
+	"github.com/onioncall/dndgo/search/format"
 )
 
 type EquipmentRequest api.BaseRequest
@@ -24,7 +24,7 @@ func HandleEquipmentRequest(equipmentQuery string, termWidth int) (string, error
 		return "", fmt.Errorf("Failed to handle equipment request (%s): %w", equipmentQuery, err)
 	}
 
-	result := cli.FormatEquipmentSingle(e, termWidth)
+	result := format.FormatEquipmentSingle(e, termWidth)
 	return result, nil
 }
 
@@ -39,7 +39,7 @@ func HandleEquipmentListRequest() (string, error) {
 		return "", fmt.Errorf("Failed to handle equipment request list: %w", err)
 	}
 
-	result := cli.FormatEquipmentList(el)
+	result := format.FormatEquipmentList(el)
 	return result, nil
 }
 

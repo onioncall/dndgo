@@ -39,7 +39,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			m.updateViewportSize()
 		case "enter":
 			searchInput := m.searchInput.Value()
-			m.selectedTabIndex, searchInput = searchUserCmd(searchInput)
+			m.selectedTabIndex, searchInput = searchUserCmd(searchInput, m.selectedTabIndex)
 
 			var result string
 			var err error
@@ -76,11 +76,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func searchUserCmd(searchInput string) (int, string) {
+func searchUserCmd(searchInput string, currentTab int) (int, string) {
 	cmd, searchInputAfterCmd, _ := strings.Cut(searchInput, " ")
 
-	var tab int
-	var newSearchInput string
+	tab := currentTab
+	newSearchInput := searchInput
 
 	switch strings.ToLower(cmd) {
 	case spellCmd:

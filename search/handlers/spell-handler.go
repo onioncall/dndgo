@@ -6,7 +6,7 @@ import (
 
 	"github.com/onioncall/dndgo/search/api"
 	"github.com/onioncall/dndgo/search/api/responses"
-	"github.com/onioncall/dndgo/search/cli"
+	"github.com/onioncall/dndgo/search/format"
 )
 
 type SpellRequest api.BaseRequest
@@ -24,7 +24,7 @@ func HandleSpellRequest(spellQuery string, termWidth int) (string, error) {
 		return "", fmt.Errorf("Failed to handle spell request (%s): %w", spellQuery, err)
 	}
 
-	result := cli.FormatSpellSingle(spell, termWidth)
+	result := format.FormatSpellSingle(spell, termWidth)
 	return result, nil
 }
 
@@ -39,7 +39,7 @@ func HandleSpellListRequest() (string, error) {
 		return "", fmt.Errorf("Failed to handle spell request list: %w", err)
 	}
 
-	result := cli.FormatSpellList(sl)
+	result := format.FormatSpellList(sl)
 	return result, nil
 }
 

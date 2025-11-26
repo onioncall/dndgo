@@ -6,7 +6,7 @@ import (
 
 	"github.com/onioncall/dndgo/search/api"
 	"github.com/onioncall/dndgo/search/api/responses"
-	"github.com/onioncall/dndgo/search/cli"
+	"github.com/onioncall/dndgo/search/format"
 )
 
 type MonsterRequest api.BaseRequest
@@ -24,7 +24,7 @@ func HandleMonsterRequest(monsterQuery string, termWidth int) (string, error) {
 		return "", fmt.Errorf("Failed to handle monster request (%s): %w", monsterQuery, err)
 	}
 
-	result := cli.FormatMonsterSingle(m, termWidth)
+	result := format.FormatMonsterSingle(m, termWidth)
 	return result, nil
 }
 
@@ -39,7 +39,7 @@ func HandleMonsterListRequest() (string, error) {
 		return "", fmt.Errorf("Failed to handle monster request list: %w", err)
 	}
 
-	result := cli.FormatMonsterList(ml)
+	result := format.FormatMonsterList(ml)
 	return result, nil
 }
 
