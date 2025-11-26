@@ -101,30 +101,37 @@ func searchUserCmd(searchInput string, currentTab int) (int, string) {
 func searchUserInput(input string, currentIndex int, width int) (string, error) {
 	var result string
 	var err error
+	const list string = "list"
 
 	if input == "" {
 		return result, nil
 	}
 
+	lowercaseInput := strings.ToLower(input)
+
 	switch currentIndex {
 	case spellTab:
-		if input == "list" {
+		if lowercaseInput == list {
 			result, err = handlers.HandleSpellListRequest()
+			break
 		}
 		result, err = handlers.HandleSpellRequest(input, width)
 	case monsterTab:
-		if input == "list" {
+		if lowercaseInput == list {
 			result, err = handlers.HandleMonsterListRequest()
+			break
 		}
 		result, err = handlers.HandleMonsterRequest(input, width)
 	case equipmentTab:
-		if input == "list" {
+		if lowercaseInput == list {
 			result, err = handlers.HandleEquipmentListRequest()
+			break
 		}
 		result, err = handlers.HandleEquipmentRequest(input, width)
 	case featureTab:
-		if input == "list" {
+		if lowercaseInput == list {
 			result, err = handlers.HandleFeatureListRequest()
+			break
 		}
 		result, err = handlers.HandleFeatureRequest(input, width)
 	}

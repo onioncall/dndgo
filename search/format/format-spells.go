@@ -26,7 +26,7 @@ func FormatSpellSingle(spell responses.Spell, termWidth int) string {
 	builder.WriteString(fmt.Sprintf("Duration: %v\n", spell.Duration))
 
 	if spell.Damage != nil {
-		fmt.Println()
+		builder.WriteString("\n")
 		builder.WriteString(fmt.Sprintf("Damage Type: %s\n", spell.Damage.DamageType.Name))
 
 		if spell.Damage.DamageAtSlotLevel != nil {
