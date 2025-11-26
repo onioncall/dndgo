@@ -157,6 +157,7 @@ func LoadCharacterTemplate(characterName string, className string) (*models.Char
 	}
 	character.Name = characterName
 	character.ClassName = className
+	character.Default = true
 
 	return &character, nil
 }

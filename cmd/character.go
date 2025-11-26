@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/onioncall/dndgo/character-management/db"
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/logger"
@@ -20,6 +21,12 @@ var (
 		Use:   "add",
 		Short: "Add character attributes",
 		Run: func(cmd *cobra.Command, args []string) {
+			repo, err := db.NewRepo()
+			if err != nil {
+				panic(fmt.Sprintf("Failed to initialize db:\n%v", err.Error()))
+			}
+			defer repo.Deinit()
+
 			l, _ := cmd.Flags().GetString("language")
 			bp, _ := cmd.Flags().GetString("backpack")
 			il, _ := cmd.Flags().GetBool("level")
@@ -30,9 +37,9 @@ var (
 			t, _ := cmd.Flags().GetInt("temp-hp")
 			n, _ := cmd.Flags().GetString("name")
 
-			c, err := handlers.LoadCharacter()
+			c, err := repo.GetCharacter()
 			if err != nil {
-				logger.Info("Failed to save character data")
+				logger.Info("Failed to load character data")
 				panic(err)
 			}
 
@@ -69,15 +76,9 @@ var (
 				c.AddTempHp(t)
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = repo.SyncCharacter(*c)
 			if err != nil {
 				logger.Info("Failed to save character data")
-				panic(err)
-			}
-
-			err = handlers.SaveClassHandler(c.Class)
-			if err != nil {
-				logger.Info("Failed to save class data")
 				panic(err)
 			}
 
@@ -320,6 +321,12 @@ var (
 		Use:   "init",
 		Short: "Initializes a new character on this machine",
 		Run: func(cmd *cobra.Command, args []string) {
+			repo, err := db.NewRepo()
+			if err != nil {
+				panic(fmt.Sprintf("Failed to initialize db:\n%v", err.Error()))
+			}
+			defer repo.Deinit()
+
 			c, _ := cmd.Flags().GetString("class")
 			n, _ := cmd.Flags().GetString("name")
 
@@ -328,24 +335,19 @@ var (
 				logger.Info("Failed to load character template")
 				panic(err)
 			}
-			err = handlers.SaveCharacterJson(character)
+
+			class, err := handlers.LoadClassTemplate(c)
+			if err != nil {
+				errMsg := "Failed to load class template"
+				logger.HandleInfo(errMsg)
+				panic(fmt.Errorf("%s: %w", errMsg, err))
+			}
+			character.Class = class
+
+			_, err = repo.InsertCharacter(*character)
 			if err != nil {
 				logger.Info("Failed to save new character data")
 				panic(err)
-			}
-
-			if c != "" {
-				class, err := handlers.LoadClassTemplate(c)
-				if err != nil {
-					errMsg := "Failed to load class template"
-					logger.Info(errMsg)
-					panic(fmt.Errorf("%s: %w", errMsg, err))
-				}
-				err = handlers.SaveClassHandler(class)
-				if err != nil {
-					logger.Info("Failed to save new class data")
-					panic(err)
-				}
 			}
 
 			logger.Info("Character Creation Successful")
@@ -456,6 +458,7 @@ func init() {
 
 	initCmd.Flags().StringP("class", "c", "", "Name of character class")
 	initCmd.Flags().StringP("name", "n", "", "Name of character")
+	initCmd.MarkFlagRequired("class")
 	initCmd.MarkFlagRequired("name")
 
 	equipCmd.Flags().StringP("primary", "p", "", "Equip primary weapon or shield")
