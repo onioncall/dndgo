@@ -13,7 +13,7 @@ type FeatureRequest api.BaseRequest
 
 const FeatureType api.PathType = "features"
 
-func HandleFeatureRequest(featureQuery string, termWidth int) error {
+func HandleFeatureRequest(featureQuery string, termWidth int) (string, error) {
 	r := FeatureRequest{
 		Name:     featureQuery,
 		PathType: FeatureType,
@@ -21,25 +21,25 @@ func HandleFeatureRequest(featureQuery string, termWidth int) error {
 
 	f, err := r.GetSingle()
 	if err != nil {
-		return fmt.Errorf("Failed to handle feature request (%s): %w", featureQuery, err)
+		return "", fmt.Errorf("Failed to handle feature request (%s): %w", featureQuery, err)
 	}
 
-	cli.PrintFeatureSingle(f, termWidth)
-	return nil
+	result := cli.FormatFeatureSingle(f, termWidth)
+	return result, nil
 }
 
-func HandleFeatureListRequest() error {
+func HandleFeatureListRequest() (string, error) {
 	r := FeatureRequest{
 		PathType: FeatureType,
 	}
 
 	fl, err := r.GetList()
 	if err != nil {
-		return fmt.Errorf("Failed to handle feature request list: %w", err)
+		return "", fmt.Errorf("Failed to handle feature request list: %w", err)
 	}
 
-	cli.PrintFeatureList(fl)
-	return nil
+	result := cli.FormatFeatureList(fl)
+	return result, nil
 }
 
 func (f *FeatureRequest) GetList() (responses.FeatureList, error) {

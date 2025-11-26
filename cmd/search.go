@@ -31,11 +31,11 @@ var (
 			case s != "":
 				result, err = handlers.HandleSpellRequest(s, w)
 			case e != "":
-				err = handlers.HandleEquipmentRequest(e, w)
+				result, err = handlers.HandleEquipmentRequest(e, w)
 			case m != "":
-				err = handlers.HandleMonsterRequest(m, w)
+				result, err = handlers.HandleMonsterRequest(m, w)
 			case f != "":
-				err = handlers.HandleFeatureRequest(f, w)
+				result, err = handlers.HandleFeatureRequest(f, w)
 			}
 
 			if err != nil {
@@ -59,21 +59,26 @@ var (
 			f, _ := cmd.Flags().GetBool("feature")
 
 			var err error
+			var result string
 
 			switch {
 			case s:
-				err = handlers.HandleSpellListRequest()
+				result, err = handlers.HandleSpellListRequest()
 			case e:
-				err = handlers.HandleEquipmentListRequest()
+				result, err = handlers.HandleEquipmentListRequest()
 			case m:
-				err = handlers.HandleMonsterListRequest()
+				result, err = handlers.HandleMonsterListRequest()
 			case f:
-				err = handlers.HandleFeatureListRequest()
+				result, err = handlers.HandleFeatureListRequest()
 			}
 
 			if err != nil {
 				logger.Info("Failed to hande search list request")
 				panic(err)
+			}
+
+			if result != "" {
+				fmt.Println(result)
 			}
 		},
 	}

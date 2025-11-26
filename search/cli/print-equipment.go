@@ -2,34 +2,42 @@ package cli
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/onioncall/dndgo/search/api/responses"
 	"github.com/onioncall/wrapt"
 )
 
-func PrintEquipmentSingle(equipment responses.Equipment, termWidth int) {
-	fmt.Printf("%s\n\n", equipment.Name)
+func PrintEquipmentSingle(equipment responses.Equipment, termWidth int) string {
+	var builder strings.Builder
+
+	builder.WriteString(fmt.Sprintf("%s\n\n", equipment.Name))
 
 	for _, description := range equipment.Desc {
-		fmt.Printf("%s\n\n", wrapt.Wrap(description, termWidth))
+		builder.WriteString(fmt.Sprintf("%s\n\n", wrapt.Wrap(description, termWidth)))
 	}
 
-	fmt.Printf("Equipment Category: %s\n", equipment.EquipmentCategory.Name)
+	builder.WriteString(fmt.Sprintf("Equipment Category: %s\n", equipment.EquipmentCategory.Name))
 	if equipment.GearCategory != nil {
-		fmt.Printf("Gear Category: %s\n", equipment.GearCategory.Name)
+		builder.WriteString(fmt.Sprintf("Gear Category: %s\n", equipment.GearCategory.Name))
 	} else if equipment.WeaponCategory != "" {
-		fmt.Printf("Weapon Category: %s\n", equipment.WeaponCategory)
-		fmt.Printf("Weapon Range: %s - %d\n", equipment.WeaponRange, equipment.Range.Normal)
-		fmt.Printf("Damage: %s\n", equipment.Damage.DamageDice)
-		fmt.Printf("Damage Type: %s\n", equipment.Damage.DamageType.Name)
+		builder.WriteString(fmt.Sprintf("Weapon Category: %s\n", equipment.WeaponCategory))
+		builder.WriteString(fmt.Sprintf("Weapon Range: %s - %d\n", equipment.WeaponRange, equipment.Range.Normal))
+		builder.WriteString(fmt.Sprintf("Damage: %s\n", equipment.Damage.DamageDice))
+		builder.WriteString(fmt.Sprintf("Damage Type: %s\n", equipment.Damage.DamageType.Name))
 	}
 
-	fmt.Printf("Cost: %d%s\n", equipment.Cost.Quantity, equipment.Cost.Unit)
+	builder.WriteString(fmt.Sprintf("Cost: %d%s\n", equipment.Cost.Quantity, equipment.Cost.Unit))
+
+	return builder.String()
 }
 
-func PrintEquipmentList(equipmentList responses.EquipmentList) {
-	fmt.Print("Equipment Name\n\n")
+func PrintEquipmentList(equipmentList responses.EquipmentList) string {
+	var builder strings.Builder
+	builder.WriteString("Equipment Name\n\n")
 	for _, equpment := range equipmentList.ListItems {
-		fmt.Printf("%s - %s\n", equpment.Name, equpment.Index)
+		builder.WriteString(fmt.Sprintf("%s - %s\n", equpment.Name, equpment.Index))
 	}
+
+	return builder.String()
 }

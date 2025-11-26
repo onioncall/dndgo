@@ -9,7 +9,7 @@ import (
 	"github.com/onioncall/wrapt"
 )
 
-func PrintSpellSingle(spell responses.Spell, termWidth int) string {
+func FormatSpellSingle(spell responses.Spell, termWidth int) string {
 	var builder strings.Builder
 
 	builder.WriteString(fmt.Sprintf("%s\n\n", spell.Name))
@@ -32,14 +32,14 @@ func PrintSpellSingle(spell responses.Spell, termWidth int) string {
 		if spell.Damage.DamageAtSlotLevel != nil {
 			builder.WriteString(fmt.Sprintf("Damage By Slot Level: \n\n"))
 			// Because maps aren't sortable, we have to do this to print the damage by slot level nicely
-			builder.WriteString(damageBySlotLevel(spell.Damage.DamageAtSlotLevel))
+			builder.WriteString(formatDamageBySlotLevel(spell.Damage.DamageAtSlotLevel))
 		}
 	}
 
 	return builder.String()
 }
 
-func damageBySlotLevel(dmg map[int]string) string {
+func formatDamageBySlotLevel(dmg map[int]string) string {
 	var builder strings.Builder
 
 	keys := make([]int, 0, len(dmg))
@@ -55,7 +55,7 @@ func damageBySlotLevel(dmg map[int]string) string {
 	return builder.String()
 }
 
-func PrintSpellList(spellList responses.SpellList) string {
+func FormatSpellList(spellList responses.SpellList) string {
 	var builder strings.Builder
 	builder.WriteString("Spell Name | Level")
 	for _, spell := range spellList.ListItems {

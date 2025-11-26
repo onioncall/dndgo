@@ -2,48 +2,60 @@ package cli
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/onioncall/dndgo/search/api/responses"
 	"github.com/onioncall/wrapt"
 )
 
-func PrintMonsterSingle(monster responses.Monster, termWidth int) {
+func FormatMonsterSingle(monster responses.Monster, termWidth int) string {
+	var builder strings.Builder
 
-	fmt.Printf("%s\n\n", monster.Name)
-	fmt.Printf("Hit Points: %d\n", monster.HitPoints)
-	fmt.Printf("Strength: %d\n", monster.Strength)
-	fmt.Printf("Dexterity: %d\n", monster.Dexterity)
-	fmt.Printf("Consitution: %d\n", monster.Constitution)
-	fmt.Printf("Intelligence: %d\n", monster.Intelligence)
-	fmt.Printf("Wisdom: %d\n", monster.Wisdom)
-	fmt.Printf("Charisma: %d\n", monster.Charisma)
-	fmt.Println()
+	builder.WriteString(fmt.Sprintf("%s\n\n", monster.Name))
+	builder.WriteString(fmt.Sprintf("Hit Points: %d\n", monster.HitPoints))
+	builder.WriteString(fmt.Sprintf("Strength: %d\n", monster.Strength))
+	builder.WriteString(fmt.Sprintf("Dexterity: %d\n", monster.Dexterity))
+	builder.WriteString(fmt.Sprintf("Consitution: %d\n", monster.Constitution))
+	builder.WriteString(fmt.Sprintf("Intelligence: %d\n", monster.Intelligence))
+	builder.WriteString(fmt.Sprintf("Wisdom: %d\n", monster.Wisdom))
+	builder.WriteString(fmt.Sprintf("Charisma: %d\n", monster.Charisma))
+	builder.WriteString("\n")
 
 	if len(monster.SpecialAbilities) > 0 {
-		printSpecialAbilities(monster.SpecialAbilities, termWidth)
+		formatSpecialAbilities(monster.SpecialAbilities, termWidth)
 	}
+
+	return builder.String()
 }
 
-func PrintMonsterList(monsterList responses.MonsterList) {
+func FormatMonsterList(monsterList responses.MonsterList) string {
+	var builder strings.Builder
+
 	fmt.Print("Monster Name\n\n")
 	for _, monster := range monsterList.ListItems {
-		fmt.Printf("%s - %s\n", monster.Name, monster.Index)
+		builder.WriteString(fmt.Sprintf("%s - %s\n", monster.Name, monster.Index))
 	}
+
+	return builder.String()
 }
 
-func printSpecialAbilities(abilities []responses.SpecialAbility, termWidth int) {
-	fmt.Print("Special Abilities:\n")
+func formatSpecialAbilities(abilities []responses.SpecialAbility, termWidth int) string {
+	var builder strings.Builder
+
+	builder.WriteString("Special Abilities:\n")
 
 	for _, ability := range abilities {
 		tab := "    "
-		fmt.Println()
-		fmt.Printf("%s%s\n", tab, ability.Name)
+		builder.WriteString("\n")
+		builder.WriteString(fmt.Sprintf("%s%s\n", tab, ability.Name))
 		for _, s := range wrapt.WrapArray(ability.Desc, len(tab), termWidth) {
-			fmt.Printf("%s%s\n", tab, s)
+			builder.WriteString(fmt.Sprintf("%s%s\n", tab, s))
 		}
 		if ability.Usage != nil {
-			fmt.Printf("%sType: %s\n", tab, ability.Usage.Type)
-			fmt.Printf("%sUsage Times: %d\n", tab, ability.Usage.Times)
+			builder.WriteString(fmt.Sprintf("%sType: %s\n", tab, ability.Usage.Type))
+			builder.WriteString(fmt.Sprintf("%sUsage Times: %d\n", tab, ability.Usage.Times))
 		}
 	}
+
+	return builder.String()
 }

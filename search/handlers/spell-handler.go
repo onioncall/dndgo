@@ -24,11 +24,11 @@ func HandleSpellRequest(spellQuery string, termWidth int) (string, error) {
 		return "", fmt.Errorf("Failed to handle spell request (%s): %w", spellQuery, err)
 	}
 
-	result := cli.PrintSpellSingle(spell, termWidth)
+	result := cli.FormatSpellSingle(spell, termWidth)
 	return result, nil
 }
 
-func HandleSpellListRequest() error {
+func HandleSpellListRequest() (string, error) {
 	r := SpellRequest{
 		Name:     "",
 		PathType: SpellType,
@@ -36,11 +36,11 @@ func HandleSpellListRequest() error {
 
 	sl, err := r.GetList()
 	if err != nil {
-		return fmt.Errorf("Failed to handle spell request list: %w", err)
+		return "", fmt.Errorf("Failed to handle spell request list: %w", err)
 	}
 
-	cli.PrintSpellList(sl)
-	return nil
+	result := cli.FormatSpellList(sl)
+	return result, nil
 }
 
 func (s *SpellRequest) GetList() (responses.SpellList, error) {
