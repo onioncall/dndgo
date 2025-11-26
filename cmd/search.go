@@ -21,7 +21,7 @@ var (
 
 			w, _, err := term.GetSize(int(os.Stdout.Fd()))
 			if err != nil {
-				logger.HandleInfo("Failed to get terminal size")
+				logger.Info("Failed to get terminal size")
 				panic(err)
 			}
 
@@ -37,7 +37,7 @@ var (
 			}
 
 			if err != nil {
-				logger.HandleInfo("Failed to hande search request")
+				logger.Info("Failed to hande search request")
 				panic(err)
 			}
 		},
@@ -66,7 +66,7 @@ var (
 			}
 
 			if err != nil {
-				logger.HandleInfo("Failed to hande search list request")
+				logger.Info("Failed to hande search list request")
 				panic(err)
 			}
 		},

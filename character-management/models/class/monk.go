@@ -80,7 +80,7 @@ func (m *Monk) executeKiPoints(c *models.Character) {
 	if c.Level < 2 || m.ClassToken.Name == "" {
 		return
 	} else if m.ClassToken.Name != kiPointsToken {
-		logger.HandleInfo("Invalid Class Token Name")
+		logger.Info("Invalid Class Token Name")
 		return
 	}
 
@@ -153,7 +153,7 @@ func (m *Monk) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since monk only has ki points, we won't check the slot name value
 	if m.ClassToken.Available <= 0 {
-		logger.HandleInfo("No Ki Points Available")
+		logger.Info("No Ki Points Available")
 		return
 	}
 

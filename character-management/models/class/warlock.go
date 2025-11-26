@@ -72,7 +72,7 @@ func applyArmorOfShadows(c *models.Character) bool {
 
 	if !c.ValidationDisabled {
 		if c.AC > armorOfShadows {
-			logger.HandleInfo(fmt.Sprintf("Armor of Shadows AC (%d) lower than characters current AC (%d)",
+			logger.Info(fmt.Sprintf("Armor of Shadows AC (%d) lower than characters current AC (%d)",
 				armorOfShadows, c.AC))
 			return false
 		}

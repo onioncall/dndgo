@@ -112,6 +112,6 @@ func (r *Ranger) executeFightingStyle(c *models.Character) {
 	case shared.FightingStyleTwoWeaponFighting:
 		r.FightingStyleFeature = applyTwoWeaponFighting(c)
 	default:
-		logger.HandleInfo(invalidMsg)
+		logger.Info(invalidMsg)
 	}
 }

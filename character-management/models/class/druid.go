@@ -43,7 +43,7 @@ func (d *Druid) executeWildShape(c *models.Character) {
 	if c.Level < 2 || d.ClassToken.Name == "" {
 		return
 	} else if d.ClassToken.Name != wildShapeToken {
-		logger.HandleInfo("Invalid Class Token Name")
+		logger.Info("Invalid Class Token Name")
 		return
 	}
 
@@ -86,7 +86,7 @@ func (d *Druid) executeCantripVersatility(c *models.Character) {
 	}
 
 	if cantripVersatilityMax < cantripCount+abilityImprovementTotal {
-		logger.HandleInfo("Cantrip Versatility: You have too many cantrips or ability score improvement bonuss for your level")
+		logger.Info("Cantrip Versatility: You have too many cantrips or ability score improvement bonuss for your level")
 	}
 }
 
@@ -103,11 +103,11 @@ func (d *Druid) executePreparedSpells(c *models.Character) {
 
 	if !c.ValidationDisabled {
 		if len(d.PreparedSpells) > preparedSpellsMax {
-			logger.HandleInfo(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
+			logger.Info(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
 				len(d.PreparedSpells), preparedSpellsMax))
 		} else if len(d.PreparedSpells) < preparedSpellsMax {
 			diff := preparedSpellsMax - len(d.PreparedSpells)
-			logger.HandleInfo(fmt.Sprintf("You have %d prepared spells not being used", diff))
+			logger.Info(fmt.Sprintf("You have %d prepared spells not being used", diff))
 		}
 	}
 
@@ -160,7 +160,7 @@ func (d *Druid) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since druid only has wild shape, we won't check the slot name value
 	if d.ClassToken.Available <= 0 {
-		logger.HandleInfo("Wild Shape had no uses left")
+		logger.Info("Wild Shape had no uses left")
 		return
 	}
 

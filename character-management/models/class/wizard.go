@@ -42,11 +42,11 @@ func (w *Wizard) executePreparedSpells(c *models.Character) {
 
 	if !c.ValidationDisabled {
 		if len(w.PreparedSpells) > preparedSpellsMax {
-			logger.HandleInfo(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
+			logger.Info(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
 				len(w.PreparedSpells), preparedSpellsMax))
 		} else if len(w.PreparedSpells) < preparedSpellsMax {
 			diff := preparedSpellsMax - len(w.PreparedSpells)
-			logger.HandleInfo(fmt.Sprintf("You have %d prepared spells not being used", diff))
+			logger.Info(fmt.Sprintf("You have %d prepared spells not being used", diff))
 		}
 	}
 
@@ -72,7 +72,7 @@ func (w *Wizard) executeSignatureSpellValidation(c *models.Character) {
 				spellFound = true
 
 				if spell.SlotLevel > 3 {
-					logger.HandleInfo(fmt.Sprintf("Signature Spell '%s' is an invalid level", sigSpell))
+					logger.Info(fmt.Sprintf("Signature Spell '%s' is an invalid level", sigSpell))
 				}
 
 				break
@@ -80,7 +80,7 @@ func (w *Wizard) executeSignatureSpellValidation(c *models.Character) {
 		}
 
 		if !spellFound {
-			logger.HandleInfo(fmt.Sprintf("Signature Spell '%s' was not found in your list of learned spells", sigSpell))
+			logger.Info(fmt.Sprintf("Signature Spell '%s' was not found in your list of learned spells", sigSpell))
 		}
 	}
 }
