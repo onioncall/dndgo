@@ -135,7 +135,7 @@ func (c *Character) calculateAbilityScoreImprovement() {
 
 	if bonusSum > maxBonus {
 		info := fmt.Sprintf("Ability Score Bonus (%d) exceeds available for level (%d)\n", bonusSum, maxBonus)
-		logger.HandleInfo(info)
+		logger.Info(info)
 		return
 	}
 
@@ -713,7 +713,7 @@ func (c *Character) RemoveItemFromPack(item string, quantity int) {
 					quantity,
 					packItem.Quantity)
 
-				logger.HandleInfo(info)
+				logger.Info(info)
 				c.Backpack[i].Quantity = 0
 				return
 			}
@@ -724,7 +724,7 @@ func (c *Character) RemoveItemFromPack(item string, quantity int) {
 	}
 
 	info := fmt.Sprintf("Item %s not found in pack", item)
-	logger.HandleInfo(info)
+	logger.Info(info)
 }
 
 func (c *Character) AddLanguage(language string) {
@@ -754,7 +754,7 @@ func (c *Character) AddEquipment(equipmentType string, equipmentName string) {
 		c.WornEquipment.Boots = equipmentName
 	default:
 		info := fmt.Sprintf("Invalid Equipment Type: %s", equipmentType)
-		logger.HandleInfo(info)
+		logger.Info(info)
 	}
 }
 
@@ -772,7 +772,7 @@ func (c *Character) HealCharacter(hpInc int) {
 
 func (c *Character) DamageCharacter(hpDecr int) {
 	if c.HPCurrent <= 0 {
-		logger.HandleInfo("Character had no health left")
+		logger.Info("Character had no health left")
 		return
 	}
 
@@ -804,7 +804,7 @@ func (c *Character) UseSpellSlot(level int) {
 		if c.SpellSlots[i].Level == level {
 			if c.SpellSlots[i].Available <= 0 {
 				info := fmt.Sprintf("Spell Slot Level %d: already at zero", level)
-				logger.HandleInfo(info)
+				logger.Info(info)
 
 				return
 			}
@@ -814,7 +814,7 @@ func (c *Character) UseSpellSlot(level int) {
 		}
 	}
 
-	logger.HandleInfo("Invalid level, must be 1-9")
+	logger.Info("Invalid level, must be 1-9")
 }
 
 func (c *Character) RecoverSpellSlots(level int, quantity int) {
@@ -882,7 +882,7 @@ func (c *Character) Equip(isPrimary bool, name string) {
 	}
 
 	if !equipmentFound {
-		logger.HandleInfo(fmt.Sprintf("Weapon or shield '%s' not found, check spelling", name))
+		logger.Info(fmt.Sprintf("Weapon or shield '%s' not found, check spelling", name))
 		return
 	}
 

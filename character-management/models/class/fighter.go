@@ -70,7 +70,7 @@ func (f *Fighter) executeFightingStyle(c *models.Character) {
 	case shared.FightingStyleProtection:
 		f.FightingStyleFeature = applyProtection(c)
 	default:
-		logger.HandleInfo(invalidMsg)
+		logger.Info(invalidMsg)
 	}
 }
 
@@ -105,7 +105,7 @@ func (f *Fighter) PrintClassDetails(c *models.Character) []string {
 		case "indomitable":
 			tokenHeader = "Indomitable"
 		default:
-			logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", token.Name))
+			logger.Info(fmt.Sprintf("Invalid token name: %s", token.Name))
 			continue
 		}
 
@@ -146,12 +146,12 @@ func (f *Fighter) UseClassTokens(tokenName string, quantity int) {
 	token := getToken(tokenName, f.ClassTokens)
 
 	if token == nil {
-		logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", tokenName))
+		logger.Info(fmt.Sprintf("Invalid token name: %s", tokenName))
 		return
 	}
 
 	if token.Available <= 0 {
-		logger.HandleInfo(fmt.Sprintf("%s had no uses left", tokenName))
+		logger.Info(fmt.Sprintf("%s had no uses left", tokenName))
 		return
 	}
 
@@ -167,7 +167,7 @@ func (f *Fighter) RecoverClassTokens(tokenName string, quantity int) {
 	token := getToken(tokenName, f.ClassTokens)
 
 	if token == nil {
-		logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", tokenName))
+		logger.Info(fmt.Sprintf("Invalid token name: %s", tokenName))
 		return
 	}
 

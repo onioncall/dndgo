@@ -81,7 +81,7 @@ func (p *Paladin) executeFightingStyle(c *models.Character) {
 	case shared.FightingStyleProtection:
 		p.FightingStyleFeature = applyProtection(c)
 	default:
-		logger.HandleInfo(invalidMsg)
+		logger.Info(invalidMsg)
 	}
 }
 
@@ -91,11 +91,11 @@ func (p *Paladin) executePreparedSpells(c *models.Character) {
 
 	if !c.ValidationDisabled {
 		if len(p.PreparedSpells) > preparedSpellsMax {
-			logger.HandleInfo(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
+			logger.Info(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
 				len(p.PreparedSpells), preparedSpellsMax))
 		} else if len(p.PreparedSpells) < preparedSpellsMax {
 			diff := preparedSpellsMax - len(p.PreparedSpells)
-			logger.HandleInfo(fmt.Sprintf("You have %d prepared spells not being used", diff))
+			logger.Info(fmt.Sprintf("You have %d prepared spells not being used", diff))
 		}
 	}
 
@@ -121,11 +121,11 @@ func (p *Paladin) executeOathSpells(c *models.Character) {
 
 	if !c.ValidationDisabled {
 		if len(p.OathSpells) > oathSpellsMax {
-			logger.HandleInfo(fmt.Sprintf("%d exceeds the maximum amount of oath spells (%d)",
+			logger.Info(fmt.Sprintf("%d exceeds the maximum amount of oath spells (%d)",
 				len(p.OathSpells), oathSpellsMax))
 		} else if len(p.OathSpells) < oathSpellsMax {
 			diff := oathSpellsMax - len(p.OathSpells)
-			logger.HandleInfo(fmt.Sprintf("You have %d oath spells not being used", diff))
+			logger.Info(fmt.Sprintf("You have %d oath spells not being used", diff))
 		}
 	}
 
@@ -147,7 +147,7 @@ func (p *Paladin) PrintClassDetails(c *models.Character) []string {
 		case "lay-on-hands":
 			s = append(s, fmt.Sprintf("*Lay On Hands*: %d/%d\n\n", token.Available, token.Maximum))
 		default:
-			logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", token.Name))
+			logger.Info(fmt.Sprintf("Invalid token name: %s", token.Name))
 			continue
 		}
 	}
@@ -186,12 +186,12 @@ func (p *Paladin) UseClassTokens(tokenName string, quantity int) {
 	token := getToken(tokenName, p.ClassTokens)
 
 	if token == nil {
-		logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", tokenName))
+		logger.Info(fmt.Sprintf("Invalid token name: %s", tokenName))
 		return
 	}
 
 	if token.Available <= 0 {
-		logger.HandleInfo(fmt.Sprintf("%s had no uses left", tokenName))
+		logger.Info(fmt.Sprintf("%s had no uses left", tokenName))
 		return
 	}
 
@@ -207,7 +207,7 @@ func (p *Paladin) RecoverClassTokens(tokenName string, quantity int) {
 	token := getToken(tokenName, p.ClassTokens)
 
 	if token == nil {
-		logger.HandleInfo(fmt.Sprintf("Invalid token name: %s", tokenName))
+		logger.Info(fmt.Sprintf("Invalid token name: %s", tokenName))
 		return
 	}
 

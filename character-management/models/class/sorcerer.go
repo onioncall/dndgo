@@ -94,7 +94,7 @@ func (s *Sorcerer) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since sorcerer only has sorcery points, we won't check the slot name value
 	if s.ClassToken.Available <= 0 {
-		logger.HandleInfo("There were no sorcery points left")
+		logger.Info("There were no sorcery points left")
 		return
 	}
 

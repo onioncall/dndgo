@@ -32,7 +32,7 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.HandleInfo("Failed to save character data")
+				logger.Info("Failed to save character data")
 				panic(err)
 			}
 
@@ -41,7 +41,7 @@ var (
 			}
 			if e != "" {
 				if n == "" {
-					logger.HandleInfo("Name of equipment can not be left empty")
+					logger.Info("Name of equipment can not be left empty")
 					return
 				}
 
@@ -49,7 +49,7 @@ var (
 			}
 			if bp != "" {
 				if q <= 0 {
-					logger.HandleInfo("Must pass a positive quantity to add")
+					logger.Info("Must pass a positive quantity to add")
 					return
 				}
 
@@ -71,23 +71,23 @@ var (
 
 			err = handlers.SaveCharacterJson(c)
 			if err != nil {
-				logger.HandleInfo("Failed to save character data")
+				logger.Info("Failed to save character data")
 				panic(err)
 			}
 
 			err = handlers.SaveClassHandler(c.Class)
 			if err != nil {
-				logger.HandleInfo("Failed to save class data")
+				logger.Info("Failed to save class data")
 				panic(err)
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.HandleInfo("Failed to process character")
+				logger.Info("Failed to process character")
 				panic(err)
 			}
 
-			logger.HandleInfo("Character Update Successful")
+			logger.Info("Character Update Successful")
 		},
 	}
 
@@ -105,13 +105,13 @@ var (
 				if p == "config" {
 					path, err = handlers.GetConfigPath()
 					if err != nil {
-						logger.HandleInfo("Failed to get config path")
+						logger.Info("Failed to get config path")
 						panic(err)
 					}
 				} else if p == "markdown" {
 					c, err := handlers.LoadCharacter()
 					if err != nil {
-						logger.HandleInfo("Failed to load character")
+						logger.Info("Failed to load character")
 						panic(err)
 					}
 
@@ -120,7 +120,7 @@ var (
 						path, err = handlers.GetConfigPath()
 					}
 				} else {
-					logger.HandleInfo("path option not found")
+					logger.Info("path option not found")
 				}
 
 				fmt.Printf("Path: %s\n", path)
@@ -129,7 +129,7 @@ var (
 			if t {
 				c, err := handlers.LoadCharacter()
 				if err != nil {
-					logger.HandleInfo("Failed to save character data")
+					logger.Info("Failed to save character data")
 					panic(err)
 				}
 
@@ -170,7 +170,7 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.HandleInfo("Failed to load character")
+				logger.Info("Failed to load character")
 				panic(err)
 			}
 
@@ -182,17 +182,17 @@ var (
 
 			err = handlers.SaveCharacterJson(c)
 			if err != nil {
-				logger.HandleInfo("Failed to save character data")
+				logger.Info("Failed to save character data")
 				panic(err)
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.HandleInfo("Failed to process character")
+				logger.Info("Failed to process character")
 				panic(err)
 			}
 
-			logger.HandleInfo("Character Update Successful")
+			logger.Info("Character Update Successful")
 		},
 	}
 
@@ -202,17 +202,17 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.HandleInfo("Failed to save character data")
+				logger.Info("Failed to save character data")
 				panic(err)
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.HandleInfo("Failed to process character")
+				logger.Info("Failed to process character")
 				panic(err)
 			}
 
-			logger.HandleInfo("Character Update Successful")
+			logger.Info("Character Update Successful")
 		},
 	}
 
@@ -227,13 +227,13 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.HandleInfo("Failed to save character data")
+				logger.Info("Failed to save character data")
 				panic(err)
 			}
 
 			if bp != "" {
 				if q <= 0 {
-					logger.HandleInfo("Must pass a positive quantity to use")
+					logger.Info("Must pass a positive quantity to use")
 					return
 				}
 
@@ -247,23 +247,23 @@ var (
 
 			err = handlers.SaveCharacterJson(c)
 			if err != nil {
-				logger.HandleInfo("Failed to save character data")
+				logger.Info("Failed to save character data")
 				panic(err)
 			}
 
 			err = handlers.SaveClassHandler(c.Class)
 			if err != nil {
-				logger.HandleInfo("Failed to save class data")
+				logger.Info("Failed to save class data")
 				panic(err)
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.HandleInfo("Failed to process character")
+				logger.Info("Failed to process character")
 				panic(err)
 			}
 
-			logger.HandleInfo("Character Update Successful")
+			logger.Info("Character Update Successful")
 		},
 	}
 
@@ -280,7 +280,7 @@ var (
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				errMsg := "Failed to save character data"
-				logger.HandleInfo(errMsg)
+				logger.Info(errMsg)
 				panic(fmt.Errorf("%s: %w", errMsg, err))
 			}
 
@@ -296,23 +296,23 @@ var (
 
 			err = handlers.SaveCharacterJson(c)
 			if err != nil {
-				logger.HandleInfo("Failed to save character data")
+				logger.Info("Failed to save character data")
 				panic(err)
 			}
 
 			err = handlers.SaveClassHandler(c.Class)
 			if err != nil {
-				logger.HandleInfo("Failed to save class data")
+				logger.Info("Failed to save class data")
 				panic(err)
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.HandleInfo("Failed to process character")
+				logger.Info("Failed to process character")
 				panic(err)
 			}
 
-			logger.HandleInfo("Character Update Successful")
+			logger.Info("Character Update Successful")
 		},
 	}
 
@@ -325,12 +325,12 @@ var (
 
 			character, err := handlers.LoadCharacterTemplate(n, c)
 			if err != nil {
-				logger.HandleInfo("Failed to load character template")
+				logger.Info("Failed to load character template")
 				panic(err)
 			}
 			err = handlers.SaveCharacterJson(character)
 			if err != nil {
-				logger.HandleInfo("Failed to save new character data")
+				logger.Info("Failed to save new character data")
 				panic(err)
 			}
 
@@ -338,17 +338,17 @@ var (
 				class, err := handlers.LoadClassTemplate(c)
 				if err != nil {
 					errMsg := "Failed to load class template"
-					logger.HandleInfo(errMsg)
+					logger.Info(errMsg)
 					panic(fmt.Errorf("%s: %w", errMsg, err))
 				}
 				err = handlers.SaveClassHandler(class)
 				if err != nil {
-					logger.HandleInfo("Failed to save new class data")
+					logger.Info("Failed to save new class data")
 					panic(err)
 				}
 			}
 
-			logger.HandleInfo("Character Creation Successful")
+			logger.Info("Character Creation Successful")
 		},
 	}
 
@@ -361,7 +361,7 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.HandleInfo("Failed to save character data")
+				logger.Info("Failed to save character data")
 				panic(err)
 			}
 
@@ -374,17 +374,17 @@ var (
 
 			err = handlers.SaveCharacterJson(c)
 			if err != nil {
-				logger.HandleInfo("Failed to save character data")
+				logger.Info("Failed to save character data")
 				panic(err)
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.HandleInfo("Failed to process character")
+				logger.Info("Failed to process character")
 				panic(err)
 			}
 
-			logger.HandleInfo("Character Update Successful")
+			logger.Info("Character Update Successful")
 		},
 	}
 
@@ -397,7 +397,7 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.HandleInfo("Failed to save character data")
+				logger.Info("Failed to save character data")
 				panic(err)
 			}
 
@@ -410,17 +410,17 @@ var (
 
 			err = handlers.SaveCharacterJson(c)
 			if err != nil {
-				logger.HandleInfo("Failed to save character data")
+				logger.Info("Failed to save character data")
 				panic(err)
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.HandleInfo("Failed to process character")
+				logger.Info("Failed to process character")
 				panic(err)
 			}
 
-			logger.HandleInfo("Character Update Successful")
+			logger.Info("Character Update Successful")
 		},
 	}
 )

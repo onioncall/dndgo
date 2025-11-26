@@ -42,7 +42,7 @@ func (cl *Cleric) executeChannelDiversity(c *models.Character) {
 	if cl.ClassToken.Name == "" {
 		return
 	} else if cl.ClassToken.Name != channelDivinityToken {
-		logger.HandleInfo("Invalid Class Token Name")
+		logger.Info("Invalid Class Token Name")
 		return
 	}
 
@@ -96,7 +96,7 @@ func (cl *Cleric) executeCantripVersatility(c *models.Character) {
 	}
 
 	if cantripVersatilityMax < cantripCount+abilityImprovementTotal {
-		logger.HandleInfo("Cantrip Versatility: You have too many cantrips or ability score improvement bonuss for your level")
+		logger.Info("Cantrip Versatility: You have too many cantrips or ability score improvement bonuss for your level")
 	}
 }
 
@@ -113,11 +113,11 @@ func (cl *Cleric) executePreparedSpells(c *models.Character) {
 
 	if !c.ValidationDisabled {
 		if len(cl.PreparedSpells) > preparedSpellsMax {
-			logger.HandleInfo(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
+			logger.Info(fmt.Sprintf("%d exceeds the maximum amount of prepared spells (%d)",
 				len(cl.PreparedSpells), preparedSpellsMax))
 		} else if len(cl.PreparedSpells) < preparedSpellsMax {
 			diff := preparedSpellsMax - len(cl.PreparedSpells)
-			logger.HandleInfo(fmt.Sprintf("You have %d prepared spells not being used", diff))
+			logger.Info(fmt.Sprintf("You have %d prepared spells not being used", diff))
 		}
 	}
 
@@ -160,7 +160,7 @@ func (cl *Cleric) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has channel divinity, we won't check the slot name value
 	if cl.ClassToken.Available <= 0 {
-		logger.HandleInfo("Channel Divinity had no uses left")
+		logger.Info("Channel Divinity had no uses left")
 		return
 	}
 

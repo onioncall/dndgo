@@ -2,83 +2,120 @@ package logger
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"runtime/debug"
+	"time"
 )
 
-var infoLogs []string
+// Log is the global logger. genrally this should be configured during initialization.
+var Log = New(LevelInfo, os.Stdout)
 
-func NewLogger() {
-	if infoLogs == nil {
-		infoLogs = make([]string, 0)
+// NewFileLogger creates a logger that writes to the specified file path.
+// Use ":stdout" to write to stdout.
+func NewFileLogger(level Level, path string) (*Logger, error) {
+	var out io.Writer
+	if path == ":stdout" {
+		out = os.Stdout
+	} else {
+		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+			return nil, fmt.Errorf("failed to create log directory: %w", err)
+		}
+		f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			return nil, fmt.Errorf("failed to open log file: %w", err)
+		}
+		out = f
 	}
-
-	// Considered persisting this longer, but for now we're
-	// only going to keep log records from the last run
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "LOG ERROR- failed to get home directory: %v\n", err)
-		return
-	}
-
-	logDir := filepath.Join(homeDir, ".config", "dndgo")
-	if err := os.MkdirAll(logDir, 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "LOG ERROR- failed to create log directory: %v\n", err)
-		return
-	}
-
-	logPath := filepath.Join(logDir, "log")
-	f, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "LOG ERROR- failed to clear log file: %v\n", err)
-		return
-	}
-	f.Close()
+	return New(level, out), nil
 }
 
-func HandleInfo(info string) {
-	if infoLogs == nil {
+// tells [log.Output] how many stack frames to skip when
+// determining the file and line number to report
+const calldepth = 3
+
+// Logger is a leveled logger wrapping the standard library logger
+type Logger struct {
+	minLevel Level
+	out      io.Writer
+}
+
+// New creates a new Logger with the specified minimum level and output
+func New(level Level, out io.Writer) *Logger {
+	return &Logger{
+		minLevel: level,
+		out:      out,
+	}
+}
+
+func (l *Logger) log(calldepth int, level Level, msg string) {
+	if level < l.minLevel {
 		return
 	}
 
-	infoLogs = append(infoLogs, info)
+	_, file, line, ok := runtime.Caller(calldepth)
+	if !ok {
+		file = "???"
+		line = 0
+	}
+	file = filepath.Base(file)
+
+	timestamp := time.Now().UTC().Format(time.RFC3339)
+	_, err := fmt.Fprintf(l.out, "%s %s:%d: [%s] %s\n", timestamp, file, line, level, msg)
+	if err != nil {
+		panic(fmt.Errorf("failed to write to log writer, unrecoverable error: %w", err))
+	}
 }
 
-func HandleLogs() {
-	// Info logs
-	for _, log := range infoLogs {
-		fmt.Printf("-> %s\n", log)
-	}
-	// Panic logs
+// Debug logs a debug message
+func Debug(v ...any) {
+	Log.log(calldepth, LevelDebug, fmt.Sprint(v...))
+}
+
+// Debugf logs a formatted debug message
+func Debugf(format string, v ...any) {
+	Log.log(calldepth, LevelDebug, fmt.Sprintf(format, v...))
+}
+
+// Info logs an info message
+func Info(v ...any) {
+	Log.log(calldepth, LevelInfo, fmt.Sprint(v...))
+}
+
+// Infof logs a formatted info message
+func Infof(format string, v ...any) {
+	Log.log(calldepth, LevelInfo, fmt.Sprintf(format, v...))
+}
+
+// Warn logs a warning message
+func Warn(v ...any) {
+	Log.log(calldepth, LevelWarn, fmt.Sprint(v...))
+}
+
+// Warnf logs a formatted warning message
+func Warnf(format string, v ...any) {
+	Log.log(calldepth, LevelWarn, fmt.Sprintf(format, v...))
+}
+
+// Error logs an error message
+func Error(v ...any) {
+	Log.log(calldepth, LevelError, fmt.Sprint(v...))
+}
+
+// Errorf logs a formatted error message
+func Errorf(format string, v ...any) {
+	Log.log(calldepth, LevelError, fmt.Sprintf(format, v...))
+}
+
+// RegisterPanicHandler uses recover to catch and attempt to log panic to the log file
+// and print the panic and a user message to the console.
+func RegisterPanicHandler() {
 	if r := recover(); r != nil {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "LOG ERROR- failed to get home directory: %v\n", err)
-			fmt.Fprintf(os.Stderr, "PANIC: %v\n", r)
-			os.Exit(1)
-		}
-		logDir := filepath.Join(homeDir, ".config", "dndgo")
-		if err := os.MkdirAll(logDir, 0755); err != nil {
-			fmt.Fprintf(os.Stderr, "LOG ERROR- failed to create log directory: %v\n", err)
-			fmt.Fprintf(os.Stderr, "PANIC: %v\n", r)
-			os.Exit(1)
-		}
-		logPath := filepath.Join(logDir, "log")
-		f, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "LOG ERROR- failed to open log file: %v\n", err)
-			fmt.Fprintf(os.Stderr, "PANIC: %v\n", r)
-			os.Exit(1)
-		}
-		defer f.Close()
-
-		panicEntry := fmt.Sprintf("[PANIC] %v\n%s\n", r, debug.Stack())
-		if _, err := f.WriteString(panicEntry); err != nil {
-			fmt.Fprintf(os.Stderr, "LOG ERROR- failed to write panic to log file: %v\n", err)
-		}
-
-		fmt.Printf("Application had an unrecoverable error, check log file for more details: %s\n", logPath)
+		msg := fmt.Sprintf("%v\n%s", r, debug.Stack())
+		Log.log(calldepth, LevelPanic, msg)
+		fmt.Fprintf(os.Stderr, "Application had an unrecoverable error: %v\n", r)
 		os.Exit(1)
 	}
 }
