@@ -27,7 +27,7 @@ func executeExpertiseShared(c *models.Character, expertiseSkills []string) {
 	seen := make(map[string]bool)
 	for _, profToDouble := range expertiseSkills {
 		if seen[profToDouble] == true {
-			logger.HandleInfo("Bard Config Error - Expertise can not have dupliate proficiencies")
+			logger.Info("Bard Config Error - Expertise can not have dupliate proficiencies")
 			return
 		}
 		seen[profToDouble] = true

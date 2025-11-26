@@ -52,7 +52,7 @@ func (b *Bard) executeBardicInspiration(c *models.Character) {
 	if b.ClassToken.Name == "" {
 		return
 	} else if b.ClassToken.Name != bardicInspirationToken {
-		logger.HandleInfo("Invalid Class Token Name")
+		logger.Info("Invalid Class Token Name")
 		return
 	}
 
@@ -139,7 +139,7 @@ func (b *Bard) UseClassTokens(tokenName string, quantity int) {
 	// We only really need slot name for classes that have multiple slots
 	// since bard only has bardic inspiration, we won't check the slot name value
 	if b.ClassToken.Available <= 0 {
-		logger.HandleInfo("Bardic Inpsiration had no uses left")
+		logger.Info("Bardic Inpsiration had no uses left")
 		return
 	}
 

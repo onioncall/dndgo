@@ -48,7 +48,7 @@ func (b *Barbarian) executeRage(c *models.Character) {
 	if b.ClassToken.Name == "" {
 		return
 	} else if b.ClassToken.Name != rageToken {
-		logger.HandleInfo("Invalid Class Token Name")
+		logger.Info("Invalid Class Token Name")
 		return
 	}
 
@@ -108,7 +108,7 @@ func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
 						pk,
 						strings.Join(avaliableSkills, ", "))
 
-					logger.HandleInfo(info)
+					logger.Info(info)
 				}
 			}
 		}
@@ -176,7 +176,7 @@ func (b *Barbarian) UseClassTokens(tokenName string, quantity int) {
 	// We only really need token name for classes that have multiple tokens
 	// since barbarian only has rage, we won't check the token name value
 	if b.ClassToken.Available <= 0 {
-		logger.HandleInfo("Rage had no uses left")
+		logger.Info("Rage had no uses left")
 		return
 	}
 
