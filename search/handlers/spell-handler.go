@@ -6,29 +6,29 @@ import (
 
 	"github.com/onioncall/dndgo/search/api"
 	"github.com/onioncall/dndgo/search/api/responses"
-	"github.com/onioncall/dndgo/search/cli"
+	"github.com/onioncall/dndgo/search/format"
 )
 
 type SpellRequest api.BaseRequest
 
 const SpellType api.PathType = "spells"
 
-func HandleSpellRequest(spellQuery string, termWidth int) error {
+func HandleSpellRequest(spellQuery string, termWidth int) (string, error) {
 	r := SpellRequest{
 		Name:     spellQuery,
 		PathType: SpellType,
 	}
 
-	s, err := r.GetSingle()
+	spell, err := r.GetSingle()
 	if err != nil {
-		return fmt.Errorf("Failed to handle spell request (%s): %w", spellQuery, err)
+		return "", fmt.Errorf("Failed to handle spell request (%s): %w", spellQuery, err)
 	}
 
-	cli.PrintSpellSingle(s, termWidth)
-	return nil
+	result := format.FormatSpellSingle(spell, termWidth)
+	return result, nil
 }
 
-func HandleSpellListRequest() error {
+func HandleSpellListRequest() (string, error) {
 	r := SpellRequest{
 		Name:     "",
 		PathType: SpellType,
@@ -36,11 +36,11 @@ func HandleSpellListRequest() error {
 
 	sl, err := r.GetList()
 	if err != nil {
-		return fmt.Errorf("Failed to handle spell request list: %w", err)
+		return "", fmt.Errorf("Failed to handle spell request list: %w", err)
 	}
 
-	cli.PrintSpellList(sl)
-	return nil
+	result := format.FormatSpellList(sl)
+	return result, nil
 }
 
 func (s *SpellRequest) GetList() (responses.SpellList, error) {

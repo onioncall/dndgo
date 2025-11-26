@@ -6,14 +6,14 @@ import (
 
 	"github.com/onioncall/dndgo/search/api"
 	"github.com/onioncall/dndgo/search/api/responses"
-	"github.com/onioncall/dndgo/search/cli"
+	"github.com/onioncall/dndgo/search/format"
 )
 
 type MonsterRequest api.BaseRequest
 
 const MonsterType api.PathType = "monsters"
 
-func HandleMonsterRequest(monsterQuery string, termWidth int) error {
+func HandleMonsterRequest(monsterQuery string, termWidth int) (string, error) {
 	r := MonsterRequest{
 		Name:     monsterQuery,
 		PathType: MonsterType,
@@ -21,14 +21,14 @@ func HandleMonsterRequest(monsterQuery string, termWidth int) error {
 
 	m, err := r.GetSingle()
 	if err != nil {
-		return fmt.Errorf("Failed to handle monster request (%s): %w", monsterQuery, err)
+		return "", fmt.Errorf("Failed to handle monster request (%s): %w", monsterQuery, err)
 	}
 
-	cli.PrintMonsterSingle(m, termWidth)
-	return nil
+	result := format.FormatMonsterSingle(m, termWidth)
+	return result, nil
 }
 
-func HandleMonsterListRequest() error {
+func HandleMonsterListRequest() (string, error) {
 	r := MonsterRequest{
 		Name:     "",
 		PathType: MonsterType,
@@ -36,11 +36,11 @@ func HandleMonsterListRequest() error {
 
 	ml, err := r.GetList()
 	if err != nil {
-		return fmt.Errorf("Failed to handle monster request list: %w", err)
+		return "", fmt.Errorf("Failed to handle monster request list: %w", err)
 	}
 
-	cli.PrintMonsterList(ml)
-	return nil
+	result := format.FormatMonsterList(ml)
+	return result, nil
 }
 
 func (m *MonsterRequest) GetList() (responses.MonsterList, error) {

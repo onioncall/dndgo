@@ -30,7 +30,6 @@ func (m Model) renderMenu() string {
 
 	var content strings.Builder
 
-	// For centering vertically
 	textLines := 3 // pageText + empty line + buttons
 	topPadding := (m.height - textLines) / 2
 
