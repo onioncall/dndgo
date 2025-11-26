@@ -13,19 +13,19 @@ type SpellRequest api.BaseRequest
 
 const SpellType api.PathType = "spells"
 
-func HandleSpellRequest(spellQuery string, termWidth int) error {
+func HandleSpellRequest(spellQuery string, termWidth int) (string, error) {
 	r := SpellRequest{
 		Name:     spellQuery,
 		PathType: SpellType,
 	}
 
-	s, err := r.GetSingle()
+	spell, err := r.GetSingle()
 	if err != nil {
-		return fmt.Errorf("Failed to handle spell request (%s): %w", spellQuery, err)
+		return "", fmt.Errorf("Failed to handle spell request (%s): %w", spellQuery, err)
 	}
 
-	cli.PrintSpellSingle(s, termWidth)
-	return nil
+	result := cli.PrintSpellSingle(spell, termWidth)
+	return result, nil
 }
 
 func HandleSpellListRequest() error {

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/onioncall/dndgo/logger"
@@ -25,9 +26,10 @@ var (
 				panic(err)
 			}
 
+			result := ""
 			switch {
 			case s != "":
-				err = handlers.HandleSpellRequest(s, w)
+				result, err = handlers.HandleSpellRequest(s, w)
 			case e != "":
 				err = handlers.HandleEquipmentRequest(e, w)
 			case m != "":
@@ -39,6 +41,10 @@ var (
 			if err != nil {
 				logger.HandleInfo("Failed to hande search request")
 				panic(err)
+			}
+
+			if result != "" {
+				fmt.Println(result)
 			}
 		},
 	}

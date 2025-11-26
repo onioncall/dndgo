@@ -3,7 +3,48 @@ package search
 import (
 	"strings"
 
-	"github.com/onioncall/dndgo/tui/shared"
+	"github.com/charmbracelet/lipgloss"
+)
+
+const (
+	orange   = lipgloss.Color("#FFA500")
+	darkGray = lipgloss.Color("#767676")
+)
+
+var (
+	activeTabBorder = lipgloss.Border{
+		Top:         "─",
+		Bottom:      " ",
+		Left:        "│",
+		Right:       "│",
+		TopLeft:     "╭",
+		TopRight:    "╮",
+		BottomLeft:  "┘",
+		BottomRight: "└",
+	}
+
+	tabBorder = lipgloss.Border{
+		Top:         "─",
+		Bottom:      "─",
+		Left:        "│",
+		Right:       "│",
+		TopLeft:     "╭",
+		TopRight:    "╮",
+		BottomLeft:  "┴",
+		BottomRight: "┴",
+	}
+
+	tab = lipgloss.NewStyle().
+		Border(tabBorder, true).
+		BorderForeground(orange).
+		Padding(0, 1)
+
+	activeTab = tab.Border(activeTabBorder, true)
+
+	tabGap = tab.
+		BorderTop(false).
+		BorderLeft(false).
+		BorderRight(false)
 )
 
 func (m Model) View() string {
@@ -11,23 +52,78 @@ func (m Model) View() string {
 		return ""
 	}
 
-	var content strings.Builder
+	outerBorderMargin := 2
+	containerStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(orange).
+		Padding(1, 2).
+		Margin(outerBorderMargin).
+		Width(m.width - (outerBorderMargin * 2) - 2).
+		Height(m.height - (outerBorderMargin * 2) - 2)
 
-	textLines := 3 // page header + empty line + page text
-	topPadding := (m.height - textLines) / 2
+	innerWidth := containerStyle.GetWidth() - containerStyle.GetHorizontalPadding()
+	innerHeight := containerStyle.GetHeight() - containerStyle.GetVerticalPadding()
 
-	for range topPadding {
-		content.WriteString("\n")
+	var rendered []string
+	for i, t := range m.tabs {
+		if i == m.selectedTabIndex {
+			rendered = append(rendered, activeTab.Render(t))
+		} else {
+			rendered = append(rendered, tab.Render(t))
+		}
 	}
 
-	dndgoLeftPadding := max((m.width-len(shared.TuiHeader))/2, 0)
-	content.WriteString(strings.Repeat(" ", dndgoLeftPadding))
-	content.WriteString(shared.TuiHeader)
-	content.WriteString("\n\n")
+	tabRow := lipgloss.JoinHorizontal(lipgloss.Top, rendered...)
+	tabsWidth := lipgloss.Width(tabRow)
+	totalGap := innerWidth - tabsWidth
+	leftGap := totalGap / 2
+	rightGap := totalGap - leftGap
 
-	leftPadding := max((m.width-len(m.pageText))/2, 0)
-	content.WriteString(strings.Repeat(" ", leftPadding))
-	content.WriteString(m.pageText)
+	if totalGap > 0 {
+		fillerStyle := lipgloss.NewStyle().Foreground(orange)
+		leftFiller := fillerStyle.Render(strings.Repeat("─", leftGap))
+		rightFiller := fillerStyle.Render(strings.Repeat("─", rightGap))
+		tabRow = lipgloss.JoinHorizontal(
+			lipgloss.Bottom,
+			leftFiller,
+			tabRow,
+			rightFiller,
+		)
+	}
 
-	return content.String()
+	var searchRow string
+	if m.searchVisible {
+		searchStyle := lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(orange).
+			Width(40)
+		searchBox := searchStyle.Render(m.searchInput.View())
+		searchRow = lipgloss.NewStyle().
+			Width(innerWidth).
+			Align(lipgloss.Center).
+			Render(searchBox)
+	}
+
+	tabHeight := lipgloss.Height(tabRow)
+	searchHeight := 0
+	if m.searchVisible {
+		searchHeight = lipgloss.Height(searchRow)
+	}
+	contentHeight := innerHeight - tabHeight - searchHeight
+
+	contentBlock := lipgloss.NewStyle().
+		Width(innerWidth).
+		Height(contentHeight).
+		Render(m.content)
+
+	var sections []string
+	sections = append(sections, tabRow)
+	sections = append(sections, contentBlock)
+	if m.searchVisible {
+		sections = append(sections, searchRow)
+	}
+
+	inner := lipgloss.JoinVertical(lipgloss.Left, sections...)
+
+	return containerStyle.Render(inner)
 }
