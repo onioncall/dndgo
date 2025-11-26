@@ -8,7 +8,7 @@ import (
 	"github.com/onioncall/wrapt"
 )
 
-func PrintEquipmentSingle(equipment responses.Equipment, termWidth int) string {
+func FormatEquipmentSingle(equipment responses.Equipment, termWidth int) string {
 	var builder strings.Builder
 
 	builder.WriteString(fmt.Sprintf("%s\n\n", equipment.Name))
@@ -32,7 +32,7 @@ func PrintEquipmentSingle(equipment responses.Equipment, termWidth int) string {
 	return builder.String()
 }
 
-func PrintEquipmentList(equipmentList responses.EquipmentList) string {
+func FormatEquipmentList(equipmentList responses.EquipmentList) string {
 	var builder strings.Builder
 	builder.WriteString("Equipment Name\n\n")
 	for _, equpment := range equipmentList.ListItems {
