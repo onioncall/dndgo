@@ -44,9 +44,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			var result string
 			var err error
 
-			if searchInput == "" {
-				result = "not found"
-			} else {
+			if searchInput != "" {
 				result, err = searchUserInput(searchInput, m.selectedTabIndex, m.viewport.Width)
 			}
 
