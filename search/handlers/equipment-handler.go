@@ -6,14 +6,14 @@ import (
 
 	"github.com/onioncall/dndgo/search/api"
 	"github.com/onioncall/dndgo/search/api/responses"
-	"github.com/onioncall/dndgo/search/cli"
+	"github.com/onioncall/dndgo/search/format"
 )
 
 type EquipmentRequest api.BaseRequest
 
 const EquipmentType api.PathType = "equipment"
 
-func HandleEquipmentRequest(equipmentQuery string, termWidth int) error {
+func HandleEquipmentRequest(equipmentQuery string, termWidth int) (string, error) {
 	r := EquipmentRequest{
 		Name:     equipmentQuery,
 		PathType: EquipmentType,
@@ -21,14 +21,14 @@ func HandleEquipmentRequest(equipmentQuery string, termWidth int) error {
 
 	e, err := r.GetSingle()
 	if err != nil {
-		return fmt.Errorf("Failed to handle equipment request (%s): %w", equipmentQuery, err)
+		return "", fmt.Errorf("Failed to handle equipment request (%s): %w", equipmentQuery, err)
 	}
 
-	cli.PrintEquipmentSingle(e, termWidth)
-	return nil
+	result := format.FormatEquipmentSingle(e, termWidth)
+	return result, nil
 }
 
-func HandleEquipmentListRequest() error {
+func HandleEquipmentListRequest() (string, error) {
 	r := EquipmentRequest{
 		Name:     "",
 		PathType: EquipmentType,
@@ -36,11 +36,11 @@ func HandleEquipmentListRequest() error {
 
 	el, err := r.GetList()
 	if err != nil {
-		return fmt.Errorf("Failed to handle equipment request list: %w", err)
+		return "", fmt.Errorf("Failed to handle equipment request list: %w", err)
 	}
 
-	cli.PrintEquipmentList(el)
-	return nil
+	result := format.FormatEquipmentList(el)
+	return result, nil
 }
 
 func (s *EquipmentRequest) GetList() (responses.EquipmentList, error) {
