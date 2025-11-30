@@ -339,7 +339,7 @@ var (
 			class, err := handlers.LoadClassTemplate(c)
 			if err != nil {
 				errMsg := "Failed to load class template"
-				logger.HandleInfo(errMsg)
+				logger.Info(errMsg)
 				panic(fmt.Errorf("%s: %w", errMsg, err))
 			}
 			character.Class = class
