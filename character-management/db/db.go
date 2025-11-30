@@ -26,7 +26,7 @@ func NewRepo() (Repo, error) {
 		xdgData = filepath.Join(home, ".local", "share")
 	}
 
-	dbDir := filepath.Join(xdgData, "dndgo")
+	dbDir := filepath.Join(xdgData, db_dirname)
 
 	err := os.MkdirAll(dbDir, 0755)
 	if err != nil {
