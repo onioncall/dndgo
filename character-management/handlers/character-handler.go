@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/onioncall/dndgo/character-management/db"
 	defaultjsonconfigs "github.com/onioncall/dndgo/character-management/default-json-configs"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
@@ -20,6 +21,16 @@ const (
 	remove   string = "remove"
 	backpack string = "backpack"
 )
+
+type CharacterHandler struct {
+	repo db.Repo
+}
+
+func NewCharacterHandler(repo db.Repo) CharacterHandler {
+	return CharacterHandler{
+		repo: repo,
+	}
+}
 
 func HandleCharacter(c *models.Character) error {
 	if c.Class != nil {
@@ -84,52 +95,14 @@ func GetConfigPath() (string, error) {
 	return configDir, nil
 }
 
-func SaveCharacterJson(c *models.Character) error {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("error getting home directory: %w", err)
-	}
-
-	configDir := filepath.Join(homeDir, ".config", "dndgo")
-	err = os.MkdirAll(configDir, 0755)
-	if err != nil {
-		return fmt.Errorf("error creating config directory: %w", err)
-	}
-
-	filePath := filepath.Join(configDir, "character.json")
-
-	characterJSON, err := json.MarshalIndent(c, "", "  ")
-	if err != nil {
-		return fmt.Errorf("error marshaling character to JSON: %w", err)
-	}
-
-	err = os.WriteFile(filePath, characterJSON, 0644)
-	if err != nil {
-		return fmt.Errorf("error writing character to file: %w", err)
-	}
-
-	return nil
+func (ch CharacterHandler) SaveCharacter(c *models.Character) error {
+	return ch.repo.SyncCharacter(*c)
 }
 
-func LoadCharacter() (*models.Character, error) {
-	homeDir, err := os.UserHomeDir()
+func (ch CharacterHandler) LoadCharacter() (*models.Character, error) {
+	character, err := ch.repo.GetCharacter()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get home directory: %w", err)
-	}
-
-	configPath := filepath.Join(homeDir, ".config", "dndgo", "character.json")
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return nil, fmt.Errorf("character file not found at %s: %w", configPath, err)
-	}
-
-	fileData, err := os.ReadFile(configPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read character file: %w", err)
-	}
-
-	var character models.Character
-	if err := json.Unmarshal(fileData, &character); err != nil {
-		return nil, fmt.Errorf("failed to parse character data: %w", err)
+		return nil, fmt.Errorf("failed to retrieve character from db:\n%w", err)
 	}
 
 	if character.ClassName != "" {
@@ -141,7 +114,7 @@ func LoadCharacter() (*models.Character, error) {
 		character.Class = class
 	}
 
-	return &character, nil
+	return character, nil
 }
 
 func LoadCharacterTemplate(characterName string, className string) (*models.Character, error) {

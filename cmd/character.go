@@ -3,10 +3,11 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/onioncall/dndgo/character-management/db"
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/di"
 	"github.com/onioncall/dndgo/logger"
+
 	"github.com/spf13/cobra"
 )
 
@@ -21,12 +22,6 @@ var (
 		Use:   "add",
 		Short: "Add character attributes",
 		Run: func(cmd *cobra.Command, args []string) {
-			repo, err := db.NewRepo()
-			if err != nil {
-				panic(fmt.Sprintf("Failed to initialize db:\n%v", err.Error()))
-			}
-			defer repo.Deinit()
-
 			l, _ := cmd.Flags().GetString("language")
 			bp, _ := cmd.Flags().GetString("backpack")
 			il, _ := cmd.Flags().GetBool("level")
@@ -37,7 +32,7 @@ var (
 			t, _ := cmd.Flags().GetInt("temp-hp")
 			n, _ := cmd.Flags().GetString("name")
 
-			c, err := repo.GetCharacter()
+			c, err := di.Repo.GetCharacter()
 			if err != nil {
 				logger.Info("Failed to load character data")
 				panic(err)
@@ -76,7 +71,7 @@ var (
 				c.AddTempHp(t)
 			}
 
-			err = repo.SyncCharacter(*c)
+			err = di.Repo.SyncCharacter(*c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -110,7 +105,7 @@ var (
 						panic(err)
 					}
 				} else if p == "markdown" {
-					c, err := handlers.LoadCharacter()
+					c, err := di.CharacterHandler.LoadCharacter()
 					if err != nil {
 						logger.Info("Failed to load character")
 						panic(err)
@@ -128,7 +123,7 @@ var (
 			}
 
 			if t {
-				c, err := handlers.LoadCharacter()
+				c, err := di.CharacterHandler.LoadCharacter()
 				if err != nil {
 					logger.Info("Failed to save character data")
 					panic(err)
@@ -169,7 +164,7 @@ var (
 			hp, _ := cmd.Flags().GetInt("hitpoints")
 			u, _ := cmd.Flags().GetInt("use-slot")
 
-			c, err := handlers.LoadCharacter()
+			c, err := di.CharacterHandler.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to load character")
 				panic(err)
@@ -181,7 +176,7 @@ var (
 				c.UseSpellSlot(u)
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = di.CharacterHandler.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -201,7 +196,7 @@ var (
 		Use:   "update",
 		Short: "Update character attributes",
 		Run: func(cmd *cobra.Command, args []string) {
-			c, err := handlers.LoadCharacter()
+			c, err := di.CharacterHandler.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -226,7 +221,7 @@ var (
 			q, _ := cmd.Flags().GetInt("quantity")
 			ct, _ := cmd.Flags().GetString("class-tokens")
 
-			c, err := handlers.LoadCharacter()
+			c, err := di.CharacterHandler.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -246,7 +241,7 @@ var (
 				c.UseClassTokens(ct, q)
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = di.CharacterHandler.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -278,7 +273,7 @@ var (
 			ct, _ := cmd.Flags().GetString("class-tokens")
 			q, _ := cmd.Flags().GetInt("quantity")
 
-			c, err := handlers.LoadCharacter()
+			c, err := di.CharacterHandler.LoadCharacter()
 			if err != nil {
 				errMsg := "Failed to save character data"
 				logger.Info(errMsg)
@@ -295,7 +290,7 @@ var (
 				c.RecoverClassTokens(ct, q)
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = di.CharacterHandler.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -321,12 +316,6 @@ var (
 		Use:   "init",
 		Short: "Initializes a new character on this machine",
 		Run: func(cmd *cobra.Command, args []string) {
-			repo, err := db.NewRepo()
-			if err != nil {
-				panic(fmt.Sprintf("Failed to initialize db:\n%v", err.Error()))
-			}
-			defer repo.Deinit()
-
 			c, _ := cmd.Flags().GetString("class")
 			n, _ := cmd.Flags().GetString("name")
 
@@ -336,18 +325,23 @@ var (
 				panic(err)
 			}
 
+			_, err = di.Repo.InsertCharacter(*character)
+			if err != nil {
+				logger.Info("Failed to save new character data")
+				panic(err)
+			}
+
 			class, err := handlers.LoadClassTemplate(c)
 			if err != nil {
 				errMsg := "Failed to load class template"
 				logger.Info(errMsg)
 				panic(fmt.Errorf("%s: %w", errMsg, err))
 			}
-			character.Class = class
 
-			_, err = repo.InsertCharacter(*character)
-			if err != nil {
-				logger.Info("Failed to save new character data")
-				panic(err)
+			if err = handlers.SaveClassHandler(class); err != nil {
+				errMsg := "Failed to save class data"
+				logger.Info(errMsg)
+				panic(fmt.Errorf("%s: %w", errMsg, err))
 			}
 
 			logger.Info("Character Creation Successful")
@@ -361,7 +355,7 @@ var (
 			p, _ := cmd.Flags().GetString("primary")
 			s, _ := cmd.Flags().GetString("secondary")
 
-			c, err := handlers.LoadCharacter()
+			c, err := di.CharacterHandler.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -374,7 +368,7 @@ var (
 				c.Equip(false, s)
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = di.CharacterHandler.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -397,7 +391,7 @@ var (
 			p, _ := cmd.Flags().GetBool("primary")
 			s, _ := cmd.Flags().GetBool("secondary")
 
-			c, err := handlers.LoadCharacter()
+			c, err := di.CharacterHandler.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -410,7 +404,7 @@ var (
 				c.Unequip(false)
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = di.CharacterHandler.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
