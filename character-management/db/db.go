@@ -3,6 +3,8 @@ package db
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/onioncall/dndgo/character-management/models"
 	c "github.com/ostafen/clover/v2"
@@ -11,13 +13,27 @@ import (
 )
 
 const character_collection = "characters"
+const db_dirname = "dndgo"
 
 type Repo struct {
 	db *c.DB
 }
 
 func NewRepo() (Repo, error) {
-	db, err := c.Open("dndgo")
+	xdgData := os.Getenv("XDG_DATA_HOME")
+	if xdgData == "" {
+		home := os.Getenv("HOME")
+		xdgData = filepath.Join(home, ".local", "share")
+	}
+
+	dbDir := filepath.Join(xdgData, "dndgo")
+
+	err := os.MkdirAll(dbDir, 755)
+	if err != nil {
+		return Repo{}, fmt.Errorf("Failed to create data dir at %v:\n%w", dbDir, err)
+	}
+
+	db, err := c.Open(dbDir)
 	if err != nil {
 		return Repo{}, fmt.Errorf("Failed to open dndgo db: %w", err)
 	}
