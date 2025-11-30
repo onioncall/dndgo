@@ -9,6 +9,7 @@ import (
 )
 
 type Character struct {
+	Default                 bool                                 `json:"default"`
 	Path                    string                               `json:"path"`
 	ValidationDisabled      bool                                 `json:"validation-disabled"`
 	Name                    string                               `json:"name"`
