@@ -28,7 +28,7 @@ func NewRepo() (Repo, error) {
 
 	dbDir := filepath.Join(xdgData, "dndgo")
 
-	err := os.MkdirAll(dbDir, 755)
+	err := os.MkdirAll(dbDir, 0755)
 	if err != nil {
 		return Repo{}, fmt.Errorf("Failed to create data dir at %v:\n%w", dbDir, err)
 	}
