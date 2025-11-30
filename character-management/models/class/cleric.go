@@ -10,6 +10,7 @@ import (
 )
 
 type Cleric struct {
+	BaseClass
 	ClassToken     shared.NamedToken     `json:"class-token"`
 	Domain         string                `json:"domain"`
 	PreparedSpells []string              `json:"prepared-spells"`

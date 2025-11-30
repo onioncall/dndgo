@@ -8,6 +8,7 @@ import (
 )
 
 type Rogue struct {
+	BaseClass
 	ExpertiseSkills []string              `json:"expertise"`
 	Archetype       string                `json:"archetype"`
 	SneakAttack     string                `json:"-"`

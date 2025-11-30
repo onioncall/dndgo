@@ -51,6 +51,8 @@ type GenericItem struct {
 type Class interface {
 	CalculateHitDice(int) string
 	PrintClassDetails(c *Character) []string
+	GetCharacterId() string
+	GetClassName() string
 }
 
 type PostCalculator interface {

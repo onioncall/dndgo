@@ -11,6 +11,7 @@ import (
 )
 
 type Bard struct {
+	BaseClass
 	ExpertiseSkills []string              `json:"expertise"`
 	College         string                `json:"college"`
 	OtherFeatures   []models.ClassFeature `json:"other-features"`

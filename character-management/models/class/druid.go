@@ -10,6 +10,7 @@ import (
 )
 
 type Druid struct {
+	BaseClass
 	ClassToken     shared.NamedToken     `json:"class-token"`
 	Circle         string                `json:"circle"`
 	PreparedSpells []string              `json:"prepared-spells"`

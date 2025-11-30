@@ -10,6 +10,7 @@ import (
 )
 
 type Sorcerer struct {
+	BaseClass
 	SorcerousOrigin string                `json:"sorcerous-origin"`
 	ClassToken      shared.NamedToken     `json:"class-token"`
 	MetaMagicSpells []models.ClassFeature `json:"meta-magic-spells"`

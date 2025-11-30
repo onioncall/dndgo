@@ -13,6 +13,7 @@ import (
 )
 
 const character_collection = "characters"
+const class_collection = "classes"
 const db_dirname = "dndgo"
 
 type Repo struct {
@@ -95,6 +96,54 @@ func (r Repo) SyncCharacter(character models.Character) error {
 
 	if err = r.db.Update(cquery.NewQuery(character_collection).Where(cquery.Field("default").Eq(true)), updates); err != nil {
 		return fmt.Errorf("Failed to update character doc:\n%w", err)
+	}
+
+	return nil
+}
+
+// InsertClass creates a new class record in the db
+func (r Repo) InsertClass(class models.Class) error {
+	if err := r.db.CreateCollection(class_collection); err != nil {
+		return fmt.Errorf("Failed to create or locate classes collection: %w", err)
+	}
+
+	doc := cdocument.NewDocumentOf(class)
+	_, err := r.db.InsertOne(class_collection, doc)
+	if err != nil {
+		return fmt.Errorf("Failed to insert new class record to db: %w", err)
+	}
+
+	return nil
+}
+
+// GetClass retrieves a class from the db based on the ID of the corresponding character
+// Returns a []byte json representation of the class
+func (r Repo) GetClass(id string) ([]byte, error) {
+	doc, err := r.db.FindFirst(
+		cquery.NewQuery(class_collection).Where(cquery.Field("character_id").Eq(id)),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to retrieve class from db: %w", err)
+	}
+
+	return cdocument.Encode(doc)
+}
+
+// SyncClass updates the class doc based on class.CharacterID
+func (r Repo) SyncClass(class models.Class) error {
+	bytes, err := json.Marshal(class)
+	if err != nil {
+		return fmt.Errorf("Failed to marshal class:\n%w", err)
+	}
+
+	updates := make(map[string]interface{})
+	err = json.Unmarshal(bytes, &updates)
+	if err != nil {
+		return fmt.Errorf("Failed to unmarshal class to generic map:\n%w", err)
+	}
+
+	if err = r.db.Update(cquery.NewQuery(class_collection).Where(cquery.Field("character_id").Eq(class.GetCharacterId())), updates); err != nil {
+		return fmt.Errorf("Failed to update class doc:\n%w", err)
 	}
 
 	return nil

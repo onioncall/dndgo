@@ -10,6 +10,7 @@ import (
 )
 
 type Paladin struct {
+	BaseClass
 	OtherFeatures        []models.ClassFeature `json:"other-features"`
 	PreparedSpells       []string              `json:"prepared-spells"`
 	OathSpells           []string              `json:"oath-spells"`
