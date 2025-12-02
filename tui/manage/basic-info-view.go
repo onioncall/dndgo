@@ -9,7 +9,7 @@ const (
 	skillsPadding    int = 4
 )
 
-func (m *BasicInfoModel) View(innerWidth, availableHeight int) string {
+func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 	col1Width := innerWidth / 3
 	col1Height := availableHeight / 2
 

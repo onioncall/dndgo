@@ -20,18 +20,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
+
 		innerWidth, availableHeight := m.getInnerDimensions()
-
-		// Only update the active tab size
-		switch m.selectedTabIndex {
-		case basicInfoTab:
-			m.basicInfoTab.UpdateSize(innerWidth, availableHeight, m.character)
-		}
-
-		// Initiallize all content on load
-		if !m.contentInitialized {
-			m.basicInfoTab.InitializeContent(m.character)
-		}
+		m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, m.character)
+		m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, m.character)
 
 		return m, nil
 	case tea.KeyMsg:
@@ -53,9 +45,14 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			m.err = nil
 			m.cmdVisible = !m.cmdVisible
 			m.cmdInput.Focus()
-			// Update tab sizes when cmd visibility changes
+
 			innerWidth, availableHeight := m.getInnerDimensions()
-			m.basicInfoTab.UpdateSize(innerWidth, availableHeight, m.character)
+			switch m.selectedTabIndex {
+			case basicInfoTab:
+				m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, m.character)
+			case spellTab:
+				m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, m.character)
+			}
 
 			return m, nil
 		case "enter":
@@ -81,6 +78,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		switch m.selectedTabIndex {
 		case basicInfoTab:
 			cmd = m.basicInfoTab.Update(msg)
+			cmds = append(cmds, cmd)
+		case spellTab:
+			cmd = m.spellsTab.Update(msg)
 			cmds = append(cmds, cmd)
 		}
 	}
@@ -109,17 +109,27 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		dmg, err := strconv.ParseInt(inputAfterCmd, 10, 32)
 		m.err = err
 		m.character.DamageCharacter(int(dmg))
-		m.basicInfoTab.SetHealthContent(m.character)
+		m.basicInfoTab.healthViewport.SetContent(getHealthContent(m.character))
 	case recoverCmd:
 		health, err := strconv.ParseInt(inputAfterCmd, 10, 32)
 		m.err = err
 		m.character.HealCharacter(int(health))
-		m.basicInfoTab.SetHealthContent(m.character)
+		m.basicInfoTab.healthViewport.SetContent(getHealthContent(m.character))
 	case addTempCmd:
 		temp, err := strconv.ParseInt(inputAfterCmd, 10, 32)
 		m.err = err
 		m.character.AddTempHp(int(temp))
-		m.basicInfoTab.SetHealthContent(m.character)
+		m.basicInfoTab.healthViewport.SetContent(getHealthContent(m.character))
+	case useSlotCmd:
+		level, err := strconv.ParseInt(inputAfterCmd, 10, 32)
+		m.err = err
+		m.character.UseSpellSlot(int(level))
+		m.spellsTab.spellSlotsViewport.SetContent(getSpellSlotContent(m.character))
+	case recoverSlotCmd:
+		level, err := strconv.ParseInt(inputAfterCmd, 10, 32)
+		m.err = err
+		m.character.RecoverSpellSlots(int(level), 1)
+		m.spellsTab.spellSlotsViewport.SetContent(getSpellSlotContent(m.character))
 	default:
 		m.err = fmt.Errorf("%s command not found", cmd)
 	}

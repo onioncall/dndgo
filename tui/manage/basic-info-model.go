@@ -18,6 +18,39 @@ type BasicInfoModel struct {
 
 func NewBasicInfoModel(character *models.Character) BasicInfoModel {
 	statsVp := viewport.New(0, 0)
+	statsContent := getStatsContent(character)
+	statsVp.SetContent(statsContent)
+
+	healthVp := viewport.New(0, 0)
+	healthContent := getHealthContent(character)
+	healthVp.SetContent(healthContent)
+
+	abilitiesVp := viewport.New(0, 0)
+	abilitiesContent := getAbilitiesContent(character)
+	abilitiesVp.SetContent(abilitiesContent)
+
+	skillsVp := viewport.New(0, 0)
+	skillsContent := getSkillsContent(character)
+	skillsVp.SetContent(skillsContent)
+
+	// This content can be set here because model context is not required.
+
+	return BasicInfoModel{
+		basicStatsViewport: statsVp,
+		abilitiesViewport:  abilitiesVp,
+		healthViewport:     healthVp,
+		skillsViewport:     skillsVp,
+	}
+}
+
+func getHealthContent(character *models.Character) string {
+	healthContent := fmt.Sprintf("Current HP: %d | Max HP: %d | Temp HP: %d",
+		character.HPCurrent, character.HPMax, character.HPTemp)
+
+	return healthContent
+}
+
+func getStatsContent(character *models.Character) string {
 	statsContent := fmt.Sprintf(`Class: %s
 Level: %d
 Race: %s
@@ -30,29 +63,13 @@ Hit Dice: %s
 	`, character.ClassName, character.Level, character.Race, character.Proficiency,
 		character.Speed, character.PassivePerception, character.PassiveInsight,
 		character.AC, character.HitDice)
-	statsVp.SetContent(statsContent)
 
-	// Content will be set in RefreshBasicInfo
-	abilitiesVp := viewport.New(0, 0)
-
-	healthStr := fmt.Sprintf("Current HP: %d | Max HP: %d | Temp HP: %d", character.HPCurrent, character.HPMax, character.HPTemp)
-	healthVp := viewport.New(0, 0)
-	healthVp.SetContent(healthStr)
-
-	// Content will be set in InitializeContent
-	skillsVp := viewport.New(0, 0)
-
-	return BasicInfoModel{
-		basicStatsViewport: statsVp,
-		abilitiesViewport:  abilitiesVp,
-		healthViewport:     healthVp,
-		skillsViewport:     skillsVp,
-	}
+	return statsContent
 }
 
-func (m *BasicInfoModel) SetAbilitiesContent(character *models.Character) {
-	lineWidth := m.abilitiesViewport.Width - (abilitiesPadding * 2)
+func getAbilitiesContent(character *models.Character) string {
 	abilitiesHeader := "Ability        -  Mod -  ST Mod"
+	lineWidth := utf8.RuneCountInString(abilitiesHeader)
 	abilitiesStr := fmt.Sprintf("%s\n", abilitiesHeader)
 	abilitiesStr += strings.Repeat("─", lineWidth) + "\n"
 	for _, a := range character.Abilities {
@@ -76,15 +93,15 @@ func (m *BasicInfoModel) SetAbilitiesContent(character *models.Character) {
 		// This is a space, but we are using the unicode so that lipgloss does not strip it out as a trailing space
 		abilitiesStr += fmt.Sprintf("%s%s\n",
 			abilityStr,
-			strings.Repeat("\u00A0", utf8.RuneCountInString(abilitiesHeader)-utf8.RuneCountInString(abilityStr)))
+			strings.Repeat("\u00A0", lineWidth-utf8.RuneCountInString(abilityStr)))
 	}
 
-	m.abilitiesViewport.SetContent(abilitiesStr)
+	return abilitiesStr
 }
 
-func (m *BasicInfoModel) SetSkillsContent(character *models.Character) {
-	lineWidth := m.skillsViewport.Width - (skillsPadding * 2)
+func getSkillsContent(character *models.Character) string {
 	skillsHeader := "Ability       -  Skills          -  Mod -  Proficient"
+	lineWidth := utf8.RuneCountInString(skillsHeader)
 	skillsStr := fmt.Sprintf("%s\n", skillsHeader)
 	skillsStr += strings.Repeat("─", lineWidth) + "\n"
 
@@ -106,18 +123,13 @@ func (m *BasicInfoModel) SetSkillsContent(character *models.Character) {
 		// This is a space, but we are using the unicode so that lipgloss does not strip it out as a trailing space
 		skillsStr += fmt.Sprintf("%s%s\n",
 			skillStr,
-			strings.Repeat("\u00A0", utf8.RuneCountInString(skillsHeader)-utf8.RuneCountInString(skillStr)))
+			strings.Repeat("\u00A0", lineWidth-utf8.RuneCountInString(skillStr)))
 	}
 
-	m.skillsViewport.SetContent(skillsStr)
+	return skillsStr
 }
 
-func (m *BasicInfoModel) SetHealthContent(character *models.Character) {
-	healthStr := fmt.Sprintf("Current HP: %d | Max HP: %d | Temp HP: %d", character.HPCurrent, character.HPMax, character.HPTemp)
-	m.healthViewport.SetContent(healthStr)
-}
-
-func (m *BasicInfoModel) UpdateSize(innerWidth, availableHeight int, character *models.Character) {
+func (m BasicInfoModel) UpdateSize(innerWidth, availableHeight int, character *models.Character) BasicInfoModel {
 	// Column 1: 1/3 width, split vertically 50/50
 	col1Width := innerWidth / 3
 	boxHeight := availableHeight / 2
@@ -146,10 +158,6 @@ func (m *BasicInfoModel) UpdateSize(innerWidth, availableHeight int, character *
 	m.healthViewport.Height = healthInnerHeight
 	m.skillsViewport.Width = skillsInnerWidth
 	m.skillsViewport.Height = skillsInnerHeight
-}
 
-func (m *BasicInfoModel) InitializeContent(character *models.Character) {
-	m.SetHealthContent(character)
-	m.SetAbilitiesContent(character)
-	m.SetSkillsContent(character)
+	return m
 }
