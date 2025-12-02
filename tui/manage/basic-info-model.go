@@ -33,8 +33,6 @@ func NewBasicInfoModel(character *models.Character) BasicInfoModel {
 	skillsContent := getSkillsContent(character)
 	skillsVp.SetContent(skillsContent)
 
-	// This content can be set here because model context is not required.
-
 	return BasicInfoModel{
 		basicStatsViewport: statsVp,
 		abilitiesViewport:  abilitiesVp,

@@ -31,9 +31,14 @@ Character Management is the central feature of this application. To Navigate,
 - ctrl+s to show or hide cmd bar, or clear an error
 
 ### Basic Info
-
 Commands available to basic info 
 
-- *damage (int)* example, `damage 3` removes three hp from your character, if your character has temp hp, that is removed first
-- *recover (int)* example, `recover 3` recovers three hp for your character.
-- *temp (int)* example, `temp 5` adds five temporary hp
+- *damage (int, damage amount)* example, `damage 3` removes three hp from your character, if your character has temp hp, that is removed first
+- *recover (int, recover amount)* example, `recover 3` recovers three hp for your character.
+- *temp (int, temp hp amount)* example, `temp 5` adds five temporary hp
+
+### Spells
+Commands available to spells
+
+- *use-slot (int, level)* example, `use-slot 1` uses a single level one spell slot
+- *recover-slot (int, level)* example, `recover-slot 1` recovers a single level one spell slot
