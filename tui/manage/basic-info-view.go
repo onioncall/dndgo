@@ -1,0 +1,68 @@
+package manage
+
+import (
+	"github.com/charmbracelet/lipgloss"
+)
+
+const (
+	abilitiesPadding int = 2
+	skillsPadding    int = 4
+)
+
+func (m *BasicInfoModel) View(innerWidth, availableHeight int) string {
+	col1Width := innerWidth / 3
+	col1Height := availableHeight / 2
+
+	// Column 1 Viewports
+	statsVpStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(orange).
+		Padding(0, 4).
+		Width(col1Width - 2).
+		Height(col1Height - 2)
+
+	basicStatsVp := statsVpStyle.Render(m.basicStatsViewport.View())
+
+	abilitiesVpStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(orange).
+		Padding(0, abilitiesPadding).
+		Width(col1Width - 2).
+		Height(col1Height - 2).
+		Align(lipgloss.Center)
+
+	abilitiesVp := abilitiesVpStyle.Render(m.abilitiesViewport.View())
+
+	// Stack them vertically
+	column1 := lipgloss.JoinVertical(lipgloss.Left, basicStatsVp, abilitiesVp)
+
+	// Column 2: 2/3 horizontally, split 15/85 vertically
+	col2Width := (innerWidth * 2) / 3
+	healthHeight := (availableHeight * 15) / 100
+	skillsHeight := availableHeight - healthHeight
+
+	// Column 2 Viewports
+	healthVpStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(orange).
+		Padding(0, 2).
+		Width(col2Width - 2).
+		Height(healthHeight - 2).
+		Align(lipgloss.Center)
+
+	healthVp := healthVpStyle.Render(m.healthViewport.View())
+
+	skillsVpStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(orange).
+		Padding(0, skillsPadding).
+		Width(col2Width - 2).
+		Height(skillsHeight - 2).
+		Align(lipgloss.Center)
+
+	skillsVp := skillsVpStyle.Render(m.skillsViewport.View())
+
+	column2 := lipgloss.JoinVertical(lipgloss.Left, healthVp, skillsVp)
+
+	return lipgloss.JoinHorizontal(lipgloss.Top, column1, column2)
+}
