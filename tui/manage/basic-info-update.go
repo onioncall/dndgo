@@ -4,11 +4,11 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func (m *BasicInfoModel) Init() tea.Cmd {
+func (m BasicInfoModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m *BasicInfoModel) Update(msg tea.Msg) tea.Cmd {
+func (m BasicInfoModel) Update(msg tea.Msg) tea.Cmd {
 	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {

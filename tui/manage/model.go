@@ -18,6 +18,7 @@ type Model struct {
 	err                error
 
 	basicInfoTab BasicInfoModel
+	spellsTab    SpellsModel
 }
 
 // Tab constants
@@ -30,13 +31,15 @@ const (
 
 // Tab Commands
 const (
-	basicInfoCmd = "/b"
-	spellCmd     = "/s"
-	equipmentCmd = "/e"
-	classCmd     = "/c"
-	damageCmd    = "damage"
-	recoverCmd   = "recover"
-	addTempCmd   = "temp"
+	basicInfoCmd   = "/b"
+	spellCmd       = "/s"
+	equipmentCmd   = "/e"
+	classCmd       = "/c"
+	damageCmd      = "damage"
+	recoverCmd     = "recover"
+	addTempCmd     = "temp"
+	useSlotCmd     = "use-slot"
+	recoverSlotCmd = "recover-slot"
 )
 
 func NewModel() Model {
@@ -61,6 +64,7 @@ func NewModel() Model {
 	}
 
 	basicInfoTab := NewBasicInfoModel(character)
+	spellsTab := NewSpellsModel(character)
 
 	return Model{
 		width:            0,
@@ -70,6 +74,7 @@ func NewModel() Model {
 		cmdInput:         input,
 		cmdVisible:       false,
 		basicInfoTab:     basicInfoTab,
+		spellsTab:        spellsTab,
 		character:        character,
 	}
 }
@@ -86,7 +91,7 @@ func (m Model) getInnerDimensions() (width, height int) {
 
 	containerPadding := 2
 	innerWidth := containerWidth - containerPadding
-	innerHeight := containerHeight - 0
+	innerHeight := containerHeight
 
 	tabHeight := 3
 	availableHeight := innerHeight - tabHeight

@@ -96,6 +96,8 @@ func (m Model) renderActiveTabContent(width, height int) string {
 	switch m.selectedTabIndex {
 	case basicInfoTab:
 		return m.basicInfoTab.View(width, height)
+	case spellTab:
+		return m.spellsTab.View(width, height)
 	default:
 		return m.renderPlaceholderContent(width, height)
 	}
