@@ -1,7 +1,12 @@
-package manage
+package spells
 
 import (
 	"github.com/charmbracelet/lipgloss"
+)
+
+const (
+	orange   = lipgloss.Color("#FFA500")
+	darkGray = lipgloss.Color("#767676")
 )
 
 func (m SpellsModel) View(innerWidth, availableHeight int) string {
@@ -19,7 +24,7 @@ func (m SpellsModel) View(innerWidth, availableHeight int) string {
 		Height(spellSaveDCHeight - 2).
 		Align(lipgloss.Center)
 
-	spellSaveDCVp := spellSaveDCStyle.Render(m.spellSaveDCViewport.View())
+	spellSaveDCVp := spellSaveDCStyle.Render(m.SpellSaveDCViewport.View())
 
 	// Spell Slots viewport (bottom of column 1)
 	spellSlotsStyle := lipgloss.NewStyle().
@@ -30,7 +35,7 @@ func (m SpellsModel) View(innerWidth, availableHeight int) string {
 		Height(spellSlotsHeight - 2).
 		Align(lipgloss.Center)
 
-	spellSlotsVp := spellSlotsStyle.Render(m.spellSlotsViewport.View())
+	spellSlotsVp := spellSlotsStyle.Render(m.SpellSlotsViewport.View())
 
 	// Stack column 1 vertically
 	column1 := lipgloss.JoinVertical(lipgloss.Left, spellSaveDCVp, spellSlotsVp)
@@ -47,7 +52,7 @@ func (m SpellsModel) View(innerWidth, availableHeight int) string {
 		Height(availableHeight - 2).
 		Align(lipgloss.Center)
 
-	knownSpellsVp := knownSpellsStyle.Render(m.knownSpellsViewport.View())
+	knownSpellsVp := knownSpellsStyle.Render(m.KnownSpellsViewport.View())
 
 	column2 := knownSpellsVp
 

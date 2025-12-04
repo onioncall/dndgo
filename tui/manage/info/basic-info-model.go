@@ -1,4 +1,4 @@
-package manage
+package info
 
 import (
 	"fmt"
@@ -10,45 +10,45 @@ import (
 )
 
 type BasicInfoModel struct {
-	basicStatsViewport viewport.Model
-	abilitiesViewport  viewport.Model
-	healthViewport     viewport.Model
-	skillsViewport     viewport.Model
+	BasicStatsViewport viewport.Model
+	AbilitiesViewport  viewport.Model
+	HealthViewport     viewport.Model
+	SkillsViewport     viewport.Model
 }
 
 func NewBasicInfoModel(character *models.Character) BasicInfoModel {
 	statsVp := viewport.New(0, 0)
-	statsContent := getStatsContent(character)
+	statsContent := GetStatsContent(character)
 	statsVp.SetContent(statsContent)
 
 	healthVp := viewport.New(0, 0)
-	healthContent := getHealthContent(character)
+	healthContent := GetHealthContent(character)
 	healthVp.SetContent(healthContent)
 
 	abilitiesVp := viewport.New(0, 0)
-	abilitiesContent := getAbilitiesContent(character)
+	abilitiesContent := GetAbilitiesContent(character)
 	abilitiesVp.SetContent(abilitiesContent)
 
 	skillsVp := viewport.New(0, 0)
-	skillsContent := getSkillsContent(character)
+	skillsContent := GetSkillsContent(character)
 	skillsVp.SetContent(skillsContent)
 
 	return BasicInfoModel{
-		basicStatsViewport: statsVp,
-		abilitiesViewport:  abilitiesVp,
-		healthViewport:     healthVp,
-		skillsViewport:     skillsVp,
+		BasicStatsViewport: statsVp,
+		AbilitiesViewport:  abilitiesVp,
+		HealthViewport:     healthVp,
+		SkillsViewport:     skillsVp,
 	}
 }
 
-func getHealthContent(character *models.Character) string {
+func GetHealthContent(character *models.Character) string {
 	healthContent := fmt.Sprintf("Current HP: %d | Max HP: %d | Temp HP: %d",
 		character.HPCurrent, character.HPMax, character.HPTemp)
 
 	return healthContent
 }
 
-func getStatsContent(character *models.Character) string {
+func GetStatsContent(character *models.Character) string {
 	statsContent := fmt.Sprintf(`Class: %s
 Level: %d
 Race: %s
@@ -65,7 +65,7 @@ Hit Dice: %s
 	return statsContent
 }
 
-func getAbilitiesContent(character *models.Character) string {
+func GetAbilitiesContent(character *models.Character) string {
 	abilitiesHeader := "Ability        -  Mod -  ST Mod"
 	lineWidth := utf8.RuneCountInString(abilitiesHeader)
 	abilitiesStr := fmt.Sprintf("%s\n", abilitiesHeader)
@@ -97,7 +97,7 @@ func getAbilitiesContent(character *models.Character) string {
 	return abilitiesStr
 }
 
-func getSkillsContent(character *models.Character) string {
+func GetSkillsContent(character *models.Character) string {
 	skillsHeader := "Ability       -  Skills          -  Mod -  Proficient"
 	lineWidth := utf8.RuneCountInString(skillsHeader)
 	skillsStr := fmt.Sprintf("%s\n", skillsHeader)
@@ -137,10 +137,10 @@ func (m BasicInfoModel) UpdateSize(innerWidth, availableHeight int, character *m
 	abilitiesInnerWidth := col1Width - 2
 	abilitiesInnerHeight := boxHeight - 2
 
-	m.basicStatsViewport.Width = basicStatsInnerWidth
-	m.basicStatsViewport.Height = basicStatsInnerHeight
-	m.abilitiesViewport.Width = abilitiesInnerWidth
-	m.abilitiesViewport.Height = abilitiesInnerHeight
+	m.BasicStatsViewport.Width = basicStatsInnerWidth
+	m.BasicStatsViewport.Height = basicStatsInnerHeight
+	m.AbilitiesViewport.Width = abilitiesInnerWidth
+	m.AbilitiesViewport.Height = abilitiesInnerHeight
 
 	// Column 2: 2/3 width, split 15/85
 	col2Width := innerWidth * 2 / 3
@@ -152,10 +152,10 @@ func (m BasicInfoModel) UpdateSize(innerWidth, availableHeight int, character *m
 	skillsInnerWidth := col2Width - 2
 	skillsInnerHeight := skillsHeight - 2
 
-	m.healthViewport.Width = healthInnerWidth
-	m.healthViewport.Height = healthInnerHeight
-	m.skillsViewport.Width = skillsInnerWidth
-	m.skillsViewport.Height = skillsInnerHeight
+	m.HealthViewport.Width = healthInnerWidth
+	m.HealthViewport.Height = healthInnerHeight
+	m.SkillsViewport.Width = skillsInnerWidth
+	m.SkillsViewport.Height = skillsInnerHeight
 
 	return m
 }

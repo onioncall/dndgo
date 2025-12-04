@@ -1,4 +1,4 @@
-package manage
+package info
 
 import (
 	"github.com/charmbracelet/lipgloss"
@@ -7,6 +7,11 @@ import (
 const (
 	abilitiesPadding int = 2
 	skillsPadding    int = 4
+)
+
+const (
+	orange   = lipgloss.Color("#FFA500")
+	darkGray = lipgloss.Color("#767676")
 )
 
 func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
@@ -21,7 +26,7 @@ func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 		Width(col1Width - 2).
 		Height(col1Height - 2)
 
-	basicStatsVp := statsVpStyle.Render(m.basicStatsViewport.View())
+	basicStatsVp := statsVpStyle.Render(m.BasicStatsViewport.View())
 
 	abilitiesVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
@@ -31,7 +36,7 @@ func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 		Height(col1Height - 2).
 		Align(lipgloss.Center)
 
-	abilitiesVp := abilitiesVpStyle.Render(m.abilitiesViewport.View())
+	abilitiesVp := abilitiesVpStyle.Render(m.AbilitiesViewport.View())
 
 	// Stack them vertically
 	column1 := lipgloss.JoinVertical(lipgloss.Left, basicStatsVp, abilitiesVp)
@@ -50,7 +55,7 @@ func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 		Height(healthHeight - 2).
 		Align(lipgloss.Center)
 
-	healthVp := healthVpStyle.Render(m.healthViewport.View())
+	healthVp := healthVpStyle.Render(m.HealthViewport.View())
 
 	skillsVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
@@ -60,7 +65,7 @@ func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 		Height(skillsHeight - 2).
 		Align(lipgloss.Center)
 
-	skillsVp := skillsVpStyle.Render(m.skillsViewport.View())
+	skillsVp := skillsVpStyle.Render(m.SkillsViewport.View())
 
 	column2 := lipgloss.JoinVertical(lipgloss.Left, healthVp, skillsVp)
 

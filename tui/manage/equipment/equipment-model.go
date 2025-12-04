@@ -1,4 +1,4 @@
-package manage
+package equipment
 
 import (
 	"fmt"
@@ -10,32 +10,32 @@ import (
 )
 
 type EquipmentModel struct {
-	wornEquipmentViewport viewport.Model
-	backpackViewport      viewport.Model
-	weaponsViewport       viewport.Model
+	WornEquipmentViewport viewport.Model
+	BackpackViewport      viewport.Model
+	WeaponsViewport       viewport.Model
 }
 
 func NewEquipmentModel(character *models.Character) EquipmentModel {
 	wornEquipmentVp := viewport.New(0, 0)
-	wornEquipmentContent := getWornEquipmentContent(character)
+	wornEquipmentContent := GetWornEquipmentContent(character)
 	wornEquipmentVp.SetContent(wornEquipmentContent)
 
 	backpackVp := viewport.New(0, 0)
-	backpackContent := getBackpackContent(character)
+	backpackContent := GetBackpackContent(character)
 	backpackVp.SetContent(backpackContent)
 
 	weaponsVp := viewport.New(0, 0)
-	weaponsContent := getWeaponsContent(character)
+	weaponsContent := GetWeaponsContent(character)
 	weaponsVp.SetContent(weaponsContent)
 
 	return EquipmentModel{
-		wornEquipmentViewport: wornEquipmentVp,
-		backpackViewport:      backpackVp,
-		weaponsViewport:       weaponsVp,
+		WornEquipmentViewport: wornEquipmentVp,
+		BackpackViewport:      backpackVp,
+		WeaponsViewport:       weaponsVp,
 	}
 }
 
-func getBackpackContent(character *models.Character) string {
+func GetBackpackContent(character *models.Character) string {
 	backpackContent := "Backpack\n\n"
 	maxLength := 8 //length of header
 
@@ -53,7 +53,7 @@ func getBackpackContent(character *models.Character) string {
 	return backpackContent
 }
 
-func getWornEquipmentContent(character *models.Character) string {
+func GetWornEquipmentContent(character *models.Character) string {
 	equipmentContent := "Worn Equipment\n\n"
 	headerLen := 14
 
@@ -88,7 +88,7 @@ func getWornEquipmentContent(character *models.Character) string {
 	return equipmentContent
 }
 
-func getWeaponsContent(character *models.Character) string {
+func GetWeaponsContent(character *models.Character) string {
 	// As a general note, any weirdness around how we're handling primary weapons is probably related to
 	// handling primary and secondary when both are the same weapon name
 
@@ -184,23 +184,23 @@ func (m EquipmentModel) UpdateSize(innerWidth, availableHeight int, character *m
 	wornInnerWidth := wornWidth - 2
 	wornInnerHeight := row1Height - 2
 
-	m.wornEquipmentViewport.Width = wornInnerWidth
-	m.wornEquipmentViewport.Height = wornInnerHeight
+	m.WornEquipmentViewport.Width = wornInnerWidth
+	m.WornEquipmentViewport.Height = wornInnerHeight
 
 	// Backpack viewport (right side of row 1)
 	backpackWidth := innerWidth - wornWidth
 	backpackInnerWidth := backpackWidth - 2
 	backpackInnerHeight := row1Height - 2
 
-	m.backpackViewport.Width = backpackInnerWidth
-	m.backpackViewport.Height = backpackInnerHeight
+	m.BackpackViewport.Width = backpackInnerWidth
+	m.BackpackViewport.Height = backpackInnerHeight
 
 	// Weapons viewport (row 2, full width)
 	weaponsInnerWidth := innerWidth - 2
 	weaponsInnerHeight := row2Height - 2
 
-	m.weaponsViewport.Width = weaponsInnerWidth
-	m.weaponsViewport.Height = weaponsInnerHeight
+	m.WeaponsViewport.Width = weaponsInnerWidth
+	m.WeaponsViewport.Height = weaponsInnerHeight
 
 	return m
 }

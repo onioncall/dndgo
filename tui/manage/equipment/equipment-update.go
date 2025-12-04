@@ -1,4 +1,4 @@
-package manage
+package equipment
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
@@ -14,13 +14,13 @@ func (m EquipmentModel) Update(msg tea.Msg) (EquipmentModel, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		var cmd tea.Cmd
-		m.wornEquipmentViewport, cmd = m.wornEquipmentViewport.Update(msg)
+		m.WornEquipmentViewport, cmd = m.WornEquipmentViewport.Update(msg)
 		cmds = append(cmds, cmd)
 
-		m.backpackViewport, cmd = m.backpackViewport.Update(msg)
+		m.BackpackViewport, cmd = m.BackpackViewport.Update(msg)
 		cmds = append(cmds, cmd)
 
-		m.weaponsViewport, cmd = m.weaponsViewport.Update(msg)
+		m.WeaponsViewport, cmd = m.WeaponsViewport.Update(msg)
 		cmds = append(cmds, cmd)
 	}
 

@@ -4,6 +4,11 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/tui/manage/class"
+	"github.com/onioncall/dndgo/tui/manage/equipment"
+	"github.com/onioncall/dndgo/tui/manage/info"
+	"github.com/onioncall/dndgo/tui/manage/notes"
+	"github.com/onioncall/dndgo/tui/manage/spells"
 )
 
 type Model struct {
@@ -17,9 +22,11 @@ type Model struct {
 	contentInitialized bool
 	err                error
 
-	basicInfoTab BasicInfoModel
-	spellsTab    SpellsModel
-	equipmentTab EquipmentModel
+	basicInfoTab info.BasicInfoModel
+	spellsTab    spells.SpellsModel
+	equipmentTab equipment.EquipmentModel
+	classTab     class.ClassModel
+	notesTab     notes.NotesModel
 }
 
 // Tab constants
@@ -28,6 +35,7 @@ const (
 	spellTab
 	equipmentTab
 	classTab
+	notesTab
 )
 
 // Tab Commands
@@ -76,9 +84,11 @@ func NewModel() Model {
 		tabs = []string{"Basic Info", "Spells", "Equipment", "Class", "Notes"}
 	}
 
-	basicInfoTab := NewBasicInfoModel(character)
-	spellsTab := NewSpellsModel(character)
-	equipmentTab := NewEquipmentModel(character)
+	basicInfoTab := info.NewBasicInfoModel(character)
+	spellsTab := spells.NewSpellsModel(character)
+	equipmentTab := equipment.NewEquipmentModel(character)
+	classTab := class.NewClassModel(character)
+	notesTab := notes.NewNotesModel(character)
 
 	return Model{
 		width:            0,
@@ -90,6 +100,8 @@ func NewModel() Model {
 		basicInfoTab:     basicInfoTab,
 		spellsTab:        spellsTab,
 		equipmentTab:     equipmentTab,
+		classTab:         classTab,
+		notesTab:         notesTab,
 		character:        character,
 	}
 }

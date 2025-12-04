@@ -1,4 +1,4 @@
-package manage
+package spells
 
 import (
 	"fmt"
@@ -11,9 +11,9 @@ import (
 )
 
 type SpellsModel struct {
-	spellSaveDCViewport viewport.Model
-	spellSlotsViewport  viewport.Model
-	knownSpellsViewport viewport.Model
+	SpellSaveDCViewport viewport.Model
+	SpellSlotsViewport  viewport.Model
+	KnownSpellsViewport viewport.Model
 }
 
 func NewSpellsModel(character *models.Character) SpellsModel {
@@ -24,21 +24,21 @@ func NewSpellsModel(character *models.Character) SpellsModel {
 	// These work differently from basic info, since basic info has known sizes
 	// and spells are different from character to character
 	spellSlotsVp := viewport.New(0, 0)
-	slotContent := getSpellSlotContent(character)
+	slotContent := GetSpellSlotContent(character)
 	spellSlotsVp.SetContent(slotContent)
 
 	knownSpellsVp := viewport.New(0, 0)
-	spellContent := getKnownSpellContent(character)
+	spellContent := GetKnownSpellContent(character)
 	knownSpellsVp.SetContent(spellContent)
 
 	return SpellsModel{
-		spellSaveDCViewport: spellSaveDCVp,
-		spellSlotsViewport:  spellSlotsVp,
-		knownSpellsViewport: knownSpellsVp,
+		SpellSaveDCViewport: spellSaveDCVp,
+		SpellSlotsViewport:  spellSlotsVp,
+		KnownSpellsViewport: knownSpellsVp,
 	}
 }
 
-func getKnownSpellContent(character *models.Character) string {
+func GetKnownSpellContent(character *models.Character) string {
 	maxSpellNameWidth := 0
 
 	for _, s := range character.Spells {
@@ -69,7 +69,7 @@ func getKnownSpellContent(character *models.Character) string {
 	return knownSpellsContent
 }
 
-func getSpellSlotContent(character *models.Character) string {
+func GetSpellSlotContent(character *models.Character) string {
 	slotHeader := "Spell Slots"
 	lineWidth := utf8.RuneCountInString(slotHeader)
 	slotLineContent := ""
@@ -103,18 +103,18 @@ func (m SpellsModel) UpdateSize(innerWidth, availableHeight int, character *mode
 	spellSlotsInnerWidth := col1Width - 2
 	spellSlotsInnerHeight := spellSlotsHeight - 2
 
-	m.spellSaveDCViewport.Height = spellSaveDCInnerHeight
-	m.spellSaveDCViewport.Width = spellSaveDCInnerWidth
-	m.spellSlotsViewport.Height = spellSlotsInnerHeight
-	m.spellSlotsViewport.Width = spellSlotsInnerWidth
+	m.SpellSaveDCViewport.Height = spellSaveDCInnerHeight
+	m.SpellSaveDCViewport.Width = spellSaveDCInnerWidth
+	m.SpellSlotsViewport.Height = spellSlotsInnerHeight
+	m.SpellSlotsViewport.Width = spellSlotsInnerWidth
 
 	col2Width := innerWidth / 2
 
 	knownSpellsInnerHeight := availableHeight - 2
 	knownSpellsInnerWidth := col2Width - 2
 
-	m.knownSpellsViewport.Height = knownSpellsInnerHeight
-	m.knownSpellsViewport.Width = knownSpellsInnerWidth
+	m.KnownSpellsViewport.Height = knownSpellsInnerHeight
+	m.KnownSpellsViewport.Width = knownSpellsInnerWidth
 
 	return m
 }

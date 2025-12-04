@@ -1,8 +1,9 @@
 package manage
 
 import (
-	"github.com/charmbracelet/lipgloss"
 	"strings"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 const (
@@ -100,6 +101,10 @@ func (m Model) renderActiveTabContent(width, height int) string {
 		return m.spellsTab.View(width, height)
 	case equipmentTab:
 		return m.equipmentTab.View(width, height)
+	case classTab:
+		return m.classTab.View(width, height)
+	case notesTab:
+		return m.notesTab.View(width, height)
 	default:
 		return m.renderPlaceholderContent(width, height)
 	}
