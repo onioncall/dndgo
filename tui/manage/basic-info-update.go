@@ -8,12 +8,13 @@ func (m BasicInfoModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m BasicInfoModel) Update(msg tea.Msg) tea.Cmd {
+func (m BasicInfoModel) Update(msg tea.Msg) (BasicInfoModel, tea.Cmd) {
 	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		var cmd tea.Cmd
+
 		m.basicStatsViewport, cmd = m.basicStatsViewport.Update(msg)
 		cmds = append(cmds, cmd)
 
@@ -27,5 +28,5 @@ func (m BasicInfoModel) Update(msg tea.Msg) tea.Cmd {
 		cmds = append(cmds, cmd)
 	}
 
-	return tea.Batch(cmds...)
+	return m, tea.Batch(cmds...)
 }
