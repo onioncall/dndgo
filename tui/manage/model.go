@@ -48,12 +48,11 @@ const (
 	recoverSlotCmd = "recover-slot"
 
 	// Equipment
-	addEquipmentCmd    = "add-equipment"
-	removeEquipmentCmd = "remove-equipment"
-	equipCmd           = "equip"
-	unequipCmd         = "unequip"
-	addItemCmd         = "add-item"
-	removeItemCmd      = "remove-item"
+	addEquipmentCmd = "add-equipment"
+	equipCmd        = "equip"
+	unequipCmd      = "unequip"
+	addItemCmd      = "add-item"
+	removeItemCmd   = "remove-item"
 )
 
 func NewModel() Model {
