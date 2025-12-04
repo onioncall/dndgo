@@ -7,26 +7,20 @@ import (
 
 	"github.com/charmbracelet/bubbles/viewport"
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/tui/shared"
 )
 
 type EquipmentModel struct {
 	WornEquipmentViewport viewport.Model
 	BackpackViewport      viewport.Model
 	WeaponsViewport       viewport.Model
+	contentSet            bool
 }
 
 func NewEquipmentModel(character *models.Character) EquipmentModel {
 	wornEquipmentVp := viewport.New(0, 0)
-	wornEquipmentContent := GetWornEquipmentContent(character)
-	wornEquipmentVp.SetContent(wornEquipmentContent)
-
 	backpackVp := viewport.New(0, 0)
-	backpackContent := GetBackpackContent(character)
-	backpackVp.SetContent(backpackContent)
-
 	weaponsVp := viewport.New(0, 0)
-	weaponsContent := GetWeaponsContent(character)
-	weaponsVp.SetContent(weaponsContent)
 
 	return EquipmentModel{
 		WornEquipmentViewport: wornEquipmentVp,
@@ -35,8 +29,10 @@ func NewEquipmentModel(character *models.Character) EquipmentModel {
 	}
 }
 
-func GetBackpackContent(character *models.Character) string {
-	backpackContent := "Backpack\n\n"
+func GetBackpackContent(character *models.Character, width int) string {
+	backpackContent := "Backpack\n"
+	width = width - (widthPadding * 2) //padding on both sides
+	backpackContent += fmt.Sprintf("%s\n", strings.Repeat("─", width))
 	maxLength := 8 //length of header
 
 	var contentWithoutSpacers []string
@@ -47,31 +43,35 @@ func GetBackpackContent(character *models.Character) string {
 	}
 
 	for _, item := range contentWithoutSpacers {
-		backpackContent += fmt.Sprintf("%s%s\n", item, strings.Repeat("\u00A0", maxLength-utf8.RuneCountInString(item)))
+		itemLength := utf8.RuneCountInString(item)
+		item := shared.TruncateString(item, width)
+		backpackContent += fmt.Sprintf("%s%s\n", item, strings.Repeat("\u00A0", maxLength-itemLength))
 	}
 
 	return backpackContent
 }
 
-func GetWornEquipmentContent(character *models.Character) string {
-	equipmentContent := "Worn Equipment\n\n"
+func GetWornEquipmentContent(character *models.Character, width int) string {
+	width = width - (widthPadding * 2)
+	equipmentContent := "Worn Equipment\n"
+	equipmentContent += fmt.Sprintf("%s\n", strings.Repeat("─", width))
 	headerLen := 14
 
-	amuletStr := fmt.Sprintf("Amulet: %s", character.WornEquipment.Amulet)
+	amuletStr := shared.TruncateString(fmt.Sprintf("Amulet: %s", character.WornEquipment.Amulet), width)
 	amuletLen := utf8.RuneCountInString(amuletStr)
-	beltStr := fmt.Sprintf("Belt: %s", character.WornEquipment.Belt)
+	beltStr := shared.TruncateString(fmt.Sprintf("Belt: %s", character.WornEquipment.Belt), width)
 	beltLen := utf8.RuneCountInString(beltStr)
-	bootsStr := fmt.Sprintf("Boots: %s", character.WornEquipment.Boots)
+	bootsStr := shared.TruncateString(fmt.Sprintf("Boots: %s", character.WornEquipment.Boots), width)
 	bootsLen := utf8.RuneCountInString(bootsStr)
-	cloakStr := fmt.Sprintf("Cloak: %s", character.WornEquipment.Cloak)
+	cloakStr := shared.TruncateString(fmt.Sprintf("Cloak: %s", character.WornEquipment.Cloak), width)
 	cloakLen := utf8.RuneCountInString(cloakStr)
-	headStr := fmt.Sprintf("Helmet: %s", character.WornEquipment.Head)
+	headStr := shared.TruncateString(fmt.Sprintf("Helmet: %s", character.WornEquipment.Head), width)
 	headLen := utf8.RuneCountInString(headStr)
-	ringStr := fmt.Sprintf("Ring: %s", character.WornEquipment.Ring)
+	ringStr := shared.TruncateString(fmt.Sprintf("Ring: %s", character.WornEquipment.Ring), width)
 	ringLen := utf8.RuneCountInString(ringStr)
-	ring2Str := fmt.Sprintf("Ring2: %s", character.WornEquipment.Ring2)
+	ring2Str := shared.TruncateString(fmt.Sprintf("Ring2: %s", character.WornEquipment.Ring2), width)
 	ring2Len := utf8.RuneCountInString(ring2Str)
-	armorStr := fmt.Sprintf("Armor: %s", character.WornEquipment.Armor.Name)
+	armorStr := shared.TruncateString(fmt.Sprintf("Armor: %s", character.WornEquipment.Armor.Name), width)
 	armorLen := utf8.RuneCountInString(armorStr)
 
 	maxLen := max(headerLen, amuletLen, beltLen, bootsLen, cloakLen, ring2Len, headLen, ringLen, armorLen)
@@ -88,10 +88,11 @@ func GetWornEquipmentContent(character *models.Character) string {
 	return equipmentContent
 }
 
-func GetWeaponsContent(character *models.Character) string {
+func GetWeaponsContent(character *models.Character, width int) string {
 	// As a general note, any weirdness around how we're handling primary weapons is probably related to
 	// handling primary and secondary when both are the same weapon name
 
+	width = width - (widthPadding * 2)
 	maxNameLength := 4
 	maxTypeLength := 4
 	maxPropertiesLength := 10
@@ -109,21 +110,16 @@ func GetWeaponsContent(character *models.Character) string {
 		maxPropertiesLength = max(maxPropertiesLength, utf8.RuneCountInString(strings.Join(w.Properties, ", ")))
 	}
 
-	weaponsHeader := fmt.Sprintf("Name%s - Proficient - Bonus - Damage - Normal/Long - Type%s - Properties%s\n",
+	weaponsHeader := fmt.Sprintf("Name%s - Bonus - Damage - Normal/Long - Type%s - Properties%s\n",
 		strings.Repeat(" ", maxNameLength-4),
 		strings.Repeat(" ", maxTypeLength-4),
 		strings.Repeat("\u00A0", maxPropertiesLength-10))
 
 	weaponsContent := weaponsHeader
-	lineWidth := utf8.RuneCountInString(weaponsHeader)
-	weaponsContent += fmt.Sprintf("%s\n", strings.Repeat("─", lineWidth))
+	weaponsContent += fmt.Sprintf("%s\n", strings.Repeat("─", width-widthPadding))
 
 	for _, w := range character.Weapons {
 		normalLongStr := fmt.Sprintf("%d/%d", w.Range.NormalRange, w.Range.LongRange)
-		prof := strings.Repeat(" ", 10)
-		if w.Proficient {
-			prof = "Proficient"
-		}
 		bonusStr := fmt.Sprintf(" %d", w.Bonus)
 		if w.Bonus >= 0 {
 			bonusStr = fmt.Sprintf("%s%s", "+", bonusStr)
@@ -155,10 +151,9 @@ func GetWeaponsContent(character *models.Character) string {
 		typeSpacer := strings.Repeat(" ", maxTypeLength-min(typeLen, maxTypeLength))
 		propertiesSpacer := strings.Repeat("\u00A0", maxPropertiesLength-min(propertiesLen, maxPropertiesLength))
 
-		weaponsContent += fmt.Sprintf("%s%s - %s - %s%s - %s%s - %s%s - %s%s - %s%s\n",
+		weaponsLine := fmt.Sprintf("%s%s - %s%s - %s%s - %s%s - %s%s - %s%s\n",
 			nameStr,
 			nameSpacer,
-			prof,
 			bonusStr,
 			bonusSpacer,
 			w.Damage,
@@ -169,6 +164,8 @@ func GetWeaponsContent(character *models.Character) string {
 			typeSpacer,
 			propertiesStr,
 			propertiesSpacer)
+
+		weaponsContent += shared.TruncateString(weaponsLine, width)
 	}
 
 	return weaponsContent
@@ -201,6 +198,17 @@ func (m EquipmentModel) UpdateSize(innerWidth, availableHeight int, character *m
 
 	m.WeaponsViewport.Width = weaponsInnerWidth
 	m.WeaponsViewport.Height = weaponsInnerHeight
+
+	if !m.contentSet {
+		backpackContent := GetBackpackContent(character, m.BackpackViewport.Width)
+		m.BackpackViewport.SetContent(backpackContent)
+
+		equipmentContent := GetWornEquipmentContent(character, m.WornEquipmentViewport.Width)
+		m.WornEquipmentViewport.SetContent(equipmentContent)
+
+		weaponsContent := GetWeaponsContent(character, m.WeaponsViewport.Width)
+		m.WeaponsViewport.SetContent(weaponsContent)
+	}
 
 	return m
 }

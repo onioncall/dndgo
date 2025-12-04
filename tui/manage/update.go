@@ -153,19 +153,24 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(m.character))
 	case addEquipmentCmd:
 		m.err = execAddEquipmentCmd(inputAfterCmd, m.character)
-		m.equipmentTab.WornEquipmentViewport.SetContent(equipment.GetWornEquipmentContent(m.character))
+		weWidth := m.equipmentTab.WornEquipmentViewport.Width
+		m.equipmentTab.WornEquipmentViewport.SetContent(equipment.GetWornEquipmentContent(m.character, weWidth))
 	case equipCmd:
 		m.err = execEquipCmd(inputAfterCmd, m.character)
-		m.equipmentTab.WeaponsViewport.SetContent(equipment.GetWeaponsContent(m.character))
+		wpWidth := m.equipmentTab.WeaponsViewport.Width
+		m.equipmentTab.WeaponsViewport.SetContent(equipment.GetWeaponsContent(m.character, wpWidth))
 	case unequipCmd:
 		m.err = execUnequipCmd(inputAfterCmd, m.character)
-		m.equipmentTab.WeaponsViewport.SetContent(equipment.GetWeaponsContent(m.character))
+		wpWidth := m.equipmentTab.WeaponsViewport.Width
+		m.equipmentTab.WeaponsViewport.SetContent(equipment.GetWeaponsContent(m.character, wpWidth))
 	case addItemCmd:
 		m.err = execModifyItemCmd(inputAfterCmd, true, m.character)
-		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(m.character))
+		bpWidth := m.equipmentTab.BackpackViewport.Width
+		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(m.character, bpWidth))
 	case removeItemCmd:
 		m.err = execModifyItemCmd(inputAfterCmd, false, m.character)
-		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(m.character))
+		bpWidth := m.equipmentTab.BackpackViewport.Width
+		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(m.character, bpWidth))
 	default:
 		m.err = fmt.Errorf("%s command not found", cmd)
 	}

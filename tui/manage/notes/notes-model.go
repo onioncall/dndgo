@@ -12,7 +12,7 @@ type NotesModel struct {
 
 func NewNotesModel(character *models.Character) NotesModel {
 	titleViewPort := viewport.New(0, 0)
-	titleViewPort.SetContent("Note titles are under construction")
+	titleViewPort.SetContent("Note titles are")
 
 	noteViewPort := viewport.New(0, 0)
 	noteViewPort.SetContent("Note contents are under construction")

@@ -14,6 +14,7 @@ type BasicInfoModel struct {
 	AbilitiesViewport  viewport.Model
 	HealthViewport     viewport.Model
 	SkillsViewport     viewport.Model
+	contentSet         bool
 }
 
 func NewBasicInfoModel(character *models.Character) BasicInfoModel {
@@ -156,6 +157,22 @@ func (m BasicInfoModel) UpdateSize(innerWidth, availableHeight int, character *m
 	m.HealthViewport.Height = healthInnerHeight
 	m.SkillsViewport.Width = skillsInnerWidth
 	m.SkillsViewport.Height = skillsInnerHeight
+
+	// if !m.contentSet {
+	// 	statsContent := GetStatsContent(character)
+	// 	m.BasicStatsViewport.SetContent(statsContent)
+	//
+	// 	healthContent := GetHealthContent(character)
+	// 	m..SetContent(healthContent)
+	//
+	// 	abilitiesContent := GetAbilitiesContent(character)
+	// 	abilitiesVp.SetContent(abilitiesContent)
+	//
+	// 	skillsContent := GetSkillsContent(character)
+	// 	skillsVp.SetContent(skillsContent)
+	//
+	// 	m.contentSet = true
+	// }
 
 	return m
 }
