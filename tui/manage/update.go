@@ -9,6 +9,9 @@ import (
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
+	"github.com/onioncall/dndgo/tui/manage/equipment"
+	"github.com/onioncall/dndgo/tui/manage/info"
+	"github.com/onioncall/dndgo/tui/manage/spells"
 	tui "github.com/onioncall/dndgo/tui/shared"
 )
 
@@ -27,6 +30,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, m.character)
 		m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, m.character)
 		m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, m.character)
+		m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, m.character)
+		m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, m.character)
 
 		return m, nil
 	case tea.KeyMsg:
@@ -57,6 +62,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, m.character)
 			case equipmentTab:
 				m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, m.character)
+			case classTab:
+				m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, m.character)
+			case notesTab:
+				m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, m.character)
 			}
 
 			return m, nil
@@ -90,6 +99,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case equipmentTab:
 			m.equipmentTab, cmd = m.equipmentTab.Update(msg)
 			cmds = append(cmds, cmd)
+		case classTab:
+			m.classTab, cmd = m.classTab.Update(msg)
+		case notesTab:
+			m.notesTab, cmd = m.notesTab.Update(msg)
 		}
 	}
 
@@ -117,42 +130,42 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		dmg, err := strconv.ParseInt(inputAfterCmd, 10, 32)
 		m.err = err
 		m.character.DamageCharacter(int(dmg))
-		m.basicInfoTab.healthViewport.SetContent(getHealthContent(m.character))
+		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(m.character))
 	case recoverCmd:
 		health, err := strconv.ParseInt(inputAfterCmd, 10, 32)
 		m.err = err
 		m.character.HealCharacter(int(health))
-		m.basicInfoTab.healthViewport.SetContent(getHealthContent(m.character))
+		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(m.character))
 	case addTempCmd:
 		temp, err := strconv.ParseInt(inputAfterCmd, 10, 32)
 		m.err = err
 		m.character.AddTempHp(int(temp))
-		m.basicInfoTab.healthViewport.SetContent(getHealthContent(m.character))
+		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(m.character))
 	case useSlotCmd:
 		level, err := strconv.ParseInt(inputAfterCmd, 10, 32)
 		m.err = err
 		m.character.UseSpellSlot(int(level))
-		m.spellsTab.spellSlotsViewport.SetContent(getSpellSlotContent(m.character))
+		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(m.character))
 	case recoverSlotCmd:
 		level, err := strconv.ParseInt(inputAfterCmd, 10, 32)
 		m.err = err
 		m.character.RecoverSpellSlots(int(level), 1)
-		m.spellsTab.spellSlotsViewport.SetContent(getSpellSlotContent(m.character))
+		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(m.character))
 	case addEquipmentCmd:
 		m.err = execAddEquipmentCmd(inputAfterCmd, m.character)
-		m.equipmentTab.wornEquipmentViewport.SetContent(getWornEquipmentContent(m.character))
+		m.equipmentTab.WornEquipmentViewport.SetContent(equipment.GetWornEquipmentContent(m.character))
 	case equipCmd:
 		m.err = execEquipCmd(inputAfterCmd, m.character)
-		m.equipmentTab.weaponsViewport.SetContent(getWeaponsContent(m.character))
+		m.equipmentTab.WeaponsViewport.SetContent(equipment.GetWeaponsContent(m.character))
 	case unequipCmd:
 		m.err = execUnequipCmd(inputAfterCmd, m.character)
-		m.equipmentTab.weaponsViewport.SetContent(getWeaponsContent(m.character))
+		m.equipmentTab.WeaponsViewport.SetContent(equipment.GetWeaponsContent(m.character))
 	case addItemCmd:
 		m.err = execModifyItemCmd(inputAfterCmd, true, m.character)
-		m.equipmentTab.backpackViewport.SetContent(getBackpackContent(m.character))
+		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(m.character))
 	case removeItemCmd:
 		m.err = execModifyItemCmd(inputAfterCmd, false, m.character)
-		m.equipmentTab.backpackViewport.SetContent(getBackpackContent(m.character))
+		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(m.character))
 	default:
 		m.err = fmt.Errorf("%s command not found", cmd)
 	}

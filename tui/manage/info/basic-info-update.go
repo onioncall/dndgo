@@ -1,4 +1,4 @@
-package manage
+package info
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
@@ -15,16 +15,16 @@ func (m BasicInfoModel) Update(msg tea.Msg) (BasicInfoModel, tea.Cmd) {
 	case tea.KeyMsg:
 		var cmd tea.Cmd
 
-		m.basicStatsViewport, cmd = m.basicStatsViewport.Update(msg)
+		m.BasicStatsViewport, cmd = m.BasicStatsViewport.Update(msg)
 		cmds = append(cmds, cmd)
 
-		m.abilitiesViewport, cmd = m.abilitiesViewport.Update(msg)
+		m.AbilitiesViewport, cmd = m.AbilitiesViewport.Update(msg)
 		cmds = append(cmds, cmd)
 
-		m.healthViewport, cmd = m.healthViewport.Update(msg)
+		m.HealthViewport, cmd = m.HealthViewport.Update(msg)
 		cmds = append(cmds, cmd)
 
-		m.skillsViewport, cmd = m.skillsViewport.Update(msg)
+		m.SkillsViewport, cmd = m.SkillsViewport.Update(msg)
 		cmds = append(cmds, cmd)
 	}
 
