@@ -206,6 +206,7 @@ func (c *Character) calculatePassiveStats() {
 
 func (c *Character) calculateWeaponBonus() {
 	for i, weapon := range c.Weapons {
+		c.Weapons[i].Bonus = 0
 		dexMod := c.GetMod(shared.AbilityDexterity)
 		strMod := c.GetMod(shared.AbilityStrength)
 		modApplied := false
@@ -691,7 +692,7 @@ func (c *Character) GetSlots(available int, max int) string {
 
 func (c *Character) AddItemToPack(item string, quantity int) {
 	for i, packItem := range c.Backpack {
-		if packItem.Name == item {
+		if strings.ToLower(packItem.Name) == strings.ToLower(item) {
 			c.Backpack[i].Quantity += quantity
 			return
 		}
@@ -705,26 +706,27 @@ func (c *Character) AddItemToPack(item string, quantity int) {
 	c.Backpack = append(c.Backpack, newItem)
 }
 
-func (c *Character) RemoveItemFromPack(item string, quantity int) {
+func (c *Character) RemoveItemFromPack(item string, quantity int) error {
+	var err error
 	for i, packItem := range c.Backpack {
-		if packItem.Name == item {
+		if strings.ToLower(packItem.Name) == strings.ToLower(item) {
 			if packItem.Quantity < quantity {
-				info := fmt.Sprintf("Quantity to remove (%d) greater than quantity in pack (%d), set to 0",
+				err = fmt.Errorf("Quantity to remove (%d) greater than quantity in pack (%d), set to 0",
 					quantity,
 					packItem.Quantity)
 
-				logger.Info(info)
 				c.Backpack[i].Quantity = 0
-				return
+				return err
 			}
 
 			c.Backpack[i].Quantity -= quantity
-			return
+			return nil
 		}
 	}
 
-	info := fmt.Sprintf("Item %s not found in pack", item)
-	logger.Info(info)
+	err = fmt.Errorf("Item %s not found in pack", item)
+
+	return err
 }
 
 func (c *Character) AddLanguage(language string) {
@@ -862,7 +864,7 @@ func (c *Character) RecoverClassTokens(name string, quantity int) {
 	}
 }
 
-func (c *Character) Equip(isPrimary bool, name string) {
+func (c *Character) Equip(isPrimary bool, name string) error {
 	lowerName := strings.ToLower(name)
 	equipmentFound := false
 
@@ -882,8 +884,7 @@ func (c *Character) Equip(isPrimary bool, name string) {
 	}
 
 	if !equipmentFound {
-		logger.Info(fmt.Sprintf("Weapon or shield '%s' not found, check spelling", name))
-		return
+		return fmt.Errorf("Weapon or shield '%s' not found, check spelling", name)
 	}
 
 	if isPrimary {
@@ -894,13 +895,15 @@ func (c *Character) Equip(isPrimary bool, name string) {
 
 		c.PrimaryEquipped = name
 	} else {
-		// unequip secondary weapon if they only have one and it's already equipped
+		// unequip primary weapon if they only have one and it's already equipped
 		if strings.ToLower(c.PrimaryEquipped) == lowerName && weaponCount < 2 {
 			c.PrimaryEquipped = ""
 		}
 
 		c.SecondaryEquipped = name
 	}
+
+	return nil
 }
 
 func (c *Character) Unequip(isPrimary bool) {

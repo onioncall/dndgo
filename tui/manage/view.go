@@ -98,6 +98,8 @@ func (m Model) renderActiveTabContent(width, height int) string {
 		return m.basicInfoTab.View(width, height)
 	case spellTab:
 		return m.spellsTab.View(width, height)
+	case equipmentTab:
+		return m.equipmentTab.View(width, height)
 	default:
 		return m.renderPlaceholderContent(width, height)
 	}

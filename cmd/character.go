@@ -237,7 +237,8 @@ var (
 					return
 				}
 
-				c.RemoveItemFromPack(bp, q)
+				err = c.RemoveItemFromPack(bp, q)
+				logger.Info(err)
 			} else if s > 0 {
 				c.UseSpellSlot(s)
 			} else if ct != "" {
@@ -366,10 +367,16 @@ var (
 			}
 
 			if p != "" {
-				c.Equip(true, p)
+				err = c.Equip(true, p)
+				if err != nil {
+
+				}
 			}
 			if s != "" {
-				c.Equip(false, s)
+				err = c.Equip(false, s)
+				if err != nil {
+
+				}
 			}
 
 			err = handlers.SaveCharacterJson(c)

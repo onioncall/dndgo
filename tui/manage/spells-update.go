@@ -8,7 +8,7 @@ func (m SpellsModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m SpellsModel) Update(msg tea.Msg) tea.Cmd {
+func (m SpellsModel) Update(msg tea.Msg) (SpellsModel, tea.Cmd) {
 	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {
@@ -24,5 +24,5 @@ func (m SpellsModel) Update(msg tea.Msg) tea.Cmd {
 		cmds = append(cmds, cmd)
 	}
 
-	return tea.Batch(cmds...)
+	return m, tea.Batch(cmds...)
 }

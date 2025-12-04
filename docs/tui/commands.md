@@ -42,3 +42,21 @@ Commands available to spells
 
 - *use-slot (int, level)* example, `use-slot 1` uses a single level one spell slot
 - *recover-slot (int, level)* example, `recover-slot 1` recovers a single level one spell slot
+
+### Equipment
+Commands available to equipment
+
+- *add-equipment (string, worn equipment type)/(string, equipment name)* example, `add-equipment amulet/clockwork amulet` 
+- *equip (string, weapon or shield name)/(optional string, primary or secondary)*
+    - example:  `equip dagger` or `equip rapier primary` 
+    - details: if you don't specify primary or secondary, it will equip which ever is open (prioritizing primary). if neither are avialable and primary/secondary is not specified, it will replace the primary. 
+
+- *unequip (string, primary/secondary/weapons name/shield/name)* 
+    - example:  `unequip dagger` or `equip secondary` 
+
+- *add-item (string, item name)/(optional int, quantity)*
+    - example:  `add-item gold` or `add-item gold/5` 
+    - details: if you don't specify a quantity, only one is added. If an item with that name (not case sensitive) is found in your inventory, we'll add to the quantity rather than adding a new item
+
+- *remove-item (string, item name)/(optional int, quantity)*
+    - example: `remove-item gold` or `remove-item gold/5`

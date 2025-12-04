@@ -19,6 +19,7 @@ type Model struct {
 
 	basicInfoTab BasicInfoModel
 	spellsTab    SpellsModel
+	equipmentTab EquipmentModel
 }
 
 // Tab constants
@@ -31,15 +32,27 @@ const (
 
 // Tab Commands
 const (
-	basicInfoCmd   = "/b"
-	spellCmd       = "/s"
-	equipmentCmd   = "/e"
-	classCmd       = "/c"
-	damageCmd      = "damage"
-	recoverCmd     = "recover"
-	addTempCmd     = "temp"
+	// Navigation
+	basicInfoCmd = "/b"
+	spellCmd     = "/s"
+	equipmentCmd = "/e"
+	classCmd     = "/c"
+
+	// Basic Info
+	damageCmd  = "damage"
+	recoverCmd = "recover"
+	addTempCmd = "temp"
+
+	// Spell Slots
 	useSlotCmd     = "use-slot"
 	recoverSlotCmd = "recover-slot"
+
+	// Equipment
+	addEquipmentCmd = "add-equipment"
+	equipCmd        = "equip"
+	unequipCmd      = "unequip"
+	addItemCmd      = "add-item"
+	removeItemCmd   = "remove-item"
 )
 
 func NewModel() Model {
@@ -65,6 +78,7 @@ func NewModel() Model {
 
 	basicInfoTab := NewBasicInfoModel(character)
 	spellsTab := NewSpellsModel(character)
+	equipmentTab := NewEquipmentModel(character)
 
 	return Model{
 		width:            0,
@@ -75,6 +89,7 @@ func NewModel() Model {
 		cmdVisible:       false,
 		basicInfoTab:     basicInfoTab,
 		spellsTab:        spellsTab,
+		equipmentTab:     equipmentTab,
 		character:        character,
 	}
 }

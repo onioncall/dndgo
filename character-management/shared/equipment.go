@@ -50,3 +50,15 @@ const (
 	WornEquipmentBelt      string = "belt"
 	WornEquipmentBoots     string = "boots"
 )
+
+var WornEquipmentTypes = [9]string{
+	WornEquipmentHead,
+	WornEquipmentAmulet,
+	WornEquipmentCloak,
+	WornEquipmentArmor,
+	WornEquipmentBelt,
+	WornEquipmentBoots,
+	WornEquipmentHandsArms,
+	WornEquipmentRing,
+	WornEquipmentRing2,
+}
