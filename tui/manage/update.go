@@ -27,11 +27,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.height = msg.Height
 
 		innerWidth, availableHeight := m.getInnerDimensions()
-		m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, m.character)
-		m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, m.character)
-		m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, m.character)
-		m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, m.character)
-		m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, m.character)
+		m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
 
 		return m, nil
 	case tea.KeyMsg:
@@ -57,15 +57,15 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			innerWidth, availableHeight := m.getInnerDimensions()
 			switch m.selectedTabIndex {
 			case basicInfoTab:
-				m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, m.character)
+				m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			case spellTab:
-				m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, m.character)
+				m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			case equipmentTab:
-				m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, m.character)
+				m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			case classTab:
-				m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, m.character)
+				m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			case notesTab:
-				m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, m.character)
+				m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			}
 
 			return m, nil
@@ -127,50 +127,70 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		tab = classTab
 		newInput = inputAfterCmd
 	case damageCmd:
-		dmg, err := strconv.ParseInt(inputAfterCmd, 10, 32)
+		dmg, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.DamageCharacter(int(dmg))
-		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(m.character))
+		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
 	case recoverCmd:
-		health, err := strconv.ParseInt(inputAfterCmd, 10, 32)
-		m.err = err
-		m.character.HealCharacter(int(health))
-		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(m.character))
+		m.err = execRecoverCmd(inputAfterCmd, m.character)
+		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
 	case addTempCmd:
-		temp, err := strconv.ParseInt(inputAfterCmd, 10, 32)
+		temp, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.AddTempHp(int(temp))
-		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(m.character))
+		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
 	case useSlotCmd:
-		level, err := strconv.ParseInt(inputAfterCmd, 10, 32)
+		level, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.UseSpellSlot(int(level))
-		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(m.character))
+		sWidth := m.spellsTab.SpellSlotsViewport.Width
+		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(*m.character, sWidth))
 	case recoverSlotCmd:
-		level, err := strconv.ParseInt(inputAfterCmd, 10, 32)
+		level, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.RecoverSpellSlots(int(level), 1)
-		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(m.character))
+		sWidth := m.spellsTab.SpellSlotsViewport.Width
+		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(*m.character, sWidth))
 	case addEquipmentCmd:
 		m.err = execAddEquipmentCmd(inputAfterCmd, m.character)
-		m.equipmentTab.WornEquipmentViewport.SetContent(equipment.GetWornEquipmentContent(m.character))
+		weWidth := m.equipmentTab.WornEquipmentViewport.Width
+		m.equipmentTab.WornEquipmentViewport.SetContent(equipment.GetWornEquipmentContent(*m.character, weWidth))
 	case equipCmd:
 		m.err = execEquipCmd(inputAfterCmd, m.character)
-		m.equipmentTab.WeaponsViewport.SetContent(equipment.GetWeaponsContent(m.character))
+		wpWidth := m.equipmentTab.WeaponsViewport.Width
+		m.equipmentTab.WeaponsViewport.SetContent(equipment.GetWeaponsContent(*m.character, wpWidth))
 	case unequipCmd:
 		m.err = execUnequipCmd(inputAfterCmd, m.character)
-		m.equipmentTab.WeaponsViewport.SetContent(equipment.GetWeaponsContent(m.character))
+		wpWidth := m.equipmentTab.WeaponsViewport.Width
+		m.equipmentTab.WeaponsViewport.SetContent(equipment.GetWeaponsContent(*m.character, wpWidth))
 	case addItemCmd:
 		m.err = execModifyItemCmd(inputAfterCmd, true, m.character)
-		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(m.character))
+		bpWidth := m.equipmentTab.BackpackViewport.Width
+		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(*m.character, bpWidth))
 	case removeItemCmd:
 		m.err = execModifyItemCmd(inputAfterCmd, false, m.character)
-		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(m.character))
+		bpWidth := m.equipmentTab.BackpackViewport.Width
+		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(*m.character, bpWidth))
 	default:
 		m.err = fmt.Errorf("%s command not found", cmd)
 	}
 
 	return m, tab, newInput
+}
+
+func execRecoverCmd(input string, character *models.Character) error {
+	if input == "all" {
+		character.Recover()
+	} else {
+		health, err := strconv.Atoi(input)
+		if err != nil {
+			return err
+		}
+
+		character.HealCharacter(int(health))
+	}
+
+	return nil
 }
 
 func execModifyItemCmd(input string, isAdd bool, character *models.Character) error {

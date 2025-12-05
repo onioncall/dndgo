@@ -14,24 +14,14 @@ type BasicInfoModel struct {
 	AbilitiesViewport  viewport.Model
 	HealthViewport     viewport.Model
 	SkillsViewport     viewport.Model
+	contentSet         bool
 }
 
-func NewBasicInfoModel(character *models.Character) BasicInfoModel {
+func NewBasicInfoModel() BasicInfoModel {
 	statsVp := viewport.New(0, 0)
-	statsContent := GetStatsContent(character)
-	statsVp.SetContent(statsContent)
-
 	healthVp := viewport.New(0, 0)
-	healthContent := GetHealthContent(character)
-	healthVp.SetContent(healthContent)
-
 	abilitiesVp := viewport.New(0, 0)
-	abilitiesContent := GetAbilitiesContent(character)
-	abilitiesVp.SetContent(abilitiesContent)
-
 	skillsVp := viewport.New(0, 0)
-	skillsContent := GetSkillsContent(character)
-	skillsVp.SetContent(skillsContent)
 
 	return BasicInfoModel{
 		BasicStatsViewport: statsVp,
@@ -41,14 +31,14 @@ func NewBasicInfoModel(character *models.Character) BasicInfoModel {
 	}
 }
 
-func GetHealthContent(character *models.Character) string {
+func GetHealthContent(character models.Character) string {
 	healthContent := fmt.Sprintf("Current HP: %d | Max HP: %d | Temp HP: %d",
 		character.HPCurrent, character.HPMax, character.HPTemp)
 
 	return healthContent
 }
 
-func GetStatsContent(character *models.Character) string {
+func GetStatsContent(character models.Character) string {
 	statsContent := fmt.Sprintf(`Class: %s
 Level: %d
 Race: %s
@@ -65,11 +55,13 @@ Hit Dice: %s
 	return statsContent
 }
 
-func GetAbilitiesContent(character *models.Character) string {
+func GetAbilitiesContent(character models.Character, width int) string {
+	width = width - (abilitiesPadding * 2) //padding on both sides
 	abilitiesHeader := "Ability        -  Mod -  ST Mod"
 	lineWidth := utf8.RuneCountInString(abilitiesHeader)
 	abilitiesStr := fmt.Sprintf("%s\n", abilitiesHeader)
-	abilitiesStr += strings.Repeat("─", lineWidth) + "\n"
+	abilitiesStr += fmt.Sprintf("%s\n", strings.Repeat("─", width))
+
 	for _, a := range character.Abilities {
 		modStr := fmt.Sprintf("%d", a.AbilityModifier)
 		if a.AbilityModifier >= 0 {
@@ -87,8 +79,8 @@ func GetAbilitiesContent(character *models.Character) string {
 		abilityNameStr := fmt.Sprintf("%s%s", a.Name, strings.Repeat(" ", 13-utf8.RuneCountInString(a.Name)))
 		abilityStr := fmt.Sprintf("%s  -  %s  -  %s", abilityNameStr, modStr, stStr)
 
-		// Doing this so each line is the same width for centering purposes.
-		// This is a space, but we are using the unicode so that lipgloss does not strip it out as a trailing space
+		// Doing this so each line is the same width for centering purposes. This is a space,
+		// but we are using the unicode so that lipgloss does not strip it out as a trailing space
 		abilitiesStr += fmt.Sprintf("%s%s\n",
 			abilityStr,
 			strings.Repeat("\u00A0", lineWidth-utf8.RuneCountInString(abilityStr)))
@@ -97,11 +89,12 @@ func GetAbilitiesContent(character *models.Character) string {
 	return abilitiesStr
 }
 
-func GetSkillsContent(character *models.Character) string {
+func GetSkillsContent(character models.Character, width int) string {
+	width = width - (skillsPadding * 2) //padding on both sides
 	skillsHeader := "Ability       -  Skills          -  Mod -  Proficient"
 	lineWidth := utf8.RuneCountInString(skillsHeader)
 	skillsStr := fmt.Sprintf("%s\n", skillsHeader)
-	skillsStr += strings.Repeat("─", lineWidth) + "\n"
+	skillsStr += fmt.Sprintf("%s\n", strings.Repeat("─", width))
 
 	for _, s := range character.Skills {
 		modStr := fmt.Sprintf("%d", s.SkillModifier)
@@ -127,7 +120,7 @@ func GetSkillsContent(character *models.Character) string {
 	return skillsStr
 }
 
-func (m BasicInfoModel) UpdateSize(innerWidth, availableHeight int, character *models.Character) BasicInfoModel {
+func (m BasicInfoModel) UpdateSize(innerWidth, availableHeight int, character models.Character) BasicInfoModel {
 	// Column 1: 1/3 width, split vertically 50/50
 	col1Width := innerWidth / 3
 	boxHeight := availableHeight / 2
@@ -156,6 +149,22 @@ func (m BasicInfoModel) UpdateSize(innerWidth, availableHeight int, character *m
 	m.HealthViewport.Height = healthInnerHeight
 	m.SkillsViewport.Width = skillsInnerWidth
 	m.SkillsViewport.Height = skillsInnerHeight
+
+	if !m.contentSet {
+		statsContent := GetStatsContent(character)
+		m.BasicStatsViewport.SetContent(statsContent)
+
+		healthContent := GetHealthContent(character)
+		m.HealthViewport.SetContent(healthContent)
+
+		abilitiesContent := GetAbilitiesContent(character, m.AbilitiesViewport.Width)
+		m.AbilitiesViewport.SetContent(abilitiesContent)
+
+		skillsContent := GetSkillsContent(character, m.SkillsViewport.Width)
+		m.SkillsViewport.SetContent(skillsContent)
+
+		m.contentSet = true
+	}
 
 	return m
 }

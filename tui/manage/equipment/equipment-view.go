@@ -5,6 +5,10 @@ import (
 )
 
 const (
+	widthPadding int = 2
+)
+
+const (
 	orange   = lipgloss.Color("#FFA500")
 	darkGray = lipgloss.Color("#767676")
 )
@@ -19,7 +23,7 @@ func (m EquipmentModel) View(innerWidth, availableHeight int) string {
 	wornEquipmentStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(orange).
-		Padding(0, 2).
+		Padding(0, widthPadding).
 		Width(wornWidth - 2).
 		Height(row2Height - 2).
 		Align(lipgloss.Center)
@@ -31,7 +35,7 @@ func (m EquipmentModel) View(innerWidth, availableHeight int) string {
 	backpackStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(orange).
-		Padding(0, 2).
+		Padding(0, widthPadding).
 		Width(backpackWidth - 2).
 		Height(row2Height - 2).
 		Align(lipgloss.Center)
@@ -45,7 +49,7 @@ func (m EquipmentModel) View(innerWidth, availableHeight int) string {
 	weaponsStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(orange).
-		Padding(0, 2).
+		Padding(0, widthPadding).
 		Width(innerWidth - 2).
 		Height(row2Height - 2).
 		Align(lipgloss.Center)

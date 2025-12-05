@@ -84,11 +84,11 @@ func NewModel() Model {
 		tabs = []string{"Basic Info", "Spells", "Equipment", "Class", "Notes"}
 	}
 
-	basicInfoTab := info.NewBasicInfoModel(character)
-	spellsTab := spells.NewSpellsModel(character)
-	equipmentTab := equipment.NewEquipmentModel(character)
-	classTab := class.NewClassModel(character)
-	notesTab := notes.NewNotesModel(character)
+	basicInfoTab := info.NewBasicInfoModel()
+	spellsTab := spells.NewSpellsModel()
+	equipmentTab := equipment.NewEquipmentModel()
+	classTab := class.NewClassModel()
+	notesTab := notes.NewNotesModel()
 
 	return Model{
 		width:            0,

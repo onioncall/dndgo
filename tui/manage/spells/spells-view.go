@@ -5,6 +5,10 @@ import (
 )
 
 const (
+	widthPadding int = 2
+)
+
+const (
 	orange   = lipgloss.Color("#FFA500")
 	darkGray = lipgloss.Color("#767676")
 )
@@ -19,7 +23,7 @@ func (m SpellsModel) View(innerWidth, availableHeight int) string {
 	spellSaveDCStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(orange).
-		Padding(0, 4).
+		Padding(0, widthPadding).
 		Width(col1Width - 2).
 		Height(spellSaveDCHeight - 2).
 		Align(lipgloss.Center)
@@ -30,7 +34,7 @@ func (m SpellsModel) View(innerWidth, availableHeight int) string {
 	spellSlotsStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(orange).
-		Padding(0, 4).
+		Padding(0, widthPadding).
 		Width(col1Width - 2).
 		Height(spellSlotsHeight - 2).
 		Align(lipgloss.Center)
@@ -47,7 +51,7 @@ func (m SpellsModel) View(innerWidth, availableHeight int) string {
 	knownSpellsStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(orange).
-		Padding(0, 1).
+		Padding(0, widthPadding).
 		Width(col2Width - 2).
 		Height(availableHeight - 2).
 		Align(lipgloss.Center)

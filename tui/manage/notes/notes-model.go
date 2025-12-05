@@ -10,9 +10,9 @@ type NotesModel struct {
 	NoteViewPort  viewport.Model
 }
 
-func NewNotesModel(character *models.Character) NotesModel {
+func NewNotesModel() NotesModel {
 	titleViewPort := viewport.New(0, 0)
-	titleViewPort.SetContent("Note titles are under construction")
+	titleViewPort.SetContent("Note titles are")
 
 	noteViewPort := viewport.New(0, 0)
 	noteViewPort.SetContent("Note contents are under construction")
@@ -23,7 +23,7 @@ func NewNotesModel(character *models.Character) NotesModel {
 	}
 }
 
-func (m NotesModel) UpdateSize(innerWidth, availableHeight int, character *models.Character) NotesModel {
+func (m NotesModel) UpdateSize(innerWidth, availableHeight int, character models.Character) NotesModel {
 	col1Width := (innerWidth * 1) / 3
 	col2Width := (innerWidth * 2) / 3
 

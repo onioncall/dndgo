@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	abilitiesPadding int = 2
+	abilitiesPadding int = 1
 	skillsPadding    int = 4
 )
 
@@ -16,7 +16,8 @@ const (
 
 func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 	col1Width := innerWidth / 3
-	col1Height := availableHeight / 2
+	statsHeight := availableHeight / 2
+	abilitiesHeight := availableHeight - statsHeight
 
 	// Column 1 Viewports
 	statsVpStyle := lipgloss.NewStyle().
@@ -24,7 +25,7 @@ func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 		BorderForeground(orange).
 		Padding(0, 4).
 		Width(col1Width - 2).
-		Height(col1Height - 2)
+		Height(statsHeight - 2)
 
 	basicStatsVp := statsVpStyle.Render(m.BasicStatsViewport.View())
 
@@ -32,8 +33,8 @@ func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(orange).
 		Padding(0, abilitiesPadding).
-		Width(col1Width - 2).
-		Height(col1Height - 2).
+		Width(col1Width - abilitiesPadding).
+		Height(abilitiesHeight - 2).
 		Align(lipgloss.Center)
 
 	abilitiesVp := abilitiesVpStyle.Render(m.AbilitiesViewport.View())
