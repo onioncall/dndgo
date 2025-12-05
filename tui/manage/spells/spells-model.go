@@ -8,28 +8,21 @@ import (
 
 	"github.com/charmbracelet/bubbles/viewport"
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/logger"
+	"github.com/onioncall/dndgo/tui/shared"
 )
 
 type SpellsModel struct {
 	SpellSaveDCViewport viewport.Model
 	SpellSlotsViewport  viewport.Model
 	KnownSpellsViewport viewport.Model
+	contentSet          bool
 }
 
 func NewSpellsModel(character *models.Character) SpellsModel {
 	spellSaveDCVp := viewport.New(0, 0)
-	dcStr := fmt.Sprintf("Spell Save DC: %d", character.SpellSaveDC)
-	spellSaveDCVp.SetContent(dcStr)
-
-	// These work differently from basic info, since basic info has known sizes
-	// and spells are different from character to character
 	spellSlotsVp := viewport.New(0, 0)
-	slotContent := GetSpellSlotContent(character)
-	spellSlotsVp.SetContent(slotContent)
-
 	knownSpellsVp := viewport.New(0, 0)
-	spellContent := GetKnownSpellContent(character)
-	knownSpellsVp.SetContent(spellContent)
 
 	return SpellsModel{
 		SpellSaveDCViewport: spellSaveDCVp,
@@ -38,17 +31,26 @@ func NewSpellsModel(character *models.Character) SpellsModel {
 	}
 }
 
-func GetKnownSpellContent(character *models.Character) string {
-	maxSpellNameWidth := 0
+func GetKnownSpellContent(character *models.Character, width int) string {
+	width = width - (widthPadding * 2) //padding on both sides
+	longestSpellNameWidth := 0
+	maxSpellNameWidth := width - 29 // based on width of viewport and characters in header
 
+	spellNames := make(map[string]string)
 	for _, s := range character.Spells {
-		maxSpellNameWidth = max(utf8.RuneCountInString(s.Name), maxSpellNameWidth)
+		spellNameLen := utf8.RuneCountInString(s.Name)
+		spellNames[s.Name] = shared.TruncateString(s.Name, maxSpellNameWidth)
+
+		// if the spell name is truncated, we want to use the max length instead
+		newSpellLen := min(spellNameLen, maxSpellNameWidth)
+		longestSpellNameWidth = max(newSpellLen, longestSpellNameWidth)
 	}
 
 	knownSpellsHeader := fmt.Sprintf("Level  - Name%s - Ritual - Prepared",
-		strings.Repeat(" ", maxSpellNameWidth-4))
+		strings.Repeat(" ", longestSpellNameWidth-4))
+
 	knownSpellsContent := fmt.Sprintf("%s\n", knownSpellsHeader)
-	knownSpellsContent += strings.Repeat("─", utf8.RuneCountInString(knownSpellsHeader)) + "\n"
+	knownSpellsContent += fmt.Sprintf("%s\n", strings.Repeat("─", width))
 
 	for _, s := range character.Spells {
 		ritualStr := strings.Repeat("\u00A0", 6)
@@ -60,34 +62,38 @@ func GetKnownSpellContent(character *models.Character) string {
 			preparedStr = "Prepared"
 		}
 
-		nameLen := utf8.RuneCountInString(s.Name)
+		nameLen := utf8.RuneCountInString(spellNames[s.Name])
 		knownSpellStr := fmt.Sprintf("lvl: %d - %s%s - %s - %s",
-			s.SlotLevel, s.Name, strings.Repeat(" ", maxSpellNameWidth-nameLen), ritualStr, preparedStr)
+			s.SlotLevel, spellNames[s.Name], strings.Repeat(" ", longestSpellNameWidth-nameLen), ritualStr, preparedStr)
 		knownSpellsContent += fmt.Sprintf("%s\n\n", knownSpellStr)
 	}
 
 	return knownSpellsContent
 }
 
-func GetSpellSlotContent(character *models.Character) string {
+func GetSpellSlotContent(character *models.Character, width int) string {
+	width = width - (widthPadding * 2) //padding on both sides
 	slotHeader := "Spell Slots"
-	lineWidth := utf8.RuneCountInString(slotHeader)
-	slotLineContent := ""
+	slotContent := fmt.Sprintf("%s\n", slotHeader)
+	slotContent += fmt.Sprintf("%s\n", strings.Repeat("─", width))
 
-	// We're setting this a little backwards since the header isn't the longest field, and we don't know how
-	// long the longest line is without going through it. But we're doing this to get the length of the line under
-	// the header
+	maxLineWidth := utf8.RuneCountInString(slotHeader)
+
+	var slotLines []string
 	for _, s := range character.SpellSlots {
 		slots := character.GetSlots(s.Available, s.Maximum)
+		logger.Infof("'%s'", slots)
 		level := strconv.FormatInt(int64(s.Level), 10)
 		slotLine := fmt.Sprintf("lvl: %s - %s", level, slots)
-		slotLineWidth := utf8.RuneCountInString(slotLine)
-		lineWidth = max(slotLineWidth, lineWidth)
-		slotLineContent += fmt.Sprintf("%s%s\n\n", slotLine, strings.Repeat("\u00A0", lineWidth-slotLineWidth))
+		lineLength := utf8.RuneCountInString(slotLine)
+		maxLineWidth = max(lineLength, maxLineWidth)
+		slotLines = append(slotLines, slotLine)
 	}
 
-	slotContent := fmt.Sprintf("%s\n\n", slotHeader)
-	slotContent += slotLineContent
+	for _, line := range slotLines {
+		length := utf8.RuneCountInString(line)
+		slotContent += fmt.Sprintf("%s%s\n\n", line, strings.Repeat("\u00A0", maxLineWidth-length))
+	}
 
 	return slotContent
 }
@@ -115,6 +121,17 @@ func (m SpellsModel) UpdateSize(innerWidth, availableHeight int, character *mode
 
 	m.KnownSpellsViewport.Height = knownSpellsInnerHeight
 	m.KnownSpellsViewport.Width = knownSpellsInnerWidth
+
+	if !m.contentSet {
+		dcStr := fmt.Sprintf("Spell Save DC: %d", character.SpellSaveDC)
+		m.SpellSaveDCViewport.SetContent(dcStr)
+
+		spellSlotsContent := GetSpellSlotContent(character, m.SpellSaveDCViewport.Width)
+		m.SpellSlotsViewport.SetContent(spellSlotsContent)
+
+		knownSpellsContent := GetKnownSpellContent(character, m.KnownSpellsViewport.Width)
+		m.KnownSpellsViewport.SetContent(knownSpellsContent)
+	}
 
 	return m
 }

@@ -145,12 +145,14 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		level, err := strconv.ParseInt(inputAfterCmd, 10, 32)
 		m.err = err
 		m.character.UseSpellSlot(int(level))
-		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(m.character))
+		sWidth := m.spellsTab.SpellSlotsViewport.Width
+		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(m.character, sWidth))
 	case recoverSlotCmd:
 		level, err := strconv.ParseInt(inputAfterCmd, 10, 32)
 		m.err = err
 		m.character.RecoverSpellSlots(int(level), 1)
-		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(m.character))
+		sWidth := m.spellsTab.SpellSlotsViewport.Width
+		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(m.character, sWidth))
 	case addEquipmentCmd:
 		m.err = execAddEquipmentCmd(inputAfterCmd, m.character)
 		weWidth := m.equipmentTab.WornEquipmentViewport.Width

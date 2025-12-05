@@ -682,8 +682,9 @@ func (c *Character) BuildAbilityScoreImprovement() []string {
 }
 
 func (c *Character) GetSlots(available int, max int) string {
-	fullCircle := strings.Repeat("● ", available)
-	hollowCircle := strings.Repeat("○ ", (max - available))
+	// using non breaking spaces for how lipgloss trims regular spaces at the end of strings
+	fullCircle := strings.Repeat("●\u00A0", available)
+	hollowCircle := strings.Repeat("○\u00A0", (max - available))
 
 	return fmt.Sprintf("%s%s", fullCircle, hollowCircle)
 }
