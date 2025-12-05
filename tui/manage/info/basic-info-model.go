@@ -17,7 +17,7 @@ type BasicInfoModel struct {
 	contentSet         bool
 }
 
-func NewBasicInfoModel(character *models.Character) BasicInfoModel {
+func NewBasicInfoModel() BasicInfoModel {
 	statsVp := viewport.New(0, 0)
 	healthVp := viewport.New(0, 0)
 	abilitiesVp := viewport.New(0, 0)
@@ -31,14 +31,14 @@ func NewBasicInfoModel(character *models.Character) BasicInfoModel {
 	}
 }
 
-func GetHealthContent(character *models.Character) string {
+func GetHealthContent(character models.Character) string {
 	healthContent := fmt.Sprintf("Current HP: %d | Max HP: %d | Temp HP: %d",
 		character.HPCurrent, character.HPMax, character.HPTemp)
 
 	return healthContent
 }
 
-func GetStatsContent(character *models.Character) string {
+func GetStatsContent(character models.Character) string {
 	statsContent := fmt.Sprintf(`Class: %s
 Level: %d
 Race: %s
@@ -55,7 +55,7 @@ Hit Dice: %s
 	return statsContent
 }
 
-func GetAbilitiesContent(character *models.Character, width int) string {
+func GetAbilitiesContent(character models.Character, width int) string {
 	width = width - (skillsPadding * 2) //padding on both sides
 	abilitiesHeader := "Ability        -  Mod -  ST Mod"
 	lineWidth := utf8.RuneCountInString(abilitiesHeader)
@@ -89,7 +89,7 @@ func GetAbilitiesContent(character *models.Character, width int) string {
 	return abilitiesStr
 }
 
-func GetSkillsContent(character *models.Character, width int) string {
+func GetSkillsContent(character models.Character, width int) string {
 	width = width - (skillsPadding * 2) //padding on both sides
 	skillsHeader := "Ability       -  Skills          -  Mod -  Proficient"
 	lineWidth := utf8.RuneCountInString(skillsHeader)
@@ -120,7 +120,7 @@ func GetSkillsContent(character *models.Character, width int) string {
 	return skillsStr
 }
 
-func (m BasicInfoModel) UpdateSize(innerWidth, availableHeight int, character *models.Character) BasicInfoModel {
+func (m BasicInfoModel) UpdateSize(innerWidth, availableHeight int, character models.Character) BasicInfoModel {
 	// Column 1: 1/3 width, split vertically 50/50
 	col1Width := innerWidth / 3
 	boxHeight := availableHeight / 2

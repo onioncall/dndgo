@@ -19,7 +19,7 @@ type SpellsModel struct {
 	contentSet          bool
 }
 
-func NewSpellsModel(character *models.Character) SpellsModel {
+func NewSpellsModel() SpellsModel {
 	spellSaveDCVp := viewport.New(0, 0)
 	spellSlotsVp := viewport.New(0, 0)
 	knownSpellsVp := viewport.New(0, 0)
@@ -31,7 +31,7 @@ func NewSpellsModel(character *models.Character) SpellsModel {
 	}
 }
 
-func GetKnownSpellContent(character *models.Character, width int) string {
+func GetKnownSpellContent(character models.Character, width int) string {
 	width = width - (widthPadding * 2) //padding on both sides
 	longestSpellNameWidth := 0
 	maxSpellNameWidth := width - 29 // based on width of viewport and characters in header
@@ -71,7 +71,7 @@ func GetKnownSpellContent(character *models.Character, width int) string {
 	return knownSpellsContent
 }
 
-func GetSpellSlotContent(character *models.Character, width int) string {
+func GetSpellSlotContent(character models.Character, width int) string {
 	width = width - (widthPadding * 2) //padding on both sides
 	slotHeader := "Spell Slots"
 	slotContent := fmt.Sprintf("%s\n", slotHeader)
@@ -98,7 +98,7 @@ func GetSpellSlotContent(character *models.Character, width int) string {
 	return slotContent
 }
 
-func (m SpellsModel) UpdateSize(innerWidth, availableHeight int, character *models.Character) SpellsModel {
+func (m SpellsModel) UpdateSize(innerWidth, availableHeight int, character models.Character) SpellsModel {
 	// Column 1: 1/2 width, split vertically 15/85
 	col1Width := innerWidth / 2
 	spellSaveDCHeight := (availableHeight * 15) / 100

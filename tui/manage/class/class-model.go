@@ -11,7 +11,7 @@ type ClassModel struct {
 	OtherFeaturesViewPort viewport.Model
 }
 
-func NewClassModel(character *models.Character) ClassModel {
+func NewClassModel() ClassModel {
 	tokenViewPort := viewport.New(0, 0)
 	tokenViewPort.SetContent("Class Tokens are under construction")
 
@@ -28,7 +28,7 @@ func NewClassModel(character *models.Character) ClassModel {
 	}
 }
 
-func (m ClassModel) UpdateSize(innerWidth, availableHeight int, character *models.Character) ClassModel {
+func (m ClassModel) UpdateSize(innerWidth, availableHeight int, character models.Character) ClassModel {
 	// Column 1: 50% width, split 50/50 vertically
 	col1Width := innerWidth / 2
 	col1Height := availableHeight / 2

@@ -17,7 +17,7 @@ type EquipmentModel struct {
 	contentSet            bool
 }
 
-func NewEquipmentModel(character *models.Character) EquipmentModel {
+func NewEquipmentModel() EquipmentModel {
 	wornEquipmentVp := viewport.New(0, 0)
 	backpackVp := viewport.New(0, 0)
 	weaponsVp := viewport.New(0, 0)
@@ -29,7 +29,7 @@ func NewEquipmentModel(character *models.Character) EquipmentModel {
 	}
 }
 
-func GetBackpackContent(character *models.Character, width int) string {
+func GetBackpackContent(character models.Character, width int) string {
 	backpackContent := "Backpack\n"
 	width = width - (widthPadding * 2) //padding on both sides
 	backpackContent += fmt.Sprintf("%s\n", strings.Repeat("─", width))
@@ -51,7 +51,7 @@ func GetBackpackContent(character *models.Character, width int) string {
 	return backpackContent
 }
 
-func GetWornEquipmentContent(character *models.Character, width int) string {
+func GetWornEquipmentContent(character models.Character, width int) string {
 	width = width - (widthPadding * 2)
 	equipmentContent := "Worn Equipment\n"
 	equipmentContent += fmt.Sprintf("%s\n", strings.Repeat("─", width))
@@ -88,7 +88,7 @@ func GetWornEquipmentContent(character *models.Character, width int) string {
 	return equipmentContent
 }
 
-func GetWeaponsContent(character *models.Character, width int) string {
+func GetWeaponsContent(character models.Character, width int) string {
 	// As a general note, any weirdness around how we're handling primary weapons is probably related to
 	// handling primary and secondary when both are the same weapon name
 
@@ -171,7 +171,7 @@ func GetWeaponsContent(character *models.Character, width int) string {
 	return weaponsContent
 }
 
-func (m EquipmentModel) UpdateSize(innerWidth, availableHeight int, character *models.Character) EquipmentModel {
+func (m EquipmentModel) UpdateSize(innerWidth, availableHeight int, character models.Character) EquipmentModel {
 	// Row 1: 50/50 horizontal split, taking 50% of height
 	row1Height := availableHeight / 2
 	row2Height := availableHeight - row1Height
