@@ -823,7 +823,10 @@ func (c *Character) UseSpellSlot(level int) {
 func (c *Character) RecoverSpellSlots(level int, quantity int) {
 	for i := range c.SpellSlots {
 		if c.SpellSlots[i].Level == level {
-			if quantity == 0 {
+			if c.SpellSlots[i].Maximum == 0 {
+				logger.Warnf("Slot level '%d' cannot be recovered because the maximum 0", c.SpellSlots[i].Maximum)
+				return
+			} else if quantity == 0 {
 				c.SpellSlots[i].Available = c.SpellSlots[i].Maximum
 				return
 			}
