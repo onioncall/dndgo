@@ -11,6 +11,7 @@ import (
 )
 
 type Barbarian struct {
+	BaseClass
 	Path            string                `json:"path"`
 	OtherFeatures   []models.ClassFeature `json:"other-features"`
 	ClassToken      shared.NamedToken     `json:"class-token"`

@@ -10,6 +10,7 @@ import (
 )
 
 type Monk struct {
+	BaseClass
 	MartialArts     string                `json:"-"`
 	ClassToken      shared.NamedToken     `json:"class-token"`
 	KiSpellSaveDC   int                   `json:"-"`

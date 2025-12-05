@@ -10,6 +10,7 @@ import (
 )
 
 type Ranger struct {
+	BaseClass
 	Archetype            string                `json:"archetype"`
 	FightingStyle        string                `json:"fighting-style"`
 	FightingStyleFeature FightingStyleFeature  `json:"-"`
