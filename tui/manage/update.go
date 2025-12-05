@@ -127,7 +127,7 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		tab = classTab
 		newInput = inputAfterCmd
 	case damageCmd:
-		dmg, err := strconv.ParseInt(inputAfterCmd, 10, 32)
+		dmg, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.DamageCharacter(int(dmg))
 		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
@@ -135,18 +135,18 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		m.err = execRecoverCmd(inputAfterCmd, m.character)
 		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
 	case addTempCmd:
-		temp, err := strconv.ParseInt(inputAfterCmd, 10, 32)
+		temp, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.AddTempHp(int(temp))
 		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
 	case useSlotCmd:
-		level, err := strconv.ParseInt(inputAfterCmd, 10, 32)
+		level, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.UseSpellSlot(int(level))
 		sWidth := m.spellsTab.SpellSlotsViewport.Width
 		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(*m.character, sWidth))
 	case recoverSlotCmd:
-		level, err := strconv.ParseInt(inputAfterCmd, 10, 32)
+		level, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.RecoverSpellSlots(int(level), 1)
 		sWidth := m.spellsTab.SpellSlotsViewport.Width
