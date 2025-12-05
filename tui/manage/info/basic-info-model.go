@@ -56,7 +56,7 @@ Hit Dice: %s
 }
 
 func GetAbilitiesContent(character models.Character, width int) string {
-	width = width - (skillsPadding * 2) //padding on both sides
+	width = width - (abilitiesPadding * 2) //padding on both sides
 	abilitiesHeader := "Ability        -  Mod -  ST Mod"
 	lineWidth := utf8.RuneCountInString(abilitiesHeader)
 	abilitiesStr := fmt.Sprintf("%s\n", abilitiesHeader)
@@ -79,8 +79,8 @@ func GetAbilitiesContent(character models.Character, width int) string {
 		abilityNameStr := fmt.Sprintf("%s%s", a.Name, strings.Repeat(" ", 13-utf8.RuneCountInString(a.Name)))
 		abilityStr := fmt.Sprintf("%s  -  %s  -  %s", abilityNameStr, modStr, stStr)
 
-		// Doing this so each line is the same width for centering purposes.
-		// This is a space, but we are using the unicode so that lipgloss does not strip it out as a trailing space
+		// Doing this so each line is the same width for centering purposes. This is a space,
+		// but we are using the unicode so that lipgloss does not strip it out as a trailing space
 		abilitiesStr += fmt.Sprintf("%s%s\n",
 			abilityStr,
 			strings.Repeat("\u00A0", lineWidth-utf8.RuneCountInString(abilityStr)))

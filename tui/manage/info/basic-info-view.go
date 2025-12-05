@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	abilitiesPadding int = 2
+	abilitiesPadding int = 1
 	skillsPadding    int = 4
 )
 
@@ -33,7 +33,7 @@ func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(orange).
 		Padding(0, abilitiesPadding).
-		Width(col1Width - 2).
+		Width(col1Width - abilitiesPadding).
 		Height(abilitiesHeight - 2).
 		Align(lipgloss.Center)
 
