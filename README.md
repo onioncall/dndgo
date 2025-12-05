@@ -9,6 +9,13 @@ Configure your character, and this application will handle tracking your mods, b
 
 ## Tui 
 
+### Character Management
+Currently Character management is only implemented for basic info, spells, and equipment. Actions can be preformed on the character like damage, recovering health, adding items, using spell slots and more. More detailed information on these commands can be found in the docs/tui directory.
+
+*example*
+
+https://github.com/user-attachments/assets/0935bead-a4b5-466b-abd5-8881fef07208
+
 ### Search
 
 Use tab and shift tab to navigate tabs or /s, /m, /e, /f in the search field to switch directly to a tab. 
