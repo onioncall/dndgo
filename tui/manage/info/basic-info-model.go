@@ -56,7 +56,7 @@ Hit Dice: %s
 }
 
 func GetAbilitiesContent(character models.Character, width int) string {
-	width = width - (abilitiesPadding * 2) //padding on both sides
+	width = width - (abilitiesPadding * 2)
 	abilitiesHeader := "Ability        -  Mod -  ST Mod"
 	lineWidth := utf8.RuneCountInString(abilitiesHeader)
 	abilitiesStr := fmt.Sprintf("%s\n", abilitiesHeader)
@@ -90,7 +90,7 @@ func GetAbilitiesContent(character models.Character, width int) string {
 }
 
 func GetSkillsContent(character models.Character, width int) string {
-	width = width - (skillsPadding * 2) //padding on both sides
+	width = width - (skillsPadding * 2)
 	skillsHeader := "Ability       -  Skills          -  Mod -  Proficient"
 	lineWidth := utf8.RuneCountInString(skillsHeader)
 	skillsStr := fmt.Sprintf("%s\n", skillsHeader)

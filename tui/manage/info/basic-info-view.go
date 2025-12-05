@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	abilitiesPadding int = 1
+	abilitiesPadding int = 2
 	skillsPadding    int = 4
 )
 
