@@ -32,6 +32,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
 		m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
 		m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
 
 		return m, nil
 	case tea.KeyMsg:
@@ -66,6 +67,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			case notesTab:
 				m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
+			case helpTab:
+				m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			}
 
 			return m, nil
@@ -104,6 +107,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			m.classTab, cmd = m.classTab.Update(msg)
 		case notesTab:
 			m.notesTab, cmd = m.notesTab.Update(msg)
+		case helpTab:
+			m.helpTab, cmd = m.helpTab.Update(msg)
 		}
 	}
 
