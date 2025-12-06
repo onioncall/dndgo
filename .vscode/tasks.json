@@ -1,0 +1,66 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "go: build workspace",
+			"command": "go",
+			"args": [
+				"build",
+				"-v",
+				"."
+			],
+			"problemMatcher": [
+				"$go"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "Build the dndgo executable",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "go: run tui",
+			"command": "go",
+			"args": [
+				"run",
+				"main.go",
+				"tui"
+			],
+			"problemMatcher": [],
+			"detail": "Run the dndgo TUI",
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"focus": true
+			}
+		},
+		{
+			"type": "shell",
+			"label": "go: test all",
+			"command": "go",
+			"args": [
+				"test",
+				"-v",
+				"./..."
+			],
+			"problemMatcher": [
+				"$go"
+			],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"detail": "Run all tests with verbose output",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			}
+		}
+	]
+}

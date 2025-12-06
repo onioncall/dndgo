@@ -2,8 +2,9 @@ package menu
 
 import (
 	"fmt"
-	"github.com/onioncall/dndgo/tui/shared"
 	"strings"
+
+	"github.com/onioncall/dndgo/tui/shared"
 )
 
 func (m Model) View() string {
@@ -58,6 +59,20 @@ func (m Model) renderMenu() string {
 	btnLeftPadding := max((m.width-buttonsLine.Len())/2, 0)
 	content.WriteString(strings.Repeat(" ", btnLeftPadding))
 	content.WriteString(buttonsLine.String())
+
+	// Calculate remaining space to push version to bottom
+	currentLines := topPadding + textLines
+	versionPadding := m.height - currentLines - 3 // 3 lines from bottom (with padding)
+	for range versionPadding {
+		content.WriteString("\n")
+	}
+
+	// Add version info at bottom
+	content.WriteString("\n")
+	versionText := fmt.Sprintf("v%s", m.version)
+	versionLeftPadding := max((m.width-len(versionText))/2, 0)
+	content.WriteString(strings.Repeat(" ", versionLeftPadding))
+	content.WriteString(versionText)
 
 	return content.String()
 }

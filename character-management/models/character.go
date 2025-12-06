@@ -802,6 +802,11 @@ func (c *Character) AddTempHp(tempHP int) {
 	c.HPTemp += tempHP
 }
 
+// RenameCharacter updates the character's name.
+func (c *Character) RenameCharacter(newName string) {
+	c.Name = newName
+}
+
 func (c *Character) UseSpellSlot(level int) {
 	for i := range c.SpellSlots {
 		if c.SpellSlots[i].Level == level {

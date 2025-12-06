@@ -12,7 +12,7 @@ var (
 		Short: "Launch the dndgo tui",
 		Run: func(cmd *cobra.Command, args []string) {
 			p := tea.NewProgram(
-				menu.New(),
+				menu.New(Version),
 				tea.WithAltScreen(),
 			)
 

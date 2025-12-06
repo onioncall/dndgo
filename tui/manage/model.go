@@ -6,6 +6,7 @@ import (
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/tui/manage/class"
 	"github.com/onioncall/dndgo/tui/manage/equipment"
+	"github.com/onioncall/dndgo/tui/manage/help"
 	"github.com/onioncall/dndgo/tui/manage/info"
 	"github.com/onioncall/dndgo/tui/manage/notes"
 	"github.com/onioncall/dndgo/tui/manage/spells"
@@ -27,6 +28,7 @@ type Model struct {
 	equipmentTab equipment.EquipmentModel
 	classTab     class.ClassModel
 	notesTab     notes.NotesModel
+	helpTab      help.HelpModel
 }
 
 // Tab constants
@@ -36,6 +38,7 @@ const (
 	equipmentTab
 	classTab
 	notesTab
+	helpTab
 )
 
 // Tab Commands
@@ -50,6 +53,7 @@ const (
 	damageCmd  = "damage"
 	recoverCmd = "recover"
 	addTempCmd = "temp"
+	renameCmd  = "rename"
 
 	// Spell Slots
 	useSlotCmd     = "use-slot"
@@ -79,9 +83,9 @@ func NewModel() Model {
 	input.Placeholder = "Cmd..."
 	input.Width = 38
 
-	tabs := []string{"Basic Info", "Equipment", "Class", "Notes"}
+	tabs := []string{"Basic Info", "Equipment", "Class", "Notes", "Help"}
 	if character.SpellSaveDC > 0 {
-		tabs = []string{"Basic Info", "Spells", "Equipment", "Class", "Notes"}
+		tabs = []string{"Basic Info", "Spells", "Equipment", "Class", "Notes", "Help"}
 	}
 
 	basicInfoTab := info.NewBasicInfoModel()
@@ -89,6 +93,7 @@ func NewModel() Model {
 	equipmentTab := equipment.NewEquipmentModel()
 	classTab := class.NewClassModel()
 	notesTab := notes.NewNotesModel()
+	helpTab := help.NewHelpModel()
 
 	return Model{
 		width:            0,
@@ -102,6 +107,7 @@ func NewModel() Model {
 		equipmentTab:     equipmentTab,
 		classTab:         classTab,
 		notesTab:         notesTab,
+		helpTab:          helpTab,
 		character:        character,
 	}
 }
