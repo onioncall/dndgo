@@ -7,10 +7,12 @@ import (
 	"github.com/onioncall/dndgo/logger"
 )
 
-var profile bool
-
 func main() {
 	defer logger.RegisterPanicHandler()
+
+	// Set version info from root package
+	cmd.Version = Version
+	cmd.BuildDate = BuildDate
 
 	if err := cmd.Execute(); err != nil {
 		os.Exit(1)
