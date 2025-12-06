@@ -75,6 +75,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m, m.selectedTabIndex, searchInput = m.executeUserCmd(searchInput, m.selectedTabIndex)
 				m.cmdInput.SetValue("")
 				m.cmdVisible = false
+				handlers.SaveCharacterJson(m.character)
 				handlers.HandleCharacter(m.character)
 			}
 
@@ -141,7 +142,7 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
 	case renameCmd:
 		if inputAfterCmd != "" {
-			m.character.Name = inputAfterCmd
+			m.character.RenameCharacter(inputAfterCmd)
 			m.basicInfoTab.BasicStatsViewport.SetContent(info.GetStatsContent(*m.character))
 		} else {
 			m.err = fmt.Errorf("name cannot be empty")

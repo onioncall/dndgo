@@ -916,6 +916,66 @@ func TestCharacterHealCharacter(t *testing.T) {
 	}
 }
 
+func TestCharacterRenameCharacter(t *testing.T) {
+	tests := []struct {
+		name         string
+		newName      string
+		character    *Character
+		expectedName string
+	}{
+		{
+			name:    "Simple Name Change",
+			newName: "Aragorn",
+			character: &Character{
+				Name: "Nim",
+			},
+			expectedName: "Aragorn",
+		},
+		{
+			name:    "Name With Spaces",
+			newName: "Gandalf the Grey",
+			character: &Character{
+				Name: "Nim",
+			},
+			expectedName: "Gandalf the Grey",
+		},
+		{
+			name:    "Empty String",
+			newName: "",
+			character: &Character{
+				Name: "Nim",
+			},
+			expectedName: "",
+		},
+		{
+			name:    "Special Characters",
+			newName: "Drizzt Do'Urden",
+			character: &Character{
+				Name: "Nim",
+			},
+			expectedName: "Drizzt Do'Urden",
+		},
+		{
+			name:    "Unicode Characters",
+			newName: "Søren Kierkegaard",
+			character: &Character{
+				Name: "Nim",
+			},
+			expectedName: "Søren Kierkegaard",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.character.RenameCharacter(tt.newName)
+
+			if tt.character.Name != tt.expectedName {
+				t.Errorf("Expected name: %q, Result: %q", tt.expectedName, tt.character.Name)
+			}
+		})
+	}
+}
+
 func TestCharacterAddEquipment(t *testing.T) {
 	tests := []struct {
 		name          string
