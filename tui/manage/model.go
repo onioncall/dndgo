@@ -50,6 +50,7 @@ const (
 	damageCmd  = "damage"
 	recoverCmd = "recover"
 	addTempCmd = "temp"
+	renameCmd  = "rename"
 
 	// Spell Slots
 	useSlotCmd     = "use-slot"

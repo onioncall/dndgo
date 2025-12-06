@@ -37,6 +37,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+// Main Entrypoint
 func Execute() error {
 	return rootCmd.Execute()
 }
