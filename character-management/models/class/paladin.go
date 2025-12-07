@@ -132,7 +132,11 @@ func (p *Paladin) executeOathSpells(c *models.Character) {
 	executePreparedSpellsShared(c, p.OathSpells)
 }
 
-func (p *Paladin) SubClass() string {
+func (p *Paladin) SubClass(level int) string {
+	if level <= 2 {
+		return ""
+	}
+
 	return p.SacredOath
 }
 
@@ -170,37 +174,9 @@ func (p *Paladin) ClassDetails(level int) string {
 
 	return s
 }
-func (p *Paladin) ClassFeatures(c *models.Character) string {
-	s := buildClassDetailsHeader()
-
-	// for _, token := range p.ClassTokens {
-	// 	if token.Maximum == 0 || c.Level < token.Level {
-	// 		continue
-	// 	}
-	//
-	// 	switch token.Name {
-	// 	case "divine-sense":
-	// 	case "lay-on-hands":
-	// 		s = append(s, fmt.Sprintf("*Lay On Hands*: %d/%d\n\n", token.Available, token.Maximum))
-	// 	default:
-	// 		logger.Info(fmt.Sprintf("Invalid token name: %s", token.Name))
-	// 		continue
-	// 	}
-	// }
-
-	// if p.FightingStyleFeature.Name != "" && c.Level >= 2 {
-	// 	appliedText := "Requirements for fighting style not met."
-	// 	if p.FightingStyleFeature.IsApplied {
-	// 		appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
-	// 	}
-	//
-	// 	fightingStyleHeader := fmt.Sprintf("**Fighting Style**: *%s*\n", p.FightingStyleFeature.Name)
-	// 	fightingStyleDetail := fmt.Sprintf("%s\n%s\n\n", p.FightingStyleFeature.Details, appliedText)
-	// 	s = append(s, fightingStyleHeader)
-	// 	s = append(s, fightingStyleDetail)
-	// }
-
-	s += formatOtherFeatures(p.OtherFeatures, c.Level)
+func (p *Paladin) ClassFeatures(level int) string {
+	var s string
+	s += formatOtherFeatures(p.OtherFeatures, level)
 
 	return s
 }

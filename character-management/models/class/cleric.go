@@ -124,33 +124,24 @@ func (cl *Cleric) executePreparedSpells(c *models.Character) {
 	executePreparedSpellsShared(c, cl.PreparedSpells)
 }
 
-func (cl *Cleric) SubClass() string {
+func (cl *Cleric) SubClass(level int) string {
+	if level <= 2 {
+		return ""
+	}
+
 	return cl.Domain
 }
 
 func (cl *Cleric) ClassDetails(level int) string {
 	var s string
-
 	s += formatTokens(cl.ClassToken, channelDivinityToken, level)
 
 	return s
 }
 
-func (cl *Cleric) ClassFeatures(c *models.Character) string {
+func (cl *Cleric) ClassFeatures(level int) string {
 	var s string
-
-	// if cl.Domain != "" && c.Level > 3 {
-	// 	domainHeader := fmt.Sprintf("Domain: *%s*\n\n", cl.Domain)
-	// 	s = append(s, domainHeader)
-	// }
-	//
-	// if cl.ClassToken.Maximum != 0 && cl.ClassToken.Name == channelDivinityToken {
-	// 	channelDivinitySlots := c.GetSlots(cl.ClassToken.Available, cl.ClassToken.Maximum)
-	// 	biLine := fmt.Sprintf("**Channel Divinity**: %s\n\n", channelDivinitySlots)
-	// 	s = append(s, biLine)
-	// }
-
-	s += formatOtherFeatures(cl.OtherFeatures, c.Level)
+	s += formatOtherFeatures(cl.OtherFeatures, level)
 
 	return s
 }

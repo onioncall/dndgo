@@ -72,7 +72,11 @@ func (r *Rogue) executeSneakAttack(c *models.Character) {
 	}
 }
 
-func (r *Rogue) SubClass() string {
+func (r *Rogue) SubClass(level int) string {
+	if level <= 2 {
+		return ""
+	}
+
 	return r.Archetype
 }
 
@@ -97,18 +101,9 @@ func (r *Rogue) ClassDetails(level int) string {
 	return s
 }
 
-func (r *Rogue) ClassFeatures(c *models.Character) string {
+func (r *Rogue) ClassFeatures(level int) string {
 	var s string
-
-	// sneakAttackLine := fmt.Sprintf("*Sneak Attack*: %s\n\n", r.SneakAttack)
-	// s = append(s, sneakAttackLine)
-	//
-	// if r.Archetype != "" && c.Level > 3 {
-	// 	archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
-	// 	s = append(s, archetypeHeader)
-	// }
-
-	s += formatOtherFeatures(r.OtherFeatures, c.Level)
+	s += formatOtherFeatures(r.OtherFeatures, level)
 
 	return s
 }

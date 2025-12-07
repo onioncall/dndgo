@@ -93,13 +93,16 @@ func (b *Bard) executeJackOfAllTrades(c *models.Character) {
 	}
 }
 
-func (b *Bard) SubClass() string {
+func (b *Bard) SubClass(level int) string {
+	if level <= 2 {
+		return ""
+	}
+
 	return b.College
 }
 
 func (b *Bard) ClassDetails(level int) string {
 	var s string
-
 	s += formatTokens(b.ClassToken, bardicInspirationToken, level)
 
 	if len(b.ExpertiseSkills) > 0 && level > 3 {
@@ -117,31 +120,9 @@ func (b *Bard) ClassDetails(level int) string {
 	return s
 }
 
-func (b *Bard) ClassFeatures(c *models.Character) string {
+func (b *Bard) ClassFeatures(level int) string {
 	var s string
-
-	// if b.College != "" && c.Level > 3 {
-	// 	collegeHeader := fmt.Sprintf("College: *%s*\n\n", b.College)
-	// 	s = append(s, collegeHeader)
-	// }
-	//
-	// if b.ClassToken.Maximum != 0 && b.ClassToken.Name == bardicInspirationToken {
-	// 	bardicSlots := models.GetSlots(b.ClassToken.Available, b.ClassToken.Maximum)
-	// 	s = append(s, fmt.Sprintf("**Bardic Inspiration**: %s\n\n", bardicSlots))
-	// }
-
-	// if len(b.ExpertiseSkills) > 0 && c.Level >= 3 {
-	// 	expertiseHeader := fmt.Sprintf("Expertise:\n")
-	// 	s += expertiseHeader
-	//
-	// 	for _, exp := range b.ExpertiseSkills {
-	// 		expLine := fmt.Sprintf("- %s\n", exp)
-	// 		s += expLine
-	// 	}
-	// 	s += "\n"
-	// }
-
-	s += formatOtherFeatures(b.OtherFeatures, c.Level)
+	s += formatOtherFeatures(b.OtherFeatures, level)
 
 	return s
 }

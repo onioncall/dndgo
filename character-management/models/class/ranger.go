@@ -41,7 +41,11 @@ func (r *Ranger) PostCalculateSpellAttackMod(c *models.Character) {
 	executeSpellAttackMod(c, wisMod)
 }
 
-func (r *Ranger) SubClass() string {
+func (r *Ranger) SubClass(level int) string {
+	if level <= 2 {
+		return ""
+	}
+
 	return r.Archetype
 }
 
@@ -78,38 +82,10 @@ func (r *Ranger) ClassDetails(level int) string {
 
 	return s
 }
-func (r *Ranger) ClassFeatures(c *models.Character) string {
+
+func (r *Ranger) ClassFeatures(level int) string {
 	var s string
-
-	// if r.Archetype != "" && c.Level > 3 {
-	// 	archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
-	// 	s = append(s, archetypeHeader)
-	// }
-	//
-	// if r.FightingStyleFeature.Name != "" && c.Level >= 2 {
-	// 	appliedText := "Requirements for fighting style not met."
-	// 	if r.FightingStyleFeature.IsApplied {
-	// 		appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
-	// 	}
-	//
-	// 	fightingStyleHeader := fmt.Sprintf("**Fighting Style**: *%s*\n", r.FightingStyleFeature.Name)
-	// 	fightingStyleDetail := fmt.Sprintf("%s\n%s\n\n", r.FightingStyleFeature.Details, appliedText)
-	// 	s = append(s, fightingStyleHeader)
-	// 	s = append(s, fightingStyleDetail)
-	// }
-	//
-	// if len(r.FavoredEnemies) > 0 {
-	// 	favoredEnemyHeader := fmt.Sprintf("Favored Enemies:\n")
-	// 	s += favoredEnemyHeader
-	//
-	// 	for _, enemy := range r.FavoredEnemies {
-	// 		enemyLine := fmt.Sprintf("- %s\n", enemy)
-	// 		s += enemyLine
-	// 	}
-	// 	s += "\n"
-	// }
-
-	s += formatOtherFeatures(r.OtherFeatures, c.Level)
+	s += formatOtherFeatures(r.OtherFeatures, level)
 
 	return s
 }

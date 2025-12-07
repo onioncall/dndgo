@@ -77,16 +77,6 @@ func executeSpellAttackMod(c *models.Character, abilityMod int) {
 	c.SpellAttackMod = c.Proficiency + abilityMod
 }
 
-func buildClassDetailsHeader() string {
-	var s string
-	header := fmt.Sprintf("Class Details\n")
-	spacer := fmt.Sprintf("---\n")
-	s += header
-	s += spacer
-
-	return s
-}
-
 // Applies bonus for fighting style, and returns feature with details and weather or not the feature was applied
 func applyArchery(c *models.Character) FightingStyleFeature {
 	feature := FightingStyleFeature{

@@ -124,33 +124,24 @@ func (d *Druid) executeArchDruid(c *models.Character) {
 	d.ClassToken.Maximum = 0
 }
 
-func (d *Druid) SubClass() string {
+func (d *Druid) SubClass(level int) string {
+	if level <= 2 {
+		return ""
+	}
+
 	return d.Circle
 }
 
 func (d *Druid) ClassDetails(level int) string {
 	var s string
-
 	s += formatTokens(d.ClassToken, wildShapeToken, level)
 
 	return s
 }
 
-func (d *Druid) ClassFeatures(c *models.Character) string {
+func (d *Druid) ClassFeatures(level int) string {
 	var s string
-
-	// if d.Circle != "" && c.Level > 3 {
-	// 	collegeHeader := fmt.Sprintf("Circle: *%s*\n\n", d.Circle)
-	// 	s = append(s, collegeHeader)
-	// }
-	//
-	// if d.ClassToken.Maximum != 0 && d.ClassToken.Name == wildShapeToken {
-	// 	wildShapeSlots := c.GetSlots(d.ClassToken.Available, d.ClassToken.Maximum)
-	// 	biLine := fmt.Sprintf("**Wild Shape Transformations**: %s\n\n", wildShapeSlots)
-	// 	s = append(s, biLine)
-	// }
-
-	s += formatOtherFeatures(d.OtherFeatures, c.Level)
+	s += formatOtherFeatures(d.OtherFeatures, level)
 
 	return s
 }

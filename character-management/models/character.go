@@ -49,8 +49,8 @@ type GenericItem struct {
 
 type Class interface {
 	CalculateHitDice(level int) string
-	ClassFeatures(c *Character) string
-	SubClass() string
+	ClassFeatures(level int) string
+	SubClass(level int) string
 	ClassDetails(level int) string
 }
 
@@ -331,14 +331,14 @@ func (c *Character) BuildCharacter() string {
 		builder.WriteString(fmt.Sprintf("Class Details\n"))
 		builder.WriteString(fmt.Sprintf("---\n"))
 
-		builder.WriteString(fmt.Sprintf("Sub-Class: %s\n", c.Class.SubClass()))
+		builder.WriteString(fmt.Sprintf("Sub-Class: %s\n", c.Class.SubClass(c.Level)))
 
 		details := c.Class.ClassDetails(c.Level)
 		if details != "" {
 			builder.WriteString(details + "\n")
 		}
 
-		otherClassFeatures := c.Class.ClassFeatures(c)
+		otherClassFeatures := c.Class.ClassFeatures(c.Level)
 		builder.WriteString(otherClassFeatures)
 		builder.WriteString(nl)
 	}

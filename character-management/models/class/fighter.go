@@ -74,7 +74,11 @@ func (f *Fighter) executeFightingStyle(c *models.Character) {
 	}
 }
 
-func (f *Fighter) SubClass() string {
+func (f *Fighter) SubClass(level int) string {
+	if level <= 2 {
+		return ""
+	}
+
 	return f.Archetype
 }
 
@@ -114,49 +118,9 @@ func (f *Fighter) ClassDetails(level int) string {
 	return s
 }
 
-func (f *Fighter) ClassFeatures(c *models.Character) string {
+func (f *Fighter) ClassFeatures(level int) string {
 	var s string
-
-	// if f.Archetype != "" && c.Level > 3 {
-	// 	archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", f.Archetype)
-	// 	s += archetypeHeader
-	// }
-	//
-	// if f.FightingStyleFeature.Name != "" && c.Level >= 2 {
-	// 	appliedText := "Requirements for fighting style not met."
-	// 	if f.FightingStyleFeature.IsApplied {
-	// 		appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
-	// 	}
-	//
-	// 	fightingStyleHeader := fmt.Sprintf("**Fighting Style**: *%s*\n", f.FightingStyleFeature.Name)
-	// 	fightingStyleDetail := fmt.Sprintf("%s\n%s\n\n", f.FightingStyleFeature.Details, appliedText)
-	// 	s = append(s, fightingStyleHeader)
-	// 	s = append(s, fightingStyleDetail)
-	// }
-
-	// for _, token := range f.ClassTokens {
-	// 	tokenHeader := ""
-	//
-	// 	switch token.Name {
-	// 	case "action-surge":
-	// 		tokenHeader = "Action Surge"
-	// 	case "second-wind":
-	// 		tokenHeader = "Second Wind"
-	// 	case "indomitable":
-	// 		tokenHeader = "Indomitable"
-	// 	default:
-	// 		logger.Info(fmt.Sprintf("Invalid token name: %s", token.Name))
-	// 		continue
-	// 	}
-	//
-	// 	if token.Maximum != 0 && c.Level >= token.Level {
-	// 		actionSurgeSlots := c.GetSlots(token.Available, token.Maximum)
-	// 		line := fmt.Sprintf("**%s**: %s\n\n", tokenHeader, actionSurgeSlots)
-	// 		s = append(s, line)
-	// 	}
-	// }
-
-	s += formatOtherFeatures(f.OtherFeatures, c.Level)
+	s += formatOtherFeatures(f.OtherFeatures, level)
 
 	return s
 }

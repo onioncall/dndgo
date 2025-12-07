@@ -110,7 +110,11 @@ func (m *Monk) executeDiamondSoul(c *models.Character) {
 	}
 }
 
-func (m *Monk) SubClass() string {
+func (m *Monk) SubClass(level int) string {
+	if level <= 2 {
+		return ""
+	}
+
 	return m.MosaicTradition
 }
 
@@ -133,28 +137,9 @@ func (m *Monk) ClassDetails(level int) string {
 	return s
 }
 
-func (m *Monk) ClassFeatures(c *models.Character) string {
+func (m *Monk) ClassFeatures(level int) string {
 	var s string
-
-	// martialArts := fmt.Sprintf("*Martial Arts*: %s\n\n", m.MartialArts)
-	// s = append(s, martialArts)
-	//
-	// if m.ClassToken.Maximum != 0 && m.ClassToken.Name == kiPointsToken {
-	// 	s = append(s, fmt.Sprintf("*Ki Points*: %d/%d\n\n", m.ClassToken.Available, m.ClassToken.Maximum))
-	// 	s = append(s, fmt.Sprintf("*Ki Spell Save DC*: %d\n\n", m.KiSpellSaveDC))
-	// }
-	//
-	// if m.DeflectMissles > 0 {
-	// 	deflectMissles := fmt.Sprintf("*Deflect Missles Damage Reduction*: %d", m.DeflectMissles)
-	// 	s = append(s, deflectMissles)
-	// }
-
-	// if c.Level > 3 {
-	// 	mosaicTradition := fmt.Sprintf("*Mosaic Tradition*: %s\n\n", m.MosaicTradition)
-	// 	s = append(s, mosaicTradition)
-	// }
-
-	s += formatOtherFeatures(m.OtherFeatures, c.Level)
+	s += formatOtherFeatures(m.OtherFeatures, level)
 
 	return s
 }

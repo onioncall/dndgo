@@ -125,7 +125,11 @@ func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 	executeUnarmoredDefenseShared(c, barbarianExpertiseAbilityModifiers)
 }
 
-func (b *Barbarian) SubClass() string {
+func (b *Barbarian) SubClass(level int) string {
+	if level <= 2 {
+		return ""
+	}
+
 	return b.Path
 }
 
@@ -139,32 +143,9 @@ func (b *Barbarian) ClassDetails(level int) string {
 	return s
 }
 
-func (b *Barbarian) ClassFeatures(c *models.Character) string {
+func (b *Barbarian) ClassFeatures(level int) string {
 	var s string
-
-	// if b.ClassToken.Maximum != 0 && b.ClassToken.Name == rageToken {
-	// 	rageSlots := models.GetSlots(b.ClassToken.Available, b.ClassToken.Maximum)
-	// 	rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n\n", rageSlots, b.RageDamage)
-	// 	s += rageLine
-	// }
-	//
-	// if b.Path != "" && c.Level > 3 {
-	// 	pathHeader := fmt.Sprintf("Primal Path: *%s*\n\n", b.Path)
-	// 	s += pathHeader
-	// }
-
-	if len(b.OtherFeatures) > 0 {
-		for _, detail := range b.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
-
-			detailHeader := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s += detailHeader
-			detail := fmt.Sprintf("%s\n", detail.Details)
-			s += detail
-		}
-	}
+	s += formatOtherFeatures(b.OtherFeatures, level)
 
 	return s
 }

@@ -82,7 +82,11 @@ func applyArmorOfShadows(c *models.Character) bool {
 	return true
 }
 
-func (w *Warlock) SubClass() string {
+func (w *Warlock) SubClass(level int) string {
+	if level <= 2 {
+		return ""
+	}
+
 	return w.OtherworldlyPatron
 }
 
@@ -99,10 +103,10 @@ func (w *Warlock) ClassDetails(level int) string {
 	return s
 }
 
-func (w *Warlock) ClassFeatures(c *models.Character) string {
+func (w *Warlock) ClassFeatures(level int) string {
 	var s string
 
-	s += formatOtherFeatures(w.OtherFeatures, c.Level)
+	s += formatOtherFeatures(w.OtherFeatures, level)
 
 	return s
 }

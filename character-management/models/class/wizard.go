@@ -85,7 +85,11 @@ func (w *Wizard) executeSignatureSpellValidation(c *models.Character) {
 	}
 }
 
-func (w *Wizard) SubClass() string {
+func (w *Wizard) SubClass(level int) string {
+	if level <= 2 {
+		return ""
+	}
+
 	return w.ArcaneTradition
 }
 
@@ -102,10 +106,9 @@ func (w *Wizard) ClassDetails(level int) string {
 	return s
 }
 
-func (w *Wizard) ClassFeatures(c *models.Character) string {
+func (w *Wizard) ClassFeatures(level int) string {
 	var s string
-
-	s += formatOtherFeatures(w.OtherFeatures, c.Level)
+	s += formatOtherFeatures(w.OtherFeatures, level)
 
 	return s
 }
