@@ -85,32 +85,27 @@ func (w *Wizard) executeSignatureSpellValidation(c *models.Character) {
 	}
 }
 
-func (w *Wizard) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
+func (w *Wizard) SubClass() string {
+	return w.ArcaneTradition
+}
 
-	if w.ArcaneTradition != "" && c.Level > 3 {
-		s = append(s, fmt.Sprintf("Arcane Tradition: *School of %s*\n\n", w.ArcaneTradition))
-	}
+func (w *Wizard) ClassDetails(level int) string {
+	var s string
 
-	if c.Level >= 20 {
-		s = append(s, fmt.Sprintf("Signature Spells:\n"))
+	if level >= 20 {
+		s += fmt.Sprintf("Signature Spells:\n")
 		for _, spell := range w.SignatureSpells {
-			s = append(s, fmt.Sprintf("- %s\n", spell))
+			s += fmt.Sprintf("- %s\n", spell)
 		}
 	}
 
-	if len(w.OtherFeatures) > 0 {
-		for _, detail := range w.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
+	return s
+}
 
-			name := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, name)
-			detail := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, detail)
-		}
-	}
+func (w *Wizard) ClassFeatures(c *models.Character) string {
+	var s string
+
+	s += formatOtherFeatures(w.OtherFeatures, c.Level)
 
 	return s
 }

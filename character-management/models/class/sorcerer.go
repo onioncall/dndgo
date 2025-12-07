@@ -48,44 +48,60 @@ func (s *Sorcerer) executeSorceryPoints(c *models.Character) {
 	s.ClassToken.Maximum += c.Level
 }
 
-func (s *Sorcerer) PrintClassDetails(c *models.Character) []string {
-	sb := buildClassDetailsHeader()
+func (s *Sorcerer) SubClass() string {
+	return s.SorcerousOrigin
+}
 
-	if s.SorcerousOrigin != "" {
-		sb = append(sb, fmt.Sprintf("Sorcerous Origin: *%s*\n\n", s.SorcerousOrigin))
+func (s *Sorcerer) ClassDetails(level int) string {
+	var str string
+
+	if level >= 2 && s.ClassToken.Name == sorceryPointsToken {
+		str += fmt.Sprintf("*Sorcery Points*: %d/%d\n\n", s.ClassToken.Available, s.ClassToken.Maximum)
 	}
 
-	if c.Level >= 2 && s.ClassToken.Name == sorceryPointsToken {
-		sb = append(sb, fmt.Sprintf("*Sorcery Points*: %d/%d\n\n", s.ClassToken.Available, s.ClassToken.Maximum))
-	}
-
-	if len(s.MetaMagicSpells) > 0 && c.Level >= 3 {
+	if len(s.MetaMagicSpells) > 0 && level >= 3 {
 		mmHeader := fmt.Sprintf("Meta Magic Spells:\n")
-		sb = append(sb, mmHeader)
+		str += mmHeader
 
 		for _, spell := range s.MetaMagicSpells {
 			spellLine := fmt.Sprintf("*%s*\n", spell.Name)
-			sb = append(sb, fmt.Sprintf("*%s*\n", spell.Name))
-			sb = append(sb, fmt.Sprintf("%s\n\n", spell.Details))
-			sb = append(sb, spellLine)
+			str += fmt.Sprintf("*%s*\n", spell.Name)
+			str += fmt.Sprintf("%s\n\n", spell.Details)
+			str += spellLine
 		}
-		sb = append(sb, "\n")
+		str += "\n"
 	}
 
-	if len(s.OtherFeatures) > 0 {
-		for _, detail := range s.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
+	return str
+}
 
-			detailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			sb = append(sb, detailName)
-			details := fmt.Sprintf("%s\n", detail.Details)
-			sb = append(sb, details)
-		}
-	}
+func (s *Sorcerer) ClassFeatures(c *models.Character) string {
+	var str string
 
-	return sb
+	// if s.SorcerousOrigin != "" {
+	// 	sb = append(sb, fmt.Sprintf("Sorcerous Origin: *%s*\n\n", s.SorcerousOrigin))
+	// }
+
+	// if c.Level >= 2 && s.ClassToken.Name == sorceryPointsToken {
+	// 	sb = append(sb, fmt.Sprintf("*Sorcery Points*: %d/%d\n\n", s.ClassToken.Available, s.ClassToken.Maximum))
+	// }
+	//
+	// if len(s.MetaMagicSpells) > 0 && c.Level >= 3 {
+	// 	mmHeader := fmt.Sprintf("Meta Magic Spells:\n")
+	// 	sb = append(sb, mmHeader)
+	//
+	// 	for _, spell := range s.MetaMagicSpells {
+	// 		spellLine := fmt.Sprintf("*%s*\n", spell.Name)
+	// 		sb = append(sb, fmt.Sprintf("*%s*\n", spell.Name))
+	// 		sb = append(sb, fmt.Sprintf("%s\n\n", spell.Details))
+	// 		sb = append(sb, spellLine)
+	// 	}
+	// 	sb = append(sb, "\n")
+	// }
+
+	str += formatOtherFeatures(s.OtherFeatures, c.Level)
+
+	return str
 }
 
 // CLI

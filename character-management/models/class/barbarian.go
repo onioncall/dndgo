@@ -125,19 +125,33 @@ func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 	executeUnarmoredDefenseShared(c, barbarianExpertiseAbilityModifiers)
 }
 
-func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
+func (b *Barbarian) SubClass() string {
+	return b.Path
+}
 
-	if b.ClassToken.Maximum != 0 && b.ClassToken.Name == rageToken {
-		rageSlots := c.GetSlots(b.ClassToken.Available, b.ClassToken.Maximum)
-		rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n\n", rageSlots, b.RageDamage)
-		s = append(s, rageLine)
-	}
+func (b *Barbarian) ClassDetails(level int) string {
+	var s string
 
-	if b.Path != "" && c.Level > 3 {
-		pathHeader := fmt.Sprintf("Primal Path: *%s*\n\n", b.Path)
-		s = append(s, pathHeader)
-	}
+	rageSlots := formatTokens(b.ClassToken, rageToken, level)
+	rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n", rageSlots, b.RageDamage)
+	s += rageLine
+
+	return s
+}
+
+func (b *Barbarian) ClassFeatures(c *models.Character) string {
+	var s string
+
+	// if b.ClassToken.Maximum != 0 && b.ClassToken.Name == rageToken {
+	// 	rageSlots := models.GetSlots(b.ClassToken.Available, b.ClassToken.Maximum)
+	// 	rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n\n", rageSlots, b.RageDamage)
+	// 	s += rageLine
+	// }
+	//
+	// if b.Path != "" && c.Level > 3 {
+	// 	pathHeader := fmt.Sprintf("Primal Path: *%s*\n\n", b.Path)
+	// 	s += pathHeader
+	// }
 
 	if len(b.OtherFeatures) > 0 {
 		for _, detail := range b.OtherFeatures {
@@ -146,9 +160,9 @@ func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
 			}
 
 			detailHeader := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, detailHeader)
+			s += detailHeader
 			detail := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, detail)
+			s += detail
 		}
 	}
 

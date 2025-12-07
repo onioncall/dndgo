@@ -124,32 +124,33 @@ func (d *Druid) executeArchDruid(c *models.Character) {
 	d.ClassToken.Maximum = 0
 }
 
-func (d *Druid) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
+func (d *Druid) SubClass() string {
+	return d.Circle
+}
 
-	if d.Circle != "" && c.Level > 3 {
-		collegeHeader := fmt.Sprintf("Circle: *%s*\n\n", d.Circle)
-		s = append(s, collegeHeader)
-	}
+func (d *Druid) ClassDetails(level int) string {
+	var s string
 
-	if d.ClassToken.Maximum != 0 && d.ClassToken.Name == wildShapeToken {
-		wildShapeSlots := c.GetSlots(d.ClassToken.Available, d.ClassToken.Maximum)
-		biLine := fmt.Sprintf("**Wild Shape Transformations**: %s\n\n", wildShapeSlots)
-		s = append(s, biLine)
-	}
+	s += formatTokens(d.ClassToken, wildShapeToken, level)
 
-	if len(d.OtherFeatures) > 0 {
-		for _, detail := range d.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
+	return s
+}
 
-			detailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, detailName)
-			details := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, details)
-		}
-	}
+func (d *Druid) ClassFeatures(c *models.Character) string {
+	var s string
+
+	// if d.Circle != "" && c.Level > 3 {
+	// 	collegeHeader := fmt.Sprintf("Circle: *%s*\n\n", d.Circle)
+	// 	s = append(s, collegeHeader)
+	// }
+	//
+	// if d.ClassToken.Maximum != 0 && d.ClassToken.Name == wildShapeToken {
+	// 	wildShapeSlots := c.GetSlots(d.ClassToken.Available, d.ClassToken.Maximum)
+	// 	biLine := fmt.Sprintf("**Wild Shape Transformations**: %s\n\n", wildShapeSlots)
+	// 	s = append(s, biLine)
+	// }
+
+	s += formatOtherFeatures(d.OtherFeatures, c.Level)
 
 	return s
 }

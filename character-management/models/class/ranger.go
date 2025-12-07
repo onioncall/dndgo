@@ -41,15 +41,19 @@ func (r *Ranger) PostCalculateSpellAttackMod(c *models.Character) {
 	executeSpellAttackMod(c, wisMod)
 }
 
-func (r *Ranger) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
+func (r *Ranger) SubClass() string {
+	return r.Archetype
+}
 
-	if r.Archetype != "" && c.Level > 3 {
+func (r *Ranger) ClassDetails(level int) string {
+	var s string
+
+	if r.Archetype != "" && level > 3 {
 		archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
-		s = append(s, archetypeHeader)
+		s += archetypeHeader
 	}
 
-	if r.FightingStyleFeature.Name != "" && c.Level >= 2 {
+	if r.FightingStyleFeature.Name != "" && level >= 2 {
 		appliedText := "Requirements for fighting style not met."
 		if r.FightingStyleFeature.IsApplied {
 			appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
@@ -57,33 +61,55 @@ func (r *Ranger) PrintClassDetails(c *models.Character) []string {
 
 		fightingStyleHeader := fmt.Sprintf("**Fighting Style**: *%s*\n", r.FightingStyleFeature.Name)
 		fightingStyleDetail := fmt.Sprintf("%s\n%s\n\n", r.FightingStyleFeature.Details, appliedText)
-		s = append(s, fightingStyleHeader)
-		s = append(s, fightingStyleDetail)
+		s += fightingStyleHeader
+		s += fightingStyleDetail
 	}
 
 	if len(r.FavoredEnemies) > 0 {
 		favoredEnemyHeader := fmt.Sprintf("Favored Enemies:\n")
-		s = append(s, favoredEnemyHeader)
+		s += favoredEnemyHeader
 
 		for _, enemy := range r.FavoredEnemies {
 			enemyLine := fmt.Sprintf("- %s\n", enemy)
-			s = append(s, enemyLine)
+			s += enemyLine
 		}
-		s = append(s, "\n")
+		s += "\n"
 	}
 
-	if len(r.OtherFeatures) > 0 {
-		for _, detail := range r.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
+	return s
+}
+func (r *Ranger) ClassFeatures(c *models.Character) string {
+	var s string
 
-			name := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, name)
-			detail := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, detail)
-		}
-	}
+	// if r.Archetype != "" && c.Level > 3 {
+	// 	archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
+	// 	s = append(s, archetypeHeader)
+	// }
+	//
+	// if r.FightingStyleFeature.Name != "" && c.Level >= 2 {
+	// 	appliedText := "Requirements for fighting style not met."
+	// 	if r.FightingStyleFeature.IsApplied {
+	// 		appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
+	// 	}
+	//
+	// 	fightingStyleHeader := fmt.Sprintf("**Fighting Style**: *%s*\n", r.FightingStyleFeature.Name)
+	// 	fightingStyleDetail := fmt.Sprintf("%s\n%s\n\n", r.FightingStyleFeature.Details, appliedText)
+	// 	s = append(s, fightingStyleHeader)
+	// 	s = append(s, fightingStyleDetail)
+	// }
+	//
+	// if len(r.FavoredEnemies) > 0 {
+	// 	favoredEnemyHeader := fmt.Sprintf("Favored Enemies:\n")
+	// 	s += favoredEnemyHeader
+	//
+	// 	for _, enemy := range r.FavoredEnemies {
+	// 		enemyLine := fmt.Sprintf("- %s\n", enemy)
+	// 		s += enemyLine
+	// 	}
+	// 	s += "\n"
+	// }
+
+	s += formatOtherFeatures(r.OtherFeatures, c.Level)
 
 	return s
 }
