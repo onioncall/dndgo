@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/onioncall/dndgo/character-management/models"
 	c "github.com/ostafen/clover/v2"
@@ -16,11 +17,27 @@ const character_collection = "characters"
 const class_collection = "classes"
 const db_dirname = "dndgo"
 
-type Repo struct {
+type Repository struct {
 	db *c.DB
 }
 
-func NewRepo() (Repo, error) {
+var Repo *Repository
+var once sync.Once
+
+func Init() error {
+	var initErr error
+	once.Do(func() {
+		r, err := newRepository()
+		if err != nil {
+			initErr = err
+		}
+
+		Repo = r
+	})
+	return initErr
+}
+
+func newRepository() (*Repository, error) {
 	xdgData := os.Getenv("XDG_DATA_HOME")
 	if xdgData == "" {
 		home := os.Getenv("HOME")
@@ -31,25 +48,25 @@ func NewRepo() (Repo, error) {
 
 	err := os.MkdirAll(dbDir, 0755)
 	if err != nil {
-		return Repo{}, fmt.Errorf("Failed to create data dir at %v:\n%w", dbDir, err)
+		return nil, fmt.Errorf("Failed to create data dir at %v:\n%w", dbDir, err)
 	}
 
 	db, err := c.Open(dbDir)
 	if err != nil {
-		return Repo{}, fmt.Errorf("Failed to open dndgo db: %w", err)
+		return nil, fmt.Errorf("Failed to open dndgo db: %w", err)
 	}
-	return Repo{
+	return &Repository{
 		db: db,
 	}, nil
 }
 
-func (r Repo) Deinit() error {
+func (r Repository) Deinit() error {
 	return r.db.Close()
 }
 
 // InsertCharacter creates a new character in the db
 // Returns the inserted character ID
-func (r Repo) InsertCharacter(character models.Character) (string, error) {
+func (r Repository) InsertCharacter(character models.Character) (string, error) {
 	if err := r.db.CreateCollection(character_collection); err != nil {
 		return "", fmt.Errorf("Failed to create or locate characters collection: %w", err)
 	}
@@ -64,7 +81,7 @@ func (r Repo) InsertCharacter(character models.Character) (string, error) {
 }
 
 // GetCharacter gets the default character
-func (r Repo) GetCharacter() (*models.Character, error) {
+func (r Repository) GetCharacter() (*models.Character, error) {
 	doc, err := r.db.FindFirst(
 		cquery.NewQuery(character_collection).Where(cquery.Field("default").Eq(true)),
 	)
@@ -82,7 +99,7 @@ func (r Repo) GetCharacter() (*models.Character, error) {
 
 // SyncCharacter will update the "Default" character with all
 // properties in 'character'
-func (r Repo) SyncCharacter(character models.Character) error {
+func (r Repository) SyncCharacter(character models.Character) error {
 	bytes, err := json.Marshal(character)
 	if err != nil {
 		return fmt.Errorf("Failed to marshal character:\n%w", err)
@@ -102,7 +119,7 @@ func (r Repo) SyncCharacter(character models.Character) error {
 }
 
 // InsertClass creates a new class record in the db
-func (r Repo) InsertClass(class models.Class) error {
+func (r Repository) InsertClass(class models.Class) error {
 	if err := r.db.CreateCollection(class_collection); err != nil {
 		return fmt.Errorf("Failed to create or locate classes collection: %w", err)
 	}
@@ -118,7 +135,7 @@ func (r Repo) InsertClass(class models.Class) error {
 
 // GetClass retrieves a class from the db based on the ID of the corresponding character
 // Returns a []byte json representation of the class
-func (r Repo) GetClass(id string) ([]byte, error) {
+func (r Repository) GetClass(id string) ([]byte, error) {
 	doc, err := r.db.FindFirst(
 		cquery.NewQuery(class_collection).Where(cquery.Field("character_id").Eq(id)),
 	)
@@ -130,7 +147,7 @@ func (r Repo) GetClass(id string) ([]byte, error) {
 }
 
 // SyncClass updates the class doc based on class.CharacterID
-func (r Repo) SyncClass(class models.Class) error {
+func (r Repository) SyncClass(class models.Class) error {
 	bytes, err := json.Marshal(class)
 	if err != nil {
 		return fmt.Errorf("Failed to marshal class:\n%w", err)

@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/onioncall/dndgo/character-management/db"
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
-	"github.com/onioncall/dndgo/di"
 	"github.com/onioncall/dndgo/logger"
 
 	"github.com/spf13/cobra"
@@ -32,7 +33,7 @@ var (
 			t, _ := cmd.Flags().GetInt("temp-hp")
 			n, _ := cmd.Flags().GetString("name")
 
-			c, err := di.Repo.GetCharacter()
+			c, err := db.Repo.GetCharacter()
 			if err != nil {
 				logger.Info("Failed to load character data")
 				panic(err)
@@ -71,7 +72,7 @@ var (
 				c.AddTempHp(t)
 			}
 
-			err = di.Repo.SyncCharacter(*c)
+			err = db.Repo.SyncCharacter(*c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -105,7 +106,7 @@ var (
 						panic(err)
 					}
 				} else if p == "markdown" {
-					c, err := di.CharacterHandler.LoadCharacter()
+					c, err := handlers.LoadCharacter()
 					if err != nil {
 						logger.Info("Failed to load character")
 						panic(err)
@@ -123,7 +124,7 @@ var (
 			}
 
 			if t {
-				c, err := di.CharacterHandler.LoadCharacter()
+				c, err := handlers.LoadCharacter()
 				if err != nil {
 					logger.Info("Failed to save character data")
 					panic(err)
@@ -164,7 +165,7 @@ var (
 			hp, _ := cmd.Flags().GetInt("hitpoints")
 			u, _ := cmd.Flags().GetInt("use-slot")
 
-			c, err := di.CharacterHandler.LoadCharacter()
+			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to load character")
 				panic(err)
@@ -176,7 +177,7 @@ var (
 				c.UseSpellSlot(u)
 			}
 
-			err = di.CharacterHandler.SaveCharacter(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -196,7 +197,7 @@ var (
 		Use:   "update",
 		Short: "Update character attributes",
 		Run: func(cmd *cobra.Command, args []string) {
-			c, err := di.CharacterHandler.LoadCharacter()
+			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -221,7 +222,7 @@ var (
 			q, _ := cmd.Flags().GetInt("quantity")
 			ct, _ := cmd.Flags().GetString("class-tokens")
 
-			c, err := di.CharacterHandler.LoadCharacter()
+			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -241,7 +242,7 @@ var (
 				c.UseClassTokens(ct, q)
 			}
 
-			err = di.CharacterHandler.SaveCharacter(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -273,7 +274,7 @@ var (
 			ct, _ := cmd.Flags().GetString("class-tokens")
 			q, _ := cmd.Flags().GetInt("quantity")
 
-			c, err := di.CharacterHandler.LoadCharacter()
+			c, err := handlers.LoadCharacter()
 			if err != nil {
 				errMsg := "Failed to save character data"
 				logger.Info(errMsg)
@@ -290,7 +291,7 @@ var (
 				c.RecoverClassTokens(ct, q)
 			}
 
-			err = di.CharacterHandler.SaveCharacter(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -325,7 +326,7 @@ var (
 				panic(err)
 			}
 
-			_, err = di.Repo.InsertCharacter(*character)
+			_, err = db.Repo.InsertCharacter(*character)
 			if err != nil {
 				logger.Info("Failed to save new character data")
 				panic(err)
@@ -355,7 +356,7 @@ var (
 			p, _ := cmd.Flags().GetString("primary")
 			s, _ := cmd.Flags().GetString("secondary")
 
-			c, err := di.CharacterHandler.LoadCharacter()
+			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -368,7 +369,7 @@ var (
 				c.Equip(false, s)
 			}
 
-			err = di.CharacterHandler.SaveCharacter(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -391,7 +392,7 @@ var (
 			p, _ := cmd.Flags().GetBool("primary")
 			s, _ := cmd.Flags().GetBool("secondary")
 
-			c, err := di.CharacterHandler.LoadCharacter()
+			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -404,7 +405,7 @@ var (
 				c.Unequip(false)
 			}
 
-			err = di.CharacterHandler.SaveCharacter(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -417,6 +418,33 @@ var (
 			}
 
 			logger.Info("Character Update Successful")
+		},
+	}
+
+	importCmd = &cobra.Command{
+		Use:   "import",
+		Short: "Imports a character or class, supports inserts and updates",
+		Long: `Imports a character or class from a json file (exported via "export" command).
+		Will update existing record if ID is provided in json.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			var entity string
+			isClass, _ := cmd.Flags().GetBool("class")
+			filePath, _ := cmd.Flags().GetString("file")
+
+			bytes, err := os.ReadFile(filePath)
+			if err != nil {
+				logger.Errorf("Error reading file '%v':\n%v", filePath, err.Error())
+			}
+
+			if isClass {
+				entity = "Class"
+				handlers.ImportClassJson(bytes)
+			} else {
+				entity = "Character"
+				handlers.ImportCharacterJson(bytes)
+			}
+
+			logger.Infof("%v Import Successful", entity)
 		},
 	}
 )
@@ -462,4 +490,7 @@ func init() {
 
 	getCmd.Flags().StringP("path", "p", "", "Get config or markdown path")
 	getCmd.Flags().BoolP("tokens", "t", false, "Get class tokens")
+
+	importCmd.Flags().BoolP("class", "c", false, "Import Class file (default: Character)")
+	importCmd.Flags().StringP("file", "f", "", "Relative path to json file")
 }

@@ -22,16 +22,6 @@ const (
 	backpack string = "backpack"
 )
 
-type CharacterHandler struct {
-	repo db.Repo
-}
-
-func NewCharacterHandler(repo db.Repo) CharacterHandler {
-	return CharacterHandler{
-		repo: repo,
-	}
-}
-
 func HandleCharacter(c *models.Character) error {
 	if c.Class != nil {
 		c.HitDice = c.Class.CalculateHitDice(c.Level)
@@ -95,18 +85,18 @@ func GetConfigPath() (string, error) {
 	return configDir, nil
 }
 
-func (ch CharacterHandler) SaveCharacter(c *models.Character) error {
-	return ch.repo.SyncCharacter(*c)
+func SaveCharacter(c *models.Character) error {
+	return db.Repo.SyncCharacter(*c)
 }
 
-func (ch CharacterHandler) LoadCharacter() (*models.Character, error) {
-	character, err := ch.repo.GetCharacter()
+func LoadCharacter() (*models.Character, error) {
+	character, err := db.Repo.GetCharacter()
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve character from db:\n%w", err)
 	}
 
 	if character.ClassName != "" {
-		class, err := LoadClass(character.ClassName)
+		class, err := LoadClass(character.ID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to load class file: %w", err)
 		}
@@ -170,6 +160,25 @@ func ClearFile(filePath string) error {
 	err := os.WriteFile(filePath, []byte{}, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to clear file: %w", err)
+	}
+
+	return nil
+}
+
+func ImportCharacterJson(characterJson []byte) error {
+	var ch models.Character
+	if err := json.Unmarshal(characterJson, ch); err != nil {
+		return fmt.Errorf("Parsing error on character json content:\n%w", err)
+	}
+
+	if ch.ID == "" {
+		if _, err := db.Repo.InsertCharacter(ch); err != nil {
+			return fmt.Errorf("Failed to create character:\n%w", err)
+		}
+	} else {
+		if err := db.Repo.SyncCharacter(ch); err != nil {
+			return fmt.Errorf("Failed to update character:\n%w", err)
+		}
 	}
 
 	return nil

@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/onioncall/dndgo/character-management/handlers"
-	"github.com/onioncall/dndgo/di"
 	"github.com/onioncall/dndgo/logger"
 	"github.com/spf13/cobra"
 )
@@ -24,7 +23,7 @@ var rootCmd = &cobra.Command{
 	Short: "A D&D helper CLI application",
 	Long:  `A CLI application to help with D&D spells, monsters, and character management.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		c, err := di.CharacterHandler.LoadCharacter()
+		c, err := handlers.LoadCharacter()
 		if err != nil {
 			return fmt.Errorf("failed to load character data: %w", err)
 		}
