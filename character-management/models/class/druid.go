@@ -11,10 +11,9 @@ import (
 
 type Druid struct {
 	BaseClass
-	ClassToken     shared.NamedToken     `json:"class-token"`
-	Circle         string                `json:"circle"`
-	PreparedSpells []string              `json:"prepared-spells"`
-	OtherFeatures  []models.ClassFeature `json:"other-features"`
+	ClassToken     shared.NamedToken `json:"class-token"`
+	Circle         string            `json:"circle"`
+	PreparedSpells []string          `json:"prepared-spells"`
 }
 
 const wildShapeToken string = "wild-shape"
