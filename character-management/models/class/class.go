@@ -19,6 +19,10 @@ func (c BaseClass) GetCharacterId() string {
 	return c.CharacterID
 }
 
+func (c BaseClass) SetCharacterId(id string) {
+	c.CharacterID = id
+}
+
 func (c BaseClass) GetClassName() string {
 	return c.ClassName
 }

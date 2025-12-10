@@ -339,7 +339,9 @@ var (
 				panic(fmt.Errorf("%s: %w", errMsg, err))
 			}
 
-			if err = handlers.SaveClassHandler(class); err != nil {
+			class.SetCharacterId(character.ID)
+
+			if err = db.Repo.InsertClass(class); err != nil {
 				errMsg := "Failed to save class data"
 				logger.Info(errMsg)
 				panic(fmt.Errorf("%s: %w", errMsg, err))
@@ -483,7 +485,17 @@ var (
 )
 
 func init() {
-	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd, initCmd, getCmd, equipCmd, unequipCmd)
+	characterCmd.AddCommand(addCmd,
+		removeCmd,
+		updateCmd,
+		useCmd,
+		recoverCmd,
+		initCmd,
+		getCmd,
+		equipCmd,
+		unequipCmd,
+		importCmd,
+		exportCmd)
 
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
 	addCmd.Flags().StringP("language", "l", "", "Language to add")

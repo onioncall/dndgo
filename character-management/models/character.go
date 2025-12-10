@@ -53,6 +53,7 @@ type Class interface {
 	CalculateHitDice(int) string
 	PrintClassDetails(c *Character) []string
 	GetCharacterId() string
+	SetCharacterId(id string)
 	GetClassName() string
 }
 

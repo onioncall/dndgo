@@ -67,7 +67,7 @@ func (r Repository) Deinit() error {
 // InsertCharacter creates a new character in the db
 // Returns the inserted character ID
 func (r Repository) InsertCharacter(character models.Character) (string, error) {
-	if err := r.db.CreateCollection(character_collection); err != nil {
+	if err := r.createCollection(character_collection); err != nil {
 		return "", fmt.Errorf("Failed to create or locate characters collection: %w", err)
 	}
 
@@ -106,6 +106,10 @@ func (r Repository) GetCharacterByName(name string) (*models.Character, error) {
 		return nil, fmt.Errorf("Failed to retrieve character from db:\n%w", err)
 	}
 
+	if doc == nil {
+		return nil, fmt.Errorf("Character with name '%v' not found", name)
+	}
+
 	res := models.Character{}
 	if err = doc.Unmarshal(&res); err != nil {
 		return nil, fmt.Errorf("Failed to unmarshal db record into character struct:\n%w", err)
@@ -137,7 +141,7 @@ func (r Repository) SyncCharacter(character models.Character) error {
 
 // InsertClass creates a new class record in the db
 func (r Repository) InsertClass(class models.Class) error {
-	if err := r.db.CreateCollection(class_collection); err != nil {
+	if err := r.createCollection(class_collection); err != nil {
 		return fmt.Errorf("Failed to create or locate classes collection: %w", err)
 	}
 
@@ -181,4 +185,16 @@ func (r Repository) SyncClass(class models.Class) error {
 	}
 
 	return nil
+}
+
+func (r Repository) createCollection(collection string) error {
+	exist, err := r.db.HasCollection(collection)
+	if err != nil {
+		return err
+	}
+	if exist {
+		return nil
+	}
+
+	return r.db.CreateCollection(collection)
 }
