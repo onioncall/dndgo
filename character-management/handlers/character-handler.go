@@ -183,3 +183,16 @@ func ImportCharacterJson(characterJson []byte) error {
 
 	return nil
 }
+
+func ExportCharacterJson(characterName string) ([]byte, error) {
+	ch, err := db.Repo.GetCharacterByName(characterName)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to locate character with name '%v':\n%w", characterName, err)
+	}
+
+	data, err := json.Marshal(ch)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to parse existing character '%v':\n%w", characterName, err)
+	}
+	return data, nil
+}

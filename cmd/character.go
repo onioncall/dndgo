@@ -424,7 +424,8 @@ var (
 	importCmd = &cobra.Command{
 		Use:   "import",
 		Short: "Imports a character or class, supports inserts and updates",
-		Long: `Imports a character or class from a json file (exported via "export" command).
+		Long: `Imports a character or class from a json file 
+		Existing characters or classes can be exported via "export" command.
 		Will update existing record if ID is provided in json.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var entity string
@@ -445,6 +446,38 @@ var (
 			}
 
 			logger.Infof("%v Import Successful", entity)
+		},
+	}
+
+	exportCmd = &cobra.Command{
+		Use:   "export",
+		Short: "Exports a character or class to a file",
+		Long: `Exports a character or class to a json file. 
+		Can be altered and re-imported with the "import" command.
+		Will update existing record if ID is provided in json.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			var entity string
+			var data []byte
+			var err error
+			name, _ := cmd.Flags().GetString("name")
+			isClass, _ := cmd.Flags().GetBool("class")
+			filePath, _ := cmd.Flags().GetString("file")
+
+			if isClass {
+				entity = "Class"
+				data, err = handlers.ExportClassJson(name)
+			} else {
+				entity = "Character"
+				data, err = handlers.ExportCharacterJson(name)
+			}
+
+			err = os.WriteFile(filePath, data, 0644)
+			if err != nil {
+				logger.Infof("Failed to write file '%v'", filePath)
+				panic(err)
+			}
+
+			logger.Infof("%v Export Successful", entity)
 		},
 	}
 )
@@ -493,4 +526,12 @@ func init() {
 
 	importCmd.Flags().BoolP("class", "c", false, "Import Class file (default: Character)")
 	importCmd.Flags().StringP("file", "f", "", "Relative path to json file")
+	importCmd.MarkFlagRequired("file")
+	importCmd.MarkFlagFilename("file")
+
+	exportCmd.Flags().BoolP("class", "c", false, "Export Class file (default: Character)")
+	exportCmd.Flags().StringP("name", "n", "", "Name of Character")
+	exportCmd.Flags().StringP("file", "f", "", "Output file name")
+	exportCmd.MarkFlagRequired("name")
+	exportCmd.MarkFlagRequired("file")
 }

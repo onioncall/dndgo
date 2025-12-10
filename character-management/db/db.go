@@ -97,6 +97,23 @@ func (r Repository) GetCharacter() (*models.Character, error) {
 	return &res, nil
 }
 
+// GetCharacterByName gets the character with the provided name
+func (r Repository) GetCharacterByName(name string) (*models.Character, error) {
+	doc, err := r.db.FindFirst(
+		cquery.NewQuery(character_collection).Where(cquery.Field("name").Eq(name)),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to retrieve character from db:\n%w", err)
+	}
+
+	res := models.Character{}
+	if err = doc.Unmarshal(&res); err != nil {
+		return nil, fmt.Errorf("Failed to unmarshal db record into character struct:\n%w", err)
+	}
+
+	return &res, nil
+}
+
 // SyncCharacter will update the "Default" character with all
 // properties in 'character'
 func (r Repository) SyncCharacter(character models.Character) error {

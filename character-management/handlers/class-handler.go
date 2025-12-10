@@ -146,3 +146,17 @@ func ImportClassJson(classJson []byte) error {
 
 	return nil
 }
+
+func ExportClassJson(characterName string) ([]byte, error) {
+	ch, err := db.Repo.GetCharacterByName(characterName)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to locate character with name '%v':\n%w", characterName, err)
+	}
+
+	c, err := db.Repo.GetClass(ch.ID)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to locate class for character '%v':\n%w", characterName, err)
+	}
+
+	return c, nil
+}
