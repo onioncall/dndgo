@@ -11,10 +11,10 @@ import (
 )
 
 type Bard struct {
-	ExpertiseSkills []string              `json:"expertise"`
-	College         string                `json:"college"`
-	OtherFeatures   []models.ClassFeature `json:"other-features"`
-	ClassToken      shared.NamedToken     `json:"class-token"`
+	BaseClass
+	ExpertiseSkills []string          `json:"expertise"`
+	College         string            `json:"college"`
+	ClassToken      shared.NamedToken `json:"class-token"`
 }
 
 const bardicInspirationToken string = "bardic-inspiration"

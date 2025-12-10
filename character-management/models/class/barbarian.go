@@ -11,11 +11,11 @@ import (
 )
 
 type Barbarian struct {
-	Path            string                `json:"path"`
-	OtherFeatures   []models.ClassFeature `json:"other-features"`
-	ClassToken      shared.NamedToken     `json:"class-token"`
-	RageDamage      int                   `json:"-"`
-	PrimalKnowledge []string              `json:"primal-knowledge"`
+	BaseClass
+	Path            string            `json:"path"`
+	ClassToken      shared.NamedToken `json:"class-token"`
+	RageDamage      int               `json:"-"`
+	PrimalKnowledge []string          `json:"primal-knowledge"`
 }
 
 const rageToken string = "rage"

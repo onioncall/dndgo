@@ -10,12 +10,12 @@ import (
 )
 
 type Monk struct {
-	MartialArts     string                `json:"-"`
-	ClassToken      shared.NamedToken     `json:"class-token"`
-	KiSpellSaveDC   int                   `json:"-"`
-	MosaicTradition string                `json:"mosaic-tradition"`
-	DeflectMissles  int                   `json:"-"`
-	OtherFeatures   []models.ClassFeature `json:"other-features"`
+	BaseClass
+	MartialArts     string            `json:"-"`
+	ClassToken      shared.NamedToken `json:"class-token"`
+	KiSpellSaveDC   int               `json:"-"`
+	MosaicTradition string            `json:"mosaic-tradition"`
+	DeflectMissles  int               `json:"-"`
 }
 
 const kiPointsToken string = "ki-points"

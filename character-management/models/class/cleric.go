@@ -10,10 +10,10 @@ import (
 )
 
 type Cleric struct {
-	ClassToken     shared.NamedToken     `json:"class-token"`
-	Domain         string                `json:"domain"`
-	PreparedSpells []string              `json:"prepared-spells"`
-	OtherFeatures  []models.ClassFeature `json:"other-features"`
+	BaseClass
+	ClassToken     shared.NamedToken `json:"class-token"`
+	Domain         string            `json:"domain"`
+	PreparedSpells []string          `json:"prepared-spells"`
 }
 
 const channelDivinityToken string = "channel-divinity"

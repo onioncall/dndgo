@@ -9,6 +9,24 @@ import (
 	"github.com/onioncall/dndgo/logger"
 )
 
+type BaseClass struct {
+	CharacterID   string                `json:"character-id"`
+	ClassName     string                `json:"class-name"`
+	OtherFeatures []models.ClassFeature `json:"other-features"`
+}
+
+func (c BaseClass) GetCharacterId() string {
+	return c.CharacterID
+}
+
+func (c BaseClass) SetCharacterId(id string) {
+	c.CharacterID = id
+}
+
+func (c BaseClass) GetClassName() string {
+	return c.ClassName
+}
+
 func executeExpertiseShared(c *models.Character, expertiseSkills []string) {
 	if c.Level < 3 {
 		return

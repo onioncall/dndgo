@@ -9,6 +9,8 @@ import (
 )
 
 type Character struct {
+	ID                      string                               `json:"id"`
+	Default                 bool                                 `json:"default"`
 	Path                    string                               `json:"path"`
 	ValidationDisabled      bool                                 `json:"validation-disabled"`
 	Name                    string                               `json:"name"`
@@ -50,6 +52,9 @@ type GenericItem struct {
 type Class interface {
 	CalculateHitDice(int) string
 	PrintClassDetails(c *Character) []string
+	GetCharacterId() string
+	SetCharacterId(id string)
+	GetClassName() string
 }
 
 type PostCalculator interface {

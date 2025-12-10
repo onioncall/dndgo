@@ -19,9 +19,9 @@ const (
 )
 
 type Warlock struct {
-	OtherworldlyPatron string                `json:"otherworldly-patron"`
-	Invocations        []string              `json:"invocations"`
-	OtherFeatures      []models.ClassFeature `json:"other-features"`
+	BaseClass
+	OtherworldlyPatron string   `json:"otherworldly-patron"`
+	Invocations        []string `json:"invocations"`
 }
 
 func LoadWarlock(data []byte) (*Warlock, error) {

@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/onioncall/dndgo/character-management/db"
 	defaultjsonconfigs "github.com/onioncall/dndgo/character-management/default-json-configs"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
@@ -84,56 +85,18 @@ func GetConfigPath() (string, error) {
 	return configDir, nil
 }
 
-func SaveCharacterJson(c *models.Character) error {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("error getting home directory: %w", err)
-	}
-
-	configDir := filepath.Join(homeDir, ".config", "dndgo")
-	err = os.MkdirAll(configDir, 0755)
-	if err != nil {
-		return fmt.Errorf("error creating config directory: %w", err)
-	}
-
-	filePath := filepath.Join(configDir, "character.json")
-
-	characterJSON, err := json.MarshalIndent(c, "", "  ")
-	if err != nil {
-		return fmt.Errorf("error marshaling character to JSON: %w", err)
-	}
-
-	err = os.WriteFile(filePath, characterJSON, 0644)
-	if err != nil {
-		return fmt.Errorf("error writing character to file: %w", err)
-	}
-
-	return nil
+func SaveCharacter(c *models.Character) error {
+	return db.Repo.SyncCharacter(*c)
 }
 
 func LoadCharacter() (*models.Character, error) {
-	homeDir, err := os.UserHomeDir()
+	character, err := db.Repo.GetCharacter()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get home directory: %w", err)
-	}
-
-	configPath := filepath.Join(homeDir, ".config", "dndgo", "character.json")
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return nil, fmt.Errorf("character file not found at %s: %w", configPath, err)
-	}
-
-	fileData, err := os.ReadFile(configPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read character file: %w", err)
-	}
-
-	var character models.Character
-	if err := json.Unmarshal(fileData, &character); err != nil {
-		return nil, fmt.Errorf("failed to parse character data: %w", err)
+		return nil, fmt.Errorf("failed to retrieve character from db:\n%w", err)
 	}
 
 	if character.ClassName != "" {
-		class, err := LoadClass(character.ClassName)
+		class, err := LoadClass(character.ID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to load class file: %w", err)
 		}
@@ -141,7 +104,7 @@ func LoadCharacter() (*models.Character, error) {
 		character.Class = class
 	}
 
-	return &character, nil
+	return character, nil
 }
 
 func LoadCharacterTemplate(characterName string, className string) (*models.Character, error) {
@@ -157,6 +120,7 @@ func LoadCharacterTemplate(characterName string, className string) (*models.Char
 	}
 	character.Name = characterName
 	character.ClassName = className
+	character.Default = true
 
 	return &character, nil
 }
@@ -199,4 +163,36 @@ func ClearFile(filePath string) error {
 	}
 
 	return nil
+}
+
+func ImportCharacterJson(characterJson []byte) error {
+	var ch models.Character
+	if err := json.Unmarshal(characterJson, ch); err != nil {
+		return fmt.Errorf("Parsing error on character json content:\n%w", err)
+	}
+
+	if ch.ID == "" {
+		if _, err := db.Repo.InsertCharacter(ch); err != nil {
+			return fmt.Errorf("Failed to create character:\n%w", err)
+		}
+	} else {
+		if err := db.Repo.SyncCharacter(ch); err != nil {
+			return fmt.Errorf("Failed to update character:\n%w", err)
+		}
+	}
+
+	return nil
+}
+
+func ExportCharacterJson(characterName string) ([]byte, error) {
+	ch, err := db.Repo.GetCharacterByName(characterName)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to locate character with name '%v':\n%w", characterName, err)
+	}
+
+	data, err := json.Marshal(ch)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to parse existing character '%v':\n%w", characterName, err)
+	}
+	return data, nil
 }

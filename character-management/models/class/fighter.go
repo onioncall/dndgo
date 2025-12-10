@@ -11,11 +11,11 @@ import (
 )
 
 type Fighter struct {
-	Archetype            string                `json:"archetype"`
-	FightingStyle        string                `json:"fighting-style"`
-	FightingStyleFeature FightingStyleFeature  `json:"-"`
-	OtherFeatures        []models.ClassFeature `json:"other-features"`
-	ClassTokens          []shared.NamedToken   `json:"class-tokens"`
+	BaseClass
+	Archetype            string               `json:"archetype"`
+	FightingStyle        string               `json:"fighting-style"`
+	FightingStyleFeature FightingStyleFeature `json:"-"`
+	ClassTokens          []shared.NamedToken  `json:"class-tokens"`
 }
 
 type FightingStyleFeature struct {
