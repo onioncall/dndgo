@@ -10,8 +10,9 @@ import (
 )
 
 type BaseClass struct {
-	CharacterID string `json:"character_id"`
-	ClassName   string `json:"class_name"`
+	CharacterID   string                `json:"character-id"`
+	ClassName     string                `json:"class-name"`
+	OtherFeatures []models.ClassFeature `json:"other-features"`
 }
 
 func (c BaseClass) GetCharacterId() string {
