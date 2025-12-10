@@ -122,7 +122,7 @@ func (r Repository) SyncCharacter(character models.Character) error {
 		return fmt.Errorf("Failed to marshal character:\n%w", err)
 	}
 
-	updates := make(map[string]interface{})
+	updates := make(map[string]any)
 	err = json.Unmarshal(bytes, &updates)
 	if err != nil {
 		return fmt.Errorf("Failed to unmarshal character to generic map:\n%w", err)
@@ -170,7 +170,7 @@ func (r Repository) SyncClass(class models.Class) error {
 		return fmt.Errorf("Failed to marshal class:\n%w", err)
 	}
 
-	updates := make(map[string]interface{})
+	updates := make(map[string]any)
 	err = json.Unmarshal(bytes, &updates)
 	if err != nil {
 		return fmt.Errorf("Failed to unmarshal class to generic map:\n%w", err)
