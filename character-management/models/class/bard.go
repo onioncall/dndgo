@@ -103,9 +103,9 @@ func (b *Bard) SubClass(level int) string {
 
 func (b *Bard) ClassDetails(level int) string {
 	var s string
-	s += formatTokens(b.ClassToken, bardicInspirationToken, level)
+	s += formatTokens(b.ClassToken, bardicInspirationToken, level) + "\n"
 
-	if len(b.ExpertiseSkills) > 0 && level > 3 {
+	if len(b.ExpertiseSkills) > 0 && level >= 3 {
 		expertiseHeader := fmt.Sprintf("Expertise:\n")
 		s += expertiseHeader
 

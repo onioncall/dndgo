@@ -282,9 +282,9 @@ func fullTokenRecovery(tokens []shared.NamedToken) {
 func formatTokens(token shared.NamedToken, tokenName string, level int) string {
 	var s string
 
-	if token.Maximum != 0 && token.Name != tokenName && level >= token.Level {
-		slots := models.GetSlots(token.Available, token.Maximum) + "\n"
-		s += slots
+	if token.Maximum > 0 && token.Name == tokenName && level >= token.Level {
+		slots := models.GetSlots(token.Available, token.Maximum)
+		s += fmt.Sprintf("%s: %s\n", tokenName, slots)
 	}
 
 	return s
