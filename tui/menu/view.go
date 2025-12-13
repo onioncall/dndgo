@@ -12,7 +12,6 @@ const (
 	orange    = lipgloss.Color("#FFA500")
 	lightBlue = lipgloss.Color("#5DC9E2")
 	cream     = lipgloss.Color("#F9F6F0")
-	darkGray  = lipgloss.Color("#767676")
 )
 
 func (m Model) View() string {
@@ -37,8 +36,8 @@ func (m Model) renderMenu() string {
 		return ""
 	}
 
-	textStyle := lipgloss.NewStyle().Foreground(cream)
-	selectedBtnStyle := lipgloss.NewStyle().Foreground(cream).Bold(true)
+	headerStyle := lipgloss.NewStyle().Foreground(lightBlue).Bold(true)
+	selectedBtnStyle := lipgloss.NewStyle().Foreground(orange).Bold(true)
 	unselectedBtnStyle := lipgloss.NewStyle().Foreground(cream)
 
 	var content strings.Builder
@@ -50,7 +49,7 @@ func (m Model) renderMenu() string {
 
 	leftPadding := max((m.width-len(m.pageText))/2, 0)
 	content.WriteString(strings.Repeat(" ", leftPadding))
-	content.WriteString(textStyle.Render(m.pageText))
+	content.WriteString(headerStyle.Render(m.pageText))
 	content.WriteString("\n\n")
 
 	var visualButtons []string
