@@ -5,8 +5,9 @@ import (
 )
 
 const (
-	orange   = lipgloss.Color("#FFA500")
-	darkGray = lipgloss.Color("#767676")
+	orange    = lipgloss.Color("#FFA500")
+	lightBlue = lipgloss.Color("#5DC9E2")
+	darkGray  = lipgloss.Color("#767676")
 )
 
 func (m ClassModel) View(innerWidth, availableHeight int) string {
@@ -16,7 +17,7 @@ func (m ClassModel) View(innerWidth, availableHeight int) string {
 	// Column 1 Viewports
 	tokenVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
 		Padding(0, 4).
 		Width(col1Width - 2).
 		Height(col1Height - 2).
@@ -26,7 +27,7 @@ func (m ClassModel) View(innerWidth, availableHeight int) string {
 
 	detailVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
 		Padding(0, 2).
 		Width(col1Width - 2).
 		Height(col1Height - 2).
@@ -42,11 +43,10 @@ func (m ClassModel) View(innerWidth, availableHeight int) string {
 	// Column 2 Viewports
 	otherFeaturesVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
 		Padding(0, 2).
 		Width(col2Width - 2).
-		Height(availableHeight - 2).
-		Align(lipgloss.Center)
+		Height(availableHeight - 2)
 
 	otherFeaturesVp := otherFeaturesVpStyle.Render(m.OtherFeaturesViewPort.View())
 

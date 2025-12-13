@@ -10,8 +10,9 @@ const (
 )
 
 const (
-	orange   = lipgloss.Color("#FFA500")
-	darkGray = lipgloss.Color("#767676")
+	orange    = lipgloss.Color("#FFA500")
+	lightBlue = lipgloss.Color("#5DC9E2")
+	darkGray  = lipgloss.Color("#767676")
 )
 
 func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
@@ -22,7 +23,7 @@ func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 	// Column 1 Viewports
 	statsVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
 		Padding(0, 4).
 		Width(col1Width - 2).
 		Height(statsHeight - 2)
@@ -31,7 +32,7 @@ func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 
 	abilitiesVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
 		Padding(0, abilitiesPadding).
 		Width(col1Width - abilitiesPadding).
 		Height(abilitiesHeight - 2).
@@ -50,7 +51,7 @@ func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 	// Column 2 Viewports
 	healthVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
 		Padding(0, 2).
 		Width(col2Width - 2).
 		Height(healthHeight - 2).
@@ -60,7 +61,7 @@ func (m BasicInfoModel) View(innerWidth, availableHeight int) string {
 
 	skillsVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
 		Padding(0, skillsPadding).
 		Width(col2Width - 2).
 		Height(skillsHeight - 2).

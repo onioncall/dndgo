@@ -331,15 +331,20 @@ func (c *Character) BuildCharacter() string {
 		builder.WriteString(fmt.Sprintf("Class Details\n"))
 		builder.WriteString(fmt.Sprintf("---\n"))
 
-		builder.WriteString(fmt.Sprintf("Sub-Class: %s\n", c.Class.SubClass(c.Level)))
+		subClass := c.Class.SubClass(c.Level)
+		if subClass != "" {
+			builder.WriteString(fmt.Sprintf("Sub-Class: %s\n\n", subClass))
+		}
 
 		details := c.Class.ClassDetails(c.Level)
 		if details != "" {
 			builder.WriteString(details + "\n")
 		}
 
-		otherClassFeatures := c.Class.ClassFeatures(c.Level)
-		builder.WriteString(otherClassFeatures)
+		classFeatures := c.Class.ClassFeatures(c.Level)
+		if classFeatures != "" {
+			builder.WriteString(classFeatures + "\n")
+		}
 		builder.WriteString(nl)
 	}
 

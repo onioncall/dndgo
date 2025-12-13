@@ -3,29 +3,31 @@ package class
 import (
 	"github.com/charmbracelet/bubbles/viewport"
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/logger"
+	"github.com/onioncall/wrapt"
 )
 
 type ClassModel struct {
 	TokenViewPort         viewport.Model
 	DetailViewPort        viewport.Model
 	OtherFeaturesViewPort viewport.Model
+	contentSet            bool
 }
 
 func NewClassModel() ClassModel {
 	tokenViewPort := viewport.New(0, 0)
-	tokenViewPort.SetContent("Class Tokens are under construction")
-
 	detailViewPort := viewport.New(0, 0)
-	detailViewPort.SetContent("Class Details are under construction")
-
 	otherFeaturesViewPort := viewport.New(0, 0)
-	otherFeaturesViewPort.SetContent("Class Features are under construction")
 
 	return ClassModel{
 		TokenViewPort:         tokenViewPort,
 		DetailViewPort:        detailViewPort,
 		OtherFeaturesViewPort: otherFeaturesViewPort,
 	}
+}
+
+func getClassFeatures(c models.Character) string {
+	return c.Class.ClassFeatures(c.Level)
 }
 
 func (m ClassModel) UpdateSize(innerWidth, availableHeight int, character models.Character) ClassModel {
@@ -50,6 +52,17 @@ func (m ClassModel) UpdateSize(innerWidth, availableHeight int, character models
 
 	m.OtherFeaturesViewPort.Width = otherFeaturesInnerWidth
 	m.OtherFeaturesViewPort.Height = otherFeaturesInnerHeight
+
+	if !m.contentSet {
+		classFeaturesContent := getClassFeatures(character)
+		if classFeaturesContent == "" {
+			classFeaturesContent = "Class has no features yet"
+		}
+		classFeaturesContent = wrapt.Wrap(classFeaturesContent, m.TokenViewPort.Width)
+		logger.Info(classFeaturesContent)
+
+		m.OtherFeaturesViewPort.SetContent(classFeaturesContent)
+	}
 
 	return m
 }
