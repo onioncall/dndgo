@@ -10,7 +10,6 @@ const (
 	orange    = lipgloss.Color("#FFA500")
 	lightBlue = lipgloss.Color("#5DC9E2")
 	cream     = lipgloss.Color("#F9F6F0")
-	darkGray  = lipgloss.Color("#767676")
 )
 
 var (
@@ -39,15 +38,12 @@ var (
 	tab = lipgloss.NewStyle().
 		Border(tabBorder, true).
 		BorderForeground(lightBlue).
-		Foreground(orange).
+		Foreground(cream).
 		Padding(0, 1)
 
-	activeTab = tab.Border(activeTabBorder, true)
-
-	tabGap = tab.
-		BorderTop(false).
-		BorderLeft(false).
-		BorderRight(false)
+	activeTab = tab.Border(activeTabBorder, true).
+			Foreground(orange).
+			Bold(true)
 )
 
 func (m *Model) View() string {

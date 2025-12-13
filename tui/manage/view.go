@@ -41,7 +41,8 @@ var (
 		Padding(0, 1)
 
 	activeTab = tab.Border(activeTabBorder, true).
-			Foreground(orange)
+			Foreground(orange).
+			Bold(true)
 )
 
 func (m Model) View() string {
