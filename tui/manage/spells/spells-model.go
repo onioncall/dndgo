@@ -80,7 +80,7 @@ func GetSpellSlotContent(character models.Character, width int) string {
 
 	var slotLines []string
 	for _, s := range character.SpellSlots {
-		slots := character.GetSlots(s.Available, s.Maximum)
+		slots := models.GetSlots(s.Available, s.Maximum)
 		level := strconv.FormatInt(int64(s.Level), 10)
 		slotLine := fmt.Sprintf("lvl: %s - %s", level, slots)
 		lineLength := utf8.RuneCountInString(slotLine)

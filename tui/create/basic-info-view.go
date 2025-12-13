@@ -18,34 +18,32 @@ func (m Model) BasicInfoPageView() string {
 
 	availableLines := m.height - headerLines - footerLines
 	visibleFields := max(availableLines/linesPerField, 1)
-
 	startIdx := m.viewportOffset
 	endIdx := min(startIdx+visibleFields, len(m.inputs))
 
 	labels := []string{
 		"Character Name",
-		"Level			",
+		"Level",
 		"Character Class",
-		"Race			",
-		"Background		",
-		"Languages		",
-		"HP (maximum)	",
-		"Speed			",
+		"Race",
+		"Background",
+		"Languages",
+		"HP (maximum)",
+		"Speed",
 	}
 
 	var formContent string
 
-	// Top padding
 	formContent += strings.Repeat("\n", 2)
-	formContent += "Create Character:\n\n"
-
+	headerStyle := secondaryStyle.Width(41).Align(lipgloss.Center)
+	formContent += headerStyle.Render("Create Character:") + "\n\n"
+	
 	for i := startIdx; i < endIdx; i++ {
 		formContent += fmt.Sprintf("%s\n%s\n",
-			inputStyle.Width(41).Render(labels[i]),
+			primaryStyle.Width(41).Render(labels[i]),
 			m.inputs[i].View(),
 		)
 	}
-
 	nextText := "next"
 	menuText := "menu"
 	if m.nextButtonFocused {
@@ -53,11 +51,9 @@ func (m Model) BasicInfoPageView() string {
 	} else if m.backButtonFocused {
 		menuText = "[ menu ]"
 	}
-
-	formContent += "\n" + continueStyle.Render(nextText)
-	formContent += "\n" + continueStyle.Render(menuText)
+	formContent += "\n" + secondaryStyle.Render(nextText)
+	formContent += "\n" + secondaryStyle.Render(menuText)
 	formContent = getScrollIndicators(startIdx, endIdx, len(labels), visibleFields) + formContent + m.renderError()
-
 	return lipgloss.Place(
 		m.width,
 		m.height,

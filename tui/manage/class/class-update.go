@@ -15,7 +15,7 @@ func (m ClassModel) Update(msg tea.Msg) (ClassModel, tea.Cmd) {
 	case tea.KeyMsg:
 		var cmd tea.Cmd
 
-		m.TokenViewPort, cmd = m.TokenViewPort.Update(msg)
+		m.SubClassViewPort, cmd = m.SubClassViewPort.Update(msg)
 		cmds = append(cmds, cmd)
 
 		m.DetailViewPort, cmd = m.DetailViewPort.Update(msg)

@@ -7,8 +7,10 @@ import (
 )
 
 const (
-	orange   = lipgloss.Color("#FFA500")
-	darkGray = lipgloss.Color("#767676")
+	orange    = lipgloss.Color("#FFA500")
+	lightBlue = lipgloss.Color("#5DC9E2")
+	cream     = lipgloss.Color("#F9F6F0")
+	darkGray  = lipgloss.Color("#767676")
 )
 
 var (
@@ -36,7 +38,8 @@ var (
 
 	tab = lipgloss.NewStyle().
 		Border(tabBorder, true).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(orange).
 		Padding(0, 1)
 
 	activeTab = tab.Border(activeTabBorder, true)
@@ -61,7 +64,8 @@ func (m *Model) View() string {
 
 	containerStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(cream).
 		Padding(1, 2).
 		MarginTop(outerBorderMargin).
 		MarginLeft(outerBorderMargin).
@@ -89,7 +93,7 @@ func (m *Model) View() string {
 	rightGap := totalGap - leftGap
 
 	if totalGap > 0 {
-		fillerStyle := lipgloss.NewStyle().Foreground(orange)
+		fillerStyle := lipgloss.NewStyle().Foreground(lightBlue)
 		leftFiller := fillerStyle.Render(strings.Repeat("─", leftGap))
 		rightFiller := fillerStyle.Render(strings.Repeat("─", rightGap))
 		tabRow = lipgloss.JoinHorizontal(
@@ -119,7 +123,8 @@ func (m *Model) View() string {
 	if m.searchVisible {
 		searchStyle := lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
-			BorderForeground(orange).
+			BorderForeground(lightBlue).
+			Foreground(cream).
 			Width(40)
 		searchBox := searchStyle.Render(m.searchInput.View())
 		searchRow := lipgloss.NewStyle().

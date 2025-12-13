@@ -5,8 +5,10 @@ import (
 )
 
 const (
-	orange   = lipgloss.Color("#FFA500")
-	darkGray = lipgloss.Color("#767676")
+	orange    = lipgloss.Color("#FFA500")
+	lightBlue = lipgloss.Color("#5DC9E2")
+	cream     = lipgloss.Color("#F9F6F0")
+	darkGray  = lipgloss.Color("#767676")
 )
 
 func (m NotesModel) View(innerWidth, availableHeight int) string {
@@ -15,7 +17,8 @@ func (m NotesModel) View(innerWidth, availableHeight int) string {
 	// Column 1 Viewports
 	titleVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(cream).
 		Padding(0, 4).
 		Width(col1Width - 2).
 		Height(availableHeight - 2).
@@ -28,7 +31,8 @@ func (m NotesModel) View(innerWidth, availableHeight int) string {
 	// Column 2 Viewports
 	notesVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(cream).
 		Padding(0, 2).
 		Width(col2Width - 2).
 		Height(availableHeight - 2).

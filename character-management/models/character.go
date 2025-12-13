@@ -48,8 +48,10 @@ type GenericItem struct {
 }
 
 type Class interface {
-	CalculateHitDice(int) string
-	PrintClassDetails(c *Character) []string
+	CalculateHitDice(level int) string
+	ClassFeatures(level int) string
+	SubClass(level int) string
+	ClassDetails(level int) string
 }
 
 type PostCalculator interface {
@@ -326,9 +328,22 @@ func (c *Character) BuildCharacter() string {
 	builder.WriteString(nl)
 
 	if c.Class != nil {
-		otherClassFeatures := c.Class.PrintClassDetails(c)
-		for i := range otherClassFeatures {
-			builder.WriteString(otherClassFeatures[i])
+		builder.WriteString(fmt.Sprintf("Class Details\n"))
+		builder.WriteString(fmt.Sprintf("---\n"))
+
+		subClass := c.Class.SubClass(c.Level)
+		if subClass != "" {
+			builder.WriteString(fmt.Sprintf("Sub-Class: %s\n\n", subClass))
+		}
+
+		details := c.Class.ClassDetails(c.Level)
+		if details != "" {
+			builder.WriteString(details + "\n")
+		}
+
+		classFeatures := c.Class.ClassFeatures(c.Level)
+		if classFeatures != "" {
+			builder.WriteString(classFeatures + "\n")
 		}
 		builder.WriteString(nl)
 	}
@@ -681,7 +696,7 @@ func (c *Character) BuildAbilityScoreImprovement() []string {
 	return s
 }
 
-func (c *Character) GetSlots(available int, max int) string {
+func GetSlots(available int, max int) string {
 	// using non breaking spaces for how lipgloss trims regular spaces at the end of strings
 	fullCircle := strings.Repeat("●\u00A0", available)
 	hollowCircle := strings.Repeat("○\u00A0", (max - available))

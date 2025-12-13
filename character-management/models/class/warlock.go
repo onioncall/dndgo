@@ -82,32 +82,31 @@ func applyArmorOfShadows(c *models.Character) bool {
 	return true
 }
 
-func (w *Warlock) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
-
-	if w.OtherworldlyPatron != "" && c.Level > 3 {
-		s = append(s, fmt.Sprintf("Otherwordly Patron: *%s*\n\n", w.OtherworldlyPatron))
+func (w *Warlock) SubClass(level int) string {
+	if level <= 2 {
+		return ""
 	}
 
-	if len(w.Invocations) > 0 && c.Level > 3 {
-		s = append(s, "Invocation:\n\n")
+	return w.OtherworldlyPatron
+}
+
+func (w *Warlock) ClassDetails(level int) string {
+	var s string
+
+	if len(w.Invocations) > 0 && level > 3 {
+		s += "Invocation:\n\n"
 		for _, invocation := range w.Invocations {
-			s = append(s, fmt.Sprintf("%s\n", invocation))
+			s += fmt.Sprintf("%s\n", invocation)
 		}
 	}
 
-	if len(w.OtherFeatures) > 0 {
-		for _, detail := range w.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
+	return s
+}
 
-			detailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, detailName)
-			details := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, details)
-		}
-	}
+func (w *Warlock) ClassFeatures(level int) string {
+	var s string
+
+	s += formatOtherFeatures(w.OtherFeatures, level)
 
 	return s
 }

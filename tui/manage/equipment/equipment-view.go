@@ -9,8 +9,10 @@ const (
 )
 
 const (
-	orange   = lipgloss.Color("#FFA500")
-	darkGray = lipgloss.Color("#767676")
+	orange    = lipgloss.Color("#FFA500")
+	lightBlue = lipgloss.Color("#5DC9E2")
+	cream     = lipgloss.Color("#F9F6F0")
+	darkGray  = lipgloss.Color("#767676")
 )
 
 func (m EquipmentModel) View(innerWidth, availableHeight int) string {
@@ -22,7 +24,8 @@ func (m EquipmentModel) View(innerWidth, availableHeight int) string {
 	wornWidth := innerWidth / 2
 	wornEquipmentStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(cream).
 		Padding(0, widthPadding).
 		Width(wornWidth - 2).
 		Height(row2Height - 2).
@@ -34,7 +37,8 @@ func (m EquipmentModel) View(innerWidth, availableHeight int) string {
 	backpackWidth := innerWidth - wornWidth
 	backpackStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(cream).
 		Padding(0, widthPadding).
 		Width(backpackWidth - 2).
 		Height(row2Height - 2).
@@ -48,7 +52,8 @@ func (m EquipmentModel) View(innerWidth, availableHeight int) string {
 	// Row 2: Weapons viewport (full width)
 	weaponsStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(cream).
 		Padding(0, widthPadding).
 		Width(innerWidth - 2).
 		Height(row2Height - 2).
