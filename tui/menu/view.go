@@ -4,7 +4,14 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/onioncall/dndgo/tui/shared"
+)
+
+const (
+	orange    = lipgloss.Color("#FFA500")
+	lightBlue = lipgloss.Color("#5DC9E2")
+	cream     = lipgloss.Color("#F9F6F0")
 )
 
 func (m Model) View() string {
@@ -29,34 +36,52 @@ func (m Model) renderMenu() string {
 		return ""
 	}
 
-	var content strings.Builder
+	headerStyle := lipgloss.NewStyle().Foreground(lightBlue).Bold(true)
+	selectedBtnStyle := lipgloss.NewStyle().Foreground(orange).Bold(true)
+	unselectedBtnStyle := lipgloss.NewStyle().Foreground(cream)
 
+	var content strings.Builder
 	textLines := 3 // pageText + empty line + buttons
 	topPadding := (m.height - textLines) / 2
-
 	for range topPadding {
 		content.WriteString("\n")
 	}
 
-	// For centering horizontally
 	leftPadding := max((m.width-len(m.pageText))/2, 0)
 	content.WriteString(strings.Repeat(" ", leftPadding))
-	content.WriteString(m.pageText)
+	content.WriteString(headerStyle.Render(m.pageText))
 	content.WriteString("\n\n")
+
+	var visualButtons []string
+	for i, btn := range m.buttons {
+		if i == m.selectedBtn {
+			visualButtons = append(visualButtons, fmt.Sprintf("[ %s ]", btn))
+		} else {
+			visualButtons = append(visualButtons, fmt.Sprintf("  %s  ", btn))
+		}
+	}
+	
+	visualWidth := 0
+	for i, vBtn := range visualButtons {
+		visualWidth += len(vBtn)
+		if i < len(visualButtons)-1 {
+			visualWidth += 2 // spacing
+		}
+	}
 
 	var buttonsLine strings.Builder
 	for i, btn := range m.buttons {
 		if i == m.selectedBtn {
-			buttonsLine.WriteString(fmt.Sprintf("[ %s ]", btn))
+			buttonsLine.WriteString(selectedBtnStyle.Render(fmt.Sprintf("[ %s ]", btn)))
 		} else {
-			buttonsLine.WriteString(fmt.Sprintf("  %s  ", btn))
+			buttonsLine.WriteString(unselectedBtnStyle.Render(fmt.Sprintf("  %s  ", btn)))
 		}
 		if i < len(m.buttons)-1 {
 			buttonsLine.WriteString("  ")
 		}
 	}
 
-	btnLeftPadding := max((m.width-buttonsLine.Len())/2, 0)
+	btnLeftPadding := max((m.width-visualWidth)/2, 0)
 	content.WriteString(strings.Repeat(" ", btnLeftPadding))
 	content.WriteString(buttonsLine.String())
 

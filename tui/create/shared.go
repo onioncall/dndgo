@@ -10,13 +10,16 @@ import (
 )
 
 const (
-	orange   = lipgloss.Color("#FFA500")
-	darkGray = lipgloss.Color("#767676")
+	orange    = lipgloss.Color("#FFA500")
+	lightBlue = lipgloss.Color("#5DC9E2")
+	cream     = lipgloss.Color("#F9F6F0")
+	darkGray  = lipgloss.Color("#767676")
 )
 
 var (
-	inputStyle    = lipgloss.NewStyle().Foreground(orange)
-	continueStyle = lipgloss.NewStyle().Foreground(orange)
+	primaryStyle    = lipgloss.NewStyle().Foreground(lightBlue)
+	secondaryStyle = lipgloss.NewStyle().Foreground(orange)
+	tertiaryStyle = lipgloss.NewStyle().Foreground(cream)
 )
 
 const (

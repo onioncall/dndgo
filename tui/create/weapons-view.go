@@ -26,7 +26,8 @@ func (m Model) WeaponsPageView() string {
 
 	// Top padding
 	formContent += strings.Repeat("\n", 2)
-	formContent += "Weapons:\n\n"
+	headerStyle := secondaryStyle.Width(41).Align(lipgloss.Center)
+	formContent += headerStyle.Render("Weapons:") + "\n\n"
 
 	labels := []string{
 		"Weapon Name",
@@ -41,7 +42,7 @@ func (m Model) WeaponsPageView() string {
 
 	for i := startIdx; i < endIdx; i++ {
 		formContent += fmt.Sprintf("%s\n%s\n",
-			inputStyle.Width(41).Render(labels[i]),
+			primaryStyle.Width(41).Render(labels[i]),
 			m.inputs[i].View(),
 		)
 	}
@@ -59,9 +60,9 @@ func (m Model) WeaponsPageView() string {
 		menuText = "[ back ]"
 	}
 
-	formContent += "\n" + continueStyle.Render(addSpellText)
-	formContent += "\n" + continueStyle.Render(nextText)
-	formContent += "\n" + continueStyle.Render(menuText)
+	formContent += "\n" + secondaryStyle.Render(addSpellText)
+	formContent += "\n" + secondaryStyle.Render(nextText)
+	formContent += "\n" + secondaryStyle.Render(menuText)
 	formContent = getScrollIndicators(startIdx, endIdx, len(labels), visibleFields) + formContent + m.renderError()
 
 	return lipgloss.Place(

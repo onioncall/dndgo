@@ -15,14 +15,15 @@ func (m Model) BackpackPageView() string {
 
 	// Top padding
 	formContent += strings.Repeat("\n", 2)
-	formContent += "Backpack Inventory:\n\n"
+	headerStyle := secondaryStyle.Width(41).Align(lipgloss.Center)
+	formContent += headerStyle.Render("Backpack Invenotry:") + "\n\n"
 
 	formContent += fmt.Sprintf("%s\n%s\n\n",
-		inputStyle.Width(41).Render("Item Name"),
+		primaryStyle.Width(41).Render("Item Name"),
 		m.inputs[itemNameInput].View(),
 	)
 	formContent += fmt.Sprintf("%s\n%s\n",
-		inputStyle.Width(41).Render("Item Quantity"),
+		primaryStyle.Width(41).Render("Item Quantity"),
 		m.inputs[itemQuantityInput].View(),
 	)
 
@@ -37,9 +38,9 @@ func (m Model) BackpackPageView() string {
 		menuText = "[ back ]"
 	}
 
-	formContent += "\n" + continueStyle.Render(addItemText)
-	formContent += "\n" + continueStyle.Render(nextText)
-	formContent += "\n" + continueStyle.Render(menuText)
+	formContent += "\n" + secondaryStyle.Render(addItemText)
+	formContent += "\n" + secondaryStyle.Render(nextText)
+	formContent += "\n" + secondaryStyle.Render(menuText)
 	formContent = formContent + m.renderError()
 
 	return lipgloss.Place(

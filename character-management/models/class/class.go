@@ -77,16 +77,6 @@ func executeSpellAttackMod(c *models.Character, abilityMod int) {
 	c.SpellAttackMod = c.Proficiency + abilityMod
 }
 
-func buildClassDetailsHeader() []string {
-	s := make([]string, 0, 100)
-	header := fmt.Sprintf("Class Details\n")
-	spacer := fmt.Sprintf("---\n")
-	s = append(s, header)
-	s = append(s, spacer)
-
-	return s
-}
-
 // Applies bonus for fighting style, and returns feature with details and weather or not the feature was applied
 func applyArchery(c *models.Character) FightingStyleFeature {
 	feature := FightingStyleFeature{
@@ -287,6 +277,35 @@ func fullTokenRecovery(tokens []shared.NamedToken) {
 	for i := range tokens {
 		tokens[i].Available = tokens[i].Maximum
 	}
+}
+
+func formatTokens(token shared.NamedToken, tokenName string, level int) string {
+	var s string
+
+	if token.Maximum > 0 && token.Name == tokenName && level >= token.Level {
+		slots := models.GetSlots(token.Available, token.Maximum)
+		s += fmt.Sprintf("%s: %s\n", tokenName, slots)
+	}
+
+	return s
+}
+
+func formatOtherFeatures(features []models.ClassFeature, level int) string {
+	var s string
+	if len(features) > 0 {
+		for _, feature := range features {
+			if feature.Level > level {
+				continue
+			}
+
+			featureName := fmt.Sprintf("---\n**%s**\n", feature.Name)
+			s += featureName
+			features := fmt.Sprintf("%s\n", feature.Details)
+			s += features
+		}
+	}
+
+	return s
 }
 
 // this is only used for classes that have mutliple tokens types to implement

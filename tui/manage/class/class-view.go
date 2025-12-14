@@ -5,48 +5,52 @@ import (
 )
 
 const (
-	orange   = lipgloss.Color("#FFA500")
-	darkGray = lipgloss.Color("#767676")
+	orange    = lipgloss.Color("#FFA500")
+	lightBlue = lipgloss.Color("#5DC9E2")
+	cream     = lipgloss.Color("#F9F6F0")
+	darkGray  = lipgloss.Color("#767676")
 )
 
 func (m ClassModel) View(innerWidth, availableHeight int) string {
 	col1Width := innerWidth / 2
-	col1Height := availableHeight / 2
+	subClassHeight := (availableHeight * 15) / 100
+	detailsHeight := availableHeight - subClassHeight
 
 	// Column 1 Viewports
-	tokenVpStyle := lipgloss.NewStyle().
+	subClassVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(cream).
 		Padding(0, 4).
 		Width(col1Width - 2).
-		Height(col1Height - 2).
+		Height(subClassHeight - 2).
 		Align(lipgloss.Center)
 
-	tokenVp := tokenVpStyle.Render(m.TokenViewPort.View())
+	subClassVp := subClassVpStyle.Render(m.SubClassViewPort.View())
 
 	detailVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
-		Padding(0, 2).
+		BorderForeground(lightBlue).
+		Foreground(cream).
+		Padding(0, 4).
 		Width(col1Width - 2).
-		Height(col1Height - 2).
-		Align(lipgloss.Center)
+		Height(detailsHeight - 2)
 
 	detialVp := detailVpStyle.Render(m.DetailViewPort.View())
 
 	// Stack them vertically
-	column1 := lipgloss.JoinVertical(lipgloss.Left, tokenVp, detialVp)
+	column1 := lipgloss.JoinVertical(lipgloss.Left, subClassVp, detialVp)
 
 	col2Width := innerWidth / 2
 
 	// Column 2 Viewports
 	otherFeaturesVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(cream).
 		Padding(0, 2).
 		Width(col2Width - 2).
-		Height(availableHeight - 2).
-		Align(lipgloss.Center)
+		Height(availableHeight - 2)
 
 	otherFeaturesVp := otherFeaturesVpStyle.Render(m.OtherFeaturesViewPort.View())
 

@@ -9,8 +9,10 @@ const (
 )
 
 const (
-	orange   = lipgloss.Color("#FFA500")
-	darkGray = lipgloss.Color("#767676")
+	orange    = lipgloss.Color("#FFA500")
+	lightBlue = lipgloss.Color("#5DC9E2")
+	cream     = lipgloss.Color("#F9F6F0")
+	darkGray  = lipgloss.Color("#767676")
 )
 
 func (m SpellsModel) View(innerWidth, availableHeight int) string {
@@ -22,7 +24,8 @@ func (m SpellsModel) View(innerWidth, availableHeight int) string {
 	// Spell Save DC viewport (top of column 1)
 	spellSaveDCStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(cream).
 		Padding(0, widthPadding).
 		Width(col1Width - 2).
 		Height(spellSaveDCHeight - 2).
@@ -33,7 +36,8 @@ func (m SpellsModel) View(innerWidth, availableHeight int) string {
 	// Spell Slots viewport (bottom of column 1)
 	spellSlotsStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(cream).
 		Padding(0, widthPadding).
 		Width(col1Width - 2).
 		Height(spellSlotsHeight - 2).
@@ -50,7 +54,8 @@ func (m SpellsModel) View(innerWidth, availableHeight int) string {
 	// Known Spells viewport
 	knownSpellsStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(orange).
+		BorderForeground(lightBlue).
+		Foreground(cream).
 		Padding(0, widthPadding).
 		Width(col2Width - 2).
 		Height(availableHeight - 2).
