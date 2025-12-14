@@ -7,8 +7,6 @@ import (
 	"github.com/onioncall/dndgo/logger"
 )
 
-var profile bool
-
 func main() {
 	defer logger.RegisterPanicHandler()
 

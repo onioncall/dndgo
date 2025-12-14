@@ -37,6 +37,7 @@ func (m Model) renderMenu() string {
 	}
 
 	headerStyle := lipgloss.NewStyle().Foreground(lightBlue).Bold(true)
+	versionStyle := lipgloss.NewStyle().Foreground(orange)
 	selectedBtnStyle := lipgloss.NewStyle().Foreground(orange).Bold(true)
 	unselectedBtnStyle := lipgloss.NewStyle().Foreground(cream)
 
@@ -60,7 +61,7 @@ func (m Model) renderMenu() string {
 			visualButtons = append(visualButtons, fmt.Sprintf("  %s  ", btn))
 		}
 	}
-	
+
 	visualWidth := 0
 	for i, vBtn := range visualButtons {
 		visualWidth += len(vBtn)
@@ -84,6 +85,20 @@ func (m Model) renderMenu() string {
 	btnLeftPadding := max((m.width-visualWidth)/2, 0)
 	content.WriteString(strings.Repeat(" ", btnLeftPadding))
 	content.WriteString(buttonsLine.String())
+
+	// Calculate remaining space to push version to bottom
+	currentLines := topPadding + textLines
+	versionPadding := m.height - currentLines - 3 // 3 lines from bottom (with padding)
+	for range versionPadding {
+		content.WriteString("\n")
+	}
+
+	// Add version info at bottom
+	content.WriteString("\n")
+	versionText := fmt.Sprintf("v%s", m.version)
+	versionLeftPadding := max((m.width-len(versionText))/2, 0)
+	content.WriteString(strings.Repeat(" ", versionLeftPadding))
+	content.WriteString(versionStyle.Render(versionText))
 
 	return content.String()
 }

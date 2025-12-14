@@ -113,6 +113,8 @@ func (m Model) renderActiveTabContent(width, height int) string {
 		return m.classTab.View(width, height)
 	case notesTab:
 		return m.notesTab.View(width, height)
+	case helpTab:
+		return m.helpTab.View(width, height)
 	default:
 		return m.renderPlaceholderContent(width, height)
 	}

@@ -32,6 +32,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
 		m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
 		m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
 
 		return m, nil
 	case tea.KeyMsg:
@@ -66,6 +67,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			case notesTab:
 				m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
+			case helpTab:
+				m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			}
 
 			return m, nil
@@ -75,6 +78,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m, m.selectedTabIndex, searchInput = m.executeUserCmd(searchInput, m.selectedTabIndex)
 				m.cmdInput.SetValue("")
 				m.cmdVisible = false
+				handlers.SaveCharacterJson(m.character)
 				handlers.HandleCharacter(m.character)
 			}
 
@@ -103,6 +107,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			m.classTab, cmd = m.classTab.Update(msg)
 		case notesTab:
 			m.notesTab, cmd = m.notesTab.Update(msg)
+		case helpTab:
+			m.helpTab, cmd = m.helpTab.Update(msg)
 		}
 	}
 
@@ -139,6 +145,14 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		m.err = err
 		m.character.AddTempHp(int(temp))
 		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
+	// TODO: Rename functionality will have to change with the support of multiple character files
+	// case renameCmd:
+	// 	if inputAfterCmd != "" {
+	// 		m.character.RenameCharacter(inputAfterCmd)
+	// 		m.basicInfoTab.BasicStatsViewport.SetContent(info.GetStatsContent(*m.character))
+	// 	} else {
+	// 		m.err = fmt.Errorf("name cannot be empty")
+	// 	}
 	case useSlotCmd:
 		level, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
