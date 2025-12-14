@@ -145,13 +145,14 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		m.err = err
 		m.character.AddTempHp(int(temp))
 		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
-	case renameCmd:
-		if inputAfterCmd != "" {
-			m.character.RenameCharacter(inputAfterCmd)
-			m.basicInfoTab.BasicStatsViewport.SetContent(info.GetStatsContent(*m.character))
-		} else {
-			m.err = fmt.Errorf("name cannot be empty")
-		}
+	// TODO: Rename functionality will have to change with the support of multiple character files
+	// case renameCmd:
+	// 	if inputAfterCmd != "" {
+	// 		m.character.RenameCharacter(inputAfterCmd)
+	// 		m.basicInfoTab.BasicStatsViewport.SetContent(info.GetStatsContent(*m.character))
+	// 	} else {
+	// 		m.err = fmt.Errorf("name cannot be empty")
+	// 	}
 	case useSlotCmd:
 		level, err := strconv.Atoi(inputAfterCmd)
 		m.err = err

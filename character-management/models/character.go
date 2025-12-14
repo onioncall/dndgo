@@ -74,8 +74,10 @@ type ClassFeature struct {
 	Details string `json:"details"`
 }
 
-var PreCalculateMethods []func(c *Character)
-var PostCalculateMethods []func(c *Character)
+var (
+	PreCalculateMethods  []func(c *Character)
+	PostCalculateMethods []func(c *Character)
+)
 
 // Load Character Details
 
@@ -817,10 +819,11 @@ func (c *Character) AddTempHp(tempHP int) {
 	c.HPTemp += tempHP
 }
 
-// RenameCharacter updates the character's name.
-func (c *Character) RenameCharacter(newName string) {
-	c.Name = newName
-}
+// TODO: Rename functionality will have to change with the support of multiple character files
+// // RenameCharacter updates the character's name.
+// func (c *Character) RenameCharacter(newName string) {
+// 	c.Name = newName
+// }
 
 func (c *Character) UseSpellSlot(level int) {
 	for i := range c.SpellSlots {
