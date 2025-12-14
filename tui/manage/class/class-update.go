@@ -18,7 +18,7 @@ func (m ClassModel) Update(msg tea.Msg) (ClassModel, tea.Cmd) {
 		m.SubClassViewPort, cmd = m.SubClassViewPort.Update(msg)
 		cmds = append(cmds, cmd)
 
-		m.DetailViewPort, cmd = m.DetailViewPort.Update(msg)
+		m.DetailViewport, cmd = m.DetailViewport.Update(msg)
 		cmds = append(cmds, cmd)
 
 		m.OtherFeaturesViewPort, cmd = m.OtherFeaturesViewPort.Update(msg)

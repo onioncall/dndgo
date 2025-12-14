@@ -65,6 +65,10 @@ const (
 	unequipCmd      = "unequip"
 	addItemCmd      = "add-item"
 	removeItemCmd   = "remove-item"
+
+	// Class
+	useClassTokenCmd     = "use-token"
+	recoverClassTokenCmd = "recover-token"
 )
 
 func NewModel() Model {
