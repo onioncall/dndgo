@@ -10,9 +10,9 @@ import (
 )
 
 type ClassModel struct {
-	SubClassViewPort      viewport.Model
+	SubClassViewport      viewport.Model
 	DetailViewport        viewport.Model
-	OtherFeaturesViewPort viewport.Model
+	OtherFeaturesViewport viewport.Model
 	contentSet            bool
 }
 
@@ -22,9 +22,9 @@ func NewClassModel() ClassModel {
 	otherFeaturesViewPort := viewport.New(0, 0)
 
 	return ClassModel{
-		SubClassViewPort:      subClassViewPort,
+		SubClassViewport:      subClassViewPort,
 		DetailViewport:        detailViewPort,
-		OtherFeaturesViewPort: otherFeaturesViewPort,
+		OtherFeaturesViewport: otherFeaturesViewPort,
 	}
 }
 
@@ -52,8 +52,8 @@ func (m ClassModel) UpdateSize(innerWidth, availableHeight int, character models
 	detailInnerWidth := col1Width - 2
 	detailInnerHeight := detailHeight - 2
 
-	m.SubClassViewPort.Width = subClassInnerWidth
-	m.SubClassViewPort.Height = subClassInnerHeight
+	m.SubClassViewport.Width = subClassInnerWidth
+	m.SubClassViewport.Height = subClassInnerHeight
 	m.DetailViewport.Width = detailInnerWidth
 	m.DetailViewport.Height = detailInnerHeight
 
@@ -62,25 +62,25 @@ func (m ClassModel) UpdateSize(innerWidth, availableHeight int, character models
 	otherFeaturesInnerWidth := col2Width - 6
 	otherFeaturesInnerHeight := availableHeight - 2
 
-	m.OtherFeaturesViewPort.Width = otherFeaturesInnerWidth
-	m.OtherFeaturesViewPort.Height = otherFeaturesInnerHeight
+	m.OtherFeaturesViewport.Width = otherFeaturesInnerWidth
+	m.OtherFeaturesViewport.Height = otherFeaturesInnerHeight
 
 	if !m.contentSet {
 		subClassContent := GetSubClass(character)
-		subClassContent = wrapt.Wrap(fmt.Sprintf("Sub-Class: %s", subClassContent), m.SubClassViewPort.Width)
+		subClassContent = wrapt.Wrap(fmt.Sprintf("Sub-Class: %s", subClassContent), m.SubClassViewport.Width)
 		if subClassContent == "" {
 			subClassContent = "Class has no sub class to show"
 		}
-		m.SubClassViewPort.SetContent(subClassContent)
+		m.SubClassViewport.SetContent(subClassContent)
 
 		classFeaturesContent := "Class Features\n\n"
 		classFeaturesContent += GetClassFeatures(character)
 		classFeaturesContent = strings.ReplaceAll(classFeaturesContent, "---", "")
-		classFeaturesContent = wrapt.Wrap(classFeaturesContent, m.OtherFeaturesViewPort.Width)
+		classFeaturesContent = wrapt.Wrap(classFeaturesContent, m.OtherFeaturesViewport.Width)
 		if classFeaturesContent == "" {
 			classFeaturesContent = "Class has no features yet"
 		}
-		m.OtherFeaturesViewPort.SetContent(classFeaturesContent)
+		m.OtherFeaturesViewport.SetContent(classFeaturesContent)
 
 		classDetailsContent := "Class Details\n\n"
 		classDetailsContent += GetClassDetails(character)
