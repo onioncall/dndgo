@@ -18,22 +18,11 @@ var (
 	logOutput   string
 )
 
-var (
-	Version   = "dev"
-	BuildDate = "unknown"
-)
-
 var rootCmd = &cobra.Command{
 	Use:   "dndgo",
 	Short: "A D&D helper CLI application",
 	Long:  `A CLI application to help with D&D spells, monsters, and character management.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		v, _ := cmd.Flags().GetBool("version")
-		if v {
-			fmt.Printf("dndgo version %s (built %s)\n", Version, BuildDate)
-			return nil
-		}
-
 		c, err := handlers.LoadCharacter()
 		if err != nil {
 			return fmt.Errorf("failed to load character data: %w", err)
@@ -48,8 +37,8 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-// Main Entrypoint
-func Execute() error {
+func Execute(version string) error {
+	rootCmd.Version = version
 	return rootCmd.Execute()
 }
 
@@ -73,5 +62,4 @@ func init() {
 	rootCmd.AddCommand(characterCmd)
 	rootCmd.AddCommand(searchCmd)
 	rootCmd.AddCommand(tuiCmd)
-	rootCmd.Flags().BoolP("version", "v", false, "Get the version number of dndgo")
 }
