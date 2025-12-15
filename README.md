@@ -14,7 +14,7 @@ Currently Character management is only implemented for basic info, spells, and e
 
 *example*
 
-https://github.com/user-attachments/assets/0935bead-a4b5-466b-abd5-8881fef07208
+https://github.com/user-attachments/assets/c6c40922-ce7e-472e-8589-9180bf1d3421
 
 ### Search
 
@@ -26,7 +26,15 @@ ctrl+s will toggle the search field
 
 *example*
 
-https://github.com/user-attachments/assets/9ecdc46d-4bf9-467f-a5bd-18cbd6fa90b3
+https://github.com/user-attachments/assets/d64a8fd3-eece-4444-8ade-f5feaaac6082
+
+### Create Character
+
+If manually modifying json sounds exhausting to you, you can setup your character with the tui. 
+
+*example*
+
+Example pending, for now you'll have to take my word for it or try it yourself!
 
 ## CLI
 
