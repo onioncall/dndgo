@@ -62,3 +62,15 @@ Commands available to equipment
 
 - *remove-item (string, item name)/(optional int, quantity)*
     - example: `remove-item gold` or `remove-item gold/5`
+
+### Class
+Commands available to class
+
+- *use-token (optional string, token name)/(optional int, quantity)*
+    - example:  `use-token` or `use-token /2` or `use-token divine-sense` or `use-token divine-sense/2`
+    - details: if you don't specify a quantity, only one is used. A token name is only required if there are multiple tokens available to that class, otherwise any (or an empty) string will do
+
+- *recover-token (optional string, token name)/(optional int, quantity)*
+    - example:  `recover-token` or `recover-token /2` or `recover-token divine-sense` or `recover-token divine-sense/2`
+    - details: if you don't specify a quantity, a full token recovery is performed. A token name is only required if there are multiple tokens available to that class, otherwise any (or an empty) string will do
+

@@ -123,16 +123,14 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 	switch strings.ToLower(cmd) {
 	case basicInfoCmd:
 		tab = basicInfoTab
-		newInput = inputAfterCmd
 	case spellCmd:
 		tab = spellTab
-		newInput = inputAfterCmd
 	case equipmentCmd:
 		tab = equipmentTab
-		newInput = inputAfterCmd
 	case classCmd:
 		tab = classTab
-		newInput = inputAfterCmd
+	case helpCmd:
+		tab = helpTab
 	case damageCmd:
 		dmg, err := strconv.Atoi(inputAfterCmd)
 		m.err = err

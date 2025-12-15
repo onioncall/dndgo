@@ -48,6 +48,7 @@ const (
 	spellCmd     = "/s"
 	equipmentCmd = "/e"
 	classCmd     = "/c"
+	helpCmd      = "/h"
 
 	// Basic Info
 	damageCmd  = "damage"
