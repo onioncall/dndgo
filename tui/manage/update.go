@@ -9,6 +9,7 @@ import (
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
+	"github.com/onioncall/dndgo/tui/manage/class"
 	"github.com/onioncall/dndgo/tui/manage/equipment"
 	"github.com/onioncall/dndgo/tui/manage/info"
 	"github.com/onioncall/dndgo/tui/manage/spells"
@@ -122,16 +123,14 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 	switch strings.ToLower(cmd) {
 	case basicInfoCmd:
 		tab = basicInfoTab
-		newInput = inputAfterCmd
 	case spellCmd:
 		tab = spellTab
-		newInput = inputAfterCmd
 	case equipmentCmd:
 		tab = equipmentTab
-		newInput = inputAfterCmd
 	case classCmd:
 		tab = classTab
-		newInput = inputAfterCmd
+	case helpCmd:
+		tab = helpTab
 	case damageCmd:
 		dmg, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
@@ -185,11 +184,59 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		m.err = execModifyItemCmd(inputAfterCmd, false, m.character)
 		bpWidth := m.equipmentTab.BackpackViewport.Width
 		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(*m.character, bpWidth))
+	case useClassTokenCmd:
+		m.err = execUseClassTokenCmd(inputAfterCmd, m.character)
+		m.classTab.DetailViewport.SetContent(class.GetClassDetails(*m.character))
+	case recoverClassTokenCmd:
+		m.err = execRecoverClassTokenCmd(inputAfterCmd, m.character)
+		m.classTab.DetailViewport.SetContent(class.GetClassDetails(*m.character))
 	default:
 		m.err = fmt.Errorf("%s command not found", cmd)
 	}
 
 	return m, tab, newInput
+}
+
+func execRecoverClassTokenCmd(input string, character *models.Character) error {
+	splitInput := strings.Split(input, "/")
+	tokenName := input
+	quantity := 0 // By default for recover, we assume a full recover unless a quantity is specified
+	var err error
+
+	if len(splitInput) == 2 {
+		quantity, err = strconv.Atoi(splitInput[1])
+		if err != nil {
+			return fmt.Errorf("Invalid argument '%s', second (option argument must be an integer)", splitInput[1])
+		}
+
+		tokenName = splitInput[0]
+	} else if len(splitInput) != 1 {
+		return fmt.Errorf("Invalid argument, (string, token name)/(optional int, quantity)")
+	}
+
+	character.RecoverClassTokens(tokenName, quantity)
+	return err
+}
+
+func execUseClassTokenCmd(input string, character *models.Character) error {
+	splitInput := strings.Split(input, "/")
+	tokenName := input
+	quantity := 1 // By default for use token, we assume one use unless a quantity is specified
+	var err error
+
+	if len(splitInput) == 2 {
+		quantity, err = strconv.Atoi(splitInput[1])
+		if err != nil {
+			return fmt.Errorf("Invalid argument '%s', second (option argument must be an integer)", splitInput[1])
+		}
+
+		tokenName = splitInput[0]
+	} else if len(splitInput) != 1 {
+		return fmt.Errorf("Invalid argument, (string, token name)/(optional int, quantity)")
+	}
+
+	character.UseClassTokens(tokenName, quantity)
+	return err
 }
 
 func execRecoverCmd(input string, character *models.Character) error {

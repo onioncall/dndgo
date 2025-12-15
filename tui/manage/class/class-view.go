@@ -26,7 +26,7 @@ func (m ClassModel) View(innerWidth, availableHeight int) string {
 		Height(subClassHeight - 2).
 		Align(lipgloss.Center)
 
-	subClassVp := subClassVpStyle.Render(m.SubClassViewPort.View())
+	subClassVp := subClassVpStyle.Render(m.SubClassViewport.View())
 
 	detailVpStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
@@ -36,7 +36,7 @@ func (m ClassModel) View(innerWidth, availableHeight int) string {
 		Width(col1Width - 2).
 		Height(detailsHeight - 2)
 
-	detialVp := detailVpStyle.Render(m.DetailViewPort.View())
+	detialVp := detailVpStyle.Render(m.DetailViewport.View())
 
 	// Stack them vertically
 	column1 := lipgloss.JoinVertical(lipgloss.Left, subClassVp, detialVp)
@@ -52,7 +52,7 @@ func (m ClassModel) View(innerWidth, availableHeight int) string {
 		Width(col2Width - 2).
 		Height(availableHeight - 2)
 
-	otherFeaturesVp := otherFeaturesVpStyle.Render(m.OtherFeaturesViewPort.View())
+	otherFeaturesVp := otherFeaturesVpStyle.Render(m.OtherFeaturesViewport.View())
 
 	column2 := otherFeaturesVp
 

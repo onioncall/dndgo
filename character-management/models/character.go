@@ -887,7 +887,7 @@ func (c *Character) RecoverClassTokens(name string, quantity int) {
 			postCalculater.ExecutePostCalculateMethods(c)
 		}
 
-		tokenClass.RecoverClassTokens("", 0)
+		tokenClass.RecoverClassTokens("", quantity)
 	}
 }
 

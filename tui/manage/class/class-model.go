@@ -10,9 +10,9 @@ import (
 )
 
 type ClassModel struct {
-	SubClassViewPort      viewport.Model
-	DetailViewPort        viewport.Model
-	OtherFeaturesViewPort viewport.Model
+	SubClassViewport      viewport.Model
+	DetailViewport        viewport.Model
+	OtherFeaturesViewport viewport.Model
 	contentSet            bool
 }
 
@@ -22,21 +22,21 @@ func NewClassModel() ClassModel {
 	otherFeaturesViewPort := viewport.New(0, 0)
 
 	return ClassModel{
-		SubClassViewPort:      subClassViewPort,
-		DetailViewPort:        detailViewPort,
-		OtherFeaturesViewPort: otherFeaturesViewPort,
+		SubClassViewport:      subClassViewPort,
+		DetailViewport:        detailViewPort,
+		OtherFeaturesViewport: otherFeaturesViewPort,
 	}
 }
 
-func getClassFeatures(c models.Character) string {
+func GetClassFeatures(c models.Character) string {
 	return c.Class.ClassFeatures(c.Level)
 }
 
-func getClassDetails(c models.Character) string {
+func GetClassDetails(c models.Character) string {
 	return c.Class.ClassDetails(c.Level)
 }
 
-func getSubClass(c models.Character) string {
+func GetSubClass(c models.Character) string {
 	return c.Class.SubClass(c.Level)
 }
 
@@ -52,43 +52,43 @@ func (m ClassModel) UpdateSize(innerWidth, availableHeight int, character models
 	detailInnerWidth := col1Width - 2
 	detailInnerHeight := detailHeight - 2
 
-	m.SubClassViewPort.Width = subClassInnerWidth
-	m.SubClassViewPort.Height = subClassInnerHeight
-	m.DetailViewPort.Width = detailInnerWidth
-	m.DetailViewPort.Height = detailInnerHeight
+	m.SubClassViewport.Width = subClassInnerWidth
+	m.SubClassViewport.Height = subClassInnerHeight
+	m.DetailViewport.Width = detailInnerWidth
+	m.DetailViewport.Height = detailInnerHeight
 
 	// Column 2: 50% width, full height
 	col2Width := innerWidth / 2
 	otherFeaturesInnerWidth := col2Width - 6
 	otherFeaturesInnerHeight := availableHeight - 2
 
-	m.OtherFeaturesViewPort.Width = otherFeaturesInnerWidth
-	m.OtherFeaturesViewPort.Height = otherFeaturesInnerHeight
+	m.OtherFeaturesViewport.Width = otherFeaturesInnerWidth
+	m.OtherFeaturesViewport.Height = otherFeaturesInnerHeight
 
 	if !m.contentSet {
-		subClassContent := getSubClass(character)
-		subClassContent = wrapt.Wrap(fmt.Sprintf("Sub-Class: %s", subClassContent), m.SubClassViewPort.Width)
+		subClassContent := GetSubClass(character)
+		subClassContent = wrapt.Wrap(fmt.Sprintf("Sub-Class: %s", subClassContent), m.SubClassViewport.Width)
 		if subClassContent == "" {
 			subClassContent = "Class has no sub class to show"
 		}
-		m.SubClassViewPort.SetContent(subClassContent)
+		m.SubClassViewport.SetContent(subClassContent)
 
 		classFeaturesContent := "Class Features\n\n"
-		classFeaturesContent += getClassFeatures(character)
+		classFeaturesContent += GetClassFeatures(character)
 		classFeaturesContent = strings.ReplaceAll(classFeaturesContent, "---", "")
-		classFeaturesContent = wrapt.Wrap(classFeaturesContent, m.OtherFeaturesViewPort.Width)
+		classFeaturesContent = wrapt.Wrap(classFeaturesContent, m.OtherFeaturesViewport.Width)
 		if classFeaturesContent == "" {
 			classFeaturesContent = "Class has no features yet"
 		}
-		m.OtherFeaturesViewPort.SetContent(classFeaturesContent)
+		m.OtherFeaturesViewport.SetContent(classFeaturesContent)
 
 		classDetailsContent := "Class Details\n\n"
-		classDetailsContent += getClassDetails(character)
-		classDetailsContent = wrapt.Wrap(classDetailsContent, m.DetailViewPort.Width)
+		classDetailsContent += GetClassDetails(character)
+		classDetailsContent = wrapt.Wrap(classDetailsContent, m.DetailViewport.Width)
 		if classDetailsContent == "" {
 			classDetailsContent = "Class has no details to show"
 		}
-		m.DetailViewPort.SetContent(classDetailsContent)
+		m.DetailViewport.SetContent(classDetailsContent)
 	}
 
 	return m
