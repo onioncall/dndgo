@@ -1,5 +1,10 @@
 # README 
 ---
+
+<p align="center">
+  <img width="629" height="397" alt="dndgo-logo-lowres" src="https://github.com/user-attachments/assets/230a4145-634f-48ca-8c94-d1dda633e5b3" />
+</p>
+
 ## About
 dndgo is a terminal user interface and a command line application for Dungeons and Dragons built to make managing characters easier, and searching dnd info with the [5e-srd-api](https://5e-bits.github.io/docs/). 
 
