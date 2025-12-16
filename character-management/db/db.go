@@ -93,6 +93,7 @@ func (r Repository) GetCharacter() (*models.Character, error) {
 	if err = doc.Unmarshal(&res); err != nil {
 		return nil, fmt.Errorf("Failed to unmarshal db record into character struct:\n%w", err)
 	}
+	res.ID = doc.ObjectId()
 
 	return &res, nil
 }
@@ -114,6 +115,7 @@ func (r Repository) GetCharacterByName(name string) (*models.Character, error) {
 	if err = doc.Unmarshal(&res); err != nil {
 		return nil, fmt.Errorf("Failed to unmarshal db record into character struct:\n%w", err)
 	}
+	res.ID = doc.ObjectId()
 
 	return &res, nil
 }
@@ -155,16 +157,20 @@ func (r Repository) InsertClass(class models.Class) error {
 }
 
 // GetClass retrieves a class from the db based on the ID of the corresponding character
-// Returns a []byte json representation of the class
-func (r Repository) GetClass(id string) ([]byte, error) {
+// The result will be unmarshaled into `obj`
+func (r Repository) GetClass(chid string, obj models.Class) error {
 	doc, err := r.db.FindFirst(
-		cquery.NewQuery(class_collection).Where(cquery.Field("character_id").Eq(id)),
+		cquery.NewQuery(class_collection).Where(cquery.Field("character-id").Eq(chid)),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to retrieve class from db: %w", err)
+		return fmt.Errorf("Failed to retrieve class from db: %w", err)
 	}
 
-	return cdocument.Encode(doc)
+	if err = doc.Unmarshal(obj); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // SyncClass updates the class doc based on class.CharacterID
@@ -180,7 +186,7 @@ func (r Repository) SyncClass(class models.Class) error {
 		return fmt.Errorf("Failed to unmarshal class to generic map:\n%w", err)
 	}
 
-	if err = r.db.Update(cquery.NewQuery(class_collection).Where(cquery.Field("character_id").Eq(class.GetCharacterId())), updates); err != nil {
+	if err = r.db.Update(cquery.NewQuery(class_collection).Where(cquery.Field("character-id").Eq(class.GetCharacterId())), updates); err != nil {
 		return fmt.Errorf("Failed to update class doc:\n%w", err)
 	}
 

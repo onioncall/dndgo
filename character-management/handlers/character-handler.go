@@ -96,7 +96,7 @@ func LoadCharacter() (*models.Character, error) {
 	}
 
 	if character.ClassName != "" {
-		class, err := LoadClass(character.ID)
+		class, err := LoadClass(character.ID, character.ClassName)
 		if err != nil {
 			return nil, fmt.Errorf("failed to load class file: %w", err)
 		}

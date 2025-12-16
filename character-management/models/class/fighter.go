@@ -12,16 +12,16 @@ import (
 
 type Fighter struct {
 	BaseClass
-	Archetype            string               `json:"archetype"`
-	FightingStyle        string               `json:"fighting-style"`
-	FightingStyleFeature FightingStyleFeature `json:"-"`
-	ClassTokens          []shared.NamedToken  `json:"class-tokens"`
+	Archetype            string               `json:"archetype" clover:"archetype"`
+	FightingStyle        string               `json:"fighting-style" clover:"fighting-style"`
+	FightingStyleFeature FightingStyleFeature `json:"-" clover:"-"`
+	ClassTokens          []shared.NamedToken  `json:"class-tokens" clover:"class-tokens"`
 }
 
 type FightingStyleFeature struct {
-	Name      string `json:"name"`
-	IsApplied bool   `json:"is-applied"`
-	Details   string `json:"details"`
+	Name      string `json:"name" clover:"name"`
+	IsApplied bool   `json:"is-applied" clover:"is-applied"`
+	Details   string `json:"details" clover:"details"`
 }
 
 func LoadFighter(data []byte) (*Fighter, error) {

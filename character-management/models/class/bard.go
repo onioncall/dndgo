@@ -12,9 +12,9 @@ import (
 
 type Bard struct {
 	BaseClass
-	ExpertiseSkills []string          `json:"expertise"`
-	College         string            `json:"college"`
-	ClassToken      shared.NamedToken `json:"class-token"`
+	ExpertiseSkills []string          `json:"expertise" clover:"expertise"`
+	College         string            `json:"college" clover:"college"`
+	ClassToken      shared.NamedToken `json:"class-token" clover:"class-token"`
 }
 
 const bardicInspirationToken string = "bardic-inspiration"

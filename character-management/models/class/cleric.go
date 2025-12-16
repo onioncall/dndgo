@@ -11,9 +11,9 @@ import (
 
 type Cleric struct {
 	BaseClass
-	ClassToken     shared.NamedToken `json:"class-token"`
-	Domain         string            `json:"domain"`
-	PreparedSpells []string          `json:"prepared-spells"`
+	ClassToken     shared.NamedToken `json:"class-token" clover:"class-token"`
+	Domain         string            `json:"domain" clover:"domain"`
+	PreparedSpells []string          `json:"prepared-spells" clover:"prepared-spells"`
 }
 
 const channelDivinityToken string = "channel-divinity"

@@ -11,9 +11,9 @@ import (
 
 type Sorcerer struct {
 	BaseClass
-	SorcerousOrigin string                `json:"sorcerous-origin"`
-	ClassToken      shared.NamedToken     `json:"class-token"`
-	MetaMagicSpells []models.ClassFeature `json:"meta-magic-spells"`
+	SorcerousOrigin string                `json:"sorcerous-origin" clover:"sorcerous-origin"`
+	ClassToken      shared.NamedToken     `json:"class-token" clover:"class-token"`
+	MetaMagicSpells []models.ClassFeature `json:"meta-magic-spells" clover:"meta-magic-spells"`
 }
 
 const sorceryPointsToken string = "sorcery-points"

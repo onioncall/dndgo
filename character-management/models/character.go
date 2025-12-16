@@ -9,39 +9,39 @@ import (
 )
 
 type Character struct {
-	ID                      string                               `json:"id"`
-	Default                 bool                                 `json:"default"`
-	Path                    string                               `json:"path"`
-	ValidationDisabled      bool                                 `json:"validation-disabled"`
-	Name                    string                               `json:"name"`
-	Level                   int                                  `json:"level"`
-	ClassName               string                               `json:"class-name"`
-	Race                    string                               `json:"race"`
-	Background              string                               `json:"background"`
-	Feats                   []GenericItem                        `json:"feats"`
-	Languages               []string                             `json:"languages"`
-	Proficiency             int                                  `json:"-"`
-	PassivePerception       int                                  `json:"-"`
-	PassiveInsight          int                                  `json:"-"`
-	AC                      int                                  `json:"-"`
-	SpellSaveDC             int                                  `json:"-"`
-	SpellAttackMod          int                                  `json:"-"`
-	HPCurrent               int                                  `json:"hp-current"`
-	HPMax                   int                                  `json:"hp-max"`
-	HPTemp                  int                                  `json:"hp-temp"`
-	Speed                   int                                  `json:"speed"`
-	HitDice                 string                               `json:"-"`
-	Abilities               []shared.Ability                     `json:"abilities"`
-	Skills                  []shared.Skill                       `json:"skills"`
-	Spells                  []shared.CharacterSpell              `json:"spells"`
-	SpellSlots              []shared.SpellSlot                   `json:"spell-slots"`
-	Weapons                 []shared.Weapon                      `json:"weapons"`
-	PrimaryEquipped         string                               `json:"primary-equipped"`
-	SecondaryEquipped       string                               `json:"secondary-equipped"`
-	WornEquipment           shared.WornEquipment                 `json:"worn-equipment"`
-	Backpack                []shared.BackpackItem                `json:"backpack"`
-	AbilityScoreImprovement []shared.AbilityScoreImprovementItem `json:"ability-score-improvement"`
-	Class                   Class                                `json:"-"`
+	ID                      string                               `json:"id" clover:"id"`
+	Default                 bool                                 `json:"default" clover:"default"`
+	Path                    string                               `json:"path" clover:"path"`
+	ValidationDisabled      bool                                 `json:"validation-disabled" clover:"validation-disabled"`
+	Name                    string                               `json:"name" clover:"name"`
+	Level                   int                                  `json:"level" clover:"level"`
+	ClassName               string                               `json:"class-name" clover:"class-name"`
+	Race                    string                               `json:"race" clover:"race"`
+	Background              string                               `json:"background" clover:"background"`
+	Feats                   []GenericItem                        `json:"feats" clover:"feats"`
+	Languages               []string                             `json:"languages" clover:"languages"`
+	Proficiency             int                                  `json:"-" clover:"-"`
+	PassivePerception       int                                  `json:"-" clover:"-"`
+	PassiveInsight          int                                  `json:"-" clover:"-"`
+	AC                      int                                  `json:"-" clover:"-"`
+	SpellSaveDC             int                                  `json:"-" clover:"-"`
+	SpellAttackMod          int                                  `json:"-" clover:"-"`
+	HPCurrent               int                                  `json:"hp-current" clover:"hp-current"`
+	HPMax                   int                                  `json:"hp-max" clover:"hp-max"`
+	HPTemp                  int                                  `json:"hp-temp" clover:"hp-temp"`
+	Speed                   int                                  `json:"speed" clover:"speed"`
+	HitDice                 string                               `json:"-" clover:"-"`
+	Abilities               []shared.Ability                     `json:"abilities" clover:"abilities"`
+	Skills                  []shared.Skill                       `json:"skills" clover:"skills"`
+	Spells                  []shared.CharacterSpell              `json:"spells" clover:"spells"`
+	SpellSlots              []shared.SpellSlot                   `json:"spell-slots" clover:"spell-slots"`
+	Weapons                 []shared.Weapon                      `json:"weapons" clover:"weapons"`
+	PrimaryEquipped         string                               `json:"primary-equipped" clover:"primary-equipped"`
+	SecondaryEquipped       string                               `json:"secondary-equipped" clover:"secondary-equipped"`
+	WornEquipment           shared.WornEquipment                 `json:"worn-equipment" clover:"worn-equipment"`
+	Backpack                []shared.BackpackItem                `json:"backpack" clover:"backpack"`
+	AbilityScoreImprovement []shared.AbilityScoreImprovementItem `json:"ability-score-improvement" clover:"ability-score-improvement"`
+	Class                   Class                                `json:"-" clover:"-"`
 }
 
 type GenericItem struct {

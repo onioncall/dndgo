@@ -20,8 +20,8 @@ const (
 
 type Warlock struct {
 	BaseClass
-	OtherworldlyPatron string   `json:"otherworldly-patron"`
-	Invocations        []string `json:"invocations"`
+	OtherworldlyPatron string   `json:"otherworldly-patron" clover:"otherworldly-patron"`
+	Invocations        []string `json:"invocations" clover:"invocations"`
 }
 
 func LoadWarlock(data []byte) (*Warlock, error) {

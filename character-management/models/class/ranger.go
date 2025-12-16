@@ -11,10 +11,10 @@ import (
 
 type Ranger struct {
 	BaseClass
-	Archetype            string               `json:"archetype"`
-	FightingStyle        string               `json:"fighting-style"`
-	FightingStyleFeature FightingStyleFeature `json:"-"`
-	FavoredEnemies       []string             `json:"favored-enemies"`
+	Archetype            string               `json:"archetype" clover:"archetype"`
+	FightingStyle        string               `json:"fighting-style" clover:"fighting-style"`
+	FightingStyleFeature FightingStyleFeature `json:"-" clover:"-"`
+	FavoredEnemies       []string             `json:"favored-enemies" clover:"favored-enemies"`
 }
 
 func LoadRanger(data []byte) (*Ranger, error) {

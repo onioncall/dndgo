@@ -326,7 +326,7 @@ var (
 				panic(err)
 			}
 
-			_, err = db.Repo.InsertCharacter(*character)
+			cid, err := db.Repo.InsertCharacter(*character)
 			if err != nil {
 				logger.Info("Failed to save new character data")
 				panic(err)
@@ -339,7 +339,7 @@ var (
 				panic(fmt.Errorf("%s: %w", errMsg, err))
 			}
 
-			class.SetCharacterId(character.ID)
+			class.SetCharacterId(cid)
 
 			if err = db.Repo.InsertClass(class); err != nil {
 				errMsg := "Failed to save class data"

@@ -11,12 +11,12 @@ import (
 
 type Paladin struct {
 	BaseClass
-	PreparedSpells       []string             `json:"prepared-spells"`
-	OathSpells           []string             `json:"oath-spells"`
-	ClassTokens          []shared.NamedToken  `json:"class-tokens"`
-	FightingStyle        string               `json:"fighting-style"`
-	FightingStyleFeature FightingStyleFeature `json:"-"`
-	SacredOath           string               `json:"sacred-oath"`
+	PreparedSpells       []string             `json:"prepared-spells" clover:"prepared-spells"`
+	OathSpells           []string             `json:"oath-spells" clover:"oath-spells"`
+	ClassTokens          []shared.NamedToken  `json:"class-tokens" clover:"class-tokens"`
+	FightingStyle        string               `json:"fighting-style" clover:"fighting-style"`
+	FightingStyleFeature FightingStyleFeature `json:"-" clover:"-"`
+	SacredOath           string               `json:"sacred-oath" clover:"sacred-oath"`
 }
 
 func LoadPaladin(data []byte) (*Paladin, error) {

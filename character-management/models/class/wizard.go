@@ -12,9 +12,9 @@ import (
 
 type Wizard struct {
 	BaseClass
-	SignatureSpells []string `json:"signature-spells"`
-	ArcaneTradition string   `json:"arcane-tradition"`
-	PreparedSpells  []string `json:"prepared-spells"`
+	SignatureSpells []string `json:"signature-spells" clover:"signature-spells"`
+	ArcaneTradition string   `json:"arcane-tradition" clover:"arcane-tradition"`
+	PreparedSpells  []string `json:"prepared-spells" clover:"prepared-spells"`
 }
 
 func LoadWizard(data []byte) (*Wizard, error) {

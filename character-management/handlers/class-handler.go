@@ -27,15 +27,16 @@ var ClassFileMap = map[string]string{
 	shared.ClassWizard:    "wizard.json",
 }
 
-func LoadClass(characterId string) (models.Class, error) {
-	data, err := db.Repo.GetClass(characterId)
+func LoadClass(characterId string, className string) (models.Class, error) {
+	// Filthy trick, we can use loadClassDataFromType an empty instance of the correct class
+	c, err := loadClassDataFromType(className, make([]byte, 0))
 	if err != nil {
-		return nil, fmt.Errorf("Failed to retrieve class from db:\n%w", err)
+		return nil, fmt.Errorf("Failed to load class type:\n%w", err)
 	}
 
-	c, err := loadClassData(data)
+	err = db.Repo.GetClass(characterId, c)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to load class data:\n%w", err)
+		return nil, fmt.Errorf("Failed to retrieve class from db:\n%w", err)
 	}
 
 	return c, nil
@@ -119,14 +120,13 @@ func ImportClassJson(classJson []byte) error {
 		return fmt.Errorf("No CharacterID found. CharacterID is required.")
 	}
 
-	existClassData, err := db.Repo.GetClass(c.GetCharacterId())
-	if err != nil {
-		return fmt.Errorf("Failed to retrieve existing class data:\n%w", err)
-	}
-
-	ec, err := loadClassData(existClassData)
+	ec, err := loadClassDataFromType(c.GetClassName(), make([]byte, 0))
 	if err != nil {
 		return fmt.Errorf("Failed to load existing class data:\n%w", err)
+	}
+	err = db.Repo.GetClass(c.GetCharacterId(), ec)
+	if err != nil {
+		return fmt.Errorf("Failed to retrieve existing class data:\n%w", err)
 	}
 
 	if ec.GetClassName() == "" {
@@ -153,10 +153,15 @@ func ExportClassJson(characterName string) ([]byte, error) {
 		return nil, fmt.Errorf("Failed to locate character with name '%v':\n%w", characterName, err)
 	}
 
-	c, err := db.Repo.GetClass(ch.ID)
+	c, err := LoadClass(ch.ID, ch.ClassName)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to locate class for character '%v':\n%w", characterName, err)
 	}
 
-	return c, nil
+	j, err := json.Marshal(c)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to marshal class for character '%v':\n%w", characterName, err)
+	}
+
+	return j, nil
 }
