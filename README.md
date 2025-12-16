@@ -2,11 +2,11 @@
 ---
 
 <p align="center">
-  <img width="629" height="397" alt="dndgo-logo-lowres" src="https://github.com/user-attachments/assets/230a4145-634f-48ca-8c94-d1dda633e5b3" />
-</p>
+  <img width="800" height="450" alt="dndgo-logo-highres" src="https://github.com/user-attachments/assets/b4bfb7b8-16a5-40e3-b285-4b414a249ba7" />
+ </p>
 
 ## About
-dndgo is a terminal user interface and a command line application for Dungeons and Dragons built to make managing characters easier, and searching dnd info with the [5e-srd-api](https://5e-bits.github.io/docs/). 
+dndgo is a terminal user interface and a command line application for Dungeons and Dragons built to make managing characters easier, and searching dnd info with the [5e-srd-api](https://5e-bits.github.io/docs/).
 
 Configure your character, and this application will handle tracking your mods, bonuses, and class details. If your class has an ability that modifies your characters stats, it is handled for you by dndgo. You can also use the application to track your characters health, spell slots, and class specific slots (like bardic inspiration or rage). It will only apply class bonuses available to your class at your current level. This information is formatted for you in markdown, or rendered for you in a stateful terminal interface using [bubbletea](https://github.com/charmbracelet/bubbletea).
 
