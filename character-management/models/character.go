@@ -792,8 +792,9 @@ func (c *Character) AddTempHp(tempHP int) {
 	c.HPTemp += tempHP
 }
 
-func (c *Character) AddSubClass() {
+func (c *Character) AddSubClass(subClass string) {
 	if c.Class != nil {
+		c.Class.SetSubClass(subClass)
 	}
 }
 

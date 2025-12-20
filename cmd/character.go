@@ -69,6 +69,7 @@ var (
 				c.AddTempHp(t)
 			}
 			if sc != "" {
+				c.AddSubClass(sc)
 			}
 
 			err = handlers.SaveCharacterJson(c)

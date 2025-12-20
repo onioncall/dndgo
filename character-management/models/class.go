@@ -41,7 +41,7 @@ type ClassFeature struct {
 
 func (c *BaseClass) GetSubClass(level int) string {
 	if level <= 2 {
-		return ""
+		return "Too early, you need to level up!"
 	}
 
 	return c.SubClass
