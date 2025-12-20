@@ -29,7 +29,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 		innerWidth, availableHeight := m.getInnerDimensions()
 		m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, *m.character)
-		m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		if m.character.SpellSaveDC > 0 {
+			m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		}
 		m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
 		m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
 		m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)

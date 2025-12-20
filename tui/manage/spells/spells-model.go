@@ -31,8 +31,8 @@ func NewSpellsModel() SpellsModel {
 }
 
 func GetKnownSpellContent(character models.Character, width int) string {
-	width = width - (widthPadding * 2) //padding on both sides
-	longestSpellNameWidth := 0
+	width = width - (widthPadding * 2) // padding on both sides
+	longestSpellNameWidth := 4
 	maxSpellNameWidth := width - 29 // based on width of viewport and characters in header
 
 	spellNames := make(map[string]string)
@@ -71,7 +71,7 @@ func GetKnownSpellContent(character models.Character, width int) string {
 }
 
 func GetSpellSlotContent(character models.Character, width int) string {
-	width = width - (widthPadding * 2) //padding on both sides
+	width = width - (widthPadding * 2) // padding on both sides
 	slotHeader := "Spell Slots"
 	slotContent := fmt.Sprintf("%s\n", slotHeader)
 	slotContent += fmt.Sprintf("%s\n", strings.Repeat("─", width))
