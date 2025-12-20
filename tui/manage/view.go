@@ -43,11 +43,21 @@ var (
 	activeTab = tab.Border(activeTabBorder, true).
 			Foreground(orange).
 			Bold(true)
+
+	inactiveTab = lipgloss.NewStyle().
+			Border(tabBorder, true).
+			BorderForeground(lightBlue).
+			Foreground(darkGray).
+			Padding(0, 1)
 )
 
 func (m Model) View() string {
 	if m.width == 0 || m.height == 0 {
 		return ""
+	}
+
+	if m.character == nil {
+		return m.renderNoCharacter()
 	}
 
 	outerBorderMargin := 2
@@ -146,6 +156,8 @@ func (m Model) renderTabRow(innerWidth int) string {
 	for i, t := range m.tabs {
 		if i == m.selectedTabIndex {
 			rendered = append(rendered, activeTab.Render(t))
+		} else if m.character.SpellSaveDC == 0 && i == spellTab {
+			rendered = append(rendered, inactiveTab.Render(t))
 		} else {
 			rendered = append(rendered, tab.Render(t))
 		}
@@ -215,4 +227,21 @@ func (m Model) renderErrorBox() string {
 		Width(m.width).
 		Align(lipgloss.Center).
 		Render(errorBox)
+}
+
+func (m Model) renderNoCharacter() string {
+	noCharacterStyle := lipgloss.NewStyle().
+		Padding(0, 1).
+		Border(lipgloss.RoundedBorder()).
+		Align(lipgloss.Center, lipgloss.Center).
+		BorderForeground(lightBlue).
+		Foreground(cream)
+
+	noCharacterBox := noCharacterStyle.Render("No character loaded, consider creating a character!\n\nPress ctrl+c to exit or 'esc' to return to menu.")
+
+	return lipgloss.NewStyle().
+		Width(m.width).
+		Height(m.height).
+		Align(lipgloss.Center, lipgloss.Center).
+		Render(noCharacterBox)
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/logger"
 	"github.com/onioncall/dndgo/tui/manage/class"
 	"github.com/onioncall/dndgo/tui/manage/equipment"
 	"github.com/onioncall/dndgo/tui/manage/help"
@@ -75,23 +76,24 @@ const (
 func NewModel() Model {
 	character, err := handlers.LoadCharacter()
 	if err != nil {
-		panic("Failed to load character")
+		logger.Info("Failed to load character")
 	}
 
-	err = handlers.HandleCharacter(character)
-	if err != nil {
-		panic("Failed to handle character")
+	if character != nil {
+		err = handlers.HandleCharacter(character)
+		if err != nil {
+			logger.Info("Failed to handle character")
+		}
 	}
+
+	logger.Info("Loaded and handled character")
 
 	input := textinput.New()
 	input.Focus()
 	input.Placeholder = "Cmd..."
 	input.Width = 38
 
-	tabs := []string{"Basic Info", "Equipment", "Class", "Notes", "Help"}
-	if character.SpellSaveDC > 0 {
-		tabs = []string{"Basic Info", "Spells", "Equipment", "Class", "Notes", "Help"}
-	}
+	tabs := []string{"Basic Info", "Spells", "Equipment", "Class", "Notes", "Help"}
 
 	basicInfoTab := info.NewBasicInfoModel()
 	spellsTab := spells.NewSpellsModel()

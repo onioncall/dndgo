@@ -27,30 +27,46 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 
-		innerWidth, availableHeight := m.getInnerDimensions()
-		m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, *m.character)
-		if m.character.SpellSaveDC > 0 {
-			m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		if m.character != nil {
+			innerWidth, availableHeight := m.getInnerDimensions()
+			m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, *m.character)
+			if m.character.SpellSaveDC > 0 {
+				m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, *m.character)
+			}
+			m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
+			m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
+			m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
+			m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
 		}
-		m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
-		m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
-		m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
-		m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
 
 		return m, nil
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c":
-			handlers.SaveCharacterJson(m.character)
+			if m.character != nil {
+				handlers.SaveCharacterJson(m.character)
+			}
 			return m, tea.Quit
 		case "esc":
-			handlers.SaveCharacterJson(m.character)
+			if m.character != nil {
+				handlers.SaveCharacterJson(m.character)
+			}
 			return m, func() tea.Msg { return tui.NavigateMsg{Page: tui.MenuPage} }
 		case "tab":
 			m.selectedTabIndex = (m.selectedTabIndex + 1) % len(m.tabs)
+			// Skip spell tab if we're not rendering it
+			if m.character.SpellSaveDC == 0 && m.selectedTabIndex == spellTab {
+				m.selectedTabIndex++
+			}
+
 			return m, nil
 		case "shift+tab":
 			m.selectedTabIndex = (m.selectedTabIndex - 1 + len(m.tabs)) % len(m.tabs)
+			// Skip spell tab if we're not rendering it
+			if m.character.SpellSaveDC == 0 && m.selectedTabIndex == spellTab {
+				m.selectedTabIndex--
+			}
+
 			return m, nil
 		case "ctrl+s":
 			// Clearing error as a part of this process
@@ -58,24 +74,30 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			m.cmdVisible = !m.cmdVisible
 			m.cmdInput.Focus()
 
-			innerWidth, availableHeight := m.getInnerDimensions()
-			switch m.selectedTabIndex {
-			case basicInfoTab:
-				m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, *m.character)
-			case spellTab:
-				m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, *m.character)
-			case equipmentTab:
-				m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
-			case classTab:
-				m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
-			case notesTab:
-				m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
-			case helpTab:
-				m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
+			if m.character != nil {
+				innerWidth, availableHeight := m.getInnerDimensions()
+				switch m.selectedTabIndex {
+				case basicInfoTab:
+					m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, *m.character)
+				case spellTab:
+					m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, *m.character)
+				case equipmentTab:
+					m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
+				case classTab:
+					m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
+				case notesTab:
+					m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
+				case helpTab:
+					m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
+				}
 			}
 
 			return m, nil
 		case "enter":
+			if m.character == nil {
+				return m, nil
+			}
+
 			if m.cmdVisible {
 				searchInput := m.cmdInput.Value()
 				m, m.selectedTabIndex, searchInput = m.executeUserCmd(searchInput, m.selectedTabIndex)
@@ -96,22 +118,24 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.cmdInput.Focus()
 	} else {
 		m.cmdInput.Blur()
-		switch m.selectedTabIndex {
-		case basicInfoTab:
-			m.basicInfoTab, cmd = m.basicInfoTab.Update(msg)
-			cmds = append(cmds, cmd)
-		case spellTab:
-			m.spellsTab, cmd = m.spellsTab.Update(msg)
-			cmds = append(cmds, cmd)
-		case equipmentTab:
-			m.equipmentTab, cmd = m.equipmentTab.Update(msg)
-			cmds = append(cmds, cmd)
-		case classTab:
-			m.classTab, cmd = m.classTab.Update(msg)
-		case notesTab:
-			m.notesTab, cmd = m.notesTab.Update(msg)
-		case helpTab:
-			m.helpTab, cmd = m.helpTab.Update(msg)
+		if m.character != nil {
+			switch m.selectedTabIndex {
+			case basicInfoTab:
+				m.basicInfoTab, cmd = m.basicInfoTab.Update(msg)
+				cmds = append(cmds, cmd)
+			case spellTab:
+				m.spellsTab, cmd = m.spellsTab.Update(msg)
+				cmds = append(cmds, cmd)
+			case equipmentTab:
+				m.equipmentTab, cmd = m.equipmentTab.Update(msg)
+				cmds = append(cmds, cmd)
+			case classTab:
+				m.classTab, cmd = m.classTab.Update(msg)
+			case notesTab:
+				m.notesTab, cmd = m.notesTab.Update(msg)
+			case helpTab:
+				m.helpTab, cmd = m.helpTab.Update(msg)
+			}
 		}
 	}
 
@@ -155,12 +179,22 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 	// 		m.err = fmt.Errorf("name cannot be empty")
 	// 	}
 	case useSlotCmd:
+		if m.character.SpellSaveDC == 0 {
+			m.err = fmt.Errorf("Character cannot use spell commands")
+			break
+		}
+
 		level, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.UseSpellSlot(int(level))
 		sWidth := m.spellsTab.SpellSlotsViewport.Width
 		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(*m.character, sWidth))
 	case recoverSlotCmd:
+		if m.character.SpellSaveDC == 0 {
+			m.err = fmt.Errorf("Character cannot use spell commands")
+			break
+		}
+
 		level, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.RecoverSpellSlots(int(level), 1)
