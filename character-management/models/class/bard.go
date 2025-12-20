@@ -11,15 +11,15 @@ import (
 )
 
 type Bard struct {
-	ExpertiseSkills []string              `json:"expertise"`
-	College         string                `json:"college"`
-	OtherFeatures   []models.ClassFeature `json:"other-features"`
-	ClassToken      shared.NamedToken     `json:"class-token"`
+	models.BaseClass
+	ExpertiseSkills []string          `json:"expertise"`
+	ClassToken      shared.NamedToken `json:"class-token"`
 }
 
-const bardicInspirationToken string = "bardic-inspiration"
-
-const bardSpellCastingAbility string = shared.AbilityCharisma
+const (
+	bardicInspirationToken  string = "bardic-inspiration"
+	bardSpellCastingAbility string = shared.AbilityCharisma
+)
 
 func LoadBard(data []byte) (*Bard, error) {
 	var bard Bard
@@ -93,14 +93,6 @@ func (b *Bard) executeJackOfAllTrades(c *models.Character) {
 	}
 }
 
-func (b *Bard) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return b.College
-}
-
 func (b *Bard) ClassDetails(level int) string {
 	var s string
 	s += formatTokens(b.ClassToken, bardicInspirationToken, level) + "\n"
@@ -116,13 +108,6 @@ func (b *Bard) ClassDetails(level int) string {
 
 		s += "\n"
 	}
-
-	return s
-}
-
-func (b *Bard) ClassFeatures(level int) string {
-	var s string
-	s += formatOtherFeatures(b.OtherFeatures, level)
 
 	return s
 }

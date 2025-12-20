@@ -10,12 +10,11 @@ import (
 )
 
 type Monk struct {
-	MartialArts     string                `json:"-"`
-	ClassToken      shared.NamedToken     `json:"class-token"`
-	KiSpellSaveDC   int                   `json:"-"`
-	MosaicTradition string                `json:"mosaic-tradition"`
-	DeflectMissles  int                   `json:"-"`
-	OtherFeatures   []models.ClassFeature `json:"other-features"`
+	models.BaseClass
+	MartialArts    string            `json:"-"`
+	ClassToken     shared.NamedToken `json:"class-token"`
+	KiSpellSaveDC  int               `json:"-"`
+	DeflectMissles int               `json:"-"`
 }
 
 const kiPointsToken string = "ki-points"
@@ -110,14 +109,6 @@ func (m *Monk) executeDiamondSoul(c *models.Character) {
 	}
 }
 
-func (m *Monk) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return m.MosaicTradition
-}
-
 func (m *Monk) ClassDetails(level int) string {
 	var s string
 
@@ -133,13 +124,6 @@ func (m *Monk) ClassDetails(level int) string {
 		deflectMissles := fmt.Sprintf("*Deflect Missles Damage Reduction*: %d", m.DeflectMissles)
 		s += deflectMissles
 	}
-
-	return s
-}
-
-func (m *Monk) ClassFeatures(level int) string {
-	var s string
-	s += formatOtherFeatures(m.OtherFeatures, level)
 
 	return s
 }

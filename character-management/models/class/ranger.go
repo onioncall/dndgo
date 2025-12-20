@@ -10,11 +10,10 @@ import (
 )
 
 type Ranger struct {
-	Archetype            string                `json:"archetype"`
-	FightingStyle        string                `json:"fighting-style"`
-	FightingStyleFeature FightingStyleFeature  `json:"-"`
-	FavoredEnemies       []string              `json:"favored-enemies"`
-	OtherFeatures        []models.ClassFeature `json:"other-features"`
+	models.BaseClass
+	FightingStyle        string               `json:"fighting-style"`
+	FightingStyleFeature FightingStyleFeature `json:"-"`
+	FavoredEnemies       []string             `json:"favored-enemies"`
 }
 
 func LoadRanger(data []byte) (*Ranger, error) {
@@ -41,22 +40,8 @@ func (r *Ranger) PostCalculateSpellAttackMod(c *models.Character) {
 	executeSpellAttackMod(c, wisMod)
 }
 
-func (r *Ranger) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return r.Archetype
-}
-
 func (r *Ranger) ClassDetails(level int) string {
 	var s string
-
-	if r.Archetype != "" && level > 3 {
-		archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
-		s += archetypeHeader
-	}
-
 	if r.FightingStyleFeature.Name != "" && level >= 2 {
 		appliedText := "Requirements for fighting style not met."
 		if r.FightingStyleFeature.IsApplied {
@@ -79,13 +64,6 @@ func (r *Ranger) ClassDetails(level int) string {
 		}
 		s += "\n"
 	}
-
-	return s
-}
-
-func (r *Ranger) ClassFeatures(level int) string {
-	var s string
-	s += formatOtherFeatures(r.OtherFeatures, level)
 
 	return s
 }

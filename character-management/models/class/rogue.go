@@ -8,10 +8,9 @@ import (
 )
 
 type Rogue struct {
-	ExpertiseSkills []string              `json:"expertise"`
-	Archetype       string                `json:"archetype"`
-	SneakAttack     string                `json:"-"`
-	OtherFeatures   []models.ClassFeature `json:"other-features"`
+	models.BaseClass
+	ExpertiseSkills []string `json:"expertise"`
+	SneakAttack     string   `json:"-"`
 }
 
 func LoadRogue(data []byte) (*Rogue, error) {
@@ -72,14 +71,6 @@ func (r *Rogue) executeSneakAttack(c *models.Character) {
 	}
 }
 
-func (r *Rogue) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return r.Archetype
-}
-
 func (r *Rogue) ClassDetails(level int) string {
 	var s string
 
@@ -97,13 +88,6 @@ func (r *Rogue) ClassDetails(level int) string {
 
 	sneakAttackLine := fmt.Sprintf("*Sneak Attack*: %s\n\n", r.SneakAttack)
 	s += sneakAttackLine
-
-	return s
-}
-
-func (r *Rogue) ClassFeatures(level int) string {
-	var s string
-	s += formatOtherFeatures(r.OtherFeatures, level)
 
 	return s
 }

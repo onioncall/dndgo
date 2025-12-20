@@ -19,9 +19,8 @@ const (
 )
 
 type Warlock struct {
-	OtherworldlyPatron string                `json:"otherworldly-patron"`
-	Invocations        []string              `json:"invocations"`
-	OtherFeatures      []models.ClassFeature `json:"other-features"`
+	models.BaseClass
+	Invocations []string `json:"invocations"`
 }
 
 func LoadWarlock(data []byte) (*Warlock, error) {
@@ -82,14 +81,6 @@ func applyArmorOfShadows(c *models.Character) bool {
 	return true
 }
 
-func (w *Warlock) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return w.OtherworldlyPatron
-}
-
 func (w *Warlock) ClassDetails(level int) string {
 	var s string
 
@@ -99,14 +90,6 @@ func (w *Warlock) ClassDetails(level int) string {
 			s += fmt.Sprintf("%s\n", invocation)
 		}
 	}
-
-	return s
-}
-
-func (w *Warlock) ClassFeatures(level int) string {
-	var s string
-
-	s += formatOtherFeatures(w.OtherFeatures, level)
 
 	return s
 }

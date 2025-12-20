@@ -11,10 +11,9 @@ import (
 )
 
 type Wizard struct {
-	SignatureSpells []string              `json:"signature-spells"`
-	ArcaneTradition string                `json:"arcane-tradition"`
-	PreparedSpells  []string              `json:"prepared-spells"`
-	OtherFeatures   []models.ClassFeature `json:"other-features"`
+	models.BaseClass
+	SignatureSpells []string `json:"signature-spells"`
+	PreparedSpells  []string `json:"prepared-spells"`
 }
 
 func LoadWizard(data []byte) (*Wizard, error) {
@@ -85,14 +84,6 @@ func (w *Wizard) executeSignatureSpellValidation(c *models.Character) {
 	}
 }
 
-func (w *Wizard) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return w.ArcaneTradition
-}
-
 func (w *Wizard) ClassDetails(level int) string {
 	var s string
 
@@ -102,13 +93,6 @@ func (w *Wizard) ClassDetails(level int) string {
 			s += fmt.Sprintf("- %s\n", spell)
 		}
 	}
-
-	return s
-}
-
-func (w *Wizard) ClassFeatures(level int) string {
-	var s string
-	s += formatOtherFeatures(w.OtherFeatures, level)
 
 	return s
 }

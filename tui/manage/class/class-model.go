@@ -29,7 +29,7 @@ func NewClassModel() ClassModel {
 }
 
 func GetClassFeatures(c models.Character) string {
-	return c.Class.ClassFeatures(c.Level)
+	return c.Class.GetClassFeatures(c.Level)
 }
 
 func GetClassDetails(c models.Character) string {
@@ -37,7 +37,7 @@ func GetClassDetails(c models.Character) string {
 }
 
 func GetSubClass(c models.Character) string {
-	return c.Class.SubClass(c.Level)
+	return c.Class.GetSubClass(c.Level)
 }
 
 func (m ClassModel) UpdateSize(innerWidth, availableHeight int, character models.Character) ClassModel {

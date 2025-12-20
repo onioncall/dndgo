@@ -11,11 +11,10 @@ import (
 )
 
 type Fighter struct {
-	Archetype            string                `json:"archetype"`
-	FightingStyle        string                `json:"fighting-style"`
-	FightingStyleFeature FightingStyleFeature  `json:"-"`
-	OtherFeatures        []models.ClassFeature `json:"other-features"`
-	ClassTokens          []shared.NamedToken   `json:"class-tokens"`
+	models.BaseClass
+	FightingStyle        string               `json:"fighting-style"`
+	FightingStyleFeature FightingStyleFeature `json:"-"`
+	ClassTokens          []shared.NamedToken  `json:"class-tokens"`
 }
 
 type FightingStyleFeature struct {
@@ -74,14 +73,6 @@ func (f *Fighter) executeFightingStyle(c *models.Character) {
 	}
 }
 
-func (f *Fighter) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return f.Archetype
-}
-
 func (f *Fighter) ClassDetails(level int) string {
 	var s string
 
@@ -118,19 +109,10 @@ func (f *Fighter) ClassDetails(level int) string {
 	return s
 }
 
-func (f *Fighter) ClassFeatures(level int) string {
-	var s string
-	s += formatOtherFeatures(f.OtherFeatures, level)
-
-	return s
-}
-
 func (f *Fighter) AddFightingStyleFeature(feature models.ClassFeature) {
-
 }
 
 func (f *Fighter) RemoveFightingStyleFeature(feature models.ClassFeature) {
-
 }
 
 // CLI

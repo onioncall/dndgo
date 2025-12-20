@@ -10,10 +10,9 @@ import (
 )
 
 type Druid struct {
-	ClassToken     shared.NamedToken     `json:"class-token"`
-	Circle         string                `json:"circle"`
-	PreparedSpells []string              `json:"prepared-spells"`
-	OtherFeatures  []models.ClassFeature `json:"other-features"`
+	models.BaseClass
+	ClassToken     shared.NamedToken `json:"class-token"`
+	PreparedSpells []string          `json:"prepared-spells"`
 }
 
 const wildShapeToken string = "wild-shape"
@@ -124,24 +123,9 @@ func (d *Druid) executeArchDruid(c *models.Character) {
 	d.ClassToken.Maximum = 0
 }
 
-func (d *Druid) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return d.Circle
-}
-
 func (d *Druid) ClassDetails(level int) string {
 	var s string
 	s += formatTokens(d.ClassToken, wildShapeToken, level)
-
-	return s
-}
-
-func (d *Druid) ClassFeatures(level int) string {
-	var s string
-	s += formatOtherFeatures(d.OtherFeatures, level)
 
 	return s
 }

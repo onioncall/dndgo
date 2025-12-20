@@ -10,13 +10,12 @@ import (
 )
 
 type Paladin struct {
-	OtherFeatures        []models.ClassFeature `json:"other-features"`
-	PreparedSpells       []string              `json:"prepared-spells"`
-	OathSpells           []string              `json:"oath-spells"`
-	ClassTokens          []shared.NamedToken   `json:"class-tokens"`
-	FightingStyle        string                `json:"fighting-style"`
-	FightingStyleFeature FightingStyleFeature  `json:"-"`
-	SacredOath           string                `json:"sacred-oath"`
+	models.BaseClass
+	PreparedSpells       []string             `json:"prepared-spells"`
+	OathSpells           []string             `json:"oath-spells"`
+	ClassTokens          []shared.NamedToken  `json:"class-tokens"`
+	FightingStyle        string               `json:"fighting-style"`
+	FightingStyleFeature FightingStyleFeature `json:"-"`
 }
 
 func LoadPaladin(data []byte) (*Paladin, error) {
@@ -132,14 +131,6 @@ func (p *Paladin) executeOathSpells(c *models.Character) {
 	executePreparedSpellsShared(c, p.OathSpells)
 }
 
-func (p *Paladin) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return p.SacredOath
-}
-
 func (p *Paladin) ClassDetails(level int) string {
 	var s string
 
@@ -171,12 +162,6 @@ func (p *Paladin) ClassDetails(level int) string {
 		s += fightingStyleHeader
 		s += fightingStyleDetail
 	}
-
-	return s
-}
-func (p *Paladin) ClassFeatures(level int) string {
-	var s string
-	s += formatOtherFeatures(p.OtherFeatures, level)
 
 	return s
 }

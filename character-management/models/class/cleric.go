@@ -10,10 +10,9 @@ import (
 )
 
 type Cleric struct {
-	ClassToken     shared.NamedToken     `json:"class-token"`
-	Domain         string                `json:"domain"`
-	PreparedSpells []string              `json:"prepared-spells"`
-	OtherFeatures  []models.ClassFeature `json:"other-features"`
+	models.BaseClass
+	ClassToken     shared.NamedToken `json:"class-token"`
+	PreparedSpells []string          `json:"prepared-spells"`
 }
 
 const channelDivinityToken string = "channel-divinity"
@@ -124,24 +123,9 @@ func (cl *Cleric) executePreparedSpells(c *models.Character) {
 	executePreparedSpellsShared(c, cl.PreparedSpells)
 }
 
-func (cl *Cleric) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return cl.Domain
-}
-
 func (cl *Cleric) ClassDetails(level int) string {
 	var s string
 	s += formatTokens(cl.ClassToken, channelDivinityToken, level)
-
-	return s
-}
-
-func (cl *Cleric) ClassFeatures(level int) string {
-	var s string
-	s += formatOtherFeatures(cl.OtherFeatures, level)
 
 	return s
 }
