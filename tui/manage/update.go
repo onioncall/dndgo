@@ -179,12 +179,22 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 	// 		m.err = fmt.Errorf("name cannot be empty")
 	// 	}
 	case useSlotCmd:
+		if m.character.SpellSaveDC == 0 {
+			m.err = fmt.Errorf("Character cannot use spell commands")
+			break
+		}
+
 		level, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.UseSpellSlot(int(level))
 		sWidth := m.spellsTab.SpellSlotsViewport.Width
 		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(*m.character, sWidth))
 	case recoverSlotCmd:
+		if m.character.SpellSaveDC == 0 {
+			m.err = fmt.Errorf("Character cannot use spell commands")
+			break
+		}
+
 		level, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
 		m.character.RecoverSpellSlots(int(level), 1)
