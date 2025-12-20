@@ -4,6 +4,8 @@ type NavigateMsg struct {
 	Page string
 }
 
+type ReloadCharacterMsg struct{}
+
 const (
 	TuiHeader  = "dndgo"
 	MenuPage   = "menu"

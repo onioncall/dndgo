@@ -3,6 +3,7 @@ package menu
 import (
 	tea "github.com/charmbracelet/bubbletea"
 
+	"github.com/onioncall/dndgo/tui/manage"
 	"github.com/onioncall/dndgo/tui/shared"
 )
 
@@ -18,6 +19,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.createPage, _ = m.createPage.Update(msg)
 		m.managePage, _ = m.managePage.Update(msg)
 		m.searchPage, _ = m.searchPage.Update(msg)
+		return m, nil
+
+	case shared.ReloadCharacterMsg:
+		newManagePage := manage.NewModel()
+
+		// apply dimensions to model, since on reload they will be zero
+		if m.width > 0 && m.height > 0 {
+			newManagePage, _ = newManagePage.Update(tea.WindowSizeMsg{
+				Width:  m.width,
+				Height: m.height,
+			})
+		}
+
+		m.managePage = newManagePage
 		return m, nil
 
 	case shared.NavigateMsg:
