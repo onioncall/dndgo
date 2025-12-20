@@ -47,33 +47,6 @@ type GenericItem struct {
 	Desc string `json:"description"`
 }
 
-type Class interface {
-	CalculateHitDice(level int) string
-	ClassFeatures(level int) string
-	SubClass(level int) string
-	ClassDetails(level int) string
-}
-
-type PostCalculator interface {
-	ExecutePostCalculateMethods(c *Character)
-}
-
-type PreCalculator interface {
-	ExecutePreCalculateMethods(c *Character)
-}
-
-type TokenClass interface {
-	GetTokens() []string
-	UseClassTokens(string, int)
-	RecoverClassTokens(string, int)
-}
-
-type ClassFeature struct {
-	Name    string `json:"name"`
-	Level   int    `json:"level"`
-	Details string `json:"details"`
-}
-
 var (
 	PreCalculateMethods  []func(c *Character)
 	PostCalculateMethods []func(c *Character)
@@ -333,7 +306,7 @@ func (c *Character) BuildCharacter() string {
 		builder.WriteString(fmt.Sprintf("Class Details\n"))
 		builder.WriteString(fmt.Sprintf("---\n"))
 
-		subClass := c.Class.SubClass(c.Level)
+		subClass := c.Class.GetSubClass(c.Level)
 		if subClass != "" {
 			builder.WriteString(fmt.Sprintf("Sub-Class: %s\n\n", subClass))
 		}
@@ -343,7 +316,7 @@ func (c *Character) BuildCharacter() string {
 			builder.WriteString(details + "\n")
 		}
 
-		classFeatures := c.Class.ClassFeatures(c.Level)
+		classFeatures := c.Class.GetClassFeatures(c.Level)
 		if classFeatures != "" {
 			builder.WriteString(classFeatures + "\n")
 		}
@@ -817,6 +790,11 @@ func (c *Character) DamageCharacter(hpDecr int) {
 
 func (c *Character) AddTempHp(tempHP int) {
 	c.HPTemp += tempHP
+}
+
+func (c *Character) AddSubClass() {
+	if c.Class != nil {
+	}
 }
 
 // TODO: Rename functionality will have to change with the support of multiple character files

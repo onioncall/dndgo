@@ -29,6 +29,7 @@ var (
 			q, _ := cmd.Flags().GetInt("quantity")
 			t, _ := cmd.Flags().GetInt("temp-hp")
 			n, _ := cmd.Flags().GetString("name")
+			sc, _ := cmd.Flags().GetString("sub-class")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -63,10 +64,11 @@ var (
 			}
 			if s != "" {
 				err = handlers.AddSpell(c, s)
-
 			}
 			if t != 0 {
 				c.AddTempHp(t)
+			}
+			if sc != "" {
 			}
 
 			err = handlers.SaveCharacterJson(c)
@@ -369,13 +371,11 @@ var (
 			if p != "" {
 				err = c.Equip(true, p)
 				if err != nil {
-
 				}
 			}
 			if s != "" {
 				err = c.Equip(false, s)
 				if err != nil {
-
 				}
 			}
 
@@ -444,6 +444,7 @@ func init() {
 	addCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
 	addCmd.Flags().IntP("temp-hp", "t", 0, "Add temporary hp")
 	addCmd.Flags().StringP("name", "n", "", "Name of equipment to add")
+	addCmd.Flags().StringP("sub-class", "c", "", "Name of sub-class to add")
 
 	removeCmd.Flags().StringP("language", "l", "", "Language to remove")
 	removeCmd.Flags().StringP("weapon", "w", "", "Weapon to remove")

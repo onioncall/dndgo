@@ -10,10 +10,9 @@ import (
 )
 
 type Sorcerer struct {
-	SorcerousOrigin string                `json:"sorcerous-origin"`
+	models.BaseClass
 	ClassToken      shared.NamedToken     `json:"class-token"`
 	MetaMagicSpells []models.ClassFeature `json:"meta-magic-spells"`
-	OtherFeatures   []models.ClassFeature `json:"other-features"`
 }
 
 const sorceryPointsToken string = "sorcery-points"
@@ -48,14 +47,6 @@ func (s *Sorcerer) executeSorceryPoints(c *models.Character) {
 	s.ClassToken.Maximum += c.Level
 }
 
-func (s *Sorcerer) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return s.SorcerousOrigin
-}
-
 func (s *Sorcerer) ClassDetails(level int) string {
 	var str string
 
@@ -75,13 +66,6 @@ func (s *Sorcerer) ClassDetails(level int) string {
 		}
 		str += "\n"
 	}
-
-	return str
-}
-
-func (s *Sorcerer) ClassFeatures(level int) string {
-	var str string
-	str += formatOtherFeatures(s.OtherFeatures, level)
 
 	return str
 }

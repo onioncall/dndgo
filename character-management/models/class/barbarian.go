@@ -11,11 +11,10 @@ import (
 )
 
 type Barbarian struct {
-	Path            string                `json:"path"`
-	OtherFeatures   []models.ClassFeature `json:"other-features"`
-	ClassToken      shared.NamedToken     `json:"class-token"`
-	RageDamage      int                   `json:"-"`
-	PrimalKnowledge []string              `json:"primal-knowledge"`
+	models.BaseClass
+	ClassToken      shared.NamedToken `json:"class-token"`
+	RageDamage      int               `json:"-"`
+	PrimalKnowledge []string          `json:"primal-knowledge"`
 }
 
 const rageToken string = "rage"
@@ -64,7 +63,7 @@ func (b *Barbarian) executeRage(c *models.Character) {
 	case c.Level < 20:
 		b.ClassToken.Maximum = 6
 	case c.Level >= 20:
-		b.ClassToken.Maximum = 0 //unlimited
+		b.ClassToken.Maximum = 0 // unlimited
 	}
 
 	// Unfortunately these don't line up and putting them in the same switch is gross
@@ -125,27 +124,12 @@ func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 	executeUnarmoredDefenseShared(c, barbarianExpertiseAbilityModifiers)
 }
 
-func (b *Barbarian) SubClass(level int) string {
-	if level <= 2 {
-		return ""
-	}
-
-	return b.Path
-}
-
 func (b *Barbarian) ClassDetails(level int) string {
 	var s string
 
 	rageSlots := formatTokens(b.ClassToken, rageToken, level)
 	rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n", rageSlots, b.RageDamage)
 	s += rageLine
-
-	return s
-}
-
-func (b *Barbarian) ClassFeatures(level int) string {
-	var s string
-	s += formatOtherFeatures(b.OtherFeatures, level)
 
 	return s
 }
