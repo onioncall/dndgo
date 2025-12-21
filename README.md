@@ -5,8 +5,6 @@
   <img width="800" height="450" alt="dndgo-logo-highres" src="https://github.com/user-attachments/assets/b4bfb7b8-16a5-40e3-b285-4b414a249ba7" />
  </p>
 
-<small>*Special Thank you to Matt Evans for the dndgo logo, and to Renée French for inspiration</small>
-
 ## About
 dndgo is a terminal user interface and a command line application for Dungeons and Dragons built to make managing characters easier, and searching dnd info with the [5e-srd-api](https://5e-bits.github.io/docs/).
 
@@ -21,7 +19,7 @@ Currently Character management is only implemented for basic info, spells, and e
 
 *example*
 
-https://github.com/user-attachments/assets/c6c40922-ce7e-472e-8589-9180bf1d3421
+https://github.com/user-attachments/assets/ff6a58e3-74a2-4461-a4f6-ebf140e1ac70
 
 ### Search
 
@@ -59,10 +57,6 @@ You can use the CLI to directly make changes to the characters state (like healt
 - run "dndgo ctr update" to generate your markdown file
 - more details on how to set up character and class can be found in the docs directory
 
-Search Example
+---
 
-https://github.com/user-attachments/assets/0770df8d-d0c6-4dd4-ab1c-8e7098882262
-
-Character Markdown Example
-
-https://github.com/user-attachments/assets/85c1b130-808e-4889-aa60-fd8d45ae1190
+<small>*Special Thank you to Matt Evans for the dndgo logo, and to Renée French for the inspiration</small>
