@@ -48,7 +48,7 @@ func (w *Warlock) executeSpellCastingAbility(c *models.Character) {
 	executeSpellAttackMod(c, chrMod)
 }
 
-// May implement more thoroughly in the future, but most of these invove game state that we can't mock
+// May implement more thoroughly in the future, but most of these involve game state that we can't mock
 // in this app. Will look into in the future when I know more about how this class plays
 func (w *Warlock) executeEldritchInvocations(c *models.Character) {
 	// if c.Level > 2 {

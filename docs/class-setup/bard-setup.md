@@ -1,12 +1,15 @@
 # Bard Setup
 
-### `class-token`
+### `sub-class`
+**Description:**
+College is the subclass for Bard. It can be any string and is not case sensitive
 
+### `class-token`
 **Description:**
 Class Token is a way to track class specific tokens/charges/points. The token available to the bard class is bardic-inspiration
 
 **Fields:**
-- `name`: "bardic-inspiration", (the only token available to this class is bardic-inpsiration)
+- `name`: "bardic-inspiration", (the only token available to this class is bardic-inspiration)
 - `available`: 0, (current charges/tokens. Use `dndgo ctr recover` to set to maximum available to your level )
 - `level`: 1, (bardic-inspiration is available from level 1)
 

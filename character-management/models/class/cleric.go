@@ -95,7 +95,7 @@ func (cl *Cleric) executeCantripVersatility(c *models.Character) {
 	}
 
 	if cantripVersatilityMax < cantripCount+abilityImprovementTotal {
-		logger.Info("Cantrip Versatility: You have too many cantrips or ability score improvement bonuss for your level")
+		logger.Info("Cantrip Versatility: You have too many cantrips or ability score improvement bonuses for your level")
 	}
 }
 

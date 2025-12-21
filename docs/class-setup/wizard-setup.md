@@ -1,6 +1,6 @@
 # Wizard Setup
 
-### `arcane-tradition`
+### `sub-class`
 **Description:**
 Arcane Tradition is the subclass for Wizard. It can be any string and is not case sensitive
 

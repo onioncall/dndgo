@@ -1,6 +1,6 @@
 # Warlock Setup
 
-### `otherworldly-patron`
+### `sub-class`
 **Description:**
 Otherworldly Patron is the subclass for Warlock. It can be any string and is not case sensitive
 

@@ -27,7 +27,7 @@ func executeExpertiseShared(c *models.Character, expertiseSkills []string) {
 	seen := make(map[string]bool)
 	for _, profToDouble := range expertiseSkills {
 		if seen[profToDouble] == true {
-			logger.Info("Bard Config Error - Expertise can not have dupliate proficiencies")
+			logger.Info("Class Config Error - Expertise can not have dupliate proficiencies")
 			return
 		}
 		seen[profToDouble] = true
@@ -285,24 +285,6 @@ func formatTokens(token shared.NamedToken, tokenName string, level int) string {
 	if token.Maximum > 0 && token.Name == tokenName && level >= token.Level {
 		slots := models.GetSlots(token.Available, token.Maximum)
 		s += fmt.Sprintf("%s: %s\n", tokenName, slots)
-	}
-
-	return s
-}
-
-func formatOtherFeatures(features []models.ClassFeature, level int) string {
-	var s string
-	if len(features) > 0 {
-		for _, feature := range features {
-			if feature.Level > level {
-				continue
-			}
-
-			featureName := fmt.Sprintf("---\n**%s**\n", feature.Name)
-			s += featureName
-			features := fmt.Sprintf("%s\n", feature.Details)
-			s += features
-		}
 	}
 
 	return s

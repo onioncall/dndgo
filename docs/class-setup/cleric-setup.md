@@ -1,6 +1,7 @@
 # Cleric Setup
 
-### `domain`
+### `sub-class`
+
 **Description:**
 Domain is the subclass for Cleric. It can be any string and is not case sensitive
 

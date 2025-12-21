@@ -1,6 +1,7 @@
 # Paladin Setup 
 
-### `sacred-oath`
+### `sub-class`
+**Description**
 Sacred Oath is the subclass for Paladin. It can be any string and is not case sensitive.
 
 ### `fighting-style`
@@ -15,7 +16,7 @@ At 1st level, you adopt a particular style of fighting as your specialty. Choose
 
 ### `prepared-spells`
 **Description:**
-Paladins can prepare a number of spells equal to their Intelligence modifier + paladin level (minimum of 1). Prepared spells are chosen from your spellbook and can be changed after each long rest. Prepared spells must be in the list of your known spells in your character config and be spelled the same.
+Paladins can prepare a number of spells equal to their Charisma modifier + paladin level (minimum of 1). Prepared spells are chosen from your spellbook and can be changed after each long rest. Prepared spells must be in the list of your known spells in your character config and be spelled the same.
 
 **Examples**: *not a comprehensive list*
 - "Aid"
