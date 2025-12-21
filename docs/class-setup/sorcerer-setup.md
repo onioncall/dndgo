@@ -1,13 +1,13 @@
 # Sorcerer Setup
 
-### `sorcerous-origin`
+### `sub-class`
 **Description:**
 Sorcerous Origin is the subclass for Sorcerer. It can be any string and is not case sensitive
 
 ### `class-token`
 
 **Description:**
-Class Token is a way to track class specific tokens/charges/points. The token available to the sorcery class is sorcery-points
+Class Token is a way to track class specific tokens/charges/points. The token available to the sorcerer class is sorcery-points
 
 **Fields:**
 - `name`: "sorcery-points", (the only token available to this class is sorcery-points)

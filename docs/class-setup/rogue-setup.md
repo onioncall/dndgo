@@ -1,6 +1,6 @@
  # Rogue Setup
 
-### `archetype`
+### `sub-class`
 **Description:**
 Archetype is the subclass for Rogue. It can be any string and is not case sensitive
 

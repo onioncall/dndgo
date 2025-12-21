@@ -1,6 +1,6 @@
 # Ranger Setup
 
-### `archetype`
+### `sub-class`
 **Description:**
 Archetype is the subclass for Ranger. It can be any string and is not case sensitive
 

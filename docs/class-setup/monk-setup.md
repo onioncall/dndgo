@@ -1,6 +1,6 @@
 # Monk Setup
 
-### `mosaic-tradition`
+### `sub-class`
 **Description:**
 Monastic Tradition is the subclass for Monk. It can be any string and is not case sensitive
 

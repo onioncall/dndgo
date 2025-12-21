@@ -1,6 +1,6 @@
 # Character Setup Guide
 
-This is to aide your setup of your character for the character.json file. As a note, this is not meant as a comprehensive guide on how to set up a DND character period. You should still [RTFM](https://archive.org/details/players-handbook_202308). This is purely meant as a guide to help set up a character of this particular application 
+This is to aid your setup of your character for the character.json file. As a note, this is not meant as a comprehensive guide on how to set up a DND character period. You should still [RTFM](https://archive.org/details/players-handbook_202308). This is purely meant as a guide to help set up a character of this particular application 
 
 ## Basic Character Details
 
@@ -56,7 +56,6 @@ The race of your character.
 - "variant-human"
 - "tiefling"
 - "goliath"
-- "firebolt"
 - "tabaxi"
 - "kenku"
 - "triton"
@@ -103,11 +102,6 @@ An int representing your current HP. When setting up your character, just make t
 ### `hp-max`
 
 **Description:** 
-An int representing your maximum HP. You will need to adjust this every level, as a dice roll is used to determine your gained hp as you level up.
-
-### `hp-max`
-
-**Description:** 
 An int representing your maximum HP. You will need to adjust this every level, as a dice roll is used to determine your gained HP as you level up.
 
 ### `hp-temp`
@@ -130,7 +124,7 @@ A list of your abilities. The base stats should never change, the modifiers will
 **Allowed Values:** *not case sensitive*
     - "Strength"
     - "Dexterity"
-    - "Consitution"
+    - "Constitution"
     - "Intelligence"
     - "Wisdom"
     - "Charisma"
@@ -148,7 +142,7 @@ A list of your skills. Each skill is tied to one of the six abilities listed abo
 **Allowed Values:** *not case sensitive*
     - "Strength"
     - "Dexterity"
-    - "Consitution"
+    - "Constitution"
     - "Intelligence"
     - "Wisdom"
     - "Charisma"
@@ -176,6 +170,8 @@ A list of your skills. Each skill is tied to one of the six abilities listed abo
 ---
 
 ## Character Spells
+
+As a note, if your character class has no spell save DC, then the spell commands for the CLI/TUI will not be available to you. 
 
 ### `spells`
 

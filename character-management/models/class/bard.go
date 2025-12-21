@@ -59,7 +59,7 @@ func (b *Bard) executeBardicInspiration(c *models.Character) {
 	b.ClassToken.Maximum = c.GetMod(shared.AbilityCharisma)
 }
 
-// At level 3, bards can pick two skills they are proficient in, and double the modifier.
+// At level 3, bards can pick two skills they are proficient in, and double the proficiency.
 // They select two more at level 10
 func (b *Bard) executeExpertise(c *models.Character) {
 	if c.Level < 3 {

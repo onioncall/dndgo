@@ -1,6 +1,6 @@
 # Fighter Setup
 
-### `archetype`
+### `sub-class`
 **Description:**
 Archetype is the subclass for Fighter. It can be any string and is not case sensitive
 
