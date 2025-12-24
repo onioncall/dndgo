@@ -76,6 +76,10 @@ func (c *Character) calculateSkillModifierFromBase() {
 		for _, a := range c.Abilities {
 			if strings.ToLower(skill.Ability) == strings.ToLower(a.Name) {
 				c.Skills[i].SkillModifier = a.AbilityModifier
+
+				if skill.Proficient {
+					c.Skills[i].SkillModifier += c.Proficiency
+				}
 			}
 		}
 	}
@@ -463,10 +467,6 @@ func (c *Character) BuildSkills() []string {
 	s = append(s, skillSpacer)
 
 	for _, skill := range c.Skills {
-		if skill.Proficient {
-			skill.SkillModifier += c.Proficiency
-		}
-
 		skillModifierString := ""
 		if skill.SkillModifier > 0 {
 			skillModifierString = "+"
