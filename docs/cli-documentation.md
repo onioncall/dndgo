@@ -39,15 +39,16 @@ You can use the CLI to directly make changes to the characters state (like healt
 `ctr add`
 
 **Add Flags**
--  -b, --backpack string    Item to add to backpack (use -q to specify quantity)
--  -e, --equipment string   Kind of equipment to add 'armor, ring, etc'
--  -l, --language string    Language to add
--  -n, --name string        Name of equipment to add
--  -q, --quantity int       Modify quantity of something
--  -x, --spell string       Add spell to list of character spells
--  -s, --spell-slots int    Increase spell-slot max capacity by level
--  -t, --temp-hp int        Add temporary hp
--  -w, --weapon string      Weapon to add
+-  -a  --ability-improvement    Ability Score Improvement item name, (use -q to specify a quantity)
+-  -b, --backpack string        Item to add to backpack (use -q to specify quantity)
+-  -e, --equipment string       Kind of equipment to add 'armor, ring, etc'
+-  -l, --language string        Language to add
+-  -n, --name string            Name of equipment to add
+-  -q, --quantity int           Modify quantity of something
+-  -x, --spell string           Add spell to list of character spells
+-  -s, --spell-slots int        Increase spell-slot max capacity by level
+-  -t, --temp-hp int            Add temporary hp
+-  -w, --weapon string          Weapon to add
   
 *examples*
 
@@ -129,3 +130,14 @@ You can use the CLI to directly make changes to the characters state (like healt
 `ctr unequip`
 
 *documentation needed*
+
+---
+
+`ctr modify`
+
+**Modify Flags**
+-a, --ability-improvement string   Ability Score Improvement item name, (use -q to specify a quantity)
+
+*examples*
+
+`dndgo ctr modify -a dexterity -q 4`

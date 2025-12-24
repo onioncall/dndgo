@@ -798,6 +798,69 @@ func (c *Character) AddSubClass(subClass string) {
 	}
 }
 
+// Adds an ability score to an existing item if found, or creates a new record with the bonus quantity
+func (c *Character) AddAbilityScoreImprovementItem(quantity int, ability string) error {
+	if quantity != 1 && quantity != 2 {
+		return fmt.Errorf("When adding an Ability Score Improvement Item, the bonus must be 1 or 2")
+	}
+
+	if !isValidAbilityName(ability) {
+		return fmt.Errorf("Ability name '%s' is not valid", ability)
+	}
+
+	for i, item := range c.AbilityScoreImprovement {
+		if strings.EqualFold(item.Ability, ability) {
+			c.AbilityScoreImprovement[i].Bonus += quantity
+			fmt.Println(c.AbilityScoreImprovement[i].Bonus)
+			return nil
+		}
+	}
+
+	abi := shared.AbilityScoreImprovementItem{
+		Ability: ability,
+		Bonus:   quantity,
+	}
+
+	c.AbilityScoreImprovement = append(c.AbilityScoreImprovement, abi)
+
+	return nil
+}
+
+// Modifies the bonus of an existing ability score improvement item if found, otherwise returns an error
+func (c *Character) ModifyAbilityScoreImprovementItem(quantity int, ability string) error {
+	if !isValidAbilityName(ability) {
+		return fmt.Errorf("Ability name '%s' is not valid", ability)
+	}
+
+	for i, item := range c.AbilityScoreImprovement {
+		if strings.EqualFold(item.Ability, ability) {
+			c.AbilityScoreImprovement[i].Bonus = quantity
+			return nil
+		}
+	}
+
+	return fmt.Errorf("Ability Score Improvement Item for '%s' was not found. Try adding new item", ability)
+}
+
+func isValidAbilityName(abilityName string) bool {
+	switch strings.ToLower(abilityName) {
+	case shared.AbilityStrength:
+		return true
+	case shared.AbilityDexterity:
+		return true
+	case shared.AbilityConstitution:
+		return true
+	case shared.AbilityIntelligence:
+		return true
+	case shared.AbilityWisdom:
+		return true
+	case shared.AbilityCharisma:
+		return true
+	}
+
+	return false
+}
+
 // TODO: Rename functionality will have to change with the support of multiple character files
 // // RenameCharacter updates the character's name.
 // func (c *Character) RenameCharacter(newName string) {
