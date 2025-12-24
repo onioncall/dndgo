@@ -20,6 +20,7 @@ var (
 		Use:   "add",
 		Short: "Add character attributes",
 		Run: func(cmd *cobra.Command, args []string) {
+			a, _ := cmd.Flags().GetString("ability-improvement")
 			l, _ := cmd.Flags().GetString("language")
 			bp, _ := cmd.Flags().GetString("backpack")
 			il, _ := cmd.Flags().GetBool("level")
@@ -42,7 +43,7 @@ var (
 			}
 			if e != "" {
 				if n == "" {
-					logger.Info("Name of equipment can not be left empty")
+					fmt.Println("Name of equipment can not be left empty")
 					return
 				}
 
@@ -50,7 +51,7 @@ var (
 			}
 			if bp != "" {
 				if q <= 0 {
-					logger.Info("Must pass a positive quantity to add")
+					fmt.Println("Must pass a positive quantity to add")
 					return
 				}
 
@@ -70,6 +71,13 @@ var (
 			}
 			if sc != "" {
 				c.AddSubClass(sc)
+			}
+			if a != "" {
+				err = c.AddAbilityScoreImprovementItem(q, a)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
 			}
 
 			err = handlers.SaveCharacterJson(c)
@@ -405,7 +413,7 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.Info("Failed to save character data")
+				logger.Error("Failed to save character data")
 				panic(err)
 			}
 
@@ -418,7 +426,44 @@ var (
 
 			err = handlers.SaveCharacterJson(c)
 			if err != nil {
+				logger.Error("Failed to save character data")
+				panic(err)
+			}
+
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.Error("Failed to process character")
+				panic(err)
+			}
+
+			logger.Info("Character Update Successful")
+		},
+	}
+
+	modifyCmd = &cobra.Command{
+		Use:   "modify",
+		Short: "modify character attributes",
+		Run: func(cmd *cobra.Command, args []string) {
+			a, _ := cmd.Flags().GetString("ability-improvement")
+			q, _ := cmd.Flags().GetInt("quantity")
+
+			c, err := handlers.LoadCharacter()
+			if err != nil {
 				logger.Info("Failed to save character data")
+				panic(err)
+			}
+
+			if a != "" {
+				err = c.ModifyAbilityScoreImprovementItem(q, a)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+			}
+
+			err = handlers.SaveCharacterJson(c)
+			if err != nil {
+				logger.Error("Failed to save character data")
 				panic(err)
 			}
 
@@ -434,8 +479,9 @@ var (
 )
 
 func init() {
-	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd, initCmd, getCmd, equipCmd, unequipCmd)
+	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd, initCmd, getCmd, equipCmd, unequipCmd, modifyCmd)
 
+	addCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
 	addCmd.Flags().StringP("language", "l", "", "Language to add")
 	addCmd.Flags().StringP("weapon", "w", "", "Weapon to add")
@@ -469,9 +515,13 @@ func init() {
 
 	equipCmd.Flags().StringP("primary", "p", "", "Equip primary weapon or shield")
 	equipCmd.Flags().StringP("secondary", "s", "", "Equip secondary weapon or shield")
+
 	unequipCmd.Flags().BoolP("primary", "p", false, "Equip primary weapon or shield")
 	unequipCmd.Flags().BoolP("secondary", "s", false, "Equip secondary weapon or shield")
 
 	getCmd.Flags().StringP("path", "p", "", "Get config or markdown path")
 	getCmd.Flags().BoolP("tokens", "t", false, "Get class tokens")
+
+	modifyCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
+	modifyCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
 }
