@@ -66,7 +66,7 @@ func SaveClassHandler(c models.Class) error {
 }
 
 func loadClassData(classData []byte) (models.Class, error) {
-	var baseClass class.BaseClass
+	var baseClass models.BaseClass
 	if err := json.Unmarshal(classData, baseClass); err != nil {
 		return nil, fmt.Errorf("Failed to unmarshal class data to base struct:\n%w", err)
 	}

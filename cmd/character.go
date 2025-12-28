@@ -460,7 +460,7 @@ var (
 				}
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Error("Failed to save character data")
 				panic(err)
