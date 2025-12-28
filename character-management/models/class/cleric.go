@@ -10,9 +10,8 @@ import (
 )
 
 type Cleric struct {
-	BaseClass
+	models.BaseClass
 	ClassToken     shared.NamedToken `json:"class-token" clover:"class-token"`
-	Domain         string            `json:"domain" clover:"domain"`
 	PreparedSpells []string          `json:"prepared-spells" clover:"prepared-spells"`
 }
 
@@ -96,7 +95,7 @@ func (cl *Cleric) executeCantripVersatility(c *models.Character) {
 	}
 
 	if cantripVersatilityMax < cantripCount+abilityImprovementTotal {
-		logger.Info("Cantrip Versatility: You have too many cantrips or ability score improvement bonuss for your level")
+		logger.Info("Cantrip Versatility: You have too many cantrips or ability score improvement bonuses for your level")
 	}
 }
 
@@ -124,32 +123,9 @@ func (cl *Cleric) executePreparedSpells(c *models.Character) {
 	executePreparedSpellsShared(c, cl.PreparedSpells)
 }
 
-func (cl *Cleric) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
-
-	if cl.Domain != "" && c.Level > 3 {
-		domainHeader := fmt.Sprintf("Domain: *%s*\n\n", cl.Domain)
-		s = append(s, domainHeader)
-	}
-
-	if cl.ClassToken.Maximum != 0 && cl.ClassToken.Name == channelDivinityToken {
-		channelDivinitySlots := c.GetSlots(cl.ClassToken.Available, cl.ClassToken.Maximum)
-		biLine := fmt.Sprintf("**Channel Divinity**: %s\n\n", channelDivinitySlots)
-		s = append(s, biLine)
-	}
-
-	if len(cl.OtherFeatures) > 0 {
-		for _, detail := range cl.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
-
-			detailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, detailName)
-			details := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, details)
-		}
-	}
+func (cl *Cleric) ClassDetails(level int) string {
+	var s string
+	s += formatTokens(cl.ClassToken, channelDivinityToken, level)
 
 	return s
 }

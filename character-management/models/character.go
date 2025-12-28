@@ -49,36 +49,10 @@ type GenericItem struct {
 	Desc string `json:"description"`
 }
 
-type Class interface {
-	CalculateHitDice(int) string
-	PrintClassDetails(c *Character) []string
-	GetCharacterId() string
-	SetCharacterId(id string)
-	GetClassName() string
-}
-
-type PostCalculator interface {
-	ExecutePostCalculateMethods(c *Character)
-}
-
-type PreCalculator interface {
-	ExecutePreCalculateMethods(c *Character)
-}
-
-type TokenClass interface {
-	GetTokens() []string
-	UseClassTokens(string, int)
-	RecoverClassTokens(string, int)
-}
-
-type ClassFeature struct {
-	Name    string `json:"name"`
-	Level   int    `json:"level"`
-	Details string `json:"details"`
-}
-
-var PreCalculateMethods []func(c *Character)
-var PostCalculateMethods []func(c *Character)
+var (
+	PreCalculateMethods  []func(c *Character)
+	PostCalculateMethods []func(c *Character)
+)
 
 // Load Character Details
 
@@ -104,6 +78,10 @@ func (c *Character) calculateSkillModifierFromBase() {
 		for _, a := range c.Abilities {
 			if strings.ToLower(skill.Ability) == strings.ToLower(a.Name) {
 				c.Skills[i].SkillModifier = a.AbilityModifier
+
+				if skill.Proficient {
+					c.Skills[i].SkillModifier += c.Proficiency
+				}
 			}
 		}
 	}
@@ -211,6 +189,7 @@ func (c *Character) calculatePassiveStats() {
 
 func (c *Character) calculateWeaponBonus() {
 	for i, weapon := range c.Weapons {
+		c.Weapons[i].Bonus = 0
 		dexMod := c.GetMod(shared.AbilityDexterity)
 		strMod := c.GetMod(shared.AbilityStrength)
 		modApplied := false
@@ -330,9 +309,22 @@ func (c *Character) BuildCharacter() string {
 	builder.WriteString(nl)
 
 	if c.Class != nil {
-		otherClassFeatures := c.Class.PrintClassDetails(c)
-		for i := range otherClassFeatures {
-			builder.WriteString(otherClassFeatures[i])
+		builder.WriteString(fmt.Sprintf("Class Details\n"))
+		builder.WriteString(fmt.Sprintf("---\n"))
+
+		subClass := c.Class.GetSubClass(c.Level)
+		if subClass != "" {
+			builder.WriteString(fmt.Sprintf("Sub-Class: %s\n\n", subClass))
+		}
+
+		details := c.Class.ClassDetails(c.Level)
+		if details != "" {
+			builder.WriteString(details + "\n")
+		}
+
+		classFeatures := c.Class.GetClassFeatures(c.Level)
+		if classFeatures != "" {
+			builder.WriteString(classFeatures + "\n")
 		}
 		builder.WriteString(nl)
 	}
@@ -477,10 +469,6 @@ func (c *Character) BuildSkills() []string {
 	s = append(s, skillSpacer)
 
 	for _, skill := range c.Skills {
-		if skill.Proficient {
-			skill.SkillModifier += c.Proficiency
-		}
-
 		skillModifierString := ""
 		if skill.SkillModifier > 0 {
 			skillModifierString = "+"
@@ -685,9 +673,10 @@ func (c *Character) BuildAbilityScoreImprovement() []string {
 	return s
 }
 
-func (c *Character) GetSlots(available int, max int) string {
-	fullCircle := strings.Repeat("● ", available)
-	hollowCircle := strings.Repeat("○ ", (max - available))
+func GetSlots(available int, max int) string {
+	// using non breaking spaces for how lipgloss trims regular spaces at the end of strings
+	fullCircle := strings.Repeat("●\u00A0", available)
+	hollowCircle := strings.Repeat("○\u00A0", (max - available))
 
 	return fmt.Sprintf("%s%s", fullCircle, hollowCircle)
 }
@@ -696,7 +685,7 @@ func (c *Character) GetSlots(available int, max int) string {
 
 func (c *Character) AddItemToPack(item string, quantity int) {
 	for i, packItem := range c.Backpack {
-		if packItem.Name == item {
+		if strings.ToLower(packItem.Name) == strings.ToLower(item) {
 			c.Backpack[i].Quantity += quantity
 			return
 		}
@@ -710,26 +699,27 @@ func (c *Character) AddItemToPack(item string, quantity int) {
 	c.Backpack = append(c.Backpack, newItem)
 }
 
-func (c *Character) RemoveItemFromPack(item string, quantity int) {
+func (c *Character) RemoveItemFromPack(item string, quantity int) error {
+	var err error
 	for i, packItem := range c.Backpack {
-		if packItem.Name == item {
+		if strings.ToLower(packItem.Name) == strings.ToLower(item) {
 			if packItem.Quantity < quantity {
-				info := fmt.Sprintf("Quantity to remove (%d) greater than quantity in pack (%d), set to 0",
+				err = fmt.Errorf("Quantity to remove (%d) greater than quantity in pack (%d), set to 0",
 					quantity,
 					packItem.Quantity)
 
-				logger.Info(info)
 				c.Backpack[i].Quantity = 0
-				return
+				return err
 			}
 
 			c.Backpack[i].Quantity -= quantity
-			return
+			return nil
 		}
 	}
 
-	info := fmt.Sprintf("Item %s not found in pack", item)
-	logger.Info(info)
+	err = fmt.Errorf("Item %s not found in pack", item)
+
+	return err
 }
 
 func (c *Character) AddLanguage(language string) {
@@ -804,6 +794,81 @@ func (c *Character) AddTempHp(tempHP int) {
 	c.HPTemp += tempHP
 }
 
+func (c *Character) AddSubClass(subClass string) {
+	if c.Class != nil {
+		c.Class.SetSubClass(subClass)
+	}
+}
+
+// Adds an ability score to an existing item if found, or creates a new record with the bonus quantity
+func (c *Character) AddAbilityScoreImprovementItem(quantity int, ability string) error {
+	if quantity != 1 && quantity != 2 {
+		return fmt.Errorf("When adding an Ability Score Improvement Item, the bonus must be 1 or 2")
+	}
+
+	if !isValidAbilityName(ability) {
+		return fmt.Errorf("Ability name '%s' is not valid", ability)
+	}
+
+	for i, item := range c.AbilityScoreImprovement {
+		if strings.EqualFold(item.Ability, ability) {
+			c.AbilityScoreImprovement[i].Bonus += quantity
+			fmt.Println(c.AbilityScoreImprovement[i].Bonus)
+			return nil
+		}
+	}
+
+	abi := shared.AbilityScoreImprovementItem{
+		Ability: ability,
+		Bonus:   quantity,
+	}
+
+	c.AbilityScoreImprovement = append(c.AbilityScoreImprovement, abi)
+
+	return nil
+}
+
+// Modifies the bonus of an existing ability score improvement item if found, otherwise returns an error
+func (c *Character) ModifyAbilityScoreImprovementItem(quantity int, ability string) error {
+	if !isValidAbilityName(ability) {
+		return fmt.Errorf("Ability name '%s' is not valid", ability)
+	}
+
+	for i, item := range c.AbilityScoreImprovement {
+		if strings.EqualFold(item.Ability, ability) {
+			c.AbilityScoreImprovement[i].Bonus = quantity
+			return nil
+		}
+	}
+
+	return fmt.Errorf("Ability Score Improvement Item for '%s' was not found. Try adding new item", ability)
+}
+
+func isValidAbilityName(abilityName string) bool {
+	switch strings.ToLower(abilityName) {
+	case shared.AbilityStrength:
+		return true
+	case shared.AbilityDexterity:
+		return true
+	case shared.AbilityConstitution:
+		return true
+	case shared.AbilityIntelligence:
+		return true
+	case shared.AbilityWisdom:
+		return true
+	case shared.AbilityCharisma:
+		return true
+	}
+
+	return false
+}
+
+// TODO: Rename functionality will have to change with the support of multiple character files
+// // RenameCharacter updates the character's name.
+// func (c *Character) RenameCharacter(newName string) {
+// 	c.Name = newName
+// }
+
 func (c *Character) UseSpellSlot(level int) {
 	for i := range c.SpellSlots {
 		if c.SpellSlots[i].Level == level {
@@ -825,7 +890,10 @@ func (c *Character) UseSpellSlot(level int) {
 func (c *Character) RecoverSpellSlots(level int, quantity int) {
 	for i := range c.SpellSlots {
 		if c.SpellSlots[i].Level == level {
-			if quantity == 0 {
+			if c.SpellSlots[i].Maximum == 0 {
+				logger.Warnf("Slot level '%d' cannot be recovered because the maximum 0", c.SpellSlots[i].Maximum)
+				return
+			} else if quantity == 0 {
 				c.SpellSlots[i].Available = c.SpellSlots[i].Maximum
 				return
 			}
@@ -863,11 +931,11 @@ func (c *Character) RecoverClassTokens(name string, quantity int) {
 			postCalculater.ExecutePostCalculateMethods(c)
 		}
 
-		tokenClass.RecoverClassTokens("", 0)
+		tokenClass.RecoverClassTokens("", quantity)
 	}
 }
 
-func (c *Character) Equip(isPrimary bool, name string) {
+func (c *Character) Equip(isPrimary bool, name string) error {
 	lowerName := strings.ToLower(name)
 	equipmentFound := false
 
@@ -887,8 +955,7 @@ func (c *Character) Equip(isPrimary bool, name string) {
 	}
 
 	if !equipmentFound {
-		logger.Info(fmt.Sprintf("Weapon or shield '%s' not found, check spelling", name))
-		return
+		return fmt.Errorf("Weapon or shield '%s' not found, check spelling", name)
 	}
 
 	if isPrimary {
@@ -899,13 +966,15 @@ func (c *Character) Equip(isPrimary bool, name string) {
 
 		c.PrimaryEquipped = name
 	} else {
-		// unequip secondary weapon if they only have one and it's already equipped
+		// unequip primary weapon if they only have one and it's already equipped
 		if strings.ToLower(c.PrimaryEquipped) == lowerName && weaponCount < 2 {
 			c.PrimaryEquipped = ""
 		}
 
 		c.SecondaryEquipped = name
 	}
+
+	return nil
 }
 
 func (c *Character) Unequip(isPrimary bool) {

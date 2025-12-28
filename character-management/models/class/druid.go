@@ -10,7 +10,7 @@ import (
 )
 
 type Druid struct {
-	BaseClass
+	models.BaseClass
 	ClassToken     shared.NamedToken `json:"class-token" clover:"class-token"`
 	Circle         string            `json:"circle" clover:"circle"`
 	PreparedSpells []string          `json:"prepared-spells" clover:"prepared-spells"`
@@ -124,32 +124,9 @@ func (d *Druid) executeArchDruid(c *models.Character) {
 	d.ClassToken.Maximum = 0
 }
 
-func (d *Druid) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
-
-	if d.Circle != "" && c.Level > 3 {
-		collegeHeader := fmt.Sprintf("Circle: *%s*\n\n", d.Circle)
-		s = append(s, collegeHeader)
-	}
-
-	if d.ClassToken.Maximum != 0 && d.ClassToken.Name == wildShapeToken {
-		wildShapeSlots := c.GetSlots(d.ClassToken.Available, d.ClassToken.Maximum)
-		biLine := fmt.Sprintf("**Wild Shape Transformations**: %s\n\n", wildShapeSlots)
-		s = append(s, biLine)
-	}
-
-	if len(d.OtherFeatures) > 0 {
-		for _, detail := range d.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
-
-			detailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, detailName)
-			details := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, details)
-		}
-	}
+func (d *Druid) ClassDetails(level int) string {
+	var s string
+	s += formatTokens(d.ClassToken, wildShapeToken, level)
 
 	return s
 }

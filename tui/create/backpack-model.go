@@ -17,11 +17,15 @@ func backpackInputs() []textinput.Model {
 	inputs[itemNameInput].Focus()
 	inputs[itemNameInput].Width = 40
 	inputs[itemNameInput].Prompt = ""
+	inputs[itemNameInput].TextStyle = tertiaryStyle
+	inputs[itemNameInput].Cursor.Style = tertiaryStyle
 
 	inputs[itemQuantityInput] = textinput.New()
 	inputs[itemQuantityInput].Placeholder = "15"
 	inputs[itemQuantityInput].Width = 40
 	inputs[itemQuantityInput].Prompt = ""
+	inputs[itemQuantityInput].TextStyle = tertiaryStyle
+	inputs[itemQuantityInput].Cursor.Style = tertiaryStyle
 
 	return inputs
 }

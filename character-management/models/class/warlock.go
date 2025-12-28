@@ -19,9 +19,8 @@ const (
 )
 
 type Warlock struct {
-	BaseClass
-	OtherworldlyPatron string   `json:"otherworldly-patron" clover:"otherworldly-patron"`
-	Invocations        []string `json:"invocations" clover:"invocations"`
+	models.BaseClass
+	Invocations []string `json:"invocations" clover:"invocations"`
 }
 
 func LoadWarlock(data []byte) (*Warlock, error) {
@@ -49,7 +48,7 @@ func (w *Warlock) executeSpellCastingAbility(c *models.Character) {
 	executeSpellAttackMod(c, chrMod)
 }
 
-// May implement more thoroughly in the future, but most of these invove game state that we can't mock
+// May implement more thoroughly in the future, but most of these involve game state that we can't mock
 // in this app. Will look into in the future when I know more about how this class plays
 func (w *Warlock) executeEldritchInvocations(c *models.Character) {
 	// if c.Level > 2 {
@@ -82,30 +81,13 @@ func applyArmorOfShadows(c *models.Character) bool {
 	return true
 }
 
-func (w *Warlock) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
+func (w *Warlock) ClassDetails(level int) string {
+	var s string
 
-	if w.OtherworldlyPatron != "" && c.Level > 3 {
-		s = append(s, fmt.Sprintf("Otherwordly Patron: *%s*\n\n", w.OtherworldlyPatron))
-	}
-
-	if len(w.Invocations) > 0 && c.Level > 3 {
-		s = append(s, "Invocation:\n\n")
+	if len(w.Invocations) > 0 && level > 3 {
+		s += "Invocation:\n\n"
 		for _, invocation := range w.Invocations {
-			s = append(s, fmt.Sprintf("%s\n", invocation))
-		}
-	}
-
-	if len(w.OtherFeatures) > 0 {
-		for _, detail := range w.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
-
-			detailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, detailName)
-			details := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, details)
+			s += fmt.Sprintf("%s\n", invocation)
 		}
 	}
 

@@ -42,11 +42,12 @@ func (m Model) EquipmentPageView() string {
 
 	// Top padding
 	formContent += strings.Repeat("\n", 2)
-	formContent += "Worn Equipment:\n\n"
+	headerStyle := secondaryStyle.Width(41).Align(lipgloss.Center)
+	formContent += headerStyle.Render("Worn Equipment:") + "\n\n"
 
 	for i := startIdx; i < endIdx; i++ {
 		formContent += fmt.Sprintf("%s\n%s\n",
-			inputStyle.Width(41).Render(labels[i]),
+			primaryStyle.Width(41).Render(labels[i]),
 			m.inputs[i].View(),
 		)
 	}
@@ -59,8 +60,8 @@ func (m Model) EquipmentPageView() string {
 		menuText = "[ back ]"
 	}
 
-	formContent += "\n" + continueStyle.Render(nextText)
-	formContent += "\n" + continueStyle.Render(menuText)
+	formContent += "\n" + secondaryStyle.Render(nextText)
+	formContent += "\n" + secondaryStyle.Render(menuText)
 	formContent = getScrollIndicators(startIdx, endIdx, len(labels), visibleFields) + formContent + m.renderError()
 
 	return lipgloss.Place(

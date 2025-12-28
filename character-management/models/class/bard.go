@@ -11,15 +11,15 @@ import (
 )
 
 type Bard struct {
-	BaseClass
+	models.BaseClass
 	ExpertiseSkills []string          `json:"expertise" clover:"expertise"`
-	College         string            `json:"college" clover:"college"`
 	ClassToken      shared.NamedToken `json:"class-token" clover:"class-token"`
 }
 
-const bardicInspirationToken string = "bardic-inspiration"
-
-const bardSpellCastingAbility string = shared.AbilityCharisma
+const (
+	bardicInspirationToken  string = "bardic-inspiration"
+	bardSpellCastingAbility string = shared.AbilityCharisma
+)
 
 func LoadBard(data []byte) (*Bard, error) {
 	var bard Bard
@@ -59,7 +59,7 @@ func (b *Bard) executeBardicInspiration(c *models.Character) {
 	b.ClassToken.Maximum = c.GetMod(shared.AbilityCharisma)
 }
 
-// At level 3, bards can pick two skills they are proficient in, and double the modifier.
+// At level 3, bards can pick two skills they are proficient in, and double the proficiency.
 // They select two more at level 10
 func (b *Bard) executeExpertise(c *models.Character) {
 	if c.Level < 3 {
@@ -93,41 +93,20 @@ func (b *Bard) executeJackOfAllTrades(c *models.Character) {
 	}
 }
 
-func (b *Bard) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
+func (b *Bard) ClassDetails(level int) string {
+	var s string
+	s += formatTokens(b.ClassToken, bardicInspirationToken, level) + "\n"
 
-	if b.College != "" && c.Level > 3 {
-		collegeHeader := fmt.Sprintf("College: *%s*\n\n", b.College)
-		s = append(s, collegeHeader)
-	}
-
-	if b.ClassToken.Maximum != 0 && b.ClassToken.Name == bardicInspirationToken {
-		bardicSlots := c.GetSlots(b.ClassToken.Available, b.ClassToken.Maximum)
-		s = append(s, fmt.Sprintf("**Bardic Inspiration**: %s\n\n", bardicSlots))
-	}
-
-	if len(b.ExpertiseSkills) > 0 && c.Level >= 3 {
+	if len(b.ExpertiseSkills) > 0 && level >= 3 {
 		expertiseHeader := fmt.Sprintf("Expertise:\n")
-		s = append(s, expertiseHeader)
+		s += expertiseHeader
 
 		for _, exp := range b.ExpertiseSkills {
 			expLine := fmt.Sprintf("- %s\n", exp)
-			s = append(s, expLine)
+			s += expLine
 		}
-		s = append(s, "\n")
-	}
 
-	if len(b.OtherFeatures) > 0 {
-		for _, detail := range b.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
-
-			detailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, detailName)
-			details := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, details)
-		}
+		s += "\n"
 	}
 
 	return s

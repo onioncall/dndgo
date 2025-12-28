@@ -1,6 +1,6 @@
 # Druid Setup
 
-### `circle`
+### `sub-class`
 **Description:**
 Circle is the subclass for Druid. It can be any string and is not case sensitive
 
@@ -28,6 +28,6 @@ Druids can prepare a number of spells equal to their Wisdom modifier + druid lev
 - "Healing Word"
 - "Entangle"
 - "Moonbeam"
-- "Pass Withou Grace"
+- "Pass Without Grace"
 
 

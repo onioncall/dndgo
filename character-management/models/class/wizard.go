@@ -11,9 +11,8 @@ import (
 )
 
 type Wizard struct {
-	BaseClass
+	models.BaseClass
 	SignatureSpells []string `json:"signature-spells" clover:"signature-spells"`
-	ArcaneTradition string   `json:"arcane-tradition" clover:"arcane-tradition"`
 	PreparedSpells  []string `json:"prepared-spells" clover:"prepared-spells"`
 }
 
@@ -85,30 +84,13 @@ func (w *Wizard) executeSignatureSpellValidation(c *models.Character) {
 	}
 }
 
-func (w *Wizard) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
+func (w *Wizard) ClassDetails(level int) string {
+	var s string
 
-	if w.ArcaneTradition != "" && c.Level > 3 {
-		s = append(s, fmt.Sprintf("Arcane Tradition: *School of %s*\n\n", w.ArcaneTradition))
-	}
-
-	if c.Level >= 20 {
-		s = append(s, fmt.Sprintf("Signature Spells:\n"))
+	if level >= 20 {
+		s += fmt.Sprintf("Signature Spells:\n")
 		for _, spell := range w.SignatureSpells {
-			s = append(s, fmt.Sprintf("- %s\n", spell))
-		}
-	}
-
-	if len(w.OtherFeatures) > 0 {
-		for _, detail := range w.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
-
-			name := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, name)
-			detail := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, detail)
+			s += fmt.Sprintf("- %s\n", spell)
 		}
 	}
 

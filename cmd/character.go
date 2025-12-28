@@ -23,6 +23,7 @@ var (
 		Use:   "add",
 		Short: "Add character attributes",
 		Run: func(cmd *cobra.Command, args []string) {
+			a, _ := cmd.Flags().GetString("ability-improvement")
 			l, _ := cmd.Flags().GetString("language")
 			bp, _ := cmd.Flags().GetString("backpack")
 			il, _ := cmd.Flags().GetBool("level")
@@ -32,6 +33,7 @@ var (
 			q, _ := cmd.Flags().GetInt("quantity")
 			t, _ := cmd.Flags().GetInt("temp-hp")
 			n, _ := cmd.Flags().GetString("name")
+			sc, _ := cmd.Flags().GetString("sub-class")
 
 			c, err := db.Repo.GetCharacter()
 			if err != nil {
@@ -44,7 +46,7 @@ var (
 			}
 			if e != "" {
 				if n == "" {
-					logger.Info("Name of equipment can not be left empty")
+					fmt.Println("Name of equipment can not be left empty")
 					return
 				}
 
@@ -52,7 +54,7 @@ var (
 			}
 			if bp != "" {
 				if q <= 0 {
-					logger.Info("Must pass a positive quantity to add")
+					fmt.Println("Must pass a positive quantity to add")
 					return
 				}
 
@@ -66,10 +68,19 @@ var (
 			}
 			if s != "" {
 				err = handlers.AddSpell(c, s)
-
 			}
 			if t != 0 {
 				c.AddTempHp(t)
+			}
+			if sc != "" {
+				c.AddSubClass(sc)
+			}
+			if a != "" {
+				err = c.AddAbilityScoreImprovementItem(q, a)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
 			}
 
 			err = db.Repo.SyncCharacter(*c)
@@ -234,7 +245,8 @@ var (
 					return
 				}
 
-				c.RemoveItemFromPack(bp, q)
+				err = c.RemoveItemFromPack(bp, q)
+				logger.Info(err)
 			} else if s > 0 {
 				c.UseSpellSlot(s)
 			} else if ct != "" {
@@ -365,10 +377,14 @@ var (
 			}
 
 			if p != "" {
-				c.Equip(true, p)
+				err = c.Equip(true, p)
+				if err != nil {
+				}
 			}
 			if s != "" {
-				c.Equip(false, s)
+				err = c.Equip(false, s)
+				if err != nil {
+				}
 			}
 
 			err = handlers.SaveCharacter(c)
@@ -396,7 +412,7 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.Info("Failed to save character data")
+				logger.Error("Failed to save character data")
 				panic(err)
 			}
 
@@ -409,7 +425,44 @@ var (
 
 			err = handlers.SaveCharacter(c)
 			if err != nil {
+				logger.Error("Failed to save character data")
+				panic(err)
+			}
+
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.Error("Failed to process character")
+				panic(err)
+			}
+
+			logger.Info("Character Update Successful")
+		},
+	}
+
+	modifyCmd = &cobra.Command{
+		Use:   "modify",
+		Short: "modify character attributes",
+		Run: func(cmd *cobra.Command, args []string) {
+			a, _ := cmd.Flags().GetString("ability-improvement")
+			q, _ := cmd.Flags().GetInt("quantity")
+
+			c, err := handlers.LoadCharacter()
+			if err != nil {
 				logger.Info("Failed to save character data")
+				panic(err)
+			}
+
+			if a != "" {
+				err = c.ModifyAbilityScoreImprovementItem(q, a)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+			}
+
+			err = handlers.SaveCharacterJson(c)
+			if err != nil {
+				logger.Error("Failed to save character data")
 				panic(err)
 			}
 
@@ -494,9 +547,11 @@ func init() {
 		getCmd,
 		equipCmd,
 		unequipCmd,
+		modifyCmd,
 		importCmd,
 		exportCmd)
 
+	addCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
 	addCmd.Flags().StringP("language", "l", "", "Language to add")
 	addCmd.Flags().StringP("weapon", "w", "", "Weapon to add")
@@ -506,6 +561,7 @@ func init() {
 	addCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
 	addCmd.Flags().IntP("temp-hp", "t", 0, "Add temporary hp")
 	addCmd.Flags().StringP("name", "n", "", "Name of equipment to add")
+	addCmd.Flags().StringP("sub-class", "c", "", "Name of sub-class to add")
 
 	removeCmd.Flags().StringP("language", "l", "", "Language to remove")
 	removeCmd.Flags().StringP("weapon", "w", "", "Weapon to remove")
@@ -530,6 +586,7 @@ func init() {
 
 	equipCmd.Flags().StringP("primary", "p", "", "Equip primary weapon or shield")
 	equipCmd.Flags().StringP("secondary", "s", "", "Equip secondary weapon or shield")
+
 	unequipCmd.Flags().BoolP("primary", "p", false, "Equip primary weapon or shield")
 	unequipCmd.Flags().BoolP("secondary", "s", false, "Equip secondary weapon or shield")
 
@@ -546,4 +603,7 @@ func init() {
 	exportCmd.Flags().StringP("file", "f", "", "Output file name")
 	exportCmd.MarkFlagRequired("name")
 	exportCmd.MarkFlagRequired("file")
+
+	modifyCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
+	modifyCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
 }

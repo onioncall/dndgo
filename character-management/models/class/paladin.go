@@ -10,13 +10,12 @@ import (
 )
 
 type Paladin struct {
-	BaseClass
+	models.BaseClass
 	PreparedSpells       []string             `json:"prepared-spells" clover:"prepared-spells"`
 	OathSpells           []string             `json:"oath-spells" clover:"oath-spells"`
 	ClassTokens          []shared.NamedToken  `json:"class-tokens" clover:"class-tokens"`
 	FightingStyle        string               `json:"fighting-style" clover:"fighting-style"`
 	FightingStyleFeature FightingStyleFeature `json:"-" clover:"-"`
-	SacredOath           string               `json:"sacred-oath" clover:"sacred-oath"`
 }
 
 func LoadPaladin(data []byte) (*Paladin, error) {
@@ -132,27 +131,27 @@ func (p *Paladin) executeOathSpells(c *models.Character) {
 	executePreparedSpellsShared(c, p.OathSpells)
 }
 
-func (p *Paladin) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
+func (p *Paladin) ClassDetails(level int) string {
+	var s string
 
 	for _, token := range p.ClassTokens {
-		if token.Maximum == 0 || c.Level < token.Level {
+		if token.Maximum == 0 || level < token.Level {
 			continue
 		}
 
 		switch token.Name {
 		case "divine-sense":
-			tokenSlots := c.GetSlots(token.Available, token.Maximum)
-			s = append(s, fmt.Sprintf("*%s*: %s\n\n", "Divine Sense", tokenSlots))
+			tokenSlots := models.GetSlots(token.Available, token.Maximum)
+			s += fmt.Sprintf("*%s*: %s\n\n", "Divine Sense", tokenSlots)
 		case "lay-on-hands":
-			s = append(s, fmt.Sprintf("*Lay On Hands*: %d/%d\n\n", token.Available, token.Maximum))
+			s += fmt.Sprintf("*Lay On Hands*: %d/%d\n\n", token.Available, token.Maximum)
 		default:
 			logger.Info(fmt.Sprintf("Invalid token name: %s", token.Name))
 			continue
 		}
 	}
 
-	if p.FightingStyleFeature.Name != "" && c.Level >= 2 {
+	if p.FightingStyleFeature.Name != "" && level >= 2 {
 		appliedText := "Requirements for fighting style not met."
 		if p.FightingStyleFeature.IsApplied {
 			appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
@@ -160,21 +159,8 @@ func (p *Paladin) PrintClassDetails(c *models.Character) []string {
 
 		fightingStyleHeader := fmt.Sprintf("**Fighting Style**: *%s*\n", p.FightingStyleFeature.Name)
 		fightingStyleDetail := fmt.Sprintf("%s\n%s\n\n", p.FightingStyleFeature.Details, appliedText)
-		s = append(s, fightingStyleHeader)
-		s = append(s, fightingStyleDetail)
-	}
-
-	if len(p.OtherFeatures) > 0 {
-		for _, detail := range p.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
-
-			detailName := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, detailName)
-			details := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, details)
-		}
+		s += fightingStyleHeader
+		s += fightingStyleDetail
 	}
 
 	return s

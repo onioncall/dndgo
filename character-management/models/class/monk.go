@@ -10,12 +10,11 @@ import (
 )
 
 type Monk struct {
-	BaseClass
-	MartialArts     string            `json:"-" clover:"-"`
-	ClassToken      shared.NamedToken `json:"class-token" clover:"class-token"`
-	KiSpellSaveDC   int               `json:"-" clover:"-"`
-	MosaicTradition string            `json:"mosaic-tradition" clover:"mosaic-tradition"`
-	DeflectMissles  int               `json:"-" clover:"-"`
+	models.BaseClass
+	MartialArts    string            `json:"-" clover:"-"`
+	ClassToken     shared.NamedToken `json:"class-token" clover:"class-token"`
+	KiSpellSaveDC  int               `json:"-" clover:"-"`
+	DeflectMissles int               `json:"-" clover:"-"`
 }
 
 const kiPointsToken string = "ki-points"
@@ -110,38 +109,20 @@ func (m *Monk) executeDiamondSoul(c *models.Character) {
 	}
 }
 
-func (m *Monk) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
+func (m *Monk) ClassDetails(level int) string {
+	var s string
 
 	martialArts := fmt.Sprintf("*Martial Arts*: %s\n\n", m.MartialArts)
-	s = append(s, martialArts)
+	s += martialArts
 
 	if m.ClassToken.Maximum != 0 && m.ClassToken.Name == kiPointsToken {
-		s = append(s, fmt.Sprintf("*Ki Points*: %d/%d\n\n", m.ClassToken.Available, m.ClassToken.Maximum))
-		s = append(s, fmt.Sprintf("*Ki Spell Save DC*: %d\n\n", m.KiSpellSaveDC))
+		s += fmt.Sprintf("*Ki Points*: %d/%d\n\n", m.ClassToken.Available, m.ClassToken.Maximum)
+		s += fmt.Sprintf("*Ki Spell Save DC*: %d\n\n", m.KiSpellSaveDC)
 	}
 
 	if m.DeflectMissles > 0 {
 		deflectMissles := fmt.Sprintf("*Deflect Missles Damage Reduction*: %d", m.DeflectMissles)
-		s = append(s, deflectMissles)
-	}
-
-	if c.Level > 3 {
-		mosaicTradition := fmt.Sprintf("*Mosaic Tradition*: %s\n\n", m.MosaicTradition)
-		s = append(s, mosaicTradition)
-	}
-
-	if len(m.OtherFeatures) > 0 {
-		for _, detail := range m.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
-
-			name := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, name)
-			detail := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, detail)
-		}
+		s += deflectMissles
 	}
 
 	return s

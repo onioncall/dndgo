@@ -8,9 +8,8 @@ import (
 )
 
 type Rogue struct {
-	BaseClass
+	models.BaseClass
 	ExpertiseSkills []string `json:"expertise" clover:"expertise"`
-	Archetype       string   `json:"archetype" clover:"archetype"`
 	SneakAttack     string   `json:"-" clover:"-"`
 }
 
@@ -72,29 +71,23 @@ func (r *Rogue) executeSneakAttack(c *models.Character) {
 	}
 }
 
-func (r *Rogue) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
+func (r *Rogue) ClassDetails(level int) string {
+	var s string
+
+	if len(r.ExpertiseSkills) > 0 {
+		expertiseHeader := fmt.Sprintf("Expertise:\n")
+		s += expertiseHeader
+
+		for _, exp := range r.ExpertiseSkills {
+			expLine := fmt.Sprintf("- %s\n", exp)
+			s += expLine
+		}
+
+		s += "\n"
+	}
 
 	sneakAttackLine := fmt.Sprintf("*Sneak Attack*: %s\n\n", r.SneakAttack)
-	s = append(s, sneakAttackLine)
-
-	if r.Archetype != "" && c.Level > 3 {
-		archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", r.Archetype)
-		s = append(s, archetypeHeader)
-	}
-
-	if len(r.OtherFeatures) > 0 {
-		for _, detail := range r.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
-
-			name := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, name)
-			detail := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, detail)
-		}
-	}
+	s += sneakAttackLine
 
 	return s
 }

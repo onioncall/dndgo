@@ -18,7 +18,6 @@ func (m Model) SkillsPageView() string {
 
 	availableLines := m.height - headerLines - footerLines
 	visibleFields := max(availableLines/linesPerField, 1)
-
 	startIdx := m.viewportOffset
 	endIdx := min(startIdx+visibleFields, len(m.inputs))
 
@@ -26,12 +25,13 @@ func (m Model) SkillsPageView() string {
 
 	// Top padding
 	formContent += strings.Repeat("\n", 2)
-	formContent += "Skill Proficiencies:\n\n"
+	headerStyle := secondaryStyle.Width(70).Align(lipgloss.Center)
+	formContent += headerStyle.Render("Skill Proficiencies:") + "\n\n"
 
 	for i := startIdx; i < endIdx; i++ {
 		formContent += fmt.Sprintf("%s %s %s\n",
-			inputStyle.Width(30).Render(skillToAbility[i].ability),
-			inputStyle.Width(30).Render(skillToAbility[i].name),
+			primaryStyle.Width(30).Render(skillToAbility[i].ability),
+			primaryStyle.Width(30).Render(skillToAbility[i].name),
 			m.inputs[i].View(),
 		)
 	}
@@ -44,8 +44,8 @@ func (m Model) SkillsPageView() string {
 		menuText = "[ back ]"
 	}
 
-	formContent += "\n" + continueStyle.Render(nextText)
-	formContent += "\n" + continueStyle.Render(menuText)
+	formContent += "\n" + secondaryStyle.Render(nextText)
+	formContent += "\n" + secondaryStyle.Render(menuText)
 	formContent = getScrollIndicators(startIdx, endIdx, len(skillToAbility), visibleFields) + formContent + m.renderError()
 
 	return lipgloss.Place(

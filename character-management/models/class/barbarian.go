@@ -11,7 +11,7 @@ import (
 )
 
 type Barbarian struct {
-	BaseClass
+	models.BaseClass
 	Path            string            `json:"path" clover:"path"`
 	ClassToken      shared.NamedToken `json:"class-token" clover:"class-token"`
 	RageDamage      int               `json:"-" clover:"-"`
@@ -64,7 +64,7 @@ func (b *Barbarian) executeRage(c *models.Character) {
 	case c.Level < 20:
 		b.ClassToken.Maximum = 6
 	case c.Level >= 20:
-		b.ClassToken.Maximum = 0 //unlimited
+		b.ClassToken.Maximum = 0 // unlimited
 	}
 
 	// Unfortunately these don't line up and putting them in the same switch is gross
@@ -125,32 +125,12 @@ func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 	executeUnarmoredDefenseShared(c, barbarianExpertiseAbilityModifiers)
 }
 
-func (b *Barbarian) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
+func (b *Barbarian) ClassDetails(level int) string {
+	var s string
 
-	if b.ClassToken.Maximum != 0 && b.ClassToken.Name == rageToken {
-		rageSlots := c.GetSlots(b.ClassToken.Available, b.ClassToken.Maximum)
-		rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n\n", rageSlots, b.RageDamage)
-		s = append(s, rageLine)
-	}
-
-	if b.Path != "" && c.Level > 3 {
-		pathHeader := fmt.Sprintf("Primal Path: *%s*\n\n", b.Path)
-		s = append(s, pathHeader)
-	}
-
-	if len(b.OtherFeatures) > 0 {
-		for _, detail := range b.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
-
-			detailHeader := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, detailHeader)
-			detail := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, detail)
-		}
-	}
+	rageSlots := formatTokens(b.ClassToken, rageToken, level)
+	rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n", rageSlots, b.RageDamage)
+	s += rageLine
 
 	return s
 }

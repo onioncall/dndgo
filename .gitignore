@@ -1,2 +1,6 @@
 dndgo
 dnd-cli
+dndgo.exe
+
+.vscode/
+dist/

@@ -9,24 +9,6 @@ import (
 	"github.com/onioncall/dndgo/logger"
 )
 
-type BaseClass struct {
-	CharacterID   string                `json:"character-id" clover:"character-id"`
-	ClassName     string                `json:"class-name" clover:"class-name"`
-	OtherFeatures []models.ClassFeature `json:"other-features" clover:"other-features"`
-}
-
-func (c BaseClass) GetCharacterId() string {
-	return c.CharacterID
-}
-
-func (c BaseClass) SetCharacterId(id string) {
-	c.CharacterID = id
-}
-
-func (c BaseClass) GetClassName() string {
-	return c.ClassName
-}
-
 func executeExpertiseShared(c *models.Character, expertiseSkills []string) {
 	if c.Level < 3 {
 		return
@@ -45,7 +27,7 @@ func executeExpertiseShared(c *models.Character, expertiseSkills []string) {
 	seen := make(map[string]bool)
 	for _, profToDouble := range expertiseSkills {
 		if seen[profToDouble] == true {
-			logger.Info("Bard Config Error - Expertise can not have dupliate proficiencies")
+			logger.Info("Class Config Error - Expertise can not have dupliate proficiencies")
 			return
 		}
 		seen[profToDouble] = true
@@ -93,16 +75,6 @@ func executeSpellSaveDC(c *models.Character, abilityMod int) {
 
 func executeSpellAttackMod(c *models.Character, abilityMod int) {
 	c.SpellAttackMod = c.Proficiency + abilityMod
-}
-
-func buildClassDetailsHeader() []string {
-	s := make([]string, 0, 100)
-	header := fmt.Sprintf("Class Details\n")
-	spacer := fmt.Sprintf("---\n")
-	s = append(s, header)
-	s = append(s, spacer)
-
-	return s
 }
 
 // Applies bonus for fighting style, and returns feature with details and weather or not the feature was applied
@@ -305,6 +277,17 @@ func fullTokenRecovery(tokens []shared.NamedToken) {
 	for i := range tokens {
 		tokens[i].Available = tokens[i].Maximum
 	}
+}
+
+func formatTokens(token shared.NamedToken, tokenName string, level int) string {
+	var s string
+
+	if token.Maximum > 0 && token.Name == tokenName && level >= token.Level {
+		slots := models.GetSlots(token.Available, token.Maximum)
+		s += fmt.Sprintf("%s: %s\n", tokenName, slots)
+	}
+
+	return s
 }
 
 // this is only used for classes that have mutliple tokens types to implement

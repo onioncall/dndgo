@@ -11,8 +11,7 @@ import (
 )
 
 type Fighter struct {
-	BaseClass
-	Archetype            string               `json:"archetype" clover:"archetype"`
+	models.BaseClass
 	FightingStyle        string               `json:"fighting-style" clover:"fighting-style"`
 	FightingStyleFeature FightingStyleFeature `json:"-" clover:"-"`
 	ClassTokens          []shared.NamedToken  `json:"class-tokens" clover:"class-tokens"`
@@ -74,25 +73,8 @@ func (f *Fighter) executeFightingStyle(c *models.Character) {
 	}
 }
 
-func (f *Fighter) PrintClassDetails(c *models.Character) []string {
-	s := buildClassDetailsHeader()
-
-	if f.Archetype != "" && c.Level > 3 {
-		archetypeHeader := fmt.Sprintf("Archetype: *%s*\n\n", f.Archetype)
-		s = append(s, archetypeHeader)
-	}
-
-	if f.FightingStyleFeature.Name != "" && c.Level >= 2 {
-		appliedText := "Requirements for fighting style not met."
-		if f.FightingStyleFeature.IsApplied {
-			appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
-		}
-
-		fightingStyleHeader := fmt.Sprintf("**Fighting Style**: *%s*\n", f.FightingStyleFeature.Name)
-		fightingStyleDetail := fmt.Sprintf("%s\n%s\n\n", f.FightingStyleFeature.Details, appliedText)
-		s = append(s, fightingStyleHeader)
-		s = append(s, fightingStyleDetail)
-	}
+func (f *Fighter) ClassDetails(level int) string {
+	var s string
 
 	for _, token := range f.ClassTokens {
 		tokenHeader := ""
@@ -109,35 +91,28 @@ func (f *Fighter) PrintClassDetails(c *models.Character) []string {
 			continue
 		}
 
-		if token.Maximum != 0 && c.Level >= token.Level {
-			actionSurgeSlots := c.GetSlots(token.Available, token.Maximum)
-			line := fmt.Sprintf("**%s**: %s\n\n", tokenHeader, actionSurgeSlots)
-			s = append(s, line)
-		}
+		s += formatTokens(token, tokenHeader, level)
 	}
 
-	if len(f.OtherFeatures) > 0 {
-		for _, detail := range f.OtherFeatures {
-			if detail.Level > c.Level {
-				continue
-			}
-
-			name := fmt.Sprintf("---\n**%s**\n", detail.Name)
-			s = append(s, name)
-			detail := fmt.Sprintf("%s\n", detail.Details)
-			s = append(s, detail)
+	if f.FightingStyleFeature.Name != "" && level >= 2 {
+		appliedText := "Requirements for fighting style not met."
+		if f.FightingStyleFeature.IsApplied {
+			appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
 		}
+
+		fightingStyleHeader := fmt.Sprintf("**Fighting Style**: *%s*\n", f.FightingStyleFeature.Name)
+		fightingStyleDetail := fmt.Sprintf("%s\n%s\n\n", f.FightingStyleFeature.Details, appliedText)
+		s += fightingStyleHeader
+		s += fightingStyleDetail
 	}
 
 	return s
 }
 
 func (f *Fighter) AddFightingStyleFeature(feature models.ClassFeature) {
-
 }
 
 func (f *Fighter) RemoveFightingStyleFeature(feature models.ClassFeature) {
-
 }
 
 // CLI

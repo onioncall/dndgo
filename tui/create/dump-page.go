@@ -114,7 +114,10 @@ func (m Model) DumpUpdate(msg tea.Msg) (Model, tea.Cmd) {
 		case "ctrl+c":
 			return m, tea.Quit
 		case "esc":
-			return m, func() tea.Msg { return tui.NavigateMsg{Page: tui.MenuPage} }
+			return m, tea.Batch(
+				func() tea.Msg { return tui.NavigateMsg{Page: tui.MenuPage} },
+				func() tea.Msg { return tui.ReloadCharacterMsg{} },
+			)
 		case "up", "k":
 			if m.viewportOffset > 0 {
 				m.viewportOffset--

@@ -6,8 +6,8 @@ require (
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/onioncall/wrapt v0.0.1
 	github.com/ostafen/clover/v2 v2.0.0-alpha.3
+	github.com/onioncall/wrapt v0.0.2
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/term v0.31.0
 )
