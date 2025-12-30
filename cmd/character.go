@@ -352,6 +352,7 @@ var (
 			}
 
 			class.SetCharacterId(cid)
+			class.SetClassName(c)
 
 			if err = db.Repo.InsertClass(class); err != nil {
 				errMsg := "Failed to save class data"

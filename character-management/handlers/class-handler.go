@@ -29,7 +29,7 @@ var ClassFileMap = map[string]string{
 
 func LoadClass(characterId string, className string) (models.Class, error) {
 	// Filthy trick, we can use loadClassDataFromType an empty instance of the correct class
-	c, err := loadClassDataFromType(className, make([]byte, 0))
+	c, err := loadClassDataFromType(className, []byte("{}"))
 	if err != nil {
 		return nil, fmt.Errorf("Failed to load class type:\n%w", err)
 	}
@@ -67,7 +67,7 @@ func SaveClassHandler(c models.Class) error {
 
 func loadClassData(classData []byte) (models.Class, error) {
 	var baseClass models.BaseClass
-	if err := json.Unmarshal(classData, baseClass); err != nil {
+	if err := json.Unmarshal(classData, &baseClass); err != nil {
 		return nil, fmt.Errorf("Failed to unmarshal class data to base struct:\n%w", err)
 	}
 
@@ -120,7 +120,7 @@ func ImportClassJson(classJson []byte) error {
 		return fmt.Errorf("No CharacterID found. CharacterID is required.")
 	}
 
-	ec, err := loadClassDataFromType(c.GetClassName(), make([]byte, 0))
+	ec, err := loadClassDataFromType(c.GetClassName(), []byte("{}"))
 	if err != nil {
 		return fmt.Errorf("Failed to load existing class data:\n%w", err)
 	}
