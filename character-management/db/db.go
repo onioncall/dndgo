@@ -55,9 +55,19 @@ func newRepository() (*Repository, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Failed to open dndgo db: %w", err)
 	}
-	return &Repository{
+
+	r := &Repository{
 		db: db,
-	}, nil
+	}
+
+	if err := r.createCollection(character_collection); err != nil {
+		return nil, fmt.Errorf("Failed to create or locate characters collection: %w", err)
+	}
+	if err := r.createCollection(class_collection); err != nil {
+		return nil, fmt.Errorf("Failed to create or locate class collection: %w", err)
+	}
+
+	return r, nil
 }
 
 func (r Repository) Deinit() error {
@@ -67,10 +77,6 @@ func (r Repository) Deinit() error {
 // InsertCharacter creates a new character in the db
 // Returns the inserted character ID
 func (r Repository) InsertCharacter(character models.Character) (string, error) {
-	if err := r.createCollection(character_collection); err != nil {
-		return "", fmt.Errorf("Failed to create or locate characters collection: %w", err)
-	}
-
 	doc := cdocument.NewDocumentOf(character)
 	docId, err := r.db.InsertOne(character_collection, doc)
 	if err != nil {
@@ -150,10 +156,6 @@ func (r Repository) SyncCharacter(character models.Character) error {
 
 // InsertClass creates a new class record in the db
 func (r Repository) InsertClass(class models.Class) error {
-	if err := r.createCollection(class_collection); err != nil {
-		return fmt.Errorf("Failed to create or locate classes collection: %w", err)
-	}
-
 	doc := cdocument.NewDocumentOf(class)
 	_, err := r.db.InsertOne(class_collection, doc)
 	if err != nil {
