@@ -43,7 +43,7 @@ func LoadClass(characterId string, className string) (models.Class, error) {
 }
 
 func LoadClassTemplate(classType string) (models.Class, error) {
-	templateName := ClassFileMap[classType]
+	templateName := ClassFileMap[strings.ToLower(classType)]
 	if templateName == "" {
 		return nil, fmt.Errorf("Unsupported class '%s'", classType)
 	}

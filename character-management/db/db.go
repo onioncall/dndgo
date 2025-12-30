@@ -90,6 +90,12 @@ func (r Repository) GetCharacter() (*models.Character, error) {
 	}
 
 	res := models.Character{}
+
+	// No default character found. May be expected, caller should handle nil.
+	if doc == nil {
+		return nil, nil
+	}
+
 	if err = doc.Unmarshal(&res); err != nil {
 		return nil, fmt.Errorf("Failed to unmarshal db record into character struct:\n%w", err)
 	}
@@ -165,6 +171,10 @@ func (r Repository) GetClass(chid string, obj models.Class) error {
 	)
 	if err != nil {
 		return fmt.Errorf("Failed to retrieve class from db: %w", err)
+	}
+
+	if doc == nil {
+		return nil
 	}
 
 	if err = doc.Unmarshal(obj); err != nil {

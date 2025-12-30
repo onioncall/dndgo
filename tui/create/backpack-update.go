@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/onioncall/dndgo/character-management/db"
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
@@ -41,9 +40,9 @@ func (m Model) UpdateBackpackPage(msg tea.Msg) (Model, tea.Cmd) {
 
 				return m, nil
 			} else if m.nextButtonFocused {
-				_, err := db.Repo.InsertCharacter(*m.character)
+				err := handlers.CreateCharacter(m.character)
 				if err != nil {
-					logger.Info("Failed to save character json")
+					logger.Info("Failed to create character:\n%v", err.Error())
 				}
 				class, err := handlers.LoadClassTemplate(strings.ToLower(m.character.ClassName))
 				if err != nil {

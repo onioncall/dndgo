@@ -85,6 +85,35 @@ func GetConfigPath() (string, error) {
 	return configDir, nil
 }
 
+func CreateCharacter(c *models.Character) error {
+	ex, err := db.Repo.GetCharacter()
+	if err != nil {
+		return fmt.Errorf("Failed to check for existing default character during creation:\n%w", err)
+	}
+
+	if ex == nil {
+		c.Default = true
+	}
+
+	cid, err := db.Repo.InsertCharacter(*c)
+	if err != nil {
+		return fmt.Errorf("Failed to insert new character:\n%w", err)
+	}
+
+	if c.Class == nil && c.ClassName != "" {
+		c.Class, err = LoadClassTemplate(c.ClassName)
+	}
+
+	if c.Class != nil {
+		c.Class.SetCharacterId(cid)
+		c.Class.SetClassName(c.ClassName)
+
+		db.Repo.InsertClass(c.Class)
+	}
+
+	return nil
+}
+
 func SaveCharacter(c *models.Character) error {
 	return db.Repo.SyncCharacter(*c)
 }
@@ -95,7 +124,7 @@ func LoadCharacter() (*models.Character, error) {
 		return nil, fmt.Errorf("failed to retrieve character from db:\n%w", err)
 	}
 
-	if character.ClassName != "" {
+	if character != nil && character.ClassName != "" {
 		class, err := LoadClass(character.ID, character.ClassName)
 		if err != nil {
 			return nil, fmt.Errorf("failed to load class file: %w", err)
