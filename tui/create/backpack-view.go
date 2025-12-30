@@ -16,7 +16,7 @@ func (m Model) BackpackPageView() string {
 	// Top padding
 	formContent += strings.Repeat("\n", 2)
 	headerStyle := secondaryStyle.Width(41).Align(lipgloss.Center)
-	formContent += headerStyle.Render("Backpack Invenotry:") + "\n\n"
+	formContent += headerStyle.Render("Backpack Inventory:") + "\n\n"
 
 	formContent += fmt.Sprintf("%s\n%s\n\n",
 		primaryStyle.Width(41).Render("Item Name"),
