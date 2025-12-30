@@ -42,7 +42,7 @@ func HandleCharacter(c *models.Character) error {
 	res := c.BuildCharacter()
 	err := SaveCharacterMarkdown(res, c.Path)
 	if err != nil {
-		return fmt.Errorf("Failed to save character markdown, Path: %s\nError: %s", c.Path, err)
+		return fmt.Errorf("Failed to save character markdown, Path: %s Error: %s", c.Path, err)
 	}
 
 	return nil
@@ -88,7 +88,7 @@ func GetConfigPath() (string, error) {
 func CreateCharacter(c *models.Character) error {
 	ex, err := db.Repo.GetCharacter()
 	if err != nil {
-		return fmt.Errorf("Failed to check for existing default character during creation:\n%w", err)
+		return fmt.Errorf("Failed to check for existing default character during creation: %w", err)
 	}
 
 	if ex == nil {
@@ -97,7 +97,7 @@ func CreateCharacter(c *models.Character) error {
 
 	cid, err := db.Repo.InsertCharacter(*c)
 	if err != nil {
-		return fmt.Errorf("Failed to insert new character:\n%w", err)
+		return fmt.Errorf("Failed to insert new character: %w", err)
 	}
 
 	if c.Class == nil && c.ClassName != "" {
@@ -121,7 +121,7 @@ func SaveCharacter(c *models.Character) error {
 func LoadCharacter() (*models.Character, error) {
 	character, err := db.Repo.GetCharacter()
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve character from db:\n%w", err)
+		return nil, fmt.Errorf("failed to retrieve character from db: %w", err)
 	}
 
 	if character != nil && character.ClassName != "" {
@@ -197,7 +197,7 @@ func ClearFile(filePath string) error {
 func ImportCharacterJson(characterJson []byte) error {
 	var ch models.Character
 	if err := json.Unmarshal(characterJson, &ch); err != nil {
-		return fmt.Errorf("Parsing error on character json content:\n%w", err)
+		return fmt.Errorf("Parsing error on character json content: %w", err)
 	}
 
 	if ch.ID == "" {
@@ -210,11 +210,11 @@ func ImportCharacterJson(characterJson []byte) error {
 		}
 
 		if _, err := db.Repo.InsertCharacter(ch); err != nil {
-			return fmt.Errorf("Failed to create character:\n%w", err)
+			return fmt.Errorf("Failed to create character: %w", err)
 		}
 	} else {
 		if err := db.Repo.SyncCharacter(ch); err != nil {
-			return fmt.Errorf("Failed to update character:\n%w", err)
+			return fmt.Errorf("Failed to update character: %w", err)
 		}
 	}
 
@@ -224,12 +224,12 @@ func ImportCharacterJson(characterJson []byte) error {
 func ExportCharacterJson(characterName string) ([]byte, error) {
 	ch, err := db.Repo.GetCharacterByName(characterName)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to locate character with name '%v':\n%w", characterName, err)
+		return nil, fmt.Errorf("Failed to locate character with name '%v': %w", characterName, err)
 	}
 
 	data, err := json.MarshalIndent(ch, "", "    ")
 	if err != nil {
-		return nil, fmt.Errorf("Failed to parse existing character '%v':\n%w", characterName, err)
+		return nil, fmt.Errorf("Failed to parse existing character '%v': %w", characterName, err)
 	}
 	return data, nil
 }

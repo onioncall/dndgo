@@ -487,6 +487,7 @@ var (
 			var entity string
 			isClass, _ := cmd.Flags().GetBool("class")
 			filePath, _ := cmd.Flags().GetString("file")
+			characterName, _ := cmd.Flags().GetString("character-name")
 
 			bytes, err := os.ReadFile(filePath)
 			if err != nil {
@@ -495,7 +496,7 @@ var (
 
 			if isClass {
 				entity = "Class"
-				handlers.ImportClassJson(bytes)
+				handlers.ImportClassJson(bytes, characterName)
 			} else {
 				entity = "Character"
 				handlers.ImportCharacterJson(bytes)
@@ -596,8 +597,10 @@ func init() {
 
 	importCmd.Flags().BoolP("class", "c", false, "Import Class file (default: Character)")
 	importCmd.Flags().StringP("file", "f", "", "Relative path to json file")
+	importCmd.Flags().StringP("character-name", "n", "", "Name of character, used for class imports")
 	importCmd.MarkFlagRequired("file")
 	importCmd.MarkFlagFilename("file")
+	importCmd.MarkFlagsRequiredTogether("class", "character-name")
 
 	exportCmd.Flags().BoolP("class", "c", false, "Export Class file (default: Character)")
 	exportCmd.Flags().StringP("name", "n", "", "Name of Character")

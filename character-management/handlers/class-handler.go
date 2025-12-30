@@ -10,6 +10,7 @@ import (
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/models/class"
 	"github.com/onioncall/dndgo/character-management/shared"
+	"github.com/onioncall/dndgo/logger"
 )
 
 var ClassFileMap = map[string]string{
@@ -28,15 +29,14 @@ var ClassFileMap = map[string]string{
 }
 
 func LoadClass(characterId string, className string) (models.Class, error) {
-	// Filthy trick, we can use loadClassDataFromType an empty instance of the correct class
-	c, err := loadClassDataFromType(className, []byte("{}"))
+	c, err := newClassInst(className)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to load class type:\n%w", err)
+		return nil, fmt.Errorf("Failed to load class type: %w", err)
 	}
 
 	err = db.Repo.GetClass(characterId, c)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to retrieve class from db:\n%w", err)
+		return nil, fmt.Errorf("Failed to retrieve class from db: %w", err)
 	}
 
 	return c, nil
@@ -53,7 +53,7 @@ func LoadClassTemplate(classType string) (models.Class, error) {
 		return nil, fmt.Errorf("Failed to read template class file: %w", err)
 	}
 
-	c, err := loadClassDataFromType(classType, fileData)
+	c, err := loadClassInstFromType(classType, fileData)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to load %s class data: %w", classType, err)
 	}
@@ -65,16 +65,20 @@ func SaveClassHandler(c models.Class) error {
 	return db.Repo.SyncClass(c)
 }
 
-func loadClassData(classData []byte) (models.Class, error) {
+func loadClassInst(classData []byte) (models.Class, error) {
 	var baseClass models.BaseClass
 	if err := json.Unmarshal(classData, &baseClass); err != nil {
-		return nil, fmt.Errorf("Failed to unmarshal class data to base struct:\n%w", err)
+		return nil, fmt.Errorf("Failed to unmarshal class data to base struct: %w", err)
 	}
 
-	return loadClassDataFromType(baseClass.GetClassName(), classData)
+	return loadClassInstFromType(baseClass.GetClassName(), classData)
 }
 
-func loadClassDataFromType(classType string, classData []byte) (models.Class, error) {
+func newClassInst(classType string) (models.Class, error) {
+	return loadClassInstFromType(classType, []byte("{}"))
+}
+
+func loadClassInstFromType(classType string, classData []byte) (models.Class, error) {
 	var c models.Class
 	var err error
 
@@ -110,28 +114,35 @@ func loadClassDataFromType(classType string, classData []byte) (models.Class, er
 	return c, err
 }
 
-func ImportClassJson(classJson []byte) error {
-	c, err := loadClassData(classJson)
+func ImportClassJson(classJson []byte, characterName string) error {
+	c, err := loadClassInst(classJson)
 	if err != nil {
 		return err
 	}
 
-	if c.GetCharacterId() == "" {
-		return fmt.Errorf("No CharacterID found. CharacterID is required.")
+	ch, err := db.Repo.GetCharacterByName(characterName)
+	if err != nil {
+		logger.Errorf("Failed to retrieve character with name '%v'", characterName)
+		return err
 	}
 
-	ec, err := loadClassDataFromType(c.GetClassName(), []byte("{}"))
+	if c.GetCharacterId() != "" && c.GetCharacterId() != ch.ID {
+		logger.Warnf("character-id provided in json '%v' does not match ID of character '%v', this value will not be included in the import", c.GetCharacterId(), characterName)
+	}
+	c.SetCharacterId(ch.ID)
+
+	ec, err := newClassInst(c.GetClassName())
 	if err != nil {
-		return fmt.Errorf("Failed to load existing class data:\n%w", err)
+		return fmt.Errorf("Failed to load existing class data: %w", err)
 	}
 	err = db.Repo.GetClass(c.GetCharacterId(), ec)
 	if err != nil {
-		return fmt.Errorf("Failed to retrieve existing class data:\n%w", err)
+		return fmt.Errorf("Failed to retrieve existing class data: %w", err)
 	}
 
 	if ec.GetClassName() == "" {
 		if err := db.Repo.InsertClass(c); err != nil {
-			return fmt.Errorf("Failed to create class:\n%w", err)
+			return fmt.Errorf("Failed to create class: %w", err)
 		}
 	} else {
 
@@ -140,7 +151,7 @@ func ImportClassJson(classJson []byte) error {
 		}
 
 		if err := db.Repo.SyncClass(c); err != nil {
-			return fmt.Errorf("Failed to update class:\n%w", err)
+			return fmt.Errorf("Failed to update class: %w", err)
 		}
 	}
 
@@ -150,17 +161,17 @@ func ImportClassJson(classJson []byte) error {
 func ExportClassJson(characterName string) ([]byte, error) {
 	ch, err := db.Repo.GetCharacterByName(characterName)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to locate character with name '%v':\n%w", characterName, err)
+		return nil, fmt.Errorf("Failed to locate character with name '%v': %w", characterName, err)
 	}
 
 	c, err := LoadClass(ch.ID, ch.ClassName)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to locate class for character '%v':\n%w", characterName, err)
+		return nil, fmt.Errorf("Failed to locate class for character '%v': %w", characterName, err)
 	}
 
 	j, err := json.MarshalIndent(c, "", "    ")
 	if err != nil {
-		return nil, fmt.Errorf("Failed to marshal class for character '%v':\n%w", characterName, err)
+		return nil, fmt.Errorf("Failed to marshal class for character '%v': %w", characterName, err)
 	}
 
 	return j, nil
