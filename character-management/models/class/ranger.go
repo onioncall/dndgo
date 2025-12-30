@@ -3,6 +3,7 @@ package class
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
@@ -82,7 +83,7 @@ func (r *Ranger) executeFightingStyle(c *models.Character) {
 		shared.FightingStyleDueling,
 		shared.FightingStyleTwoWeaponFighting)
 
-	switch r.FightingStyle {
+	switch strings.ToLower(r.FightingStyle) {
 	case shared.FightingStyleArchery:
 		r.FightingStyleFeature = applyArchery(c)
 	case shared.FightingStyleDefense:

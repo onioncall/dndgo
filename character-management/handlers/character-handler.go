@@ -205,7 +205,7 @@ func ImportCharacterJson(characterJson []byte) error {
 		if err != nil {
 			return fmt.Errorf("Failed to check for existing 'default' character in db: %w", err)
 		}
-		if existing.ID != "" {
+		if existing == nil {
 			ch.Default = true
 		}
 

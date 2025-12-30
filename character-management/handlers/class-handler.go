@@ -28,6 +28,9 @@ var ClassFileMap = map[string]string{
 	shared.ClassWizard:    "wizard.json",
 }
 
+// Consider refactor to use an actual custom error
+var noClassNameError = fmt.Errorf("No class name provided in class data")
+
 func LoadClass(characterId string, className string) (models.Class, error) {
 	c, err := newClassInst(className)
 	if err != nil {
@@ -82,6 +85,10 @@ func loadClassInstFromType(classType string, classData []byte) (models.Class, er
 	var c models.Class
 	var err error
 
+	if string(classType) == "" {
+		return nil, noClassNameError
+	}
+
 	switch strings.ToLower(classType) {
 	case shared.ClassBarbarian:
 		c, err = class.LoadBarbarian(classData)
@@ -111,19 +118,30 @@ func loadClassInstFromType(classType string, classData []byte) (models.Class, er
 		return nil, fmt.Errorf("Unsupported class type '%s'", classType)
 	}
 
+	c.SetClassName(classType)
+
 	return c, err
 }
 
 func ImportClassJson(classJson []byte, characterName string) error {
-	c, err := loadClassInst(classJson)
-	if err != nil {
-		return err
-	}
-
 	ch, err := db.Repo.GetCharacterByName(characterName)
 	if err != nil {
-		logger.Errorf("Failed to retrieve character with name '%v'", characterName)
-		return err
+		return fmt.Errorf("Failed to retrieve character with name '%v': %w", characterName, err.Error())
+	}
+
+	c, err := loadClassInst(classJson)
+
+	if err != nil {
+		// If json is missing class-name, use class name from character as fallback.
+		// When multiclassing is introduced, this will no longer be an option.
+		if err == noClassNameError {
+			c, err = loadClassInstFromType(ch.ClassName, classJson)
+			if err != nil {
+				return fmt.Errorf("failed to load class: %w", err)
+			}
+		} else {
+			return err
+		}
 	}
 
 	if c.GetCharacterId() != "" && c.GetCharacterId() != ch.ID {
@@ -140,7 +158,7 @@ func ImportClassJson(classJson []byte, characterName string) error {
 		return fmt.Errorf("Failed to retrieve existing class data: %w", err)
 	}
 
-	if ec.GetClassName() == "" {
+	if ec.GetCharacterId() == "" {
 		if err := db.Repo.InsertClass(c); err != nil {
 			return fmt.Errorf("Failed to create class: %w", err)
 		}

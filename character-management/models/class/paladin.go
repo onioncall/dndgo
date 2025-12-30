@@ -3,6 +3,7 @@ package class
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
@@ -70,7 +71,7 @@ func (p *Paladin) executeFightingStyle(c *models.Character) {
 		shared.FightingStyleDueling,
 		shared.FightingStyleProtection)
 
-	switch p.FightingStyle {
+	switch strings.ToLower(p.FightingStyle) {
 	case shared.FightingStyleGreatWeaponFighting:
 		p.FightingStyleFeature = applyGreatWeaponFighting(c)
 	case shared.FightingStyleDefense:
