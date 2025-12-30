@@ -158,7 +158,7 @@ func ExportClassJson(characterName string) ([]byte, error) {
 		return nil, fmt.Errorf("Failed to locate class for character '%v':\n%w", characterName, err)
 	}
 
-	j, err := json.Marshal(c)
+	j, err := json.MarshalIndent(c, "", "    ")
 	if err != nil {
 		return nil, fmt.Errorf("Failed to marshal class for character '%v':\n%w", characterName, err)
 	}
