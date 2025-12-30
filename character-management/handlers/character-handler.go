@@ -167,11 +167,19 @@ func ClearFile(filePath string) error {
 
 func ImportCharacterJson(characterJson []byte) error {
 	var ch models.Character
-	if err := json.Unmarshal(characterJson, ch); err != nil {
+	if err := json.Unmarshal(characterJson, &ch); err != nil {
 		return fmt.Errorf("Parsing error on character json content:\n%w", err)
 	}
 
 	if ch.ID == "" {
+		existing, err := db.Repo.GetCharacter()
+		if err != nil {
+			return fmt.Errorf("Failed to check for existing 'default' character in db: %w", err)
+		}
+		if existing.ID != "" {
+			ch.Default = true
+		}
+
 		if _, err := db.Repo.InsertCharacter(ch); err != nil {
 			return fmt.Errorf("Failed to create character:\n%w", err)
 		}

@@ -120,8 +120,9 @@ func (r Repository) GetCharacterByName(name string) (*models.Character, error) {
 	return &res, nil
 }
 
-// SyncCharacter will update the "Default" character with all
+// SyncCharacter will update the provided Character with all
 // properties in 'character'
+// Update record is based on character.id
 func (r Repository) SyncCharacter(character models.Character) error {
 	bytes, err := json.Marshal(character)
 	if err != nil {
@@ -134,7 +135,7 @@ func (r Repository) SyncCharacter(character models.Character) error {
 		return fmt.Errorf("Failed to unmarshal character to generic map:\n%w", err)
 	}
 
-	if err = r.db.Update(cquery.NewQuery(character_collection).Where(cquery.Field("default").Eq(true)), updates); err != nil {
+	if err = r.db.Update(cquery.NewQuery(character_collection).Where(cquery.Field("_id").Eq(character.ID)), updates); err != nil {
 		return fmt.Errorf("Failed to update character doc:\n%w", err)
 	}
 
