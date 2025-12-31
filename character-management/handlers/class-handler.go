@@ -126,7 +126,7 @@ func loadClassInstFromType(classType string, classData []byte) (models.Class, er
 func ImportClassJson(classJson []byte, characterName string) error {
 	ch, err := db.Repo.GetCharacterByName(characterName)
 	if err != nil {
-		return fmt.Errorf("Failed to retrieve character with name '%v': %w", characterName, err.Error())
+		return fmt.Errorf("Failed to retrieve character with name '%v': %w", characterName, err)
 	}
 
 	c, err := loadClassInst(classJson)

@@ -597,14 +597,14 @@ func init() {
 
 	importCmd.Flags().BoolP("class", "c", false, "Import Class file (default: Character)")
 	importCmd.Flags().StringP("file", "f", "", "Relative path to json file")
-	importCmd.Flags().StringP("character-name", "n", "", "Name of character, used for class imports")
+	importCmd.Flags().StringP("character-name", "n", "", "Name of character, only used when importing Class data")
 	importCmd.MarkFlagRequired("file")
 	importCmd.MarkFlagFilename("file")
 	importCmd.MarkFlagsRequiredTogether("class", "character-name")
 
-	exportCmd.Flags().BoolP("class", "c", false, "Export Class file (default: Character)")
-	exportCmd.Flags().StringP("name", "n", "", "Name of Character")
-	exportCmd.Flags().StringP("file", "f", "", "Output file name")
+	exportCmd.Flags().BoolP("class", "c", false, "Export Class data (will otherwise default to Character data)")
+	exportCmd.Flags().StringP("name", "n", "", "Name of Character to export data for")
+	exportCmd.Flags().StringP("file", "f", "", "Name of output file")
 	exportCmd.MarkFlagRequired("name")
 	exportCmd.MarkFlagRequired("file")
 

@@ -12,7 +12,6 @@ import (
 
 type Barbarian struct {
 	models.BaseClass
-	Path            string            `json:"path" clover:"path"`
 	ClassToken      shared.NamedToken `json:"class-token" clover:"class-token"`
 	RageDamage      int               `json:"-" clover:"-"`
 	PrimalKnowledge []string          `json:"primal-knowledge" clover:"primal-knowledge"`
