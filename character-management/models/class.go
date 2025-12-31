@@ -5,10 +5,12 @@ import (
 )
 
 type BaseClass struct {
-	SubClass string `json:"sub-class"`
+	SubClass    string `json:"sub-class" clover:"sub-class"`
+	CharacterID string `json:"character-id" clover:"character-id"`
+	ClassName   string `json:"class-name" clover:"class-name"`
 	// This will be used when we implement multiclassing
-	Level         int            `json:"level"`
-	OtherFeatures []ClassFeature `json:"other-features"`
+	Level         int            `json:"level" clover:"level"`
+	OtherFeatures []ClassFeature `json:"other-features" clover:"other-features"`
 }
 
 type Class interface {
@@ -17,6 +19,10 @@ type Class interface {
 	GetClassFeatures(level int) string
 	SetSubClass(subClass string)
 	GetSubClass(level int) string
+	GetCharacterId() string
+	SetCharacterId(id string)
+	GetClassName() string
+	SetClassName(name string)
 }
 
 type PostCalculator interface {
@@ -37,6 +43,22 @@ type ClassFeature struct {
 	Name    string `json:"name"`
 	Level   int    `json:"level"`
 	Details string `json:"details"`
+}
+
+func (c *BaseClass) GetCharacterId() string {
+	return c.CharacterID
+}
+
+func (c *BaseClass) SetCharacterId(id string) {
+	c.CharacterID = id
+}
+
+func (c *BaseClass) GetClassName() string {
+	return c.ClassName
+}
+
+func (c *BaseClass) SetClassName(name string) {
+	c.ClassName = name
 }
 
 func (c *BaseClass) GetSubClass(level int) string {

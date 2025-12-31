@@ -11,8 +11,8 @@ import (
 
 type Cleric struct {
 	models.BaseClass
-	ClassToken     shared.NamedToken `json:"class-token"`
-	PreparedSpells []string          `json:"prepared-spells"`
+	ClassToken     shared.NamedToken `json:"class-token" clover:"class-token"`
+	PreparedSpells []string          `json:"prepared-spells" clover:"prepared-spells"`
 }
 
 const channelDivinityToken string = "channel-divinity"

@@ -3,14 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"path/filepath"
 	"strings"
 
+	"github.com/onioncall/dndgo/character-management/db"
 	defaultjsonconfigs "github.com/onioncall/dndgo/character-management/default-json-configs"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/models/class"
 	"github.com/onioncall/dndgo/character-management/shared"
+	"github.com/onioncall/dndgo/logger"
 )
 
 var ClassFileMap = map[string]string{
@@ -28,35 +28,25 @@ var ClassFileMap = map[string]string{
 	shared.ClassWizard:    "wizard.json",
 }
 
-func LoadClass(classType string) (models.Class, error) {
-	homeDir, err := os.UserHomeDir()
+// Consider refactor to use an actual custom error
+var noClassNameError = fmt.Errorf("No class name provided in class data")
+
+func LoadClass(characterId string, className string) (models.Class, error) {
+	c, err := newClassInst(className)
 	if err != nil {
-		fmt.Println(err)
-		return nil, fmt.Errorf("Failed to get home directory: %w", err)
+		return nil, fmt.Errorf("Failed to load class type: %w", err)
 	}
 
-	// We aren't going to require a class file
-	configPath := filepath.Join(homeDir, ".config/dndgo", "class.json")
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return nil, nil
-	}
-
-	fileData, err := os.ReadFile(configPath)
+	err = db.Repo.GetClass(characterId, c)
 	if err != nil {
-		fmt.Println(err)
-		return nil, fmt.Errorf("Failed to read class file: %w", err)
-	}
-
-	c, err := loadClassData(classType, fileData)
-	if err != nil {
-		return nil, fmt.Errorf("Failed to load %s class data: %w", classType, err)
+		return nil, fmt.Errorf("Failed to retrieve class from db: %w", err)
 	}
 
 	return c, nil
 }
 
 func LoadClassTemplate(classType string) (models.Class, error) {
-	templateName := ClassFileMap[classType]
+	templateName := ClassFileMap[strings.ToLower(classType)]
 	if templateName == "" {
 		return nil, fmt.Errorf("Unsupported class '%s'", classType)
 	}
@@ -66,7 +56,7 @@ func LoadClassTemplate(classType string) (models.Class, error) {
 		return nil, fmt.Errorf("Failed to read template class file: %w", err)
 	}
 
-	c, err := loadClassData(classType, fileData)
+	c, err := loadClassInstFromType(classType, fileData)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to load %s class data: %w", classType, err)
 	}
@@ -75,35 +65,29 @@ func LoadClassTemplate(classType string) (models.Class, error) {
 }
 
 func SaveClassHandler(c models.Class) error {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("Error getting home directory: %w", err)
-	}
-
-	configDir := filepath.Join(homeDir, ".config", "dndgo")
-	err = os.MkdirAll(configDir, 0755)
-	if err != nil {
-		return fmt.Errorf("Error creating config directory: %w", err)
-	}
-
-	filePath := filepath.Join(configDir, "class.json")
-
-	characterJSON, err := json.MarshalIndent(c, "", "  ")
-	if err != nil {
-		return fmt.Errorf("Error marshaling character to JSON: %w", err)
-	}
-
-	err = os.WriteFile(filePath, characterJSON, 0644)
-	if err != nil {
-		return fmt.Errorf("Error writing character to file: %w", err)
-	}
-
-	return nil
+	return db.Repo.SyncClass(c)
 }
 
-func loadClassData(classType string, classData []byte) (models.Class, error) {
+func loadClassInst(classData []byte) (models.Class, error) {
+	var baseClass models.BaseClass
+	if err := json.Unmarshal(classData, &baseClass); err != nil {
+		return nil, fmt.Errorf("Failed to unmarshal class data to base struct: %w", err)
+	}
+
+	return loadClassInstFromType(baseClass.GetClassName(), classData)
+}
+
+func newClassInst(classType string) (models.Class, error) {
+	return loadClassInstFromType(classType, []byte("{}"))
+}
+
+func loadClassInstFromType(classType string, classData []byte) (models.Class, error) {
 	var c models.Class
 	var err error
+
+	if string(classType) == "" {
+		return nil, noClassNameError
+	}
 
 	switch strings.ToLower(classType) {
 	case shared.ClassBarbarian:
@@ -134,5 +118,79 @@ func loadClassData(classType string, classData []byte) (models.Class, error) {
 		return nil, fmt.Errorf("Unsupported class type '%s'", classType)
 	}
 
+	c.SetClassName(classType)
+
 	return c, err
+}
+
+func ImportClassJson(classJson []byte, characterName string) error {
+	ch, err := db.Repo.GetCharacterByName(characterName)
+	if err != nil {
+		return fmt.Errorf("Failed to retrieve character with name '%v': %w", characterName, err)
+	}
+
+	c, err := loadClassInst(classJson)
+
+	if err != nil {
+		// If json is missing class-name, use class name from character as fallback.
+		// When multiclassing is introduced, this will no longer be an option.
+		if err == noClassNameError {
+			c, err = loadClassInstFromType(ch.ClassName, classJson)
+			if err != nil {
+				return fmt.Errorf("failed to load class: %w", err)
+			}
+		} else {
+			return err
+		}
+	}
+
+	if c.GetCharacterId() != "" && c.GetCharacterId() != ch.ID {
+		logger.Warnf("character-id provided in json '%v' does not match ID of character '%v', this value will not be included in the import", c.GetCharacterId(), characterName)
+	}
+	c.SetCharacterId(ch.ID)
+
+	ec, err := newClassInst(c.GetClassName())
+	if err != nil {
+		return fmt.Errorf("Failed to load existing class data: %w", err)
+	}
+	err = db.Repo.GetClass(c.GetCharacterId(), ec)
+	if err != nil {
+		return fmt.Errorf("Failed to retrieve existing class data: %w", err)
+	}
+
+	if ec.GetCharacterId() == "" {
+		if err := db.Repo.InsertClass(c); err != nil {
+			return fmt.Errorf("Failed to create class: %w", err)
+		}
+	} else {
+
+		if ec.GetClassName() != c.GetClassName() {
+			return fmt.Errorf("Class switching not supported (%v -> %v)", c.GetClassName(), ec.GetClassName())
+		}
+
+		if err := db.Repo.SyncClass(c); err != nil {
+			return fmt.Errorf("Failed to update class: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func ExportClassJson(characterName string) ([]byte, error) {
+	ch, err := db.Repo.GetCharacterByName(characterName)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to locate character with name '%v': %w", characterName, err)
+	}
+
+	c, err := LoadClass(ch.ID, ch.ClassName)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to locate class for character '%v': %w", characterName, err)
+	}
+
+	j, err := json.MarshalIndent(c, "", "    ")
+	if err != nil {
+		return nil, fmt.Errorf("Failed to marshal class for character '%v': %w", characterName, err)
+	}
+
+	return j, nil
 }

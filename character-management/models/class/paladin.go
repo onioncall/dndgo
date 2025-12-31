@@ -3,6 +3,7 @@ package class
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
@@ -11,11 +12,11 @@ import (
 
 type Paladin struct {
 	models.BaseClass
-	PreparedSpells       []string             `json:"prepared-spells"`
-	OathSpells           []string             `json:"oath-spells"`
-	ClassTokens          []shared.NamedToken  `json:"class-tokens"`
-	FightingStyle        string               `json:"fighting-style"`
-	FightingStyleFeature FightingStyleFeature `json:"-"`
+	PreparedSpells       []string             `json:"prepared-spells" clover:"prepared-spells"`
+	OathSpells           []string             `json:"oath-spells" clover:"oath-spells"`
+	ClassTokens          []shared.NamedToken  `json:"class-tokens" clover:"class-tokens"`
+	FightingStyle        string               `json:"fighting-style" clover:"fighting-style"`
+	FightingStyleFeature FightingStyleFeature `json:"-" clover:"-"`
 }
 
 func LoadPaladin(data []byte) (*Paladin, error) {
@@ -70,7 +71,7 @@ func (p *Paladin) executeFightingStyle(c *models.Character) {
 		shared.FightingStyleDueling,
 		shared.FightingStyleProtection)
 
-	switch p.FightingStyle {
+	switch strings.ToLower(p.FightingStyle) {
 	case shared.FightingStyleGreatWeaponFighting:
 		p.FightingStyleFeature = applyGreatWeaponFighting(c)
 	case shared.FightingStyleDefense:

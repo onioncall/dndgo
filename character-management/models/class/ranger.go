@@ -3,6 +3,7 @@ package class
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
@@ -11,9 +12,9 @@ import (
 
 type Ranger struct {
 	models.BaseClass
-	FightingStyle        string               `json:"fighting-style"`
-	FightingStyleFeature FightingStyleFeature `json:"-"`
-	FavoredEnemies       []string             `json:"favored-enemies"`
+	FightingStyle        string               `json:"fighting-style" clover:"fighting-style"`
+	FightingStyleFeature FightingStyleFeature `json:"-" clover:"-"`
+	FavoredEnemies       []string             `json:"favored-enemies" clover:"favored-enemies"`
 }
 
 func LoadRanger(data []byte) (*Ranger, error) {
@@ -82,7 +83,7 @@ func (r *Ranger) executeFightingStyle(c *models.Character) {
 		shared.FightingStyleDueling,
 		shared.FightingStyleTwoWeaponFighting)
 
-	switch r.FightingStyle {
+	switch strings.ToLower(r.FightingStyle) {
 	case shared.FightingStyleArchery:
 		r.FightingStyleFeature = applyArchery(c)
 	case shared.FightingStyleDefense:

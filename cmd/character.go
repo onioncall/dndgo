@@ -2,10 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/onioncall/dndgo/character-management/db"
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/logger"
+
 	"github.com/spf13/cobra"
 )
 
@@ -32,9 +35,9 @@ var (
 			n, _ := cmd.Flags().GetString("name")
 			sc, _ := cmd.Flags().GetString("sub-class")
 
-			c, err := handlers.LoadCharacter()
+			c, err := db.Repo.GetCharacter()
 			if err != nil {
-				logger.Info("Failed to save character data")
+				logger.Info("Failed to load character data")
 				panic(err)
 			}
 
@@ -80,15 +83,9 @@ var (
 				}
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = db.Repo.SyncCharacter(*c)
 			if err != nil {
 				logger.Info("Failed to save character data")
-				panic(err)
-			}
-
-			err = handlers.SaveClassHandler(c.Class)
-			if err != nil {
-				logger.Info("Failed to save class data")
 				panic(err)
 			}
 
@@ -191,7 +188,7 @@ var (
 				c.UseSpellSlot(u)
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -257,7 +254,7 @@ var (
 				c.UseClassTokens(ct, q)
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -306,7 +303,7 @@ var (
 				c.RecoverClassTokens(ct, q)
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -340,24 +337,27 @@ var (
 				logger.Info("Failed to load character template")
 				panic(err)
 			}
-			err = handlers.SaveCharacterJson(character)
+
+			cid, err := db.Repo.InsertCharacter(*character)
 			if err != nil {
 				logger.Info("Failed to save new character data")
 				panic(err)
 			}
 
-			if c != "" {
-				class, err := handlers.LoadClassTemplate(c)
-				if err != nil {
-					errMsg := "Failed to load class template"
-					logger.Info(errMsg)
-					panic(fmt.Errorf("%s: %w", errMsg, err))
-				}
-				err = handlers.SaveClassHandler(class)
-				if err != nil {
-					logger.Info("Failed to save new class data")
-					panic(err)
-				}
+			class, err := handlers.LoadClassTemplate(c)
+			if err != nil {
+				errMsg := "Failed to load class template"
+				logger.Info(errMsg)
+				panic(fmt.Errorf("%s: %w", errMsg, err))
+			}
+
+			class.SetCharacterId(cid)
+			class.SetClassName(c)
+
+			if err = db.Repo.InsertClass(class); err != nil {
+				errMsg := "Failed to save class data"
+				logger.Info(errMsg)
+				panic(fmt.Errorf("%s: %w", errMsg, err))
 			}
 
 			logger.Info("Character Creation Successful")
@@ -388,7 +388,7 @@ var (
 				}
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Info("Failed to save character data")
 				panic(err)
@@ -424,7 +424,7 @@ var (
 				c.Unequip(false)
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Error("Failed to save character data")
 				panic(err)
@@ -461,7 +461,7 @@ var (
 				}
 			}
 
-			err = handlers.SaveCharacterJson(c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Error("Failed to save character data")
 				panic(err)
@@ -476,10 +476,82 @@ var (
 			logger.Info("Character Update Successful")
 		},
 	}
+
+	importCmd = &cobra.Command{
+		Use:   "import",
+		Short: "Imports a character or class, supports inserts and updates",
+		Long: `Imports a character or class from a json file 
+		Existing characters or classes can be exported via "export" command.
+		Will update existing record if ID is provided in json.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			var entity string
+			isClass, _ := cmd.Flags().GetBool("class")
+			filePath, _ := cmd.Flags().GetString("file")
+			characterName, _ := cmd.Flags().GetString("character-name")
+
+			bytes, err := os.ReadFile(filePath)
+			if err != nil {
+				logger.Errorf("Error reading file '%v':\n%v", filePath, err.Error())
+			}
+
+			if isClass {
+				entity = "Class"
+				handlers.ImportClassJson(bytes, characterName)
+			} else {
+				entity = "Character"
+				handlers.ImportCharacterJson(bytes)
+			}
+
+			logger.Infof("%v Import Successful", entity)
+		},
+	}
+
+	exportCmd = &cobra.Command{
+		Use:   "export",
+		Short: "Exports a character or class to a file",
+		Long: `Exports a character or class to a json file. 
+		Can be altered and re-imported with the "import" command.
+		Will update existing record if ID is provided in json.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			var entity string
+			var data []byte
+			var err error
+			name, _ := cmd.Flags().GetString("name")
+			isClass, _ := cmd.Flags().GetBool("class")
+			filePath, _ := cmd.Flags().GetString("file")
+
+			if isClass {
+				entity = "Class"
+				data, err = handlers.ExportClassJson(name)
+			} else {
+				entity = "Character"
+				data, err = handlers.ExportCharacterJson(name)
+			}
+
+			err = os.WriteFile(filePath, data, 0644)
+			if err != nil {
+				logger.Infof("Failed to write file '%v'", filePath)
+				panic(err)
+			}
+
+			logger.Infof("%v Export Successful", entity)
+		},
+	}
 )
 
 func init() {
-	characterCmd.AddCommand(addCmd, removeCmd, updateCmd, useCmd, recoverCmd, initCmd, getCmd, equipCmd, unequipCmd, modifyCmd)
+	characterCmd.AddCommand(addCmd,
+		removeCmd,
+		updateCmd,
+		useCmd,
+		recoverCmd,
+		initCmd,
+		getCmd,
+		equipCmd,
+		unequipCmd,
+		modifyCmd,
+		importCmd,
+		exportCmd)
 
 	addCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
@@ -511,6 +583,7 @@ func init() {
 
 	initCmd.Flags().StringP("class", "c", "", "Name of character class")
 	initCmd.Flags().StringP("name", "n", "", "Name of character")
+	initCmd.MarkFlagRequired("class")
 	initCmd.MarkFlagRequired("name")
 
 	equipCmd.Flags().StringP("primary", "p", "", "Equip primary weapon or shield")
@@ -521,6 +594,19 @@ func init() {
 
 	getCmd.Flags().StringP("path", "p", "", "Get config or markdown path")
 	getCmd.Flags().BoolP("tokens", "t", false, "Get class tokens")
+
+	importCmd.Flags().BoolP("class", "c", false, "Import Class file (default: Character)")
+	importCmd.Flags().StringP("file", "f", "", "Relative path to json file")
+	importCmd.Flags().StringP("character-name", "n", "", "Name of character, only used when importing Class data")
+	importCmd.MarkFlagRequired("file")
+	importCmd.MarkFlagFilename("file")
+	importCmd.MarkFlagsRequiredTogether("class", "character-name")
+
+	exportCmd.Flags().BoolP("class", "c", false, "Export Class data (will otherwise default to Character data)")
+	exportCmd.Flags().StringP("name", "n", "", "Name of Character to export data for")
+	exportCmd.Flags().StringP("file", "f", "", "Name of output file")
+	exportCmd.MarkFlagRequired("name")
+	exportCmd.MarkFlagRequired("file")
 
 	modifyCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
 	modifyCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")

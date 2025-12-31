@@ -20,7 +20,7 @@ const (
 
 type Warlock struct {
 	models.BaseClass
-	Invocations []string `json:"invocations"`
+	Invocations []string `json:"invocations" clover:"invocations"`
 }
 
 func LoadWarlock(data []byte) (*Warlock, error) {

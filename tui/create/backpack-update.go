@@ -40,17 +40,17 @@ func (m Model) UpdateBackpackPage(msg tea.Msg) (Model, tea.Cmd) {
 
 				return m, nil
 			} else if m.nextButtonFocused {
-				err := handlers.SaveCharacterJson(m.character)
+				err := handlers.CreateCharacter(m.character)
 				if err != nil {
-					logger.Info("Failed to save character json")
+					logger.Error("Failed to create character:", '\n', err.Error())
 				}
 				class, err := handlers.LoadClassTemplate(strings.ToLower(m.character.ClassName))
 				if err != nil {
-					logger.Info("Failed to load class template")
+					logger.Error("Failed to load class template:", '\n', err.Error())
 				}
 				err = handlers.SaveClassHandler(class)
 				if err != nil {
-					logger.Info("Failed to save class handler")
+					logger.Error("Failed to save class:", '\n', err.Error())
 				}
 
 				m.err = nil

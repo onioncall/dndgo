@@ -44,12 +44,12 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c":
 			if m.character != nil {
-				handlers.SaveCharacterJson(m.character)
+				handlers.SaveCharacter(m.character)
 			}
 			return m, tea.Quit
 		case "esc":
 			if m.character != nil {
-				handlers.SaveCharacterJson(m.character)
+				handlers.SaveCharacter(m.character)
 			}
 			return m, func() tea.Msg { return tui.NavigateMsg{Page: tui.MenuPage} }
 		case "tab":
@@ -103,7 +103,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m, m.selectedTabIndex, searchInput = m.executeUserCmd(searchInput, m.selectedTabIndex)
 				m.cmdInput.SetValue("")
 				m.cmdVisible = false
-				handlers.SaveCharacterJson(m.character)
+				handlers.SaveCharacter(m.character)
 				handlers.HandleCharacter(m.character)
 			}
 

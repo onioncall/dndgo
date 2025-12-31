@@ -12,8 +12,8 @@ import (
 
 type Bard struct {
 	models.BaseClass
-	ExpertiseSkills []string          `json:"expertise"`
-	ClassToken      shared.NamedToken `json:"class-token"`
+	ExpertiseSkills []string          `json:"expertise" clover:"expertise"`
+	ClassToken      shared.NamedToken `json:"class-token" clover:"class-token"`
 }
 
 const (

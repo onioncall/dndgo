@@ -9,8 +9,8 @@ import (
 
 type Rogue struct {
 	models.BaseClass
-	ExpertiseSkills []string `json:"expertise"`
-	SneakAttack     string   `json:"-"`
+	ExpertiseSkills []string `json:"expertise" clover:"expertise"`
+	SneakAttack     string   `json:"-" clover:"-"`
 }
 
 func LoadRogue(data []byte) (*Rogue, error) {
