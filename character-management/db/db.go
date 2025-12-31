@@ -13,16 +13,20 @@ import (
 	cquery "github.com/ostafen/clover/v2/query"
 )
 
-const character_collection = "characters"
-const class_collection = "classes"
-const db_dirname = "dndgo"
+const (
+	character_collection = "characters"
+	class_collection     = "classes"
+	db_dirname           = "dndgo"
+)
 
 type Repository struct {
 	db *c.DB
 }
 
-var Repo *Repository
-var once sync.Once
+var (
+	Repo *Repository
+	once sync.Once
+)
 
 func Init() error {
 	var initErr error
@@ -46,7 +50,7 @@ func newRepository() (*Repository, error) {
 
 	dbDir := filepath.Join(xdgData, db_dirname)
 
-	err := os.MkdirAll(dbDir, 0755)
+	err := os.MkdirAll(dbDir, 0o755)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to create data dir at %v:\n%w", dbDir, err)
 	}
@@ -154,6 +158,48 @@ func (r Repository) GetCharacterByName(name string) (*models.Character, error) {
 	res.ID = doc.ObjectId()
 
 	return &res, nil
+}
+
+// Get all character names
+func (r Repository) GetCharacterNames() ([]string, error) {
+	docs, err := r.db.FindAll(cquery.NewQuery(character_collection))
+	if err != nil {
+		return nil, fmt.Errorf("Failed to retrieve characters from db:\n%w", err)
+	}
+
+	result := []string{}
+
+	for _, doc := range docs {
+		character := models.Character{}
+		if err = doc.Unmarshal(&character); err != nil {
+			return nil, fmt.Errorf("Failed to unmarshal db record into character struct:\n%w", err)
+		}
+
+		result = append(result, character.Name)
+	}
+
+	return result, nil
+}
+
+func (r Repository) DeleteCharacter(characterId string) error {
+	err := r.db.DeleteById(character_collection, characterId)
+	if err != nil {
+		return fmt.Errorf("Failed to delete character with Id '%s':\n%w", characterId, err)
+	}
+
+	return nil
+}
+
+// Deletes all classes tied to a specific characterId, and returns an error
+func (r Repository) DeleteClassByCharacterId(characterId string) error {
+	err := r.db.Delete(
+		cquery.NewQuery(class_collection).Where(cquery.Field("character-id").Eq(characterId)),
+	)
+	if err != nil {
+		return fmt.Errorf("Failed to delete class with Id '%s':\n%w", characterId, err)
+	}
+
+	return nil
 }
 
 // SyncCharacter will update the provided Character with all

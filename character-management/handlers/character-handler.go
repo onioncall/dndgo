@@ -14,14 +14,6 @@ import (
 	"github.com/onioncall/dndgo/search/handlers"
 )
 
-const (
-	create   string = "create"
-	update   string = "update"
-	add      string = "add"
-	remove   string = "remove"
-	backpack string = "backpack"
-)
-
 func HandleCharacter(c *models.Character) error {
 	if c.Class != nil {
 		c.HitDice = c.Class.CalculateHitDice(c.Level)
@@ -118,6 +110,25 @@ func SaveCharacter(c *models.Character) error {
 	return db.Repo.SyncCharacter(*c)
 }
 
+func DeleteCharacter(name string) error {
+	character, err := db.Repo.GetCharacterByName(name)
+	if err != nil {
+		return fmt.Errorf("Failed to find character to delete with name '%s':\n%w", name, err)
+	}
+
+	err = db.Repo.DeleteClassByCharacterId(character.ID)
+	if err != nil {
+		return fmt.Errorf("Failed to delete class for character '%s':\n%w", name, err)
+	}
+
+	err = db.Repo.DeleteCharacter(character.ID)
+	if err != nil {
+		return fmt.Errorf("Failed to delete character '%s' (class files were successfully deleted):\n%w", name, err)
+	}
+
+	return nil
+}
+
 func LoadCharacter() (*models.Character, error) {
 	character, err := db.Repo.GetCharacter()
 	if err != nil {
@@ -134,6 +145,10 @@ func LoadCharacter() (*models.Character, error) {
 	}
 
 	return character, nil
+}
+
+func GetCharacterNames() ([]string, error) {
+	return db.Repo.GetCharacterNames()
 }
 
 func LoadCharacterTemplate(characterName string, className string) (*models.Character, error) {
@@ -168,7 +183,7 @@ func SaveCharacterMarkdown(res string, path string) error {
 	path = filepath.Join(homeDir, path, "character.md")
 
 	dir := filepath.Dir(path)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return fmt.Errorf("Error creating directories: %w", err)
 	}
 
@@ -177,7 +192,7 @@ func SaveCharacterMarkdown(res string, path string) error {
 		return fmt.Errorf("Error clearing file: %w", err)
 	}
 
-	err = os.WriteFile(path, []byte(res), 0644)
+	err = os.WriteFile(path, []byte(res), 0o644)
 	if err != nil {
 		return fmt.Errorf("Error writing file: %w", err)
 	}
@@ -186,7 +201,7 @@ func SaveCharacterMarkdown(res string, path string) error {
 }
 
 func ClearFile(filePath string) error {
-	err := os.WriteFile(filePath, []byte{}, 0644)
+	err := os.WriteFile(filePath, []byte{}, 0o644)
 	if err != nil {
 		return fmt.Errorf("failed to clear file: %w", err)
 	}
