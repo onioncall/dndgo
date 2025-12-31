@@ -196,16 +196,25 @@ func ClearFile(filePath string) error {
 
 func ImportCharacterJson(characterJson []byte) error {
 	var ch models.Character
-	if err := json.Unmarshal(characterJson, &ch); err != nil {
+	err := json.Unmarshal(characterJson, &ch)
+	if err != nil {
 		return fmt.Errorf("Parsing error on character json content: %w", err)
 	}
 
-	if ch.ID == "" {
-		existing, err := db.Repo.GetCharacter()
+	var existing *models.Character
+	if ch.ID != "" {
+		existing, err = db.Repo.GetCharacterById(ch.ID)
+		if err != nil {
+			return fmt.Errorf("Failed to check for existing character with specified ID in db: %w", err)
+		}
+	}
+
+	if ch.ID == "" || existing == nil {
+		defaultc, err := db.Repo.GetCharacter()
 		if err != nil {
 			return fmt.Errorf("Failed to check for existing 'default' character in db: %w", err)
 		}
-		if existing == nil {
+		if defaultc == nil {
 			ch.Default = true
 		}
 

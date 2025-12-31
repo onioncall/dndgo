@@ -110,6 +110,30 @@ func (r Repository) GetCharacter() (*models.Character, error) {
 	return &res, nil
 }
 
+// GetCharacterById gets the character with the specified ID
+func (r Repository) GetCharacterById(id string) (*models.Character, error) {
+	doc, err := r.db.FindFirst(
+		cquery.NewQuery(character_collection).Where(cquery.Field("_id").Eq(id)),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to retrieve character from db:\n%w", err)
+	}
+
+	res := models.Character{}
+
+	// No character found. May be expected, caller should handle nil.
+	if doc == nil {
+		return nil, nil
+	}
+
+	if err = doc.Unmarshal(&res); err != nil {
+		return nil, fmt.Errorf("Failed to unmarshal db record into character struct:\n%w", err)
+	}
+	res.ID = doc.ObjectId()
+
+	return &res, nil
+}
+
 // GetCharacterByName gets the character with the provided name
 func (r Repository) GetCharacterByName(name string) (*models.Character, error) {
 	doc, err := r.db.FindFirst(
