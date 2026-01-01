@@ -209,6 +209,7 @@ func (r Repository) GetCharacterNames() ([]string, error) {
 	return result, nil
 }
 
+// Deletes character by Id
 func (r Repository) DeleteCharacter(characterId string) error {
 	err := r.db.DeleteById(character_collection, characterId)
 	if err != nil {
