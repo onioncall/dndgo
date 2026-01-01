@@ -160,6 +160,34 @@ func (r Repository) GetCharacterByName(name string) (*models.Character, error) {
 	return &res, nil
 }
 
+// Returns a slice of default characters
+// There should only ever be one default character. But in the event something gets out of whack, we'll want to return all defaults.
+func (r Repository) GetDefaultCharacters() ([]models.Character, error) {
+	docs, err := r.db.FindAll(
+		cquery.NewQuery(character_collection).Where(cquery.Field("default").Eq(true)),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to retrieve character(s) from db:\n%w", err)
+	}
+
+	// No default characters found
+	if docs == nil {
+		return nil, nil
+	}
+
+	result := []models.Character{}
+	for _, doc := range docs {
+		character := models.Character{}
+		if err = doc.Unmarshal(&character); err != nil {
+			return nil, fmt.Errorf("Failed to unmarshal db record into character struct:\n%w", err)
+		}
+
+		result = append(result, character)
+	}
+
+	return result, nil
+}
+
 // Get all character names
 func (r Repository) GetCharacterNames() ([]string, error) {
 	docs, err := r.db.FindAll(cquery.NewQuery(character_collection))

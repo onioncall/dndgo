@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/onioncall/dndgo/character-management/db"
 	defaultjsonconfigs "github.com/onioncall/dndgo/character-management/default-json-configs"
@@ -78,6 +79,13 @@ func GetConfigPath() (string, error) {
 }
 
 func CreateCharacter(c *models.Character) error {
+	isUnique, err := IsUniqueCharacterName(c.Name)
+	if err != nil {
+		return fmt.Errorf("Failed to create character, unable to determine name uniqueness")
+	} else if !isUnique {
+		return fmt.Errorf("Character name '%s' is not unique", c.Name)
+	}
+
 	ex, err := db.Repo.GetCharacter()
 	if err != nil {
 		return fmt.Errorf("Failed to check for existing default character during creation: %w", err)
@@ -101,6 +109,44 @@ func CreateCharacter(c *models.Character) error {
 		c.Class.SetClassName(c.ClassName)
 
 		db.Repo.InsertClass(c.Class)
+	}
+
+	return nil
+}
+
+// Removes default from other character(s) and sets default for character with provided name
+func SetDefaultCharacter(name string) error {
+	// Getting character first because we don't want to clear the existing default until we know
+	// that this one exists
+	character, err := db.Repo.GetCharacterByName(name)
+	if err != nil {
+		return fmt.Errorf("Failed to get character with name '%s':\n%w", name, err)
+	}
+
+	defaultCharacters, err := db.Repo.GetDefaultCharacters()
+	if err != nil {
+		return fmt.Errorf("Failed to get default characters:\n%w", err)
+	}
+
+	for _, dc := range defaultCharacters {
+		// if we only have one character and it's already the default, there's nothing left to do.
+		if character.Name == dc.Name && len(defaultCharacters) == 1 {
+			return nil
+		}
+
+		dc.Default = false
+		err = db.Repo.SyncCharacter(dc)
+		// We have to decide between a situation where we end up with multiple default characters here by returning early
+		// or having no default characters by logging this error and moving on. Open to changing my mind about this.
+		if err != nil {
+			return fmt.Errorf("Failed to remove default from character '%s':\n%w", dc.Name, err)
+		}
+	}
+
+	character.Default = true
+	err = db.Repo.SyncCharacter(*character)
+	if err != nil {
+		return fmt.Errorf("Failed to update character '%s', to default:\n%w", name, err)
 	}
 
 	return nil
@@ -216,6 +262,13 @@ func ImportCharacterJson(characterJson []byte) error {
 		return fmt.Errorf("Parsing error on character json content: %w", err)
 	}
 
+	isUnique, err := IsUniqueCharacterName(ch.Name)
+	if err != nil {
+		return fmt.Errorf("Failed to create character, unable to determine name uniqueness")
+	} else if !isUnique {
+		return fmt.Errorf("Character name '%s' is not unique", ch.Name)
+	}
+
 	var existing *models.Character
 	if ch.ID != "" {
 		existing, err = db.Repo.GetCharacterById(ch.ID)
@@ -256,4 +309,19 @@ func ExportCharacterJson(characterName string) ([]byte, error) {
 		return nil, fmt.Errorf("Failed to parse existing character '%v': %w", characterName, err)
 	}
 	return data, nil
+}
+
+func IsUniqueCharacterName(name string) (bool, error) {
+	names, err := GetCharacterNames()
+	if err != nil {
+		return false, fmt.Errorf("Failed to evalaute if character name '%s' is unique:\n%w", name, err)
+	}
+
+	for _, en := range names {
+		if strings.EqualFold(name, en) {
+			return false, nil
+		}
+	}
+
+	return true, nil
 }

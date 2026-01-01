@@ -2,13 +2,13 @@ package create
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/onioncall/dndgo/character-management/shared"
 	tui "github.com/onioncall/dndgo/tui/shared"
-	"slices"
 )
 
 func (m Model) UpdateBasicInfoPage(msg tea.Msg) (Model, tea.Cmd) {
@@ -81,6 +81,13 @@ func (m Model) UpdateBasicInfoPage(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m *Model) saveBasicInfo() error {
+	nameValue := m.inputs[nameInput].Value()
+	for _, existing := range m.existingNames {
+		if strings.EqualFold(existing, nameValue) {
+			return fmt.Errorf("A character with this name already exists on this machine, please choose another")
+		}
+	}
+
 	levelValue := m.inputs[levelInput].Value()
 	if levelValue == "" {
 		levelValue = "0"

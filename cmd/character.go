@@ -17,6 +17,15 @@ var (
 		Use:     "character",
 		Short:   "Manage character information",
 		Aliases: []string{"ctr"},
+		Run: func(cmd *cobra.Command, args []string) {
+			d, _ := cmd.Flags().GetString("default")
+			if d != "" {
+				err := handlers.SetDefaultCharacter(d)
+				if err != nil {
+					fmt.Println("Failed to update default character")
+				}
+			}
+		},
 	}
 
 	addCmd = &cobra.Command{
@@ -539,7 +548,11 @@ var (
 				handlers.ImportClassJson(bytes, characterName)
 			} else {
 				entity = "Character"
-				handlers.ImportCharacterJson(bytes)
+				err = handlers.ImportCharacterJson(bytes)
+				if err != nil {
+					logger.Error(err)
+					fmt.Println("Failed to import character character")
+				}
 			}
 
 			logger.Infof("%v Import Successful", entity)
@@ -593,6 +606,8 @@ func init() {
 		modifyCmd,
 		importCmd,
 		exportCmd)
+
+	characterCmd.Flags().StringP("default", "d", "", "Name of character to update to default")
 
 	addCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
