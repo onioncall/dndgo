@@ -17,15 +17,6 @@ var (
 		Use:     "character",
 		Short:   "Manage character information",
 		Aliases: []string{"ctr"},
-		Run: func(cmd *cobra.Command, args []string) {
-			d, _ := cmd.Flags().GetString("default")
-			if d != "" {
-				err := handlers.SetDefaultCharacter(d)
-				if err != nil {
-					fmt.Println("Failed to update default character")
-				}
-			}
-		},
 	}
 
 	addCmd = &cobra.Command{
@@ -257,6 +248,14 @@ var (
 		Use:   "update",
 		Short: "Update character attributes",
 		Run: func(cmd *cobra.Command, args []string) {
+			d, _ := cmd.Flags().GetString("default-character-name")
+			if d != "" {
+				err := handlers.SetDefaultCharacter(d)
+				if err != nil {
+					fmt.Println("Failed to update default character")
+				}
+			}
+
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to save character data")
@@ -652,8 +651,10 @@ func init() {
 	getCmd.Flags().BoolP("tokens", "t", false, "Get class tokens")
 	getCmd.Flags().BoolP("character-names", "c", false, "Get character names")
 
-	deleteCmd.Flags().StringP("name", "n", "", "name of character")
+	deleteCmd.Flags().StringP("name", "n", "", "Name of character to delete")
 	deleteCmd.MarkFlagRequired("name")
+
+	updateCmd.Flags().StringP("default-character-name", "d", "", "Name of character to make default")
 
 	importCmd.Flags().BoolP("class", "c", false, "Import Class file (default: Character)")
 	importCmd.Flags().StringP("file", "f", "", "Relative path to json file")
