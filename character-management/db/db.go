@@ -220,7 +220,7 @@ func (r Repository) DeleteCharacter(characterId string) error {
 }
 
 // Deletes all classes tied to a specific characterId, and returns an error
-func (r Repository) DeleteClassByCharacterId(characterId string) error {
+func (r Repository) DeleteClassesByCharacterId(characterId string) error {
 	err := r.db.Delete(
 		cquery.NewQuery(class_collection).Where(cquery.Field("character-id").Eq(characterId)),
 	)
