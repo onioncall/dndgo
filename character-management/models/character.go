@@ -76,7 +76,7 @@ func (c *Character) calculateSkillModifierFromBase() {
 	for i, skill := range c.Skills {
 		// if this is too slow, I'll refactor this to use a map with the proficiency name as the key
 		for _, a := range c.Abilities {
-			if strings.ToLower(skill.Ability) == strings.ToLower(a.Name) {
+			if strings.EqualFold(skill.Ability, a.Name) {
 				c.Skills[i].SkillModifier = a.AbilityModifier
 
 				if skill.Proficient {
@@ -124,7 +124,7 @@ func (c *Character) calculateAbilityScoreImprovement() {
 
 	for _, item := range c.AbilityScoreImprovement {
 		for i := range c.Abilities {
-			if strings.ToLower(c.Abilities[i].Name) == strings.ToLower(item.Ability) {
+			if strings.EqualFold(c.Abilities[i].Name, item.Ability) {
 				c.Abilities[i].Base += item.Bonus
 				c.Abilities[i].Base = min(20, c.Abilities[i].Base)
 				break
@@ -162,8 +162,8 @@ func (c *Character) calculateAC() {
 	}
 
 	if c.WornEquipment.Shield != "" {
-		if strings.ToLower(c.PrimaryEquipped) == strings.ToLower(c.WornEquipment.Shield) ||
-			strings.ToLower(c.SecondaryEquipped) == strings.ToLower(c.WornEquipment.Shield) {
+		if strings.EqualFold(c.PrimaryEquipped, c.WornEquipment.Shield) ||
+			strings.EqualFold(c.SecondaryEquipped, c.WornEquipment.Shield) {
 			c.AC += 2
 		}
 	}
@@ -223,7 +223,7 @@ func (c *Character) calculateWeaponBonus() {
 
 func (c *Character) GetMod(abilityName string) int {
 	for _, ability := range c.Abilities {
-		if strings.ToLower(ability.Name) == strings.ToLower(abilityName) {
+		if strings.EqualFold(ability.Name, abilityName) {
 			return ability.AbilityModifier
 		}
 	}
@@ -309,8 +309,8 @@ func (c *Character) BuildCharacter() string {
 	builder.WriteString(nl)
 
 	if c.Class != nil {
-		builder.WriteString(fmt.Sprintf("Class Details\n"))
-		builder.WriteString(fmt.Sprintf("---\n"))
+		builder.WriteString("Class Details\n")
+		builder.WriteString("---\n")
 
 		subClass := c.Class.GetSubClass(c.Level)
 		if subClass != "" {
@@ -334,7 +334,7 @@ func (c *Character) BuildCharacter() string {
 }
 
 func (c *Character) BuildHeader() []string {
-	header := fmt.Sprintf("# DnD Character\n\n")
+	header := "# DnD Character\n\n"
 	nameLine := fmt.Sprintf("**Name: %s**\n", c.Name)
 
 	s := []string{header, nameLine}
@@ -364,7 +364,7 @@ func (c *Character) BuildFeats() []string {
 		return s
 	}
 
-	featLine := fmt.Sprintf("- Feats:\n")
+	featLine := "- Feats:\n"
 	s = append(s, featLine)
 
 	for _, feat := range c.Feats {
@@ -378,7 +378,7 @@ func (c *Character) BuildFeats() []string {
 
 func (c *Character) BuildLanguages() []string {
 	s := make([]string, 0, len(c.Languages)+1)
-	languagesLine := fmt.Sprintf("- Languages:\n")
+	languagesLine := "- Languages:\n"
 	s = append(s, languagesLine)
 
 	for _, lang := range c.Languages {
@@ -424,11 +424,11 @@ func (c *Character) BuildGeneralStats() []string {
 
 func (c *Character) BuildAbilities() []string {
 	s := make([]string, 0, len(c.Abilities)+3)
-	profHeader := fmt.Sprintf("*Abilities*\n\n")
+	profHeader := "*Abilities*\n\n"
 	s = append(s, profHeader)
 
-	profTopRow := fmt.Sprintf("| Proficiency  | Base  | Modifier | Saving Throws |\n")
-	profSpacer := fmt.Sprintf("| --- | --- | --- | --- |\n")
+	profTopRow := "| Proficiency  | Base  | Modifier | Saving Throws |\n"
+	profSpacer := "| --- | --- | --- | --- |\n"
 	s = append(s, profTopRow)
 	s = append(s, profSpacer)
 
@@ -460,11 +460,11 @@ func (c *Character) BuildAbilities() []string {
 
 func (c *Character) BuildSkills() []string {
 	s := make([]string, 0, len(c.Skills)+10)
-	skillHeader := fmt.Sprintf("*Skills*\n\n")
+	skillHeader := "*Skills*\n\n"
 	s = append(s, skillHeader)
 
-	skillTopRow := fmt.Sprintf("| Skill | Ability | Modifier |\n")
-	skillSpacer := fmt.Sprintf("| --- | --- | --- |\n")
+	skillTopRow := "| Skill | Ability | Modifier |\n"
+	skillSpacer := "| --- | --- | --- |\n"
 	s = append(s, skillTopRow)
 	s = append(s, skillSpacer)
 
@@ -492,11 +492,11 @@ func (c *Character) BuildSpells() []string {
 	}
 
 	nl := "\n"
-	spellHeader := fmt.Sprintf("*Spells*\n\n")
+	spellHeader := "*Spells*\n\n"
 	s = append(s, spellHeader)
 
-	spellTopRow := fmt.Sprintf("| Slot Level | Ritual | Spell | IsPrepared |\n")
-	spellSpacer := fmt.Sprintf("| --- | --- | --- | --- |\n")
+	spellTopRow := "| Slot Level | Ritual | Spell | IsPrepared |\n"
+	spellSpacer := "| --- | --- | --- | --- |\n"
 	s = append(s, spellTopRow)
 	s = append(s, spellSpacer)
 
@@ -516,7 +516,7 @@ func (c *Character) BuildSpells() []string {
 	}
 	s = append(s, nl)
 
-	spellSlots := fmt.Sprintf("- Spell Slots\n")
+	spellSlots := "- Spell Slots\n"
 	s = append(s, spellSlots)
 
 	for _, spellSlot := range c.SpellSlots {
@@ -535,11 +535,11 @@ func (c *Character) BuildSpells() []string {
 
 func (c *Character) BuildWeapons() []string {
 	s := make([]string, 0, len(c.Weapons)+10)
-	weaponsHeader := fmt.Sprintf("*Weapons*\n\n")
+	weaponsHeader := "*Weapons*\n\n"
 	s = append(s, weaponsHeader)
 
-	weaponTopRow := fmt.Sprintf("| Weapon | Bonus | Damage | Type | Properties | Equipped |\n")
-	weaponSpacer := fmt.Sprintf("| --- | --- | --- | --- | --- | --- |\n")
+	weaponTopRow := "| Weapon | Bonus | Damage | Type | Properties | Equipped |\n"
+	weaponSpacer := "| --- | --- | --- | --- | --- | --- |\n"
 	s = append(s, weaponTopRow)
 	s = append(s, weaponSpacer)
 
@@ -555,10 +555,10 @@ func (c *Character) BuildWeapons() []string {
 
 		equippedString := ""
 
-		if strings.ToLower(c.PrimaryEquipped) == strings.ToLower(weapon.Name) && !primaryEquippedChecked {
+		if strings.EqualFold(c.PrimaryEquipped, weapon.Name) && !primaryEquippedChecked {
 			equippedString = "Primary"
 			primaryEquippedChecked = true
-		} else if strings.ToLower(c.SecondaryEquipped) == strings.ToLower(weapon.Name) {
+		} else if strings.EqualFold(c.SecondaryEquipped, weapon.Name) {
 			equippedString = "Secondary"
 		}
 
@@ -580,8 +580,8 @@ func (c *Character) BuildWeapons() []string {
 
 func (c *Character) BuildEquipment() []string {
 	s := []string{}
-	equipmentHeader := fmt.Sprintf("*Equipment*\n\n")
-	bodyEquipment := fmt.Sprintf("- Body Equipment\n")
+	equipmentHeader := "*Equipment*\n\n"
+	bodyEquipment := "- Body Equipment\n"
 	s = append(s, equipmentHeader)
 	s = append(s, bodyEquipment)
 
@@ -614,8 +614,8 @@ func (c *Character) BuildEquipment() []string {
 	}
 	if c.WornEquipment.Shield != "" {
 		shield := fmt.Sprintf("	- Shield: %s", c.WornEquipment.Shield)
-		if strings.ToLower(c.WornEquipment.Shield) == strings.ToLower(c.PrimaryEquipped) ||
-			strings.ToLower(c.WornEquipment.Shield) == strings.ToLower(c.SecondaryEquipped) {
+		if strings.EqualFold(c.WornEquipment.Shield, c.PrimaryEquipped) ||
+			strings.EqualFold(c.WornEquipment.Shield, c.SecondaryEquipped) {
 			shield += " (equipped)"
 		}
 		s = append(s, shield+"\n")
@@ -626,11 +626,11 @@ func (c *Character) BuildEquipment() []string {
 
 func (c *Character) BuildBackpack() []string {
 	s := make([]string, 0, len(c.Weapons)+10)
-	packHeader := fmt.Sprintf("*Backpack*\n\n")
+	packHeader := "*Backpack*\n\n"
 	s = append(s, packHeader)
 
-	itemTopRow := fmt.Sprintf("| Item | Quantity |\n")
-	itemSpacer := fmt.Sprintf("| --- | --- |\n")
+	itemTopRow := "| Item | Quantity |\n"
+	itemSpacer := "| --- | --- |\n"
 	s = append(s, itemTopRow)
 	s = append(s, itemSpacer)
 
@@ -655,7 +655,7 @@ func (c *Character) BuildAbilityScoreImprovement() []string {
 			}
 		}
 
-		abilityScoreImprovementHeader := fmt.Sprintf("Ability Score Improvement\n")
+		abilityScoreImprovementHeader := "Ability Score Improvement\n"
 		s = append(s, abilityScoreImprovementHeader)
 
 		// TODO: Make this more sophistocated so we don't need to loop through this twice
@@ -685,7 +685,7 @@ func GetSlots(available int, max int) string {
 
 func (c *Character) AddItemToPack(item string, quantity int) {
 	for i, packItem := range c.Backpack {
-		if strings.ToLower(packItem.Name) == strings.ToLower(item) {
+		if strings.EqualFold(packItem.Name, item) {
 			c.Backpack[i].Quantity += quantity
 			return
 		}
@@ -702,7 +702,7 @@ func (c *Character) AddItemToPack(item string, quantity int) {
 func (c *Character) RemoveItemFromPack(item string, quantity int) error {
 	var err error
 	for i, packItem := range c.Backpack {
-		if strings.ToLower(packItem.Name) == strings.ToLower(item) {
+		if strings.EqualFold(packItem.Name, item) {
 			if packItem.Quantity < quantity {
 				err = fmt.Errorf("Quantity to remove (%d) greater than quantity in pack (%d), set to 0",
 					quantity,

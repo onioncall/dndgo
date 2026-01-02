@@ -10,13 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	spellName   string
-	monsterName string
-	weaponName  string
-	charAction  string
-	logOutput   string
-)
+var logOutput string
 
 var rootCmd = &cobra.Command{
 	Use:   "dndgo",

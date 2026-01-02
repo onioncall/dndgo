@@ -105,6 +105,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			p, _ := cmd.Flags().GetString("path")
 			t, _ := cmd.Flags().GetBool("tokens")
+			c, _ := cmd.Flags().GetBool("character-names")
 
 			if p != "" {
 				var path string
@@ -166,9 +167,43 @@ var (
 					}
 				}
 			}
+
+			if c {
+				names, err := handlers.GetCharacterNames()
+				if err != nil {
+					panic(err)
+				}
+
+				if len(names) == 0 {
+					fmt.Println("No characters found")
+				}
+
+				for _, name := range names {
+					fmt.Println(name)
+				}
+			}
 		},
 	}
 
+	deleteCmd = &cobra.Command{
+		Use:   "delete",
+		Short: "delete character/class data",
+		Run: func(cmd *cobra.Command, args []string) {
+			c, _ := cmd.Flags().GetBool("class")
+			n, _ := cmd.Flags().GetString("name")
+
+			if c {
+				// Delete class by type and character name
+				fmt.Println("Feature to delete single class is not yet supported")
+			} else {
+				err := handlers.DeleteCharacter(n)
+				if err != nil {
+					fmt.Println("Failed to delete character")
+					logger.Error(err)
+				}
+			}
+		},
+	}
 	removeCmd = &cobra.Command{
 		Use:   "remove",
 		Short: "Remove character attributes",
@@ -208,6 +243,14 @@ var (
 		Use:   "update",
 		Short: "Update character attributes",
 		Run: func(cmd *cobra.Command, args []string) {
+			d, _ := cmd.Flags().GetString("default-character-name")
+			if d != "" {
+				err := handlers.SetDefaultCharacter(d)
+				if err != nil {
+					fmt.Println("Failed to update default character")
+				}
+			}
+
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Info("Failed to save character data")
@@ -499,7 +542,11 @@ var (
 				handlers.ImportClassJson(bytes, characterName)
 			} else {
 				entity = "Character"
-				handlers.ImportCharacterJson(bytes)
+				err = handlers.ImportCharacterJson(bytes)
+				if err != nil {
+					logger.Error(err)
+					fmt.Println("Failed to import character character")
+				}
 			}
 
 			logger.Infof("%v Import Successful", entity)
@@ -528,7 +575,7 @@ var (
 				data, err = handlers.ExportCharacterJson(name)
 			}
 
-			err = os.WriteFile(filePath, data, 0644)
+			err = os.WriteFile(filePath, data, 0o644)
 			if err != nil {
 				logger.Infof("Failed to write file '%v'", filePath)
 				panic(err)
@@ -547,11 +594,14 @@ func init() {
 		recoverCmd,
 		initCmd,
 		getCmd,
+		deleteCmd,
 		equipCmd,
 		unequipCmd,
 		modifyCmd,
 		importCmd,
 		exportCmd)
+
+	characterCmd.Flags().StringP("default", "d", "", "Name of character to update to default")
 
 	addCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
@@ -594,6 +644,12 @@ func init() {
 
 	getCmd.Flags().StringP("path", "p", "", "Get config or markdown path")
 	getCmd.Flags().BoolP("tokens", "t", false, "Get class tokens")
+	getCmd.Flags().BoolP("character-names", "c", false, "Get character names")
+
+	deleteCmd.Flags().StringP("name", "n", "", "Name of character to delete")
+	deleteCmd.MarkFlagRequired("name")
+
+	updateCmd.Flags().StringP("default-character-name", "d", "", "Name of character to make default")
 
 	importCmd.Flags().BoolP("class", "c", false, "Import Class file (default: Character)")
 	importCmd.Flags().StringP("file", "f", "", "Relative path to json file")

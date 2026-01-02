@@ -6,7 +6,9 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/logger"
 )
 
 const (
@@ -17,9 +19,9 @@ const (
 )
 
 var (
-	primaryStyle    = lipgloss.NewStyle().Foreground(lightBlue)
+	primaryStyle   = lipgloss.NewStyle().Foreground(lightBlue)
 	secondaryStyle = lipgloss.NewStyle().Foreground(orange)
-	tertiaryStyle = lipgloss.NewStyle().Foreground(cream)
+	tertiaryStyle  = lipgloss.NewStyle().Foreground(cream)
 )
 
 const (
@@ -39,6 +41,7 @@ type Model struct {
 	err               error
 	width             int
 	height            int
+	existingNames     []string
 	addButtonFocused  bool
 	nextButtonFocused bool
 	backButtonFocused bool
@@ -49,11 +52,17 @@ type Model struct {
 
 func NewModel() Model {
 	inputs := basicInfoInputs()
+	names, err := handlers.GetCharacterNames()
+	if err != nil {
+		logger.Errorf("Create Character TUI Page failed to get character names:\n%v", err)
+	}
+
 	return Model{
 		inputs:            inputs,
 		focused:           0,
 		err:               nil,
 		nextButtonFocused: false,
+		existingNames:     names,
 		viewportOffset:    0,
 		character:         &models.Character{},
 	}

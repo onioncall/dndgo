@@ -112,8 +112,9 @@ You can use the CLI to directly make changes to the characters state (like healt
 `ctr get`
 
 **Get Flags**
--  -p, --path string   Get config or markdown path
--  -t, --tokens        Get class tokens
+-  -p, --path string     Get config or markdown path
+-  -t, --tokens          Get class tokens
+-  -n, --character-names Get character names
 
 *examples*
 
@@ -141,3 +142,42 @@ You can use the CLI to directly make changes to the characters state (like healt
 *examples*
 
 `dndgo ctr modify -a dexterity -q 4`
+
+--- 
+
+`ctr import`, `ctr export`
+
+**Import Flags**
+- -n, --character-name string   Name of character, only used when importing Class data
+- -c, --class                   Import Class file (default: Character)
+- -f, --file string             Relative path to json file
+
+*examples*
+
+`dndgo ctr import -f nim.json` imports character from json file 'nim.json' in your current directory
+
+`dndgo ctr import -f nim-class.json -n Nim -c` imports class file 'nim-class.json' for character name 'Nim'
+
+---
+
+`ctr delete`
+
+**Delete Flags**
+- -n, --character-name string   Name of character to delete
+
+*examples*
+
+`dndgo ctr delete -n Nim`
+
+---
+
+`ctr update`
+
+**Update Flags**
+- -d, --default-character-name string   Name of character to make default
+
+*examples*
+
+`dndgo ctr update -d Nim`
+
+---
