@@ -192,11 +192,6 @@ var (
 			c, _ := cmd.Flags().GetBool("class")
 			n, _ := cmd.Flags().GetString("name")
 
-			if n == "" {
-				fmt.Println("Name cannot be empty")
-				return
-			}
-
 			if c {
 				// Delete class by type and character name
 				fmt.Println("Feature to delete single class is not yet supported")
