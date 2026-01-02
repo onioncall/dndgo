@@ -314,7 +314,7 @@ func ExportCharacterJson(characterName string) ([]byte, error) {
 func IsUniqueCharacterName(name string) (bool, error) {
 	names, err := GetCharacterNames()
 	if err != nil {
-		return false, fmt.Errorf("Failed to get list of existing character names", err)
+		return false, fmt.Errorf("Failed to get list of existing character names:\n%w", err)
 	}
 
 	for _, en := range names {
