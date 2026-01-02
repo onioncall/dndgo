@@ -162,7 +162,7 @@ func DeleteCharacter(name string) error {
 		return fmt.Errorf("Failed to find character to delete with name '%s':\n%w", name, err)
 	}
 
-	err = db.Repo.DeleteClassByCharacterId(character.ID)
+	err = db.Repo.DeleteClassesByCharacterId(character.ID)
 	if err != nil {
 		return fmt.Errorf("Failed to delete class for character '%s':\n%w", name, err)
 	}
