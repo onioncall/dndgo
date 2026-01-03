@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	character_collection = "characters"
-	class_collection     = "classes"
-	db_dirname           = "dndgo"
+	characterCollection = "characters"
+	classCollection     = "classes"
+	dbDirname           = "dndgo"
 )
 
 type Repository struct {
@@ -48,7 +48,7 @@ func newRepository() (*Repository, error) {
 		xdgData = filepath.Join(home, ".local", "share")
 	}
 
-	dbDir := filepath.Join(xdgData, db_dirname)
+	dbDir := filepath.Join(xdgData, dbDirname)
 
 	err := os.MkdirAll(dbDir, 0o755)
 	if err != nil {
@@ -64,10 +64,10 @@ func newRepository() (*Repository, error) {
 		db: db,
 	}
 
-	if err := r.createCollection(character_collection); err != nil {
+	if err := r.createCollection(characterCollection); err != nil {
 		return nil, fmt.Errorf("Failed to create or locate characters collection: %w", err)
 	}
-	if err := r.createCollection(class_collection); err != nil {
+	if err := r.createCollection(classCollection); err != nil {
 		return nil, fmt.Errorf("Failed to create or locate class collection: %w", err)
 	}
 
@@ -82,7 +82,7 @@ func (r Repository) Deinit() error {
 // Returns the inserted character ID
 func (r Repository) InsertCharacter(character models.Character) (string, error) {
 	doc := cdocument.NewDocumentOf(character)
-	docId, err := r.db.InsertOne(character_collection, doc)
+	docId, err := r.db.InsertOne(characterCollection, doc)
 	if err != nil {
 		return "", fmt.Errorf("Failed to insert new character to db: %w", err)
 	}
@@ -93,7 +93,7 @@ func (r Repository) InsertCharacter(character models.Character) (string, error) 
 // GetCharacter gets the default character
 func (r Repository) GetCharacter() (*models.Character, error) {
 	doc, err := r.db.FindFirst(
-		cquery.NewQuery(character_collection).Where(cquery.Field("default").Eq(true)),
+		cquery.NewQuery(characterCollection).Where(cquery.Field("default").Eq(true)),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to retrieve character from db:\n%w", err)
@@ -117,7 +117,7 @@ func (r Repository) GetCharacter() (*models.Character, error) {
 // GetCharacterById gets the character with the specified ID
 func (r Repository) GetCharacterById(id string) (*models.Character, error) {
 	doc, err := r.db.FindFirst(
-		cquery.NewQuery(character_collection).Where(cquery.Field("_id").Eq(id)),
+		cquery.NewQuery(characterCollection).Where(cquery.Field("_id").Eq(id)),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to retrieve character from db:\n%w", err)
@@ -141,7 +141,7 @@ func (r Repository) GetCharacterById(id string) (*models.Character, error) {
 // GetCharacterByName gets the character with the provided name
 func (r Repository) GetCharacterByName(name string) (*models.Character, error) {
 	doc, err := r.db.FindFirst(
-		cquery.NewQuery(character_collection).Where(cquery.Field("name").Eq(name)),
+		cquery.NewQuery(characterCollection).Where(cquery.Field("name").Eq(name)),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to retrieve character from db:\n%w", err)
@@ -164,7 +164,7 @@ func (r Repository) GetCharacterByName(name string) (*models.Character, error) {
 // There should only ever be one default character. But in the event something gets out of whack, we'll want to return all defaults.
 func (r Repository) GetDefaultCharacters() ([]models.Character, error) {
 	docs, err := r.db.FindAll(
-		cquery.NewQuery(character_collection).Where(cquery.Field("default").Eq(true)),
+		cquery.NewQuery(characterCollection).Where(cquery.Field("default").Eq(true)),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to retrieve character(s) from db:\n%w", err)
@@ -190,7 +190,7 @@ func (r Repository) GetDefaultCharacters() ([]models.Character, error) {
 
 // Get all character names
 func (r Repository) GetCharacterNames() ([]string, error) {
-	docs, err := r.db.FindAll(cquery.NewQuery(character_collection))
+	docs, err := r.db.FindAll(cquery.NewQuery(characterCollection))
 	if err != nil {
 		return nil, fmt.Errorf("Failed to retrieve characters from db:\n%w", err)
 	}
@@ -211,7 +211,7 @@ func (r Repository) GetCharacterNames() ([]string, error) {
 
 // Deletes character by Id
 func (r Repository) DeleteCharacter(characterId string) error {
-	err := r.db.DeleteById(character_collection, characterId)
+	err := r.db.DeleteById(characterCollection, characterId)
 	if err != nil {
 		return fmt.Errorf("Failed to delete character with Id '%s':\n%w", characterId, err)
 	}
@@ -222,7 +222,7 @@ func (r Repository) DeleteCharacter(characterId string) error {
 // Deletes all classes tied to a specific characterId, and returns an error
 func (r Repository) DeleteClassesByCharacterId(characterId string) error {
 	err := r.db.Delete(
-		cquery.NewQuery(class_collection).Where(cquery.Field("character-id").Eq(characterId)),
+		cquery.NewQuery(classCollection).Where(cquery.Field("character-id").Eq(characterId)),
 	)
 	if err != nil {
 		return fmt.Errorf("Failed to delete class with Id '%s':\n%w", characterId, err)
@@ -246,7 +246,7 @@ func (r Repository) SyncCharacter(character models.Character) error {
 		return fmt.Errorf("Failed to unmarshal character to generic map:\n%w", err)
 	}
 
-	if err = r.db.Update(cquery.NewQuery(character_collection).Where(cquery.Field("_id").Eq(character.ID)), updates); err != nil {
+	if err = r.db.Update(cquery.NewQuery(characterCollection).Where(cquery.Field("_id").Eq(character.ID)), updates); err != nil {
 		return fmt.Errorf("Failed to update character doc:\n%w", err)
 	}
 
@@ -256,7 +256,7 @@ func (r Repository) SyncCharacter(character models.Character) error {
 // InsertClass creates a new class record in the db
 func (r Repository) InsertClass(class models.Class) error {
 	doc := cdocument.NewDocumentOf(class)
-	_, err := r.db.InsertOne(class_collection, doc)
+	_, err := r.db.InsertOne(classCollection, doc)
 	if err != nil {
 		return fmt.Errorf("Failed to insert new class record to db: %w", err)
 	}
@@ -268,7 +268,7 @@ func (r Repository) InsertClass(class models.Class) error {
 // The result will be unmarshaled into `obj`
 func (r Repository) GetClass(chid string, obj models.Class) error {
 	doc, err := r.db.FindFirst(
-		cquery.NewQuery(class_collection).Where(cquery.Field("character-id").Eq(chid)),
+		cquery.NewQuery(classCollection).Where(cquery.Field("character-id").Eq(chid)),
 	)
 	if err != nil {
 		return fmt.Errorf("Failed to retrieve class from db: %w", err)
@@ -298,7 +298,7 @@ func (r Repository) SyncClass(class models.Class) error {
 		return fmt.Errorf("Failed to unmarshal class to generic map:\n%w", err)
 	}
 
-	if err = r.db.Update(cquery.NewQuery(class_collection).Where(cquery.Field("character-id").Eq(class.GetCharacterId())), updates); err != nil {
+	if err = r.db.Update(cquery.NewQuery(classCollection).Where(cquery.Field("character-id").Eq(class.GetCharacterId())), updates); err != nil {
 		return fmt.Errorf("Failed to update class doc:\n%w", err)
 	}
 
