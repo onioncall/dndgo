@@ -10,13 +10,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var logOutput string
+var (
+	logOutput string
+	clearLog  bool
+)
 
 var rootCmd = &cobra.Command{
 	Use:   "dndgo",
 	Short: "A D&D helper CLI application",
 	Long:  `A CLI application to help with D&D spells, monsters, and character management.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if clearLog {
+			err := logger.ClearLog(logOutput)
+			if err != nil {
+				logger.ConsoleError(fmt.Sprintf("Failed to clear log file: %v", err))
+			}
+			return nil
+		}
+
 		c, err := handlers.LoadCharacter()
 		if err != nil {
 			logger.Error(err)
@@ -40,13 +51,19 @@ func Execute(version string) error {
 }
 
 func init() {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		panic(fmt.Errorf("failed to get home directory: %w", err))
+	xdgState := os.Getenv("XDG_STATE_HOME")
+	if xdgState == "" {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			panic(fmt.Errorf("failed to get home directory: %w", err))
+		}
+		xdgState = filepath.Join(homeDir, ".local", "state")
 	}
-	defaultLog := filepath.Join(homeDir, ".config", "dndgo", "log")
 
-	rootCmd.PersistentFlags().StringVar(&logOutput, "log", defaultLog, "log output path, use ':stdout' for stdout")
+	dbDir := filepath.Join(xdgState, "dndgo", "dndgo.log")
+
+	rootCmd.PersistentFlags().StringVar(&logOutput, "log", dbDir, "log output path, use ':stdout' for stdout")
+	rootCmd.Flags().BoolVar(&clearLog, "clear-log", false, "clear the log file")
 	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 		l, err := logger.NewFileLogger(logger.LevelInfo, logOutput)
 		if err != nil {
