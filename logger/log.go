@@ -120,6 +120,21 @@ func RegisterPanicHandler() {
 	}
 }
 
+func ClearLog(path string) error {
+	var err error
+	if path == ":stdout" {
+		return nil
+	}
+
+	f, err := os.OpenFile(path, os.O_TRUNC|os.O_WRONLY, 0o644)
+	defer f.Close()
+	if err != nil {
+		return fmt.Errorf("failed to truncate log file: %w", err)
+	}
+
+	return nil
+}
+
 func ConsoleError(text string) {
 	fmt.Printf("-> \033[31m%s\033[0m\n", text)
 }
