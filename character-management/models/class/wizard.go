@@ -3,6 +3,7 @@ package class
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
@@ -95,4 +96,31 @@ func (w *Wizard) ClassDetails(level int) string {
 	}
 
 	return s
+}
+
+func (w *Wizard) AddPreparedSpell(spell string) error {
+	for _, ps := range w.PreparedSpells {
+		if strings.EqualFold(ps, spell) {
+			return fmt.Errorf("Spell 's' already exists as a prepared spell")
+		}
+	}
+
+	w.PreparedSpells = append(w.PreparedSpells, spell)
+
+	return nil
+}
+
+func (w *Wizard) RemovePreparedSpell(spell string) error {
+	for i, ps := range w.PreparedSpells {
+		if strings.EqualFold(ps, spell) {
+			w.PreparedSpells = slices.Delete(w.PreparedSpells, i, i+1)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("Failed to find spell '%s' in list of prepared spells to remove", spell)
+}
+
+func (w *Wizard) GetPreparedSpells() []string {
+	return w.PreparedSpells
 }

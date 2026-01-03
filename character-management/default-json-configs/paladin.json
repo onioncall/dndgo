@@ -13,8 +13,8 @@
   ],
   "fighting-style": "",
   "sub-class": "",
-  "prepared-spells": [""],
-  "oath-spells": [""],
+  "prepared-spells": [],
+  "oath-spells": [],
   "other-features": [
     {
       "name": "Divine Sense",

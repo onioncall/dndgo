@@ -143,11 +143,6 @@
     }
   ],
   "spells": [
-    {
-      "slot-level": 0,
-      "ritual": false,
-      "name": ""
-    }
   ],
   "spell-slots": [
     {
@@ -197,18 +192,6 @@
     }
   ],
   "weapons": [
-    {
-      "name": "",
-      "damage": "",
-      "proficient": false,
-      "ranged": false,
-      "range": {
-        "normal-range": 0,
-        "long-range": 0
-      },
-      "type": "",
-      "properties": [""]
-    }
   ],
   "primary-equipped": "",
   "secondary-equipped": "",

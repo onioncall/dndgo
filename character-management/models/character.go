@@ -64,6 +64,7 @@ func (c *Character) CalculateCharacterStats() {
 	c.calculateAC()
 	c.calculatePassiveStats()
 	c.calculateWeaponBonus()
+	c.calculatePreparedSpells()
 }
 
 func (c *Character) calculateAbilitiesFromBase() {
@@ -213,6 +214,24 @@ func (c *Character) calculateWeaponBonus() {
 
 		// Since custom weapons are sometimes a thing, we'll allow the user to specify a custom bonus
 		c.Weapons[i].Bonus += weapon.CustomBonus
+	}
+}
+
+func (c *Character) calculatePreparedSpells() {
+	// We could make this more efficient, but since users generally have <20 spells we're going
+	// to favor the gained readability here.
+	for i, s := range c.Spells {
+		if psClass, ok := c.Class.(PreparedSpellClass); ok {
+			for _, ps := range psClass.GetPreparedSpells() {
+				if strings.EqualFold(s.Name, ps) {
+					c.Spells[i].IsPrepared = true
+					break
+				}
+			}
+		} else if s.IsRitual {
+			c.Spells[i].IsPrepared = true
+			break
+		}
 	}
 }
 
@@ -986,6 +1005,48 @@ func (c *Character) AddExpertiseSkill(skill string) error {
 		if err != nil {
 			return fmt.Errorf("Failed to add Expertise Skill '%s':\n%w", skill, err)
 		}
+	} else {
+		return fmt.Errorf("Class '%s' is not one that implements expertise", c.ClassName)
+	}
+
+	return nil
+}
+
+func (c *Character) AddPreparedSpell(spell string) error {
+	if psClass, ok := c.Class.(PreparedSpellClass); ok {
+		spellIdx := c.getSpellIdx(spell)
+		if spellIdx == -1 {
+			return fmt.Errorf("Character does not have spell '%s' in their spell list", spell)
+		}
+
+		err := psClass.AddPreparedSpell(spell)
+		if err != nil {
+			return fmt.Errorf("Failed to add prepared spell")
+		}
+
+		c.Spells[spellIdx].IsPrepared = true
+	} else {
+		return fmt.Errorf("Class '%s' is not one that implements prepared spells", c.ClassName)
+	}
+
+	return nil
+}
+
+func (c *Character) RemovePreparedSpell(spell string) error {
+	if psClass, ok := c.Class.(PreparedSpellClass); ok {
+		spellIdx := c.getSpellIdx(spell)
+		if spellIdx == -1 {
+			return fmt.Errorf("Character does not have spell '%s' in their spell list", spell)
+		}
+
+		err := psClass.RemovePreparedSpell(spell)
+		if err != nil {
+			return fmt.Errorf("Failed to add prepared spell")
+		}
+
+		c.Spells[spellIdx].IsPrepared = false
+	} else {
+		return fmt.Errorf("Class '%s' is not one that implements prepared spells", c.ClassName)
 	}
 
 	return nil
@@ -994,4 +1055,16 @@ func (c *Character) AddExpertiseSkill(skill string) error {
 func (c *Character) SetLevel(level int) {
 	// This will eventually need to be set by the class instead of by the character
 	c.Level = level
+}
+
+// Gets index of a given spell by name, returns -1 if no spell matches that name (case insensitive)
+func (c *Character) getSpellIdx(spell string) int {
+	spellIdx := -1
+	for i, cs := range c.Spells {
+		if strings.EqualFold(cs.Name, spell) {
+			return i
+		}
+	}
+
+	return spellIdx
 }

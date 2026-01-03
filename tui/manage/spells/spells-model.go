@@ -57,7 +57,7 @@ func GetKnownSpellContent(character models.Character, width int) string {
 			ritualStr = "Ritual"
 		}
 		preparedStr := strings.Repeat("\u00A0", 8)
-		if s.IsRitual {
+		if s.IsPrepared {
 			preparedStr = "Prepared"
 		}
 

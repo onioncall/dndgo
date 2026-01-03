@@ -3,6 +3,8 @@ package class
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
@@ -159,4 +161,31 @@ func (d *Druid) GetTokens() []string {
 	return []string{
 		wildShapeToken,
 	}
+}
+
+func (d *Druid) AddPreparedSpell(spell string) error {
+	for _, ps := range d.PreparedSpells {
+		if strings.EqualFold(ps, spell) {
+			return fmt.Errorf("Spell 's' already exists as a prepared spell")
+		}
+	}
+
+	d.PreparedSpells = append(d.PreparedSpells, spell)
+
+	return nil
+}
+
+func (d *Druid) RemovePreparedSpell(spell string) error {
+	for i, ps := range d.PreparedSpells {
+		if strings.EqualFold(ps, spell) {
+			d.PreparedSpells = slices.Delete(d.PreparedSpells, i, i+1)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("Failed to find spell '%s' in list of prepared spells to remove", spell)
+}
+
+func (d *Druid) GetPreparedSpells() []string {
+	return d.PreparedSpells
 }

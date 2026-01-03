@@ -3,6 +3,8 @@ package class
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
@@ -158,4 +160,31 @@ func (cl *Cleric) GetTokens() []string {
 	return []string{
 		channelDivinityToken,
 	}
+}
+
+func (cl *Cleric) AddPreparedSpell(spell string) error {
+	for _, ps := range cl.PreparedSpells {
+		if strings.EqualFold(ps, spell) {
+			return fmt.Errorf("Spell 's' already exists as a prepared spell")
+		}
+	}
+
+	cl.PreparedSpells = append(cl.PreparedSpells, spell)
+
+	return nil
+}
+
+func (cl *Cleric) RemovePreparedSpell(spell string) error {
+	for i, ps := range cl.PreparedSpells {
+		if strings.EqualFold(ps, spell) {
+			cl.PreparedSpells = slices.Delete(cl.PreparedSpells, i, i+1)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("Failed to find spell '%s' in list of prepared spells to remove", spell)
+}
+
+func (cl *Cleric) GetPreparedSpells() []string {
+	return cl.PreparedSpells
 }

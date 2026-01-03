@@ -3,6 +3,7 @@ package class
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
@@ -212,4 +213,31 @@ func (p *Paladin) GetTokens() []string {
 	}
 
 	return s
+}
+
+func (p *Paladin) AddPreparedSpell(spell string) error {
+	for _, ps := range p.PreparedSpells {
+		if strings.EqualFold(ps, spell) {
+			return fmt.Errorf("Spell 's' already exists as a prepared spell")
+		}
+	}
+
+	p.PreparedSpells = append(p.PreparedSpells, spell)
+
+	return nil
+}
+
+func (p *Paladin) RemovePreparedSpell(spell string) error {
+	for i, ps := range p.PreparedSpells {
+		if strings.EqualFold(ps, spell) {
+			p.PreparedSpells = slices.Delete(p.PreparedSpells, i, i+1)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("Failed to find spell '%s' in list of prepared spells to remove", spell)
+}
+
+func (p *Paladin) GetPreparedSpells() []string {
+	return p.PreparedSpells
 }
