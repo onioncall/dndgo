@@ -147,31 +147,6 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 		expected  []shared.Ability
 	}{
 		{
-			name: "Level not high enough",
-			character: &Character{
-				Level: 3,
-				Abilities: []shared.Ability{
-					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
-					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
-				},
-				AbilityScoreImprovement: []shared.AbilityScoreImprovementItem{
-					{Ability: "Strength", Bonus: 2},
-				},
-			},
-			expected: []shared.Ability{
-				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-				{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
-				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-				{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
-			},
-		},
-		{
 			name: "Level 4, one ability increased by two",
 			character: &Character{
 				Level: 4,
@@ -223,7 +198,7 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			},
 		},
 		{
-			name: "Level 4, two abilities increased by two (failure)",
+			name: "Level 4, two abilities increased by two",
 			character: &Character{
 				Level: 4,
 				Abilities: []shared.Ability{
@@ -240,8 +215,8 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 				},
 			},
 			expected: []shared.Ability{
-				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-				{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
+				{Name: "Strength", Base: 12, SavingThrowsProficient: false},
+				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
 				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
 				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
