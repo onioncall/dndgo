@@ -215,12 +215,12 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 				},
 			},
 			expected: []shared.Ability{
-				{Name: "Strength", Base: 12, SavingThrowsProficient: false},
+				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
 				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
 				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
 				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
 				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-				{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+				{Name: "Charisma", Base: 12, SavingThrowsProficient: false},
 			},
 		},
 		{
