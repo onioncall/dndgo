@@ -210,6 +210,8 @@ var (
 					return
 				}
 			}
+
+			logger.ConsoleSuccess("Deleted character")
 		},
 	}
 
@@ -242,8 +244,9 @@ var (
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.Info("Failed to process character")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to process character")
+				return
 			}
 
 			logger.ConsoleSuccess("Character Update Successful")
@@ -305,7 +308,9 @@ var (
 				}
 
 				err = c.RemoveItemFromPack(bp, q)
-				logger.Info(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to remove item from pack")
+				return
 			} else if s > 0 {
 				c.UseSpellSlot(s)
 			} else if ct != "" {
@@ -350,9 +355,9 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				errMsg := "Failed to save character data"
-				logger.Info(errMsg)
-				panic(fmt.Errorf("%s: %w", errMsg, err))
+				logger.Error(err)
+				logger.ConsoleError("Failed to save character data")
+				return
 			}
 
 			if a {
@@ -368,7 +373,7 @@ var (
 			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.Info("Failed to save character data")
+				logger.ConsoleError("Failed to save character data")
 				return
 			}
 
@@ -386,7 +391,7 @@ var (
 				return
 			}
 
-			logger.Info("Character Update Successful")
+			logger.ConsoleSuccess("Character Update Successful")
 		},
 	}
 
@@ -454,7 +459,7 @@ var (
 				return
 			}
 
-			logger.Info("Character Update Successful")
+			logger.ConsoleSuccess("Character Update Successful")
 		},
 	}
 
@@ -503,6 +508,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			a, _ := cmd.Flags().GetString("ability-improvement")
 			q, _ := cmd.Flags().GetInt("quantity")
+			l, _ := cmd.Flags().GetInt("level")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -518,6 +524,12 @@ var (
 					logger.ConsoleError("Failed to modify ability score improvement item")
 					return
 				}
+			} else if l > 0 {
+				if l > 20 {
+					logger.ConsoleError("Level must be no more than 20")
+				}
+
+				c.SetLevel(l)
 			}
 
 			err = handlers.SaveCharacter(c)
@@ -534,7 +546,7 @@ var (
 				return
 			}
 
-			logger.ConsoleError("Character Update Successful")
+			logger.ConsoleSuccess("Character Update Successful")
 		},
 	}
 
@@ -570,7 +582,7 @@ var (
 				}
 			}
 
-			logger.Infof("%v Import Successful", entity)
+			logger.ConsoleSuccess(fmt.Sprintf("%v Import Successful", entity))
 		},
 	}
 
@@ -602,7 +614,7 @@ var (
 				return
 			}
 
-			fmt.Printf("%v Export Successful\n", entity)
+			logger.ConsoleSuccess(fmt.Sprintf("%v Export Successful\n", entity))
 		},
 	}
 

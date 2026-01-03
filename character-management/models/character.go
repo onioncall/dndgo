@@ -990,3 +990,8 @@ func (c *Character) AddExpertiseSkill(skill string) error {
 
 	return nil
 }
+
+func (c *Character) SetLevel(level int) {
+	// This will eventually need to be set by the class instead of by the character
+	c.Level = level
+}
