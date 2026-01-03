@@ -610,11 +610,11 @@ var (
 
 			err = os.WriteFile(filePath, data, 0o644)
 			if err != nil {
-				fmt.Printf("Failed to write file '%v'\n", filePath)
+				logger.ConsoleError(fmt.Sprintf("Failed to write file '%v'", filePath))
 				return
 			}
 
-			logger.ConsoleSuccess(fmt.Sprintf("%v Export Successful\n", entity))
+			logger.ConsoleSuccess(fmt.Sprintf("%v Export Successful", entity))
 		},
 	}
 
@@ -624,6 +624,8 @@ var (
 		Long:  `Executes commands on the class via various flags.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			e, _ := cmd.Flags().GetString("expertise")
+			p, _ := cmd.Flags().GetString("prepared-spell")
+			r, _ := cmd.Flags().GetBool("remove")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -633,11 +635,32 @@ var (
 			}
 
 			if e != "" {
+				if r {
+					logger.ConsoleError("-> removing expertise skill is not implemented yet")
+					return
+				}
+
 				err := c.AddExpertiseSkill(e)
 				if err != nil {
 					logger.Error(err)
 					logger.ConsoleError("Failed to add expertise skill")
 					return
+				}
+			} else if p != "" {
+				if r {
+					err = c.RemovePreparedSpell(p)
+					if err != nil {
+						logger.Error(err)
+						logger.ConsoleError("Failed to remove prepared spell")
+						return
+					}
+				} else {
+					err = c.AddPreparedSpell(p)
+					if err != nil {
+						logger.Error(err)
+						logger.ConsoleError("Failed to add prepared spell")
+						return
+					}
 				}
 			}
 
@@ -743,4 +766,6 @@ func init() {
 	modifyCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
 
 	classCmd.Flags().StringP("expertise", "e", "", "name of skill to add to expertise")
+	classCmd.Flags().StringP("prepared-spell", "p", "", "name of spell to prepare")
+	classCmd.Flags().BoolP("remove", "r", false, "remove instead of add one of these things")
 }

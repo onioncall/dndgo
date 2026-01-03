@@ -262,11 +262,13 @@ func ImportCharacterJson(characterJson []byte) error {
 		return fmt.Errorf("Parsing error on character json content: %w", err)
 	}
 
-	isUnique, err := IsUniqueCharacterName(ch.Name)
-	if err != nil {
-		return fmt.Errorf("Failed to create character, unable to determine name uniqueness")
-	} else if !isUnique {
-		return fmt.Errorf("Character name '%s' is not unique", ch.Name)
+	if ch.ID == "" {
+		isUnique, err := IsUniqueCharacterName(ch.Name)
+		if err != nil {
+			return fmt.Errorf("Failed to create character, unable to determine name uniqueness")
+		} else if !isUnique {
+			return fmt.Errorf("Character name '%s' is not unique", ch.Name)
+		}
 	}
 
 	var existing *models.Character

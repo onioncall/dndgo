@@ -43,6 +43,12 @@ type ExpertiseClass interface {
 	AddExpertiseSkill(skill string) error
 }
 
+type PreparedSpellClass interface {
+	AddPreparedSpell(spell string) error
+	RemovePreparedSpell(spell string) error
+	GetPreparedSpells() []string
+}
+
 type ClassFeature struct {
 	Name    string `json:"name"`
 	Level   int    `json:"level"`

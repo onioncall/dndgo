@@ -181,3 +181,10 @@ You can use the CLI to directly make changes to the characters state (like healt
 `dndgo ctr update -d Nim`
 
 ---
+
+`ctr class`
+
+**Expertise Flags**
+- -e, --expertise string   name of skill to add to expertise
+
+---

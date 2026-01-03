@@ -1,8 +1,6 @@
 {
   "sub-class": "",
-  "expertise": [
-    ""
-  ],
+  "expertise": [],
   "other-features": [
     {
       "name": "Sneak Attack",
@@ -56,5 +54,3 @@
     }
   ]
 }
-
-
