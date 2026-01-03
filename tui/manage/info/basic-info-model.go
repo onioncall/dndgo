@@ -39,6 +39,11 @@ func GetHealthContent(character models.Character) string {
 }
 
 func GetStatsContent(character models.Character) string {
+	asi := ""
+	for _, item := range character.AbilityScoreImprovement {
+		asi += fmt.Sprintf("- %s: +%d\n", item.Ability, item.Bonus)
+	}
+
 	statsContent := fmt.Sprintf(`Class: %s
 Level: %d
 Race: %s
@@ -48,9 +53,11 @@ Passive Perception: %d
 Passive Insight: %d
 AC: %d
 Hit Dice: %s
-	`, character.ClassName, character.Level, character.Race, character.Proficiency,
+Ability Score Improvement:
+%s`,
+		character.ClassName, character.Level, character.Race, character.Proficiency,
 		character.Speed, character.PassivePerception, character.PassiveInsight,
-		character.AC, character.HitDice)
+		character.AC, character.HitDice, asi)
 
 	return statsContent
 }
