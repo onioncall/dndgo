@@ -209,9 +209,9 @@ var (
 					logger.ConsoleError("Failed to delete character")
 					return
 				}
-			}
 
-			logger.ConsoleSuccess("Deleted character")
+				logger.ConsoleSuccess("Deleted character")
+			}
 		},
 	}
 
