@@ -48,7 +48,7 @@ func (m Model) UpdateBackpackPage(msg tea.Msg) (Model, tea.Cmd) {
 				if err != nil {
 					logger.Error("Failed to load class template:", '\n', err.Error())
 				}
-				err = handlers.SaveClassHandler(class)
+				err = handlers.SaveClass(class)
 				if err != nil {
 					logger.Error("Failed to save class:", '\n', err.Error())
 				}

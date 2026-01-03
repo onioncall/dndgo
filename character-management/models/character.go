@@ -979,3 +979,14 @@ func (c *Character) Unequip(isPrimary bool) {
 		c.SecondaryEquipped = ""
 	}
 }
+
+func (c *Character) AddExpertiseSkill(skill string) error {
+	if expClass, ok := c.Class.(ExpertiseClass); ok {
+		err := expClass.AddExpertiseSkill(skill)
+		if err != nil {
+			return fmt.Errorf("Failed to add Expertise Skill '%s':\n%w", skill, err)
+		}
+	}
+
+	return nil
+}

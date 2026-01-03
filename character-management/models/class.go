@@ -39,6 +39,10 @@ type TokenClass interface {
 	RecoverClassTokens(string, int)
 }
 
+type ExpertiseClass interface {
+	AddExpertiseSkill(skill string) error
+}
+
 type ClassFeature struct {
 	Name    string `json:"name"`
 	Level   int    `json:"level"`

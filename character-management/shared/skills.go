@@ -7,6 +7,27 @@ type Skill struct {
 	Proficient    bool   `json:"proficient"`
 }
 
+var Skills = []string{
+	SkillAthletics,
+	SkillAcrobatics,
+	SkillSleightOfHand,
+	SkillStealth,
+	SkillArcana,
+	SkillHistory,
+	SkillInvestigation,
+	SkillNature,
+	SkillReligion,
+	SkillAnimalHandling,
+	SkillInsight,
+	SkillMedicine,
+	SkillPerception,
+	SkillSurvival,
+	SkillDeception,
+	SkillIntimidation,
+	SkillPerformance,
+	SkillPersuasion,
+}
+
 const (
 	// Strength-based skills
 	SkillAthletics string = "athletics"

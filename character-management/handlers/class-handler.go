@@ -64,7 +64,7 @@ func LoadClassTemplate(classType string) (models.Class, error) {
 	return c, nil
 }
 
-func SaveClassHandler(c models.Class) error {
+func SaveClass(c models.Class) error {
 	return db.Repo.SyncClass(c)
 }
 
@@ -130,7 +130,6 @@ func ImportClassJson(classJson []byte, characterName string) error {
 	}
 
 	c, err := loadClassInst(classJson)
-
 	if err != nil {
 		// If json is missing class-name, use class name from character as fallback.
 		// When multiclassing is introduced, this will no longer be an option.

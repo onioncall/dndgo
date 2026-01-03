@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/onioncall/dndgo/character-management/db"
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/logger"
@@ -35,10 +34,11 @@ var (
 			n, _ := cmd.Flags().GetString("name")
 			sc, _ := cmd.Flags().GetString("sub-class")
 
-			c, err := db.Repo.GetCharacter()
+			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.Info("Failed to load character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to load character data")
+				return
 			}
 
 			if l != "" {
@@ -46,7 +46,7 @@ var (
 			}
 			if e != "" {
 				if n == "" {
-					fmt.Println("Name of equipment can not be left empty")
+					logger.ConsoleError("Name of equipment can not be left empty")
 					return
 				}
 
@@ -54,7 +54,7 @@ var (
 			}
 			if bp != "" {
 				if q <= 0 {
-					fmt.Println("Must pass a positive quantity to add")
+					logger.ConsoleError("Must pass a positive quantity to add")
 					return
 				}
 
@@ -78,24 +78,26 @@ var (
 			if a != "" {
 				err = c.AddAbilityScoreImprovementItem(q, a)
 				if err != nil {
-					fmt.Println(err)
+					logger.ConsoleError(err.Error())
 					return
 				}
 			}
 
-			err = db.Repo.SyncCharacter(*c)
+			err = handlers.SaveCharacter(c)
 			if err != nil {
-				logger.Info("Failed to save character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to save character data")
+				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.Info("Failed to process character")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to process character")
+				return
 			}
 
-			logger.Info("Character Update Successful")
+			logger.ConsoleSuccess("Character Update Successful")
 		},
 	}
 
@@ -114,14 +116,16 @@ var (
 				if p == "config" {
 					path, err = handlers.GetConfigPath()
 					if err != nil {
-						logger.Info("Failed to get config path")
-						panic(err)
+						logger.Error(err)
+						logger.ConsoleError("Failed to get config path")
+						return
 					}
 				} else if p == "markdown" {
 					c, err := handlers.LoadCharacter()
 					if err != nil {
-						logger.Info("Failed to load character")
-						panic(err)
+						logger.Error(err)
+						logger.ConsoleError("Failed to load character")
+						return
 					}
 
 					path = c.Path
@@ -129,28 +133,29 @@ var (
 						path, err = handlers.GetConfigPath()
 					}
 				} else {
-					logger.Info("path option not found")
+					logger.ConsoleError("Path option not found")
 				}
 
-				fmt.Printf("Path: %s\n", path)
+				fmt.Println(path)
 			}
 
 			if t {
 				c, err := handlers.LoadCharacter()
 				if err != nil {
-					logger.Info("Failed to save character data")
-					panic(err)
+					logger.Error(err)
+					logger.ConsoleError("Failed to load character data")
+					return
 				}
 
 				if c.Class == nil {
-					fmt.Println("Class not properly configured")
+					logger.ConsoleError("Class not properly configured")
 					return
 				}
 
 				var tokenClass models.TokenClass
 				tokenClass, ok := c.Class.(models.TokenClass)
 				if !ok {
-					fmt.Println("Class does not implement TokenClass")
+					logger.ConsoleError("Class does not implement TokenClass")
 					return
 				}
 
@@ -158,12 +163,11 @@ var (
 				if len(tokens) == 0 {
 					fmt.Println("Class has no tokens implemented")
 				} else if len(tokens) == 1 {
-					fmt.Println("(Class only has one token, when modifying token values for this class you may enter any value)")
-					fmt.Printf("-> %s\n", tokens[0])
+					fmt.Println("Class only has one token, when modifying token values for this class you may enter any value")
+					fmt.Println(tokens[0])
 				} else {
-					fmt.Println("Tokens:")
 					for _, token := range tokens {
-						fmt.Printf("%s\n", token)
+						fmt.Println(token)
 					}
 				}
 			}
@@ -171,11 +175,14 @@ var (
 			if c {
 				names, err := handlers.GetCharacterNames()
 				if err != nil {
-					panic(err)
+					logger.Error(err)
+					logger.ConsoleError("Failed to get character names")
+					return
 				}
 
 				if len(names) == 0 {
 					fmt.Println("No characters found")
+					return
 				}
 
 				for _, name := range names {
@@ -194,16 +201,18 @@ var (
 
 			if c {
 				// Delete class by type and character name
-				fmt.Println("Feature to delete single class is not yet supported")
+				logger.ConsoleError("Feature to delete single class is not yet supported")
 			} else {
 				err := handlers.DeleteCharacter(n)
 				if err != nil {
-					fmt.Println("Failed to delete character")
 					logger.Error(err)
+					logger.ConsoleError("Failed to delete character")
+					return
 				}
 			}
 		},
 	}
+
 	removeCmd = &cobra.Command{
 		Use:   "remove",
 		Short: "Remove character attributes",
@@ -213,8 +222,9 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.Info("Failed to load character")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to load character")
+				return
 			}
 
 			if hp > 0 {
@@ -225,8 +235,9 @@ var (
 
 			err = handlers.SaveCharacter(c)
 			if err != nil {
-				logger.Info("Failed to save character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to save character data")
+				return
 			}
 
 			err = handlers.HandleCharacter(c)
@@ -235,7 +246,7 @@ var (
 				panic(err)
 			}
 
-			logger.Info("Character Update Successful")
+			logger.ConsoleSuccess("Character Update Successful")
 		},
 	}
 
@@ -247,23 +258,27 @@ var (
 			if d != "" {
 				err := handlers.SetDefaultCharacter(d)
 				if err != nil {
-					fmt.Println("Failed to update default character")
+					logger.Error(err)
+					logger.ConsoleError("Failed to update default character")
+					return
 				}
 			}
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.Info("Failed to save character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to save character data")
+				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.Info("Failed to process character")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to process character")
+				return
 			}
 
-			logger.Info("Character Update Successful")
+			logger.ConsoleSuccess("Character Update Successful")
 		},
 	}
 
@@ -278,13 +293,14 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.Info("Failed to save character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to save character data")
+				return
 			}
 
 			if bp != "" {
 				if q <= 0 {
-					logger.Info("Must pass a positive quantity to use")
+					logger.ConsoleError("Must pass a positive quantity to use")
 					return
 				}
 
@@ -299,23 +315,26 @@ var (
 
 			err = handlers.SaveCharacter(c)
 			if err != nil {
-				logger.Info("Failed to save character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to save character data")
+				return
 			}
 
-			err = handlers.SaveClassHandler(c.Class)
+			err = handlers.SaveClass(c.Class)
 			if err != nil {
-				logger.Info("Failed to save class data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to save class data")
+				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.Info("Failed to process character")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to process character")
+				return
 			}
 
-			logger.Info("Character Update Successful")
+			logger.ConsoleSuccess("Character Update Successful")
 		},
 	}
 
@@ -348,20 +367,23 @@ var (
 
 			err = handlers.SaveCharacter(c)
 			if err != nil {
+				logger.Error(err)
 				logger.Info("Failed to save character data")
-				panic(err)
+				return
 			}
 
-			err = handlers.SaveClassHandler(c.Class)
+			err = handlers.SaveClass(c.Class)
 			if err != nil {
-				logger.Info("Failed to save class data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to save class data")
+				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.Info("Failed to process character")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to process character")
+				return
 			}
 
 			logger.Info("Character Update Successful")
@@ -377,33 +399,19 @@ var (
 
 			character, err := handlers.LoadCharacterTemplate(n, c)
 			if err != nil {
-				logger.Info("Failed to load character template")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to load character template")
+				return
 			}
 
-			cid, err := db.Repo.InsertCharacter(*character)
+			err = handlers.CreateCharacter(character)
 			if err != nil {
-				logger.Info("Failed to save new character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to create character")
+				return
 			}
 
-			class, err := handlers.LoadClassTemplate(c)
-			if err != nil {
-				errMsg := "Failed to load class template"
-				logger.Info(errMsg)
-				panic(fmt.Errorf("%s: %w", errMsg, err))
-			}
-
-			class.SetCharacterId(cid)
-			class.SetClassName(c)
-
-			if err = db.Repo.InsertClass(class); err != nil {
-				errMsg := "Failed to save class data"
-				logger.Info(errMsg)
-				panic(fmt.Errorf("%s: %w", errMsg, err))
-			}
-
-			logger.Info("Character Creation Successful")
+			logger.ConsoleError("Character Creation Successful")
 		},
 	}
 
@@ -416,8 +424,9 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.Info("Failed to save character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to save character data")
+				return
 			}
 
 			if p != "" {
@@ -433,14 +442,16 @@ var (
 
 			err = handlers.SaveCharacter(c)
 			if err != nil {
-				logger.Info("Failed to save character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to save character data")
+				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.Info("Failed to process character")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to process character")
+				return
 			}
 
 			logger.Info("Character Update Successful")
@@ -456,8 +467,9 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.Error("Failed to save character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to load character data")
+				return
 			}
 
 			if p == true {
@@ -469,17 +481,19 @@ var (
 
 			err = handlers.SaveCharacter(c)
 			if err != nil {
-				logger.Error("Failed to save character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to save character data")
+				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.Error("Failed to process character")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to process character")
+				return
 			}
 
-			logger.Info("Character Update Successful")
+			logger.ConsoleError("Character Update Successful")
 		},
 	}
 
@@ -492,31 +506,35 @@ var (
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
-				logger.Info("Failed to save character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to load character data")
+				return
 			}
 
 			if a != "" {
 				err = c.ModifyAbilityScoreImprovementItem(q, a)
 				if err != nil {
-					fmt.Println(err)
+					logger.Error(err)
+					logger.ConsoleError("Failed to modify ability score improvement item")
 					return
 				}
 			}
 
 			err = handlers.SaveCharacter(c)
 			if err != nil {
-				logger.Error("Failed to save character data")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to save character data")
+				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
-				logger.Info("Failed to process character")
-				panic(err)
+				logger.Error(err)
+				logger.ConsoleError("Failed to process character")
+				return
 			}
 
-			logger.Info("Character Update Successful")
+			logger.ConsoleError("Character Update Successful")
 		},
 	}
 
@@ -535,6 +553,8 @@ var (
 			bytes, err := os.ReadFile(filePath)
 			if err != nil {
 				logger.Errorf("Error reading file '%v':\n%v", filePath, err.Error())
+				logger.ConsoleError("Failed to import character")
+				return
 			}
 
 			if isClass {
@@ -545,7 +565,8 @@ var (
 				err = handlers.ImportCharacterJson(bytes)
 				if err != nil {
 					logger.Error(err)
-					fmt.Println("Failed to import character character")
+					logger.ConsoleError("Failed to import character character")
+					return
 				}
 			}
 
@@ -577,11 +598,52 @@ var (
 
 			err = os.WriteFile(filePath, data, 0o644)
 			if err != nil {
-				logger.Infof("Failed to write file '%v'", filePath)
-				panic(err)
+				fmt.Printf("Failed to write file '%v'\n", filePath)
+				return
 			}
 
-			logger.Infof("%v Export Successful", entity)
+			fmt.Printf("%v Export Successful\n", entity)
+		},
+	}
+
+	classCmd = &cobra.Command{
+		Use:   "class",
+		Short: "Executes commands on the class",
+		Long:  `Executes commands on the class via various flags.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			e, _ := cmd.Flags().GetString("expertise")
+
+			c, err := handlers.LoadCharacter()
+			if err != nil {
+				logger.Error(err)
+				logger.ConsoleError("Failed to save character data")
+				return
+			}
+
+			if e != "" {
+				err := c.AddExpertiseSkill(e)
+				if err != nil {
+					logger.Error(err)
+					logger.ConsoleError("Failed to add expertise skill")
+					return
+				}
+			}
+
+			err = handlers.SaveClass(c.Class)
+			if err != nil {
+				logger.Error(err)
+				logger.ConsoleError("Failed to save class data")
+				return
+			}
+
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.Error(err)
+				logger.ConsoleError("Failed to process character")
+				return
+			}
+
+			logger.ConsoleSuccess("Character Update Successful")
 		},
 	}
 )
@@ -599,7 +661,8 @@ func init() {
 		unequipCmd,
 		modifyCmd,
 		importCmd,
-		exportCmd)
+		exportCmd,
+		classCmd)
 
 	characterCmd.Flags().StringP("default", "d", "", "Name of character to update to default")
 
@@ -666,4 +729,6 @@ func init() {
 
 	modifyCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
 	modifyCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
+
+	classCmd.Flags().StringP("expertise", "e", "", "name of skill to add to expertise")
 }

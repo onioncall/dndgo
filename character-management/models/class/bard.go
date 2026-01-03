@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"slices"
+	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
@@ -67,13 +69,11 @@ func (b *Bard) executeExpertise(c *models.Character) {
 	}
 
 	if c.Level < 10 && len(b.ExpertiseSkills) > 2 {
-		// We'll allow the user to specify more, but only the first two get taken for it to be ExpertiseSkills
-		b.ExpertiseSkills = b.ExpertiseSkills[:2]
+		logger.Warn("Only two expertise skills should be configured for your class level")
 	}
 
 	if c.Level >= 10 && len(b.ExpertiseSkills) > 4 {
-		// We'll allow the user to specify more, but only the first two get taken for it to be ExpertiseSkills
-		b.ExpertiseSkills = b.ExpertiseSkills[:4]
+		logger.Warn("Only four expertise skills should be configured for your class level")
 	}
 
 	executeExpertiseShared(c, b.ExpertiseSkills)
@@ -140,4 +140,18 @@ func (b *Bard) GetTokens() []string {
 	return []string{
 		bardicInspirationToken,
 	}
+}
+
+func (b *Bard) AddExpertiseSkill(skill string) error {
+	if !slices.Contains(shared.Skills, strings.ToLower(skill)) {
+		return fmt.Errorf("Skill '%s' does not exist, check spelling.", skill)
+	}
+
+	if slices.Contains(b.ExpertiseSkills, strings.ToLower(skill)) {
+		return fmt.Errorf("Duplicate skill '%s' cannot be added, choose unique one.", skill)
+	}
+
+	b.ExpertiseSkills = append(b.ExpertiseSkills, skill)
+
+	return nil
 }
