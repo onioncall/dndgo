@@ -20,10 +20,10 @@ func NewFileLogger(level Level, path string) (*Logger, error) {
 	if path == ":stdout" {
 		out = os.Stdout
 	} else {
-		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 			return nil, fmt.Errorf("failed to create log directory: %w", err)
 		}
-		f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
 		if err != nil {
 			return nil, fmt.Errorf("failed to open log file: %w", err)
 		}
@@ -118,4 +118,12 @@ func RegisterPanicHandler() {
 		fmt.Fprintf(os.Stderr, "Application had an unrecoverable error: %v\n", r)
 		os.Exit(1)
 	}
+}
+
+func ConsoleError(text string) {
+	fmt.Printf("-> \033[31m%s\033[0m\n", text)
+}
+
+func ConsoleSuccess(text string) {
+	fmt.Printf("-> \033[32m%s\033[0m\n", text)
 }

@@ -3,8 +3,12 @@ package class
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/character-management/shared"
+	"github.com/onioncall/dndgo/logger"
 )
 
 type Rogue struct {
@@ -35,13 +39,11 @@ func (r *Rogue) ExecutePostCalculateMethods(c *models.Character) {
 // They select two more at level 6
 func (r *Rogue) executeExpertise(c *models.Character) {
 	if c.Level < 6 && len(r.ExpertiseSkills) > 2 {
-		// We'll allow the user to specify more, but only the first two get taken for it to be ExpertiseSkills
-		r.ExpertiseSkills = r.ExpertiseSkills[:2]
+		logger.Warn("Only two expertise skills should be configured for your class level")
 	}
 
 	if c.Level >= 6 && len(r.ExpertiseSkills) > 4 {
-		// We'll allow the user to specify more, but only the first two get taken for it to be ExpertiseSkills
-		r.ExpertiseSkills = r.ExpertiseSkills[:4]
+		logger.Warn("Only four expertise skills should be configured for your class level")
 	}
 	executeExpertiseShared(c, r.ExpertiseSkills)
 }
@@ -90,4 +92,18 @@ func (r *Rogue) ClassDetails(level int) string {
 	s += sneakAttackLine
 
 	return s
+}
+
+func (r *Rogue) AddExpertiseSkill(skill string) error {
+	if !slices.Contains(shared.Skills, strings.ToLower(skill)) {
+		return fmt.Errorf("Skill '%s' does not exist, check spelling.", skill)
+	}
+
+	if slices.Contains(r.ExpertiseSkills, strings.ToLower(skill)) {
+		return fmt.Errorf("Duplicate skill '%s' cannot be added, choose unique one.", skill)
+	}
+
+	r.ExpertiseSkills = append(r.ExpertiseSkills, skill)
+
+	return nil
 }

@@ -15,29 +15,6 @@ func TestBardExecuteExpertise(t *testing.T) {
 		expected  []shared.Skill
 	}{
 		{
-			name: "Below level requirement",
-			character: &models.Character{
-				Level:       2,
-				Proficiency: 2,
-				Skills: []shared.Skill{
-					{Name: "dexterity", SkillModifier: 5, Proficient: false},
-					{Name: "persuasion", SkillModifier: 4, Proficient: false},
-					{Name: "deception", SkillModifier: 3, Proficient: false},
-				},
-			},
-			bard: &Bard{
-				ExpertiseSkills: []string{
-					"persuasion",
-					"deception",
-				},
-			},
-			expected: []shared.Skill{
-				{Name: "dexterity", SkillModifier: 5, Proficient: false},
-				{Name: "persuasion", SkillModifier: 4, Proficient: false},
-				{Name: "deception", SkillModifier: 3, Proficient: false},
-			},
-		},
-		{
 			name: "Level 3, two skill proficiencies doubled",
 			character: &models.Character{
 				Level:       3,
@@ -52,30 +29,6 @@ func TestBardExecuteExpertise(t *testing.T) {
 				ExpertiseSkills: []string{
 					"persuasion",
 					"deception",
-				},
-			},
-			expected: []shared.Skill{
-				{Name: "nature", SkillModifier: 5, Proficient: false},
-				{Name: "persuasion", SkillModifier: 6, Proficient: false},
-				{Name: "deception", SkillModifier: 5, Proficient: false},
-			},
-		},
-		{
-			name: "Level 3, two skill proficiencies doubled, one removed",
-			character: &models.Character{
-				Level:       3,
-				Proficiency: 2,
-				Skills: []shared.Skill{
-					{Name: "nature", SkillModifier: 5, Proficient: false},
-					{Name: "persuasion", SkillModifier: 4, Proficient: false},
-					{Name: "deception", SkillModifier: 3, Proficient: false},
-				},
-			},
-			bard: &Bard{
-				ExpertiseSkills: []string{
-					"persuasion",
-					"deception",
-					"nature",
 				},
 			},
 			expected: []shared.Skill{

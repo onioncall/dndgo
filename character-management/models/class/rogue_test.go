@@ -60,62 +60,6 @@ func TestRogueExecuteExpertise(t *testing.T) {
 				{Name: "deception", SkillModifier: 5, Proficient: false},
 			},
 		},
-		{
-			name: "Level 3, two skill proficiencies doubled, one removed",
-			character: &models.Character{
-				Level:       3,
-				Proficiency: 2,
-				Skills: []shared.Skill{
-					{Name: "nature", SkillModifier: 5, Proficient: false},
-					{Name: "persuasion", SkillModifier: 4, Proficient: false},
-					{Name: "deception", SkillModifier: 3, Proficient: false},
-				},
-			},
-			rogue: &Rogue{
-				ExpertiseSkills: []string{
-					"persuasion",
-					"deception",
-					"nature",
-				},
-			},
-			expected: []shared.Skill{
-				{Name: "nature", SkillModifier: 5, Proficient: false},
-				{Name: "persuasion", SkillModifier: 6, Proficient: false},
-				{Name: "deception", SkillModifier: 5, Proficient: false},
-			},
-		},
-		{
-			name: "Level 10, four skill proficiencies doubled, one removed",
-			character: &models.Character{
-				Level:       10,
-				Proficiency: 4,
-				Skills: []shared.Skill{
-					{Name: "nature", SkillModifier: 5, Proficient: false},
-					{Name: "persuasion", SkillModifier: 4, Proficient: false},
-					{Name: "deception", SkillModifier: 3, Proficient: false},
-					{Name: "religion", SkillModifier: 2, Proficient: false},
-					{Name: "survival", SkillModifier: 4, Proficient: false},
-					{Name: "perception", SkillModifier: 6, Proficient: false},
-				},
-			},
-			rogue: &Rogue{
-				ExpertiseSkills: []string{
-					"persuasion",
-					"deception",
-					"nature",
-					"religion",
-					"perception",
-				},
-			},
-			expected: []shared.Skill{
-				{Name: "nature", SkillModifier: 9, Proficient: false},
-				{Name: "persuasion", SkillModifier: 8, Proficient: false},
-				{Name: "deception", SkillModifier: 7, Proficient: false},
-				{Name: "religion", SkillModifier: 6, Proficient: false},
-				{Name: "survival", SkillModifier: 4, Proficient: false},
-				{Name: "perception", SkillModifier: 6, Proficient: false},
-			},
-		},
 	}
 
 	for _, tt := range tests {

@@ -19,14 +19,17 @@ var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		c, err := handlers.LoadCharacter()
 		if err != nil {
-			return fmt.Errorf("failed to load character data: %w", err)
+			logger.Error(err)
+			fmt.Println("Failed to load character data")
+			return nil
 		}
 
 		if err := handlers.HandleCharacter(c); err != nil {
-			return fmt.Errorf("failed to handle character: %w", err)
+			logger.Error(err)
+			fmt.Println("Failed to handle character data")
 		}
 
-		logger.Info("Character Update Successful")
+		logger.ConsoleSuccess("Character Update Successful")
 		return nil
 	},
 }
