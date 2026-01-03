@@ -58,8 +58,8 @@ var (
 
 func (c *Character) CalculateCharacterStats() {
 	c.calculateProficiencyBonusByLevel()
-	c.calculateAbilitiesFromBase()
 	c.calculateAbilityScoreImprovement()
+	c.calculateAbilitiesFromBase()
 	c.calculateSkillModifierFromBase()
 	c.calculateAC()
 	c.calculatePassiveStats()
@@ -107,10 +107,6 @@ func (c *Character) calculateAbilityScoreImprovement() {
 		maxBonus = 10
 	}
 
-	if maxBonus == 0 {
-		return // don't qualify yet
-	}
-
 	bonusSum := 0
 	for _, item := range c.AbilityScoreImprovement {
 		bonusSum += item.Bonus
@@ -119,7 +115,6 @@ func (c *Character) calculateAbilityScoreImprovement() {
 	if bonusSum > maxBonus {
 		info := fmt.Sprintf("Ability Score Bonus (%d) exceeds available for level (%d)\n", bonusSum, maxBonus)
 		logger.Info(info)
-		return
 	}
 
 	for _, item := range c.AbilityScoreImprovement {
