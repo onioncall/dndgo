@@ -10,6 +10,13 @@ import (
 	"github.com/onioncall/dndgo/logger"
 )
 
+var rangerFightingStyles = []string{
+	shared.FightingStyleArchery,
+	shared.FightingStyleDefense,
+	shared.FightingStyleDueling,
+	shared.FightingStyleTwoWeaponFighting,
+}
+
 type Ranger struct {
 	models.BaseClass
 	FightingStyle        string               `json:"fighting-style" clover:"fighting-style"`
@@ -95,4 +102,18 @@ func (r *Ranger) executeFightingStyle(c *models.Character) {
 	default:
 		logger.Info(invalidMsg)
 	}
+}
+
+func (r *Ranger) ModifyFightingStyle(fightingStyle string) error {
+	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles", fightingStyle)
+	for _, fs := range rangerFightingStyles {
+		if strings.EqualFold(fs, fightingStyle) {
+			r.FightingStyle = fightingStyle
+			return nil
+		}
+
+		invalidMsg += fmt.Sprintf(", %s", fs)
+	}
+
+	return fmt.Errorf("%s", invalidMsg)
 }

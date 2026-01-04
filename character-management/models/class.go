@@ -49,6 +49,10 @@ type PreparedSpellClass interface {
 	GetPreparedSpells() []string
 }
 
+type FightingStyleClass interface {
+	ModifyFightingStyle(fightingStyle string) error
+}
+
 type ClassFeature struct {
 	Name    string `json:"name"`
 	Level   int    `json:"level"`

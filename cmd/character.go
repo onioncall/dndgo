@@ -625,6 +625,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			e, _ := cmd.Flags().GetString("expertise")
 			p, _ := cmd.Flags().GetString("prepared-spell")
+			f, _ := cmd.Flags().GetString("fighting-style")
 			r, _ := cmd.Flags().GetBool("remove")
 
 			c, err := handlers.LoadCharacter()
@@ -659,6 +660,18 @@ var (
 					if err != nil {
 						logger.Error(err)
 						logger.ConsoleError("Failed to add prepared spell")
+						return
+					}
+				}
+			} else if f != "" {
+				if r {
+					logger.ConsoleError("-> removing fighting style is not implemented yet")
+					return
+				} else {
+					err = c.ModifyFightingStyle(f)
+					if err != nil {
+						logger.Error(err)
+						logger.ConsoleError("Failed to modify fighting style")
 						return
 					}
 				}
@@ -703,7 +716,8 @@ func init() {
 
 	addCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
-	addCmd.Flags().StringP("language", "l", "", "Language to add")
+	addCmd.Flags().BoolP("level", "l", false, "Level to add")
+	addCmd.Flags().StringP("language", "", "", "Language to add")
 	addCmd.Flags().StringP("weapon", "w", "", "Weapon to add")
 	addCmd.Flags().IntP("spell-slots", "s", 0, "Increase spell-slot max capacity by level")
 	addCmd.Flags().StringP("spell", "x", "", "Add spell to list of character spells")
@@ -767,5 +781,6 @@ func init() {
 
 	classCmd.Flags().StringP("expertise", "e", "", "name of skill to add to expertise")
 	classCmd.Flags().StringP("prepared-spell", "p", "", "name of spell to prepare")
+	classCmd.Flags().StringP("fighting-style", "f", "", "name of fighting style to assign")
 	classCmd.Flags().BoolP("remove", "r", false, "remove instead of add one of these things")
 }
