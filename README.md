@@ -61,4 +61,10 @@ We recommend using the tui for this, but if you'd prefer, it can technically be 
 
 ---
 
+## Contributions
+
+We'd love to have you contribute, either by creating a discussion and reporting issues/requesting features, or by picking up existing issues and submitting a PR! If you're interested, please read through the contribution.md file in our docs/ directory.
+
+---
+
 <small>*Special Thank you to Matt Evans for the dndgo logo, and to Renée French for the inspiration</small>
