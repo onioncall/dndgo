@@ -625,6 +625,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			e, _ := cmd.Flags().GetString("expertise")
 			p, _ := cmd.Flags().GetString("prepared-spell")
+			o, _ := cmd.Flags().GetString("oath-spell")
 			f, _ := cmd.Flags().GetString("fighting-style")
 			r, _ := cmd.Flags().GetBool("remove")
 
@@ -660,6 +661,22 @@ var (
 					if err != nil {
 						logger.Error(err)
 						logger.ConsoleError("Failed to add prepared spell")
+						return
+					}
+				}
+			} else if o != "" {
+				if r {
+					err = c.RemoveOathSpell(o)
+					if err != nil {
+						logger.Error(err)
+						logger.ConsoleError("Failed to remove oath spell")
+						return
+					}
+				} else {
+					err = c.AddOathSpell(o)
+					if err != nil {
+						logger.Error(err)
+						logger.ConsoleError("Failed to add oath spell")
 						return
 					}
 				}
@@ -782,5 +799,6 @@ func init() {
 	classCmd.Flags().StringP("expertise", "e", "", "name of skill to add to expertise")
 	classCmd.Flags().StringP("prepared-spell", "p", "", "name of spell to prepare")
 	classCmd.Flags().StringP("fighting-style", "f", "", "name of fighting style to assign")
+	classCmd.Flags().StringP("oath-spell", "o", "", "name of oath spell to add")
 	classCmd.Flags().BoolP("remove", "r", false, "remove instead of add one of these things")
 }

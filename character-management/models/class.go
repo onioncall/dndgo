@@ -49,6 +49,11 @@ type PreparedSpellClass interface {
 	GetPreparedSpells() []string
 }
 
+type OathSpellClass interface {
+	AddOathSpell(spell string) error
+	RemoveOathSpell(spell string) error
+}
+
 type FightingStyleClass interface {
 	ModifyFightingStyle(fightingStyle string) error
 }
