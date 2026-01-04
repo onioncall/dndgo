@@ -1,6 +1,14 @@
 ## CLI Commands
 ---
 
+These are flags for general application configuration, and are mostly logging related
+**Base Flags**
+- --clear-log    clear the log file, no shorthand flag
+- -h, --help     help for dndgo *This applies for all of the following sub commands, we will not list it every time
+- --log string   log output path, use ':stdout' for stdout (default "/Users/onioncall/.local/state/dndgo/dndgo.log"), no shorthand flag
+- -v, --version  version for dndgo
+
+---
 You can use the CLI to directly make changes to the characters state (like health, items, spell slots, etc) as well as rendering out a markdown file with your character information
 
 ### Search
@@ -42,7 +50,7 @@ You can use the CLI to directly make changes to the characters state (like healt
 -  -a  --ability-improvement    Ability Score Improvement item name, (use -q to specify a quantity)
 -  -b, --backpack string        Item to add to backpack (use -q to specify quantity)
 -  -e, --equipment string       Kind of equipment to add 'armor, ring, etc'
--  -l, --language string        Language to add
+-  --language string            Name of language to add
 -  -n, --name string            Name of equipment to add
 -  -q, --quantity int           Modify quantity of something
 -  -x, --spell string           Add spell to list of character spells
@@ -54,7 +62,7 @@ You can use the CLI to directly make changes to the characters state (like healt
 
 `dndgo ctr add -b "potion of greater healing" -q 1` - Add one potion of greater healing to your inventory
 
-`dndgo ctr add -t 5` Add 5 temporary HP
+`dndgo ctr add -t 5` - Add 5 temporary HP
 
 ---
 
@@ -74,13 +82,13 @@ You can use the CLI to directly make changes to the characters state (like healt
 
 *examples*
 
-`dndgo ctr use -b Gold -q 10` -  Use 10 Gold
+`dndgo ctr use -b Gold -q 10` - Use 10 Gold
 
-`dndgo ctr use -c any` -  Use 1 class token for a class that only uses one token
+`dndgo ctr use -c any` - Use 1 class token for a class that only uses one token
 
-`dndgo ctr use -c divine-sense -q 2` -  Use 2 divine sense class tokens
+`dndgo ctr use -c divine-sense -q 2` - Use 2 divine sense class tokens
 
-`dndgo ctr use -s 2` -  Use a level 2 spell slot
+`dndgo ctr use -s 2` - Use a level 2 spell slot
 
 ---
 
@@ -154,9 +162,9 @@ You can use the CLI to directly make changes to the characters state (like healt
 
 *examples*
 
-`dndgo ctr import -f nim.json` imports character from json file 'nim.json' in your current directory
+`dndgo ctr import -f nim.json` - Imports character from json file 'nim.json' in your current directory
 
-`dndgo ctr import -f nim-class.json -n Nim -c` imports class file 'nim-class.json' for character name 'Nim'
+`dndgo ctr import -f nim-class.json -n Nim -c` - Imports class file 'nim-class.json' for character name 'Nim'
 
 ---
 
@@ -185,6 +193,15 @@ You can use the CLI to directly make changes to the characters state (like healt
 `ctr class`
 
 **Expertise Flags**
-- -e, --expertise string   name of skill to add to expertise
+- -e, --expertise string        name of skill to add to expertise (remove does not apply)
+- -f, --fighting-style string   name of fighting style to assign (remove does not apply)
+- -p, --prepared-spell string   name of spell to prepare
+- -r, --remove                  remove instead of add one of these things
+
+*examples*
+
+`dndgo ctr class -e perception` - adds perception to your expertise skills
+
+`dndgo ctr class -p "Healing Word" -r`  - removes healing word from prepared spells
 
 ---

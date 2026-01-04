@@ -10,6 +10,15 @@ import (
 	"github.com/onioncall/dndgo/logger"
 )
 
+var fightingStyles = []string{
+	shared.FightingStyleArchery,
+	shared.FightingStyleDefense,
+	shared.FightingStyleDueling,
+	shared.FightingStyleTwoWeaponFighting,
+	shared.FightingStyleGreatWeaponFighting,
+	shared.FightingStyleProtection,
+}
+
 type Fighter struct {
 	models.BaseClass
 	FightingStyle        string               `json:"fighting-style" clover:"fighting-style"`
@@ -48,12 +57,14 @@ func (f *Fighter) executeClassTokens() {
 }
 
 func (f *Fighter) executeFightingStyle(c *models.Character) {
-	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s",
+	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles, %s, %s, %s, %s, %s, %s",
 		f.FightingStyle,
 		shared.FightingStyleArchery,
 		shared.FightingStyleDefense,
 		shared.FightingStyleDueling,
-		shared.FightingStyleTwoWeaponFighting)
+		shared.FightingStyleTwoWeaponFighting,
+		shared.FightingStyleGreatWeaponFighting,
+		shared.FightingStyleProtection)
 
 	switch strings.ToLower(f.FightingStyle) {
 	case shared.FightingStyleArchery:
@@ -160,4 +171,18 @@ func (f *Fighter) GetTokens() []string {
 	}
 
 	return s
+}
+
+func (f *Fighter) ModifyFightingStyle(fightingStyle string) error {
+	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles", fightingStyle)
+	for _, fs := range fightingStyles {
+		if strings.EqualFold(fs, fightingStyle) {
+			f.FightingStyle = fightingStyle
+			return nil
+		}
+
+		invalidMsg += fmt.Sprintf(", %s", fs)
+	}
+
+	return fmt.Errorf("%s", invalidMsg)
 }

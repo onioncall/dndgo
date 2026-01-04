@@ -1021,7 +1021,7 @@ func (c *Character) AddPreparedSpell(spell string) error {
 
 		err := psClass.AddPreparedSpell(spell)
 		if err != nil {
-			return fmt.Errorf("Failed to add prepared spell")
+			return fmt.Errorf("Failed to add prepared spell '%s:\n%w'", spell, err)
 		}
 
 		c.Spells[spellIdx].IsPrepared = true
@@ -1041,7 +1041,7 @@ func (c *Character) RemovePreparedSpell(spell string) error {
 
 		err := psClass.RemovePreparedSpell(spell)
 		if err != nil {
-			return fmt.Errorf("Failed to add prepared spell")
+			return fmt.Errorf("Failed to remove prepared spell '%s:\n%w'", spell, err)
 		}
 
 		c.Spells[spellIdx].IsPrepared = false
@@ -1049,6 +1049,16 @@ func (c *Character) RemovePreparedSpell(spell string) error {
 		return fmt.Errorf("Class '%s' is not one that implements prepared spells", c.ClassName)
 	}
 
+	return nil
+}
+
+func (c *Character) ModifyFightingStyle(fightingStyle string) error {
+	if fsClass, ok := c.Class.(FightingStyleClass); ok {
+		err := fsClass.ModifyFightingStyle(fightingStyle)
+		if err != nil {
+			return fmt.Errorf("Failed to update fighting style to '%s':\n%w", fightingStyle, err)
+		}
+	}
 	return nil
 }
 

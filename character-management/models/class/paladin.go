@@ -11,6 +11,13 @@ import (
 	"github.com/onioncall/dndgo/logger"
 )
 
+var paladinFightingStyles = []string{
+	shared.FightingStyleGreatWeaponFighting,
+	shared.FightingStyleDefense,
+	shared.FightingStyleDueling,
+	shared.FightingStyleProtection,
+}
+
 type Paladin struct {
 	models.BaseClass
 	PreparedSpells       []string             `json:"prepared-spells" clover:"prepared-spells"`
@@ -240,4 +247,18 @@ func (p *Paladin) RemovePreparedSpell(spell string) error {
 
 func (p *Paladin) GetPreparedSpells() []string {
 	return p.PreparedSpells
+}
+
+func (p *Paladin) ModifyFightingStyle(fightingStyle string) error {
+	invalidMsg := fmt.Sprintf("%s not one of the valid fighting styles", fightingStyle)
+	for _, fs := range paladinFightingStyles {
+		if strings.EqualFold(fs, fightingStyle) {
+			p.FightingStyle = fightingStyle
+			return nil
+		}
+
+		invalidMsg += fmt.Sprintf(", %s", fs)
+	}
+
+	return fmt.Errorf("%s", invalidMsg)
 }
