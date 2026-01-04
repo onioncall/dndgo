@@ -15,7 +15,7 @@ Configure your character, and this application will handle tracking your mods, b
 ## Tui 
 
 ### Character Management
-Currently Character management is only implemented for basic info, spells, and equipment. Actions can be performed on the character like damage, recovering health, adding items, using spell slots and more. More detailed information on these commands can be found in the docs/tui directory.
+Character management has tabs for basic info, spells, equipment, class info, and help for how to use the tui. Actions can be performed on the character like damage, recovering health, adding items, using spell slots and more. Detailed information on these commands can be found in the docs/tui directory.
 
 *example*
 
@@ -51,10 +51,12 @@ You can use the CLI to directly make changes to the characters state (like healt
 ---
 
 ## Setting up Character Config
-- run "dndgo ctr init -c <class-name> -n <character-name>
-- modify character details in the ~/.config/dndgo directory
+We recommend using the tui for this, but if you'd prefer, it can technically be done via cli.
+- run `dndgo ctr init -c <class-name> -n <character-name>`
+- export and modify your character details `dndgo ctr export -f <file name.json> -n <character name>`
+- import your modified character `dndgo ctr import -f <file name.json>`
 - if you want your character markdown to be saved to a different file than your config files, you can specify a path in the character.json file. If you do this, make sure that you only specify the path from the home directory (e.g. "dnd/mdfiles", not "~/dnd/mdfiles") or you will create a ~ dir in the home directory. 
-- run "dndgo ctr update" to generate your markdown file
+- run `dndgo ctr update` or `dndgo` to generate your markdown file
 - more details on how to set up character and class can be found in the docs directory
 
 ---
