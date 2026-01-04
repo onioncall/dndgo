@@ -135,10 +135,14 @@ func ClearLog(path string) error {
 	return nil
 }
 
-func ConsoleError(text string) {
+// Prints error to the command line
+// This is meant to be a short error summarizing what happened (or didn't happen) while the
+// logger.Error and logger.Errorf by default log to the log file (with the more detailed error)
+func PrintError(text string) {
 	fmt.Printf("-> \033[31m%s\033[0m\n", text)
 }
 
-func ConsoleSuccess(text string) {
+// Prints a short success message to the command line
+func PrintSuccess(text string) {
 	fmt.Printf("-> \033[32m%s\033[0m\n", text)
 }

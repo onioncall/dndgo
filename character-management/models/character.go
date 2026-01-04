@@ -1091,6 +1091,32 @@ func (c *Character) RemoveOathSpell(spell string) error {
 	return nil
 }
 
+func (c *Character) AddFavoredEnemy(favoredEnemy string) error {
+	if feClass, ok := c.Class.(FavoredEnemyClass); ok {
+		err := feClass.AddFavoredEnemy(favoredEnemy)
+		if err != nil {
+			return fmt.Errorf("Failed to add favored enemy '%s':\n%w", favoredEnemy, err)
+		}
+	} else {
+		return fmt.Errorf("Class '%s' is not one that implements favored enemy", c.ClassName)
+	}
+
+	return nil
+}
+
+func (c *Character) RemoveFavoredEnemy(favoredEnemy string) error {
+	if feClass, ok := c.Class.(FavoredEnemyClass); ok {
+		err := feClass.RemoveFavoredEnemy(favoredEnemy)
+		if err != nil {
+			return fmt.Errorf("Failed to remove favored enemy '%s':\n%w", favoredEnemy, err)
+		}
+	} else {
+		return fmt.Errorf("Class '%s' is not one that implements favored enemy", c.ClassName)
+	}
+
+	return nil
+}
+
 func (c *Character) SetLevel(level int) {
 	// This will eventually need to be set by the class instead of by the character
 	c.Level = level

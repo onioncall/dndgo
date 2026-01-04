@@ -37,7 +37,7 @@ var (
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to load character data")
+				logger.PrintError("Failed to load character data")
 				return
 			}
 
@@ -46,7 +46,7 @@ var (
 			}
 			if e != "" {
 				if n == "" {
-					logger.ConsoleError("Name of equipment can not be left empty")
+					logger.PrintError("Name of equipment can not be left empty")
 					return
 				}
 
@@ -54,7 +54,7 @@ var (
 			}
 			if bp != "" {
 				if q <= 0 {
-					logger.ConsoleError("Must pass a positive quantity to add")
+					logger.PrintError("Must pass a positive quantity to add")
 					return
 				}
 
@@ -78,7 +78,7 @@ var (
 			if a != "" {
 				err = c.AddAbilityScoreImprovementItem(q, a)
 				if err != nil {
-					logger.ConsoleError(err.Error())
+					logger.PrintError(err.Error())
 					return
 				}
 			}
@@ -86,18 +86,18 @@ var (
 			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to process character")
+				logger.PrintError("Failed to process character")
 				return
 			}
 
-			logger.ConsoleSuccess("Character Update Successful")
+			logger.PrintSuccess("Character Update Successful")
 		},
 	}
 
@@ -117,14 +117,14 @@ var (
 					path, err = handlers.GetConfigPath()
 					if err != nil {
 						logger.Error(err)
-						logger.ConsoleError("Failed to get config path")
+						logger.PrintError("Failed to get config path")
 						return
 					}
 				} else if p == "markdown" {
 					c, err := handlers.LoadCharacter()
 					if err != nil {
 						logger.Error(err)
-						logger.ConsoleError("Failed to load character")
+						logger.PrintError("Failed to load character")
 						return
 					}
 
@@ -133,7 +133,7 @@ var (
 						path, err = handlers.GetConfigPath()
 					}
 				} else {
-					logger.ConsoleError("Path option not found")
+					logger.PrintError("Path option not found")
 				}
 
 				fmt.Println(path)
@@ -143,19 +143,19 @@ var (
 				c, err := handlers.LoadCharacter()
 				if err != nil {
 					logger.Error(err)
-					logger.ConsoleError("Failed to load character data")
+					logger.PrintError("Failed to load character data")
 					return
 				}
 
 				if c.Class == nil {
-					logger.ConsoleError("Class not properly configured")
+					logger.PrintError("Class not properly configured")
 					return
 				}
 
 				var tokenClass models.TokenClass
 				tokenClass, ok := c.Class.(models.TokenClass)
 				if !ok {
-					logger.ConsoleError("Class does not implement TokenClass")
+					logger.PrintError("Class does not implement TokenClass")
 					return
 				}
 
@@ -176,7 +176,7 @@ var (
 				names, err := handlers.GetCharacterNames()
 				if err != nil {
 					logger.Error(err)
-					logger.ConsoleError("Failed to get character names")
+					logger.PrintError("Failed to get character names")
 					return
 				}
 
@@ -201,16 +201,16 @@ var (
 
 			if c {
 				// Delete class by type and character name
-				logger.ConsoleError("Feature to delete single class is not yet supported")
+				logger.PrintError("Feature to delete single class is not yet supported")
 			} else {
 				err := handlers.DeleteCharacter(n)
 				if err != nil {
 					logger.Error(err)
-					logger.ConsoleError("Failed to delete character")
+					logger.PrintError("Failed to delete character")
 					return
 				}
 
-				logger.ConsoleSuccess("Deleted character")
+				logger.PrintSuccess("Deleted character")
 			}
 		},
 	}
@@ -225,7 +225,7 @@ var (
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to load character")
+				logger.PrintError("Failed to load character")
 				return
 			}
 
@@ -238,18 +238,18 @@ var (
 			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to process character")
+				logger.PrintError("Failed to process character")
 				return
 			}
 
-			logger.ConsoleSuccess("Character Update Successful")
+			logger.PrintSuccess("Character Update Successful")
 		},
 	}
 
@@ -262,7 +262,7 @@ var (
 				err := handlers.SetDefaultCharacter(d)
 				if err != nil {
 					logger.Error(err)
-					logger.ConsoleError("Failed to update default character")
+					logger.PrintError("Failed to update default character")
 					return
 				}
 			}
@@ -270,18 +270,18 @@ var (
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to process character")
+				logger.PrintError("Failed to process character")
 				return
 			}
 
-			logger.ConsoleSuccess("Character Update Successful")
+			logger.PrintSuccess("Character Update Successful")
 		},
 	}
 
@@ -297,19 +297,19 @@ var (
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
 			if bp != "" {
 				if q <= 0 {
-					logger.ConsoleError("Must pass a positive quantity to use")
+					logger.PrintError("Must pass a positive quantity to use")
 					return
 				}
 
 				err = c.RemoveItemFromPack(bp, q)
 				logger.Error(err)
-				logger.ConsoleError("Failed to remove item from pack")
+				logger.PrintError("Failed to remove item from pack")
 				return
 			} else if s > 0 {
 				c.UseSpellSlot(s)
@@ -321,25 +321,25 @@ var (
 			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
 			err = handlers.SaveClass(c.Class)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save class data")
+				logger.PrintError("Failed to save class data")
 				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to process character")
+				logger.PrintError("Failed to process character")
 				return
 			}
 
-			logger.ConsoleSuccess("Character Update Successful")
+			logger.PrintSuccess("Character Update Successful")
 		},
 	}
 
@@ -356,7 +356,7 @@ var (
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
@@ -373,25 +373,25 @@ var (
 			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
 			err = handlers.SaveClass(c.Class)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save class data")
+				logger.PrintError("Failed to save class data")
 				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to process character")
+				logger.PrintError("Failed to process character")
 				return
 			}
 
-			logger.ConsoleSuccess("Character Update Successful")
+			logger.PrintSuccess("Character Update Successful")
 		},
 	}
 
@@ -405,18 +405,18 @@ var (
 			character, err := handlers.LoadCharacterTemplate(n, c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to load character template")
+				logger.PrintError("Failed to load character template")
 				return
 			}
 
 			err = handlers.CreateCharacter(character)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to create character")
+				logger.PrintError("Failed to create character")
 				return
 			}
 
-			logger.ConsoleError("Character Creation Successful")
+			logger.PrintError("Character Creation Successful")
 		},
 	}
 
@@ -430,7 +430,7 @@ var (
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
@@ -448,18 +448,18 @@ var (
 			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to process character")
+				logger.PrintError("Failed to process character")
 				return
 			}
 
-			logger.ConsoleSuccess("Character Update Successful")
+			logger.PrintSuccess("Character Update Successful")
 		},
 	}
 
@@ -473,7 +473,7 @@ var (
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to load character data")
+				logger.PrintError("Failed to load character data")
 				return
 			}
 
@@ -487,18 +487,18 @@ var (
 			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to process character")
+				logger.PrintError("Failed to process character")
 				return
 			}
 
-			logger.ConsoleError("Character Update Successful")
+			logger.PrintError("Character Update Successful")
 		},
 	}
 
@@ -513,7 +513,7 @@ var (
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to load character data")
+				logger.PrintError("Failed to load character data")
 				return
 			}
 
@@ -521,12 +521,12 @@ var (
 				err = c.ModifyAbilityScoreImprovementItem(q, a)
 				if err != nil {
 					logger.Error(err)
-					logger.ConsoleError("Failed to modify ability score improvement item")
+					logger.PrintError("Failed to modify ability score improvement item")
 					return
 				}
 			} else if l > 0 {
 				if l > 20 {
-					logger.ConsoleError("Level must be no more than 20")
+					logger.PrintError("Level must be no more than 20")
 				}
 
 				c.SetLevel(l)
@@ -535,18 +535,18 @@ var (
 			err = handlers.SaveCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to process character")
+				logger.PrintError("Failed to process character")
 				return
 			}
 
-			logger.ConsoleSuccess("Character Update Successful")
+			logger.PrintSuccess("Character Update Successful")
 		},
 	}
 
@@ -565,7 +565,7 @@ var (
 			bytes, err := os.ReadFile(filePath)
 			if err != nil {
 				logger.Errorf("Error reading file '%v':\n%v", filePath, err.Error())
-				logger.ConsoleError("Failed to import character")
+				logger.PrintError("Failed to import character")
 				return
 			}
 
@@ -577,12 +577,12 @@ var (
 				err = handlers.ImportCharacterJson(bytes)
 				if err != nil {
 					logger.Error(err)
-					logger.ConsoleError("Failed to import character character")
+					logger.PrintError("Failed to import character character")
 					return
 				}
 			}
 
-			logger.ConsoleSuccess(fmt.Sprintf("%v Import Successful", entity))
+			logger.PrintSuccess(fmt.Sprintf("%v Import Successful", entity))
 		},
 	}
 
@@ -610,11 +610,11 @@ var (
 
 			err = os.WriteFile(filePath, data, 0o644)
 			if err != nil {
-				logger.ConsoleError(fmt.Sprintf("Failed to write file '%v'", filePath))
+				logger.PrintError(fmt.Sprintf("Failed to write file '%v'", filePath))
 				return
 			}
 
-			logger.ConsoleSuccess(fmt.Sprintf("%v Export Successful", entity))
+			logger.PrintSuccess(fmt.Sprintf("%v Export Successful", entity))
 		},
 	}
 
@@ -627,25 +627,26 @@ var (
 			p, _ := cmd.Flags().GetString("prepared-spell")
 			o, _ := cmd.Flags().GetString("oath-spell")
 			f, _ := cmd.Flags().GetString("fighting-style")
+			v, _ := cmd.Flags().GetString("favored-enemy")
 			r, _ := cmd.Flags().GetBool("remove")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save character data")
+				logger.PrintError("Failed to save character data")
 				return
 			}
 
 			if e != "" {
 				if r {
-					logger.ConsoleError("-> removing expertise skill is not implemented yet")
+					logger.PrintError("-> removing expertise skill is not implemented yet")
 					return
 				}
 
 				err := c.AddExpertiseSkill(e)
 				if err != nil {
 					logger.Error(err)
-					logger.ConsoleError("Failed to add expertise skill")
+					logger.PrintError("Failed to add expertise skill")
 					return
 				}
 			} else if p != "" {
@@ -653,14 +654,14 @@ var (
 					err = c.RemovePreparedSpell(p)
 					if err != nil {
 						logger.Error(err)
-						logger.ConsoleError("Failed to remove prepared spell")
+						logger.PrintError("Failed to remove prepared spell")
 						return
 					}
 				} else {
 					err = c.AddPreparedSpell(p)
 					if err != nil {
 						logger.Error(err)
-						logger.ConsoleError("Failed to add prepared spell")
+						logger.PrintError("Failed to add prepared spell")
 						return
 					}
 				}
@@ -669,26 +670,42 @@ var (
 					err = c.RemoveOathSpell(o)
 					if err != nil {
 						logger.Error(err)
-						logger.ConsoleError("Failed to remove oath spell")
+						logger.PrintError("Failed to remove oath spell")
 						return
 					}
 				} else {
 					err = c.AddOathSpell(o)
 					if err != nil {
 						logger.Error(err)
-						logger.ConsoleError("Failed to add oath spell")
+						logger.PrintError("Failed to add oath spell")
 						return
 					}
 				}
 			} else if f != "" {
 				if r {
-					logger.ConsoleError("-> removing fighting style is not implemented yet")
+					logger.PrintError("-> removing fighting style is not implemented")
 					return
 				} else {
 					err = c.ModifyFightingStyle(f)
 					if err != nil {
 						logger.Error(err)
-						logger.ConsoleError("Failed to modify fighting style")
+						logger.PrintError("Failed to modify fighting style")
+						return
+					}
+				}
+			} else if v != "" {
+				if r {
+					err = c.RemoveFavoredEnemy(v)
+					if err != nil {
+						logger.Error(err)
+						logger.PrintError("Failed to remove favored enemy")
+						return
+					}
+				} else {
+					err = c.AddFavoredEnemy(v)
+					if err != nil {
+						logger.Error(err)
+						logger.PrintError("Failed to add favored enemy")
 						return
 					}
 				}
@@ -697,18 +714,18 @@ var (
 			err = handlers.SaveClass(c.Class)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to save class data")
+				logger.PrintError("Failed to save class data")
 				return
 			}
 
 			err = handlers.HandleCharacter(c)
 			if err != nil {
 				logger.Error(err)
-				logger.ConsoleError("Failed to process character")
+				logger.PrintError("Failed to process character")
 				return
 			}
 
-			logger.ConsoleSuccess("Character Update Successful")
+			logger.PrintSuccess("Character Update Successful")
 		},
 	}
 )
@@ -799,6 +816,7 @@ func init() {
 	classCmd.Flags().StringP("expertise", "e", "", "name of skill to add to expertise")
 	classCmd.Flags().StringP("prepared-spell", "p", "", "name of spell to prepare")
 	classCmd.Flags().StringP("fighting-style", "f", "", "name of fighting style to assign")
+	classCmd.Flags().StringP("favored-enemy", "v", "", "name of favored to assign")
 	classCmd.Flags().StringP("oath-spell", "o", "", "name of oath spell to add")
 	classCmd.Flags().BoolP("remove", "r", false, "remove instead of add one of these things")
 }

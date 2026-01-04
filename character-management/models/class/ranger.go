@@ -3,6 +3,7 @@ package class
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/models"
@@ -116,4 +117,26 @@ func (r *Ranger) ModifyFightingStyle(fightingStyle string) error {
 	}
 
 	return fmt.Errorf("%s", invalidMsg)
+}
+
+func (r *Ranger) AddFavoredEnemy(favoredEnemy string) error {
+	for _, fe := range r.FavoredEnemies {
+		if strings.EqualFold(fe, favoredEnemy) {
+			return fmt.Errorf("Favored enemy '%s' already exists in list of favored enemies", favoredEnemy)
+		}
+	}
+
+	r.FavoredEnemies = append(r.FavoredEnemies, favoredEnemy)
+	return nil
+}
+
+func (r *Ranger) RemoveFavoredEnemy(favoredEnemy string) error {
+	for i, fe := range r.FavoredEnemies {
+		if strings.EqualFold(fe, favoredEnemy) {
+			r.FavoredEnemies = slices.Delete(r.FavoredEnemies, i, i+1)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("Favored enemy '%s' not found in list of favored enemies", favoredEnemy)
 }
