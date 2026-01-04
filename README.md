@@ -12,6 +12,53 @@ Configure your character, and this application will handle tracking your mods, b
 
 ---
 
+## Installation
+
+If you have golang installed
+
+`go install github.com/onioncall/dndgo@latest`
+
+or to build from source (v 1.21 or later)
+
+```bash
+git clone https://github.com/onioncall/dndgo.git
+cd dndgo
+go build -o dndgo
+sudo mv dndgo /usr/local/bin/
+```
+
+### Linux
+
+*x86_64 (Intel/AMD 64-bit)*
+```bash
+curl -LO https://github.com/onioncall/dndgo/releases/download/v0.2.0/dndgo_Linux_x86_64.tar.gz
+tar -xzf dndgo_Linux_x86_64.tar.gz
+sudo mv dndgo /usr/local/bin/
+```
+
+### Mac OS
+
+*Apple Silicon (M1/M2/M3)*
+```bash
+curl -LO https://github.com/onioncall/dndgo/releases/download/v0.2.0/dndgo_Darwin_arm64.tar.gz
+tar -xzf dndgo_Darwin_arm64.tar.gz
+sudo mv dndgo /usr/local/bin/
+# Don't do the following step unless you trust this applciation, I don't pay apple $99.99 a year for a developer account to sign these binaries
+xattr -d com.apple.quarantine /usr/local/bin/dndgo
+```
+
+### Windows
+
+Download [dndgo_Windows_x86_64.zip](https://github.com/onioncall/dndgo/releases/download/v0.2.0/dndgo_Windows_x86_64.zip)
+Extract the zip file
+Move `dndgo.exe` to a folder in your PATH (e.g., `C:\Windows\System32`)
+
+Once you have installed it, run `dndgo -v` to verify your installation version.
+
+Hopefully we can get this in package managers if we ever get more than half a dozen people using this. 
+
+---
+
 ## Tui 
 
 ### Character Management
