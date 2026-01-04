@@ -23,7 +23,7 @@ var rootCmd = &cobra.Command{
 		if clearLog {
 			err := logger.ClearLog(logOutput)
 			if err != nil {
-				logger.ConsoleError(fmt.Sprintf("Failed to clear log file: %v", err))
+				logger.PrintError(fmt.Sprintf("Failed to clear log file: %v", err))
 			}
 			return nil
 		}
@@ -40,7 +40,7 @@ var rootCmd = &cobra.Command{
 			fmt.Println("Failed to handle character data")
 		}
 
-		logger.ConsoleSuccess("Character Update Successful")
+		logger.PrintSuccess("Character Update Successful")
 		return nil
 	},
 }

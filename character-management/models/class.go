@@ -58,6 +58,11 @@ type FightingStyleClass interface {
 	ModifyFightingStyle(fightingStyle string) error
 }
 
+type FavoredEnemyClass interface {
+	AddFavoredEnemy(favoredEnemy string) error
+	RemoveFavoredEnemy(favoredEnemy string) error
+}
+
 type ClassFeature struct {
 	Name    string `json:"name"`
 	Level   int    `json:"level"`
