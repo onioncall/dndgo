@@ -1058,7 +1058,36 @@ func (c *Character) ModifyFightingStyle(fightingStyle string) error {
 		if err != nil {
 			return fmt.Errorf("Failed to update fighting style to '%s':\n%w", fightingStyle, err)
 		}
+	} else {
+		return fmt.Errorf("Class '%s' is not one that implements fighting style", c.ClassName)
 	}
+
+	return nil
+}
+
+func (c *Character) AddOathSpell(spell string) error {
+	if osClass, ok := c.Class.(OathSpellClass); ok {
+		err := osClass.AddOathSpell(spell)
+		if err != nil {
+			return fmt.Errorf("Failed to add oath spell '%s':\n%w", spell, err)
+		}
+	} else {
+		return fmt.Errorf("Class '%s' is not one that implements oath spells", c.ClassName)
+	}
+
+	return nil
+}
+
+func (c *Character) RemoveOathSpell(spell string) error {
+	if osClass, ok := c.Class.(OathSpellClass); ok {
+		err := osClass.RemoveOathSpell(spell)
+		if err != nil {
+			return fmt.Errorf("Failed to remove oath spell '%s':\n%w", spell, err)
+		}
+	} else {
+		return fmt.Errorf("Class '%s' is not one that implements oath spells", c.ClassName)
+	}
+
 	return nil
 }
 

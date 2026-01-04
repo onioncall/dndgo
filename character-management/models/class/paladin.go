@@ -262,3 +262,25 @@ func (p *Paladin) ModifyFightingStyle(fightingStyle string) error {
 
 	return fmt.Errorf("%s", invalidMsg)
 }
+
+func (p *Paladin) AddOathSpell(spell string) error {
+	for _, os := range p.OathSpells {
+		if strings.EqualFold(os, spell) {
+			return fmt.Errorf("Oath spell '%s' already exists in list of oath spells:", spell)
+		}
+	}
+
+	p.OathSpells = append(p.OathSpells, spell)
+	return nil
+}
+
+func (p *Paladin) RemoveOathSpell(spell string) error {
+	for i, os := range p.OathSpells {
+		if strings.EqualFold(os, spell) {
+			p.OathSpells = slices.Delete(p.OathSpells, i, i+1)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("Oath spell '%s' not found in list of oath spells", spell)
+}
