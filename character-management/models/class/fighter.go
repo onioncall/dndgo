@@ -46,8 +46,8 @@ func (f *Fighter) ExecutePostCalculateMethods(c *models.Character) {
 	f.executeClassTokens()
 }
 
-func (f *Fighter) CalculateHitDice(level int) string {
-	return fmt.Sprintf("%dd10", level)
+func (f *Fighter) CalculateHitDice() string {
+	return fmt.Sprintf("%dd10", f.Level)
 }
 
 func (f *Fighter) executeClassTokens() {
@@ -84,8 +84,10 @@ func (f *Fighter) executeFightingStyle(c *models.Character) {
 	}
 }
 
-func (f *Fighter) ClassDetails(level int) string {
+func (f *Fighter) ClassDetails() string {
 	var s string
+
+	s += fmt.Sprintf("Level: %d\n", f.Level)
 
 	for _, token := range f.ClassTokens {
 		tokenHeader := ""
@@ -102,10 +104,10 @@ func (f *Fighter) ClassDetails(level int) string {
 			continue
 		}
 
-		s += formatTokens(token, tokenHeader, level)
+		s += formatTokens(token, tokenHeader, f.Level)
 	}
 
-	if f.FightingStyleFeature.Name != "" && level >= 2 {
+	if f.FightingStyleFeature.Name != "" && f.Level >= 2 {
 		appliedText := "Requirements for fighting style not met."
 		if f.FightingStyleFeature.IsApplied {
 			appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
@@ -145,7 +147,7 @@ func (f *Fighter) UseClassTokens(tokenName string, quantity int) {
 }
 
 func (f *Fighter) RecoverClassTokens(tokenName string, quantity int) {
-	if tokenName == "all" {
+	if tokenName == "" {
 		fullTokenRecovery(f.ClassTokens)
 		return
 	}

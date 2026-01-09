@@ -34,7 +34,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			}
 			m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
-			m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
+			m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, m.currentClass, *m.character)
 			m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
 		}
@@ -45,11 +45,19 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "ctrl+c":
 			if m.character != nil {
 				handlers.SaveCharacter(m.character)
+
+				for i := range m.character.Classes {
+					handlers.SaveClass(m.character.Classes[i])
+				}
 			}
 			return m, tea.Quit
 		case "esc":
 			if m.character != nil {
 				handlers.SaveCharacter(m.character)
+
+				for i := range m.character.Classes {
+					handlers.SaveClass(m.character.Classes[i])
+				}
 			}
 			return m, func() tea.Msg { return tui.NavigateMsg{Page: tui.MenuPage} }
 		case "tab":
@@ -84,7 +92,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				case equipmentTab:
 					m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
 				case classTab:
-					m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, *m.character)
+					m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, m.currentClass, *m.character)
 				case notesTab:
 					m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
 				case helpTab:
@@ -221,11 +229,16 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		bpWidth := m.equipmentTab.BackpackViewport.Width
 		m.equipmentTab.BackpackViewport.SetContent(equipment.GetBackpackContent(*m.character, bpWidth))
 	case useClassTokenCmd:
-		m.err = execUseClassTokenCmd(inputAfterCmd, m.character)
-		m.classTab.DetailViewport.SetContent(class.GetClassDetails(*m.character))
+		m.err = execUseClassTokenCmd(inputAfterCmd, m.currentClass, m.character)
+		m.classTab.DetailViewport.SetContent(class.GetClassDetails(m.currentClass, *m.character))
 	case recoverClassTokenCmd:
-		m.err = execRecoverClassTokenCmd(inputAfterCmd, m.character)
-		m.classTab.DetailViewport.SetContent(class.GetClassDetails(*m.character))
+		m.err = execRecoverClassTokenCmd(inputAfterCmd, m.currentClass, m.character)
+		m.classTab.DetailViewport.SetContent(class.GetClassDetails(m.currentClass, *m.character))
+	case updateClassCmd:
+		classType, err := execValidateUpdateClass(m.currentClass, *m.character)
+		m.err = err
+		m.currentClass = classType
+		m.classTab.DetailViewport.SetContent(class.GetClassDetails(m.currentClass, *m.character))
 	default:
 		m.err = fmt.Errorf("%s command not found", cmd)
 	}
@@ -233,7 +246,17 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 	return m, tab, newInput
 }
 
-func execRecoverClassTokenCmd(input string, character *models.Character) error {
+func execValidateUpdateClass(newClass string, character models.Character) (string, error) {
+	for _, class := range character.ClassTypes {
+		if strings.EqualFold(class, newClass) {
+			return newClass, nil
+		}
+	}
+
+	return "", fmt.Errorf("class '%s' does not match character classes", newClass)
+}
+
+func execRecoverClassTokenCmd(input string, class string, character *models.Character) error {
 	splitInput := strings.Split(input, "/")
 	tokenName := input
 	quantity := 0 // By default for recover, we assume a full recover unless a quantity is specified
@@ -250,11 +273,11 @@ func execRecoverClassTokenCmd(input string, character *models.Character) error {
 		return fmt.Errorf("Invalid argument, (string, token name)/(optional int, quantity)")
 	}
 
-	character.RecoverClassTokens(tokenName, quantity)
+	character.RecoverClassTokens(tokenName, class, quantity)
 	return err
 }
 
-func execUseClassTokenCmd(input string, character *models.Character) error {
+func execUseClassTokenCmd(input string, class string, character *models.Character) error {
 	splitInput := strings.Split(input, "/")
 	tokenName := input
 	quantity := 1 // By default for use token, we assume one use unless a quantity is specified
@@ -271,7 +294,7 @@ func execUseClassTokenCmd(input string, character *models.Character) error {
 		return fmt.Errorf("Invalid argument, (string, token name)/(optional int, quantity)")
 	}
 
-	character.UseClassTokens(tokenName, quantity)
+	character.UseClassTokens(tokenName, class, quantity)
 	return err
 }
 

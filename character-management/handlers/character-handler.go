@@ -16,19 +16,23 @@ import (
 )
 
 func HandleCharacter(c *models.Character) error {
-	if c.Class != nil {
-		c.HitDice = c.Class.CalculateHitDice(c.Level)
+	for i := range c.Classes {
+		if c.Classes[i] != nil {
+			c.HitDice = c.Classes[i].CalculateHitDice()
 
-		if preCalculater, ok := c.Class.(models.PreCalculator); ok {
-			preCalculater.ExecutePreCalculateMethods(c)
+			if preCalculater, ok := c.Classes[i].(models.PreCalculator); ok {
+				preCalculater.ExecutePreCalculateMethods(c)
+			}
 		}
 	}
 
 	c.CalculateCharacterStats()
 
-	if c.Class != nil {
-		if postCalculater, ok := c.Class.(models.PostCalculator); ok {
-			postCalculater.ExecutePostCalculateMethods(c)
+	for i := range c.Classes {
+		if c.Classes[i] != nil {
+			if postCalculater, ok := c.Classes[i].(models.PostCalculator); ok {
+				postCalculater.ExecutePostCalculateMethods(c)
+			}
 		}
 	}
 
@@ -100,15 +104,18 @@ func CreateCharacter(c *models.Character) error {
 		return fmt.Errorf("Failed to insert new character: %w", err)
 	}
 
-	if c.Class == nil && c.ClassName != "" {
-		c.Class, err = LoadClassTemplate(c.ClassName)
-	}
+	for i, classType := range c.ClassTypes {
+		class, err := LoadClassTemplate(classType)
+		if err != nil {
+			return fmt.Errorf("Failed to load class template for type '%s':\n%w", classType, err)
+		}
 
-	if c.Class != nil {
-		c.Class.SetCharacterId(cid)
-		c.Class.SetClassName(c.ClassName)
+		c.Classes = append(c.Classes, class)
 
-		db.Repo.InsertClass(c.Class)
+		c.Classes[i].SetCharacterId(cid)
+		c.Classes[i].SetClassType(strings.ToLower(classType))
+
+		db.Repo.InsertClass(c.Classes[i])
 	}
 
 	return nil
@@ -177,17 +184,13 @@ func DeleteCharacter(name string) error {
 
 func LoadCharacter() (*models.Character, error) {
 	character, err := db.Repo.GetCharacter()
-	if err != nil {
+	if err != nil || character == nil {
 		return nil, fmt.Errorf("failed to retrieve character from db: %w", err)
 	}
 
-	if character != nil && character.ClassName != "" {
-		class, err := LoadClass(character.ID, character.ClassName)
-		if err != nil {
-			return nil, fmt.Errorf("failed to load class file: %w", err)
-		}
-
-		character.Class = class
+	character.Classes, err = LoadClassesByCharacterId(character.ID, character.ClassTypes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load class files: %w", err)
 	}
 
 	return character, nil
@@ -197,7 +200,7 @@ func GetCharacterNames() ([]string, error) {
 	return db.Repo.GetCharacterNames()
 }
 
-func LoadCharacterTemplate(characterName string, className string) (*models.Character, error) {
+func LoadCharacterTemplate(characterName string, classTypes []string) (*models.Character, error) {
 	filePath := "character.json"
 	fileData, err := defaultjsonconfigs.Content.ReadFile(filePath)
 	if err != nil {
@@ -209,7 +212,7 @@ func LoadCharacterTemplate(characterName string, className string) (*models.Char
 		return nil, fmt.Errorf("failed to parse character data: %w", err)
 	}
 	character.Name = characterName
-	character.ClassName = className
+	character.ClassTypes = classTypes
 	character.Default = true
 
 	return &character, nil

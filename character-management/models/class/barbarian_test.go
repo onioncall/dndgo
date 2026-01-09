@@ -115,7 +115,6 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 		{
 			name: "Below level requirement",
 			character: &models.Character{
-				Level:       2,
 				Proficiency: 2,
 				Skills: []shared.Skill{
 					{Name: "athletics", SkillModifier: 5, Proficient: false},
@@ -124,6 +123,9 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 				},
 			},
 			barbarian: Barbarian{
+				BaseClass: models.BaseClass{
+					Level: 2,
+				},
 				PrimalKnowledge: []string{
 					"athletics",
 				},
@@ -156,44 +158,51 @@ func TestBarbarianExecutePrimalKnowledge(t *testing.T) {
 func TestBarbarianExecutePrimalChampion(t *testing.T) {
 	tests := []struct {
 		name      string
+		barbarian Barbarian
 		character *models.Character
 		expected  []shared.Ability
 	}{
 		{
 			name: "Below level threshold",
+			barbarian: Barbarian{
+				BaseClass: models.BaseClass{
+					Level: 15,
+				},
+			},
 			character: &models.Character{
-				Level: 15,
 				Abilities: []shared.Ability{
-					{Name: "Strength", Base: 16},
-					{Name: "Constitution", Base: 16},
+					{Name: "Strength", Adjusted: 16},
+					{Name: "Constitution", Adjusted: 16},
 				},
 			},
 			expected: []shared.Ability{
-				{Name: "Strength", Base: 16},
-				{Name: "Constitution", Base: 16},
+				{Name: "Strength", Adjusted: 16},
+				{Name: "Constitution", Adjusted: 16},
 			},
 		},
 		{
 			name: "Meets level requirements, valid configuration",
+			barbarian: Barbarian{
+				BaseClass: models.BaseClass{
+					Level: 20,
+				},
+			},
 			character: &models.Character{
-				Level: 20,
 				Abilities: []shared.Ability{
-					{Name: "Strength", Base: 17},
-					{Name: "Constitution", Base: 17},
+					{Name: "Strength", Adjusted: 17},
+					{Name: "Constitution", Adjusted: 17},
 				},
 			},
 			expected: []shared.Ability{
-				{Name: "Strength", Base: 21},
-				{Name: "Constitution", Base: 21},
+				{Name: "Strength", Adjusted: 21},
+				{Name: "Constitution", Adjusted: 21},
 			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			barbarian := &Barbarian{}
-
-			barbarian.executePrimalChampion(tt.character)
+			tt.barbarian.executePrimalChampion(tt.character)
 
 			for i, e := range tt.expected {
 				result := tt.character.Abilities[i]

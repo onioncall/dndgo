@@ -29,18 +29,57 @@ func NewClassModel() ClassModel {
 }
 
 func GetClassFeatures(c models.Character) string {
-	return c.Class.GetClassFeatures(c.Level)
+	features := ""
+
+	for _, class := range c.Classes {
+		features += fmt.Sprintf("%s\n\n", class.GetClassFeatures())
+	}
+
+	return features
 }
 
-func GetClassDetails(c models.Character) string {
-	return c.Class.ClassDetails(c.Level)
+func GetClassDetails(currentClass string, c models.Character) string {
+	classDetails := ""
+
+	if len(c.ClassTypes) > 1 {
+		classDetails += fmt.Sprintf("Current Class: %s\n\n", currentClass)
+	}
+
+	for i, class := range c.Classes {
+		classDetails += fmt.Sprintf("%s Details\n", c.ClassTypes[i])
+		classDetails += class.ClassDetails()
+		classDetails += "\n\n"
+	}
+
+	return classDetails
 }
 
 func GetSubClass(c models.Character) string {
-	return c.Class.GetSubClass(c.Level)
+	subClassLine := "Sub-Class | "
+	subClassCount := 0
+	for i, class := range c.Classes {
+		subClass := class.GetSubClass()
+
+		if subClass == "" {
+			continue
+		}
+
+		subClassLine += subClass
+		if i < len(c.Classes)-1 {
+			subClassLine += ", "
+		}
+
+		subClassCount++
+	}
+
+	if subClassCount == 0 {
+		subClassLine = "No sub-classes configured for character"
+	}
+
+	return subClassLine
 }
 
-func (m ClassModel) UpdateSize(innerWidth, availableHeight int, character models.Character) ClassModel {
+func (m ClassModel) UpdateSize(innerWidth, availableHeight int, currentClass string, character models.Character) ClassModel {
 	// Column 1: 50% width, split 50/50 vertically
 	col1Width := innerWidth / 2
 
@@ -67,7 +106,7 @@ func (m ClassModel) UpdateSize(innerWidth, availableHeight int, character models
 
 	if !m.contentSet {
 		subClassContent := GetSubClass(character)
-		subClassContent = wrapt.Wrap(fmt.Sprintf("Sub-Class: %s", subClassContent), m.SubClassViewport.Width)
+		subClassContent = wrapt.Wrap(subClassContent, m.SubClassViewport.Width)
 		if subClassContent == "" {
 			subClassContent = "Class has no sub class to show"
 		}
@@ -83,7 +122,7 @@ func (m ClassModel) UpdateSize(innerWidth, availableHeight int, character models
 		m.OtherFeaturesViewport.SetContent(classFeaturesContent)
 
 		classDetailsContent := "Class Details\n\n"
-		classDetailsContent += GetClassDetails(character)
+		classDetailsContent += GetClassDetails(currentClass, character)
 		classDetailsContent = wrapt.Wrap(classDetailsContent, m.DetailViewport.Width)
 		if classDetailsContent == "" {
 			classDetailsContent = "Class has no details to show"

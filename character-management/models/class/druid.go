@@ -37,8 +37,8 @@ func (d *Druid) ExecutePostCalculateMethods(c *models.Character) {
 	d.executeCantripVersatility(c)
 }
 
-func (d *Druid) CalculateHitDice(level int) string {
-	return fmt.Sprintf("%dd8", level)
+func (d *Druid) CalculateHitDice() string {
+	return fmt.Sprintf("%dd8", d.Level)
 }
 
 func (d *Druid) executeWildShape(c *models.Character) {
@@ -126,9 +126,10 @@ func (d *Druid) executeArchDruid(c *models.Character) {
 	d.ClassToken.Maximum = 0
 }
 
-func (d *Druid) ClassDetails(level int) string {
+func (d *Druid) ClassDetails() string {
 	var s string
-	s += formatTokens(d.ClassToken, wildShapeToken, level)
+	s += fmt.Sprintf("Level: %d\n", d.Level)
+	s += formatTokens(d.ClassToken, wildShapeToken, d.Level)
 
 	return s
 }
@@ -136,8 +137,11 @@ func (d *Druid) ClassDetails(level int) string {
 // CLI
 
 func (d *Druid) UseClassTokens(tokenName string, quantity int) {
-	// We only really need slot name for classes that have multiple slots
-	// since druid only has wild shape, we won't check the slot name value
+	if tokenName != "" && tokenName != wildShapeToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, d.ClassType))
+		return
+	}
+
 	if d.ClassToken.Available <= 0 {
 		logger.Info("Wild Shape had no uses left")
 		return
@@ -147,8 +151,11 @@ func (d *Druid) UseClassTokens(tokenName string, quantity int) {
 }
 
 func (d *Druid) RecoverClassTokens(tokenName string, quantity int) {
-	// We only really need slot name for classes that have multiple slots
-	// since druid only has wild shape, we won't check the slot name value
+	if tokenName != "" && tokenName != wildShapeToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, d.ClassType))
+		return
+	}
+
 	d.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover

@@ -2,16 +2,16 @@ package create
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/shared"
-	"github.com/onioncall/dndgo/logger"
 	tui "github.com/onioncall/dndgo/tui/shared"
 )
 
-func (m Model) UpdateBackpackPage(msg tea.Msg) (Model, tea.Cmd) {
+func (m Model) UpdateClassPage(msg tea.Msg) (Model, tea.Cmd) {
 	var cmds []tea.Cmd = make([]tea.Cmd, len(m.inputs))
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
@@ -23,7 +23,7 @@ func (m Model) UpdateBackpackPage(msg tea.Msg) (Model, tea.Cmd) {
 		switch msg.String() {
 		case "enter":
 			if m.addButtonFocused {
-				m.err = m.addBackpackItem()
+				m.err = m.addClass()
 				if m.err != nil {
 					return m, nil
 				}
@@ -33,31 +33,20 @@ func (m Model) UpdateBackpackPage(msg tea.Msg) (Model, tea.Cmd) {
 				}
 
 				m.focused = 0
-				m.inputs[itemNameInput].Focus()
+				m.inputs[classTypeInput].Focus()
 				m.addButtonFocused = false
 				m.viewportOffset = 0
 
 				return m, nil
 			} else if m.nextButtonFocused {
-				err := handlers.CreateCharacter(m.character)
-				if err != nil {
-					logger.Error("Failed to create character:", '\n', err.Error())
-				}
-
-				for i, class := range m.character.Classes {
-					m.character.Classes[i].SetClassLevel(m.classMap[class.GetClassType()])
-					handlers.SaveClass(m.character.Classes[i])
-				}
-
 				m.err = nil
 				m.focused = 0
 				m.nextButtonFocused = false
 				m.viewportOffset = 0
 
-				for i := range m.inputs {
-					m.inputs[i].SetValue("")
-				}
-				m.currentPage = dumpPage
+				m.currentPage = abilitiesPage
+				m.inputs = abilitiesInputs()
+				m.populateSavedAbilitiesInputs()
 
 				return m, nil
 			} else if m.backButtonFocused {
@@ -67,9 +56,9 @@ func (m Model) UpdateBackpackPage(msg tea.Msg) (Model, tea.Cmd) {
 				m.nextButtonFocused = false
 				m.viewportOffset = 0
 
-				m.currentPage = wornEquipmentPage
-				m.inputs = equipmentInputs()
-				m.populateEquipmentInputs()
+				m.currentPage = basicInfoPage
+				m.inputs = basicInfoInputs()
+				m.populateBasicInfoInputs()
 
 				return m, nil
 			}
@@ -107,25 +96,41 @@ func (m Model) UpdateBackpackPage(msg tea.Msg) (Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func (m *Model) addBackpackItem() error {
-	itemName := m.inputs[itemNameInput].Value()
-	for _, item := range m.character.Backpack {
-		if itemName == item.Name {
-			return fmt.Errorf("Item already exists in backpack")
-		}
+func (m *Model) addClass() error {
+	levelValue := m.inputs[classLevelInput].Value()
+	if levelValue == "" {
+		levelValue = "0"
+	}
+	level, err := strconv.Atoi(levelValue)
+	if err != nil {
+		return fmt.Errorf("Invalid level, must be an integer")
 	}
 
-	itemQuantity, err := strconv.Atoi(m.inputs[itemQuantityInput].Value())
-	if err != nil || itemQuantity < 1 {
-		return fmt.Errorf("Invalid item quantity, must be a positive integer")
+	classType := m.inputs[classTypeInput].Value()
+
+	validClasses := []string{
+		shared.ClassBarbarian,
+		shared.ClassBard,
+		shared.ClassCleric,
+		shared.ClassDruid,
+		shared.ClassFighter,
+		shared.ClassMonk,
+		shared.ClassPaladin,
+		shared.ClassRanger,
+		shared.ClassRogue,
+		shared.ClassSorcerer,
+		shared.ClassWarlock,
+		shared.ClassWizard,
 	}
 
-	item := shared.BackpackItem{
-		Name:     itemName,
-		Quantity: itemQuantity,
+	isValid := slices.Contains(validClasses, strings.ToLower(classType))
+
+	if !isValid {
+		return fmt.Errorf("Invalid class name")
 	}
 
-	m.character.Backpack = append(m.character.Backpack, item)
+	m.character.ClassTypes = append(m.character.ClassTypes, classType)
+	m.classMap[strings.ToLower(classType)] = level
 
 	return nil
 }

@@ -39,8 +39,8 @@ func (b *Barbarian) ExecutePreCalculateMethods(c *models.Character) {
 	b.executePrimalChampion(c)
 }
 
-func (b *Barbarian) CalculateHitDice(level int) string {
-	return fmt.Sprintf("%dd12", level)
+func (b *Barbarian) CalculateHitDice() string {
+	return fmt.Sprintf("%dd12", b.Level)
 }
 
 func (b *Barbarian) executeRage(c *models.Character) {
@@ -80,7 +80,7 @@ func (b *Barbarian) executeRage(c *models.Character) {
 // At level 3, You gain proficiency in one skill of your choice from the list of skills
 // available to barbarians at 1st level.
 func (b *Barbarian) executePrimalKnowledge(c *models.Character) {
-	if c.Level < 3 {
+	if b.Level < 3 {
 		return
 	}
 
@@ -124,10 +124,11 @@ func (b *Barbarian) executeUnarmoredDefense(c *models.Character) {
 	executeUnarmoredDefenseShared(c, barbarianExpertiseAbilityModifiers)
 }
 
-func (b *Barbarian) ClassDetails(level int) string {
+func (b *Barbarian) ClassDetails() string {
 	var s string
 
-	rageSlots := formatTokens(b.ClassToken, rageToken, level)
+	rageSlots := formatTokens(b.ClassToken, rageToken, b.Level)
+	s += fmt.Sprintf("Level: %d\n", b.Level)
 	rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n", rageSlots, b.RageDamage)
 	s += rageLine
 
@@ -136,7 +137,7 @@ func (b *Barbarian) ClassDetails(level int) string {
 
 // At level 20, your Strength and Constitution scores increase by 4. Your maximum for those scores is now 24.
 func (b *Barbarian) executePrimalChampion(c *models.Character) {
-	if c.Level < 20 {
+	if b.Level < 20 {
 		return
 	}
 
@@ -145,15 +146,18 @@ func (b *Barbarian) executePrimalChampion(c *models.Character) {
 			continue
 		}
 
-		c.Abilities[i].Base += 4
+		c.Abilities[i].Adjusted += 4
 	}
 }
 
 // CLI
 
 func (b *Barbarian) UseClassTokens(tokenName string, quantity int) {
-	// We only really need token name for classes that have multiple tokens
-	// since barbarian only has rage, we won't check the token name value
+	if tokenName != "" && tokenName != rageToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, b.ClassType))
+		return
+	}
+
 	if b.ClassToken.Available <= 0 {
 		logger.Info("Rage had no uses left")
 		return
@@ -163,8 +167,11 @@ func (b *Barbarian) UseClassTokens(tokenName string, quantity int) {
 }
 
 func (b *Barbarian) RecoverClassTokens(tokenName string, quantity int) {
-	// We only really need token name for classes that have multiple tokens
-	// since barbarian only has rage, we won't check the token name value
+	if tokenName != "" && tokenName != rageToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, b.ClassType))
+		return
+	}
+
 	b.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover

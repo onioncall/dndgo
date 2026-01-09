@@ -26,6 +26,7 @@ var (
 
 const (
 	basicInfoPage = iota
+	classPage
 	abilitiesPage
 	skillsPage
 	spellsPage
@@ -47,6 +48,7 @@ type Model struct {
 	backButtonFocused bool
 	viewportOffset    int
 	currentPage       int
+	classMap          map[string]int
 	character         *models.Character
 }
 
@@ -57,6 +59,7 @@ func NewModel() Model {
 		logger.Errorf("Create Character TUI Page failed to get character names:\n%v", err)
 	}
 
+	newClassMap := make(map[string]int)
 	return Model{
 		inputs:            inputs,
 		focused:           0,
@@ -64,6 +67,7 @@ func NewModel() Model {
 		nextButtonFocused: false,
 		existingNames:     names,
 		viewportOffset:    0,
+		classMap:          newClassMap,
 		character:         &models.Character{},
 	}
 }
@@ -72,6 +76,8 @@ func (m *Model) View() string {
 	switch m.currentPage {
 	case basicInfoPage:
 		return m.BasicInfoPageView()
+	case classPage:
+		return m.ClassPageView()
 	case abilitiesPage:
 		return m.AbilitiesPageView()
 	case skillsPage:
@@ -95,6 +101,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch m.currentPage {
 	case basicInfoPage:
 		return m.UpdateBasicInfoPage(msg)
+	case classPage:
+		return m.UpdateClassPage(msg)
 	case abilitiesPage:
 		return m.UpdateAbilitiesPage(msg)
 	case skillsPage:

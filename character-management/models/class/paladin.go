@@ -44,8 +44,8 @@ func (p *Paladin) ExecutePostCalculateMethods(c *models.Character) {
 	p.executeOathSpells(c)
 }
 
-func (p *Paladin) CalculateHitDice(level int) string {
-	return fmt.Sprintf("%dd10", level)
+func (p *Paladin) CalculateHitDice() string {
+	return fmt.Sprintf("%dd10", p.Level)
 }
 
 func (s *Paladin) executeSpellCastingAbility(c *models.Character) {
@@ -140,11 +140,13 @@ func (p *Paladin) executeOathSpells(c *models.Character) {
 	executePreparedSpellsShared(c, p.OathSpells)
 }
 
-func (p *Paladin) ClassDetails(level int) string {
+func (p *Paladin) ClassDetails() string {
 	var s string
 
+	s += fmt.Sprintf("Level: %d\n", p.Level)
+
 	for _, token := range p.ClassTokens {
-		if token.Maximum == 0 || level < token.Level {
+		if token.Maximum == 0 || p.Level < token.Level {
 			continue
 		}
 
@@ -160,7 +162,7 @@ func (p *Paladin) ClassDetails(level int) string {
 		}
 	}
 
-	if p.FightingStyleFeature.Name != "" && level >= 2 {
+	if p.FightingStyleFeature.Name != "" && p.Level >= 2 {
 		appliedText := "Requirements for fighting style not met."
 		if p.FightingStyleFeature.IsApplied {
 			appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."
@@ -194,7 +196,7 @@ func (p *Paladin) UseClassTokens(tokenName string, quantity int) {
 }
 
 func (p *Paladin) RecoverClassTokens(tokenName string, quantity int) {
-	if tokenName == "all" {
+	if tokenName == "" {
 		fullTokenRecovery(p.ClassTokens)
 		return
 	}

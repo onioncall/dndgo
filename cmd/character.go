@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/onioncall/dndgo/character-management/handlers"
-	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/logger"
 
 	"github.com/spf13/cobra"
@@ -33,6 +33,7 @@ var (
 			t, _ := cmd.Flags().GetInt("temp-hp")
 			n, _ := cmd.Flags().GetString("name")
 			sc, _ := cmd.Flags().GetString("sub-class")
+			ct, _ := cmd.Flags().GetString("class-type")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -73,7 +74,12 @@ var (
 				c.AddTempHp(t)
 			}
 			if sc != "" {
-				c.AddSubClass(sc)
+				err = c.AddSubClass(ct, sc)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("Failed to add subclass")
+					return
+				}
 			}
 			if a != "" {
 				err = c.AddAbilityScoreImprovementItem(q, a)
@@ -88,6 +94,15 @@ var (
 				logger.Error(err)
 				logger.PrintError("Failed to save character data")
 				return
+			}
+
+			for _, class := range c.Classes {
+				err = handlers.SaveClass(class)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError(fmt.Sprintf("Failed to save data for class '%s'", class.GetClassType()))
+					return
+				}
 			}
 
 			err = handlers.HandleCharacter(c)
@@ -107,7 +122,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			p, _ := cmd.Flags().GetString("path")
 			t, _ := cmd.Flags().GetBool("tokens")
-			c, _ := cmd.Flags().GetBool("character-names")
+			n, _ := cmd.Flags().GetBool("character-names")
 
 			if p != "" {
 				var path string
@@ -147,32 +162,21 @@ var (
 					return
 				}
 
-				if c.Class == nil {
+				if c.Classes == nil {
 					logger.PrintError("Class not properly configured")
 					return
 				}
 
-				var tokenClass models.TokenClass
-				tokenClass, ok := c.Class.(models.TokenClass)
-				if !ok {
-					logger.PrintError("Class does not implement TokenClass")
-					return
-				}
-
-				tokens := tokenClass.GetTokens()
-				if len(tokens) == 0 {
-					fmt.Println("Class has no tokens implemented")
-				} else if len(tokens) == 1 {
-					fmt.Println("Class only has one token, when modifying token values for this class you may enter any value")
-					fmt.Println(tokens[0])
-				} else {
+				tokenMap := c.GetTokenNames()
+				for classType, tokens := range tokenMap {
+					fmt.Printf("Class: %s\n", classType)
 					for _, token := range tokens {
-						fmt.Println(token)
+						fmt.Printf("-> %s\n", token)
 					}
 				}
 			}
 
-			if c {
+			if n {
 				names, err := handlers.GetCharacterNames()
 				if err != nil {
 					logger.Error(err)
@@ -292,7 +296,8 @@ var (
 			s, _ := cmd.Flags().GetInt("spell-slots")
 			bp, _ := cmd.Flags().GetString("backpack")
 			q, _ := cmd.Flags().GetInt("quantity")
-			ct, _ := cmd.Flags().GetString("class-tokens")
+			t, _ := cmd.Flags().GetString("class-tokens")
+			ct, _ := cmd.Flags().GetString("class-type")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -313,9 +318,9 @@ var (
 				return
 			} else if s > 0 {
 				c.UseSpellSlot(s)
-			} else if ct != "" {
+			} else if t != "" {
 				q = max(q, 1) // If q isn't provided with a valid value, we use one by default
-				c.UseClassTokens(ct, q)
+				c.UseClassTokens(t, ct, q)
 			}
 
 			err = handlers.SaveCharacter(c)
@@ -325,11 +330,13 @@ var (
 				return
 			}
 
-			err = handlers.SaveClass(c.Class)
-			if err != nil {
-				logger.Error(err)
-				logger.PrintError("Failed to save class data")
-				return
+			for _, class := range c.Classes {
+				err = handlers.SaveClass(class)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError(fmt.Sprintf("Failed to save data for class '%s'", class.GetClassType()))
+					return
+				}
 			}
 
 			err = handlers.HandleCharacter(c)
@@ -350,7 +357,8 @@ var (
 			a, _ := cmd.Flags().GetBool("all")
 			ss, _ := cmd.Flags().GetInt("spell-slots")
 			hp, _ := cmd.Flags().GetInt("hitpoints")
-			ct, _ := cmd.Flags().GetString("class-tokens")
+			t, _ := cmd.Flags().GetString("class-tokens")
+			ct, _ := cmd.Flags().GetString("class-type")
 			q, _ := cmd.Flags().GetInt("quantity")
 
 			c, err := handlers.LoadCharacter()
@@ -366,8 +374,8 @@ var (
 				c.RecoverSpellSlots(ss, q)
 			} else if hp > 0 {
 				c.HealCharacter(hp)
-			} else if ct != "" {
-				c.RecoverClassTokens(ct, q)
+			} else if t != "" {
+				c.RecoverClassTokens(t, ct, q)
 			}
 
 			err = handlers.SaveCharacter(c)
@@ -377,11 +385,13 @@ var (
 				return
 			}
 
-			err = handlers.SaveClass(c.Class)
-			if err != nil {
-				logger.Error(err)
-				logger.PrintError("Failed to save class data")
-				return
+			for _, class := range c.Classes {
+				err = handlers.SaveClass(class)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError(fmt.Sprintf("Failed to save data for class '%s'", class.GetClassType()))
+					return
+				}
 			}
 
 			err = handlers.HandleCharacter(c)
@@ -399,7 +409,7 @@ var (
 		Use:   "init",
 		Short: "Initializes a new character on this machine",
 		Run: func(cmd *cobra.Command, args []string) {
-			c, _ := cmd.Flags().GetString("class")
+			c, _ := cmd.Flags().GetStringSlice("class")
 			n, _ := cmd.Flags().GetString("name")
 
 			character, err := handlers.LoadCharacterTemplate(n, c)
@@ -558,7 +568,7 @@ var (
 		Will update existing record if ID is provided in json.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var entity string
-			isClass, _ := cmd.Flags().GetBool("class")
+			classType, _ := cmd.Flags().GetString("class-type")
 			filePath, _ := cmd.Flags().GetString("file")
 			characterName, _ := cmd.Flags().GetString("character-name")
 
@@ -569,15 +579,21 @@ var (
 				return
 			}
 
-			if isClass {
+			if classType != "" {
+				classType = strings.ToLower(classType)
 				entity = "Class"
-				handlers.ImportClassJson(bytes, characterName)
+				err = handlers.ImportClassJson(bytes, characterName, classType)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("Failed to import class")
+					return
+				}
 			} else {
 				entity = "Character"
 				err = handlers.ImportCharacterJson(bytes)
 				if err != nil {
 					logger.Error(err)
-					logger.PrintError("Failed to import character character")
+					logger.PrintError("Failed to import character")
 					return
 				}
 			}
@@ -597,15 +613,25 @@ var (
 			var data []byte
 			var err error
 			name, _ := cmd.Flags().GetString("name")
-			isClass, _ := cmd.Flags().GetBool("class")
+			classType, _ := cmd.Flags().GetString("class-type")
 			filePath, _ := cmd.Flags().GetString("file")
 
-			if isClass {
+			if classType != "" {
 				entity = "Class"
-				data, err = handlers.ExportClassJson(name)
+				data, err = handlers.ExportClassJson(name, classType)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("Failed to export class file")
+					return
+				}
 			} else {
 				entity = "Character"
 				data, err = handlers.ExportCharacterJson(name)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("Failed to export character file")
+					return
+				}
 			}
 
 			err = os.WriteFile(filePath, data, 0o644)
@@ -629,6 +655,7 @@ var (
 			f, _ := cmd.Flags().GetString("fighting-style")
 			v, _ := cmd.Flags().GetString("favored-enemy")
 			r, _ := cmd.Flags().GetBool("remove")
+			ct, _ := cmd.Flags().GetString("class-type")
 
 			c, err := handlers.LoadCharacter()
 			if err != nil {
@@ -643,7 +670,7 @@ var (
 					return
 				}
 
-				err := c.AddExpertiseSkill(e)
+				err := c.AddExpertiseSkill(e, ct)
 				if err != nil {
 					logger.Error(err)
 					logger.PrintError("Failed to add expertise skill")
@@ -651,14 +678,14 @@ var (
 				}
 			} else if p != "" {
 				if r {
-					err = c.RemovePreparedSpell(p)
+					err = c.RemovePreparedSpell(p, ct)
 					if err != nil {
 						logger.Error(err)
 						logger.PrintError("Failed to remove prepared spell")
 						return
 					}
 				} else {
-					err = c.AddPreparedSpell(p)
+					err = c.AddPreparedSpell(p, ct)
 					if err != nil {
 						logger.Error(err)
 						logger.PrintError("Failed to add prepared spell")
@@ -667,14 +694,14 @@ var (
 				}
 			} else if o != "" {
 				if r {
-					err = c.RemoveOathSpell(o)
+					err = c.RemoveOathSpell(o, ct)
 					if err != nil {
 						logger.Error(err)
 						logger.PrintError("Failed to remove oath spell")
 						return
 					}
 				} else {
-					err = c.AddOathSpell(o)
+					err = c.AddOathSpell(o, ct)
 					if err != nil {
 						logger.Error(err)
 						logger.PrintError("Failed to add oath spell")
@@ -686,7 +713,7 @@ var (
 					logger.PrintError("-> removing fighting style is not implemented")
 					return
 				} else {
-					err = c.ModifyFightingStyle(f)
+					err = c.ModifyFightingStyle(f, ct)
 					if err != nil {
 						logger.Error(err)
 						logger.PrintError("Failed to modify fighting style")
@@ -695,14 +722,14 @@ var (
 				}
 			} else if v != "" {
 				if r {
-					err = c.RemoveFavoredEnemy(v)
+					err = c.RemoveFavoredEnemy(v, ct)
 					if err != nil {
 						logger.Error(err)
 						logger.PrintError("Failed to remove favored enemy")
 						return
 					}
 				} else {
-					err = c.AddFavoredEnemy(v)
+					err = c.AddFavoredEnemy(v, ct)
 					if err != nil {
 						logger.Error(err)
 						logger.PrintError("Failed to add favored enemy")
@@ -711,11 +738,13 @@ var (
 				}
 			}
 
-			err = handlers.SaveClass(c.Class)
-			if err != nil {
-				logger.Error(err)
-				logger.PrintError("Failed to save class data")
-				return
+			for _, class := range c.Classes {
+				err = handlers.SaveClass(class)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError(fmt.Sprintf("Failed to save data for class '%s'", class.GetClassType()))
+					return
+				}
 			}
 
 			err = handlers.HandleCharacter(c)
@@ -746,8 +775,6 @@ func init() {
 		exportCmd,
 		classCmd)
 
-	characterCmd.Flags().StringP("default", "d", "", "Name of character to update to default")
-
 	addCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
 	addCmd.Flags().BoolP("level", "l", false, "Level to add")
@@ -759,7 +786,8 @@ func init() {
 	addCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
 	addCmd.Flags().IntP("temp-hp", "t", 0, "Add temporary hp")
 	addCmd.Flags().StringP("name", "n", "", "Name of equipment to add")
-	addCmd.Flags().StringP("sub-class", "c", "", "Name of sub-class to add")
+	addCmd.Flags().StringP("sub-class", "u", "", "Name of sub-class to add")
+	addCmd.Flags().StringP("class-type", "c", "", "class type to modify (only required for multi-class)")
 
 	removeCmd.Flags().StringP("language", "l", "", "Language to remove")
 	removeCmd.Flags().StringP("weapon", "w", "", "Weapon to remove")
@@ -769,44 +797,46 @@ func init() {
 	useCmd.Flags().IntP("spell-slots", "s", 0, "Use spell-slot by level")
 	useCmd.Flags().StringP("backpack", "b", "", "Use item from backpack")
 	useCmd.Flags().IntP("quantity", "q", 0, "Modify quantity of something")
-	useCmd.Flags().StringP("class-tokens", "c", "any", "Use class-tokens by token name")
+	useCmd.Flags().StringP("class-tokens", "t", "any", "Use class-tokens by token name")
+	useCmd.Flags().StringP("class-type", "c", "", "class type to modify (only required for multi-class)")
 
-	recoverCmd.Flags().IntP("spell-slots", "s", 0, "Recover spell-slot by level")
-	recoverCmd.Flags().BoolP("all", "a", false, "Recover all health, slots, and tokens")
-	recoverCmd.Flags().IntP("hitpoints", "p", 0, "Recover hitpoints")
-	recoverCmd.Flags().StringP("class-tokens", "c", "all", "Recover class-tokens by token name")
-	recoverCmd.Flags().IntP("quantity", "q", 0, "Recover the quantity of something")
+	recoverCmd.Flags().IntP("spell-slots", "s", 0, "recover spell-slot by level")
+	recoverCmd.Flags().BoolP("all", "a", false, "recover all health, slots, and tokens")
+	recoverCmd.Flags().IntP("hitpoints", "p", 0, "recover hitpoints")
+	recoverCmd.Flags().StringP("class-tokens", "t", "all", "recover class-tokens by token name")
+	recoverCmd.Flags().StringP("class-type", "c", "", "class type to modify (only required for multi-class)")
+	recoverCmd.Flags().IntP("quantity", "q", 0, "recover the quantity of something")
 
-	initCmd.Flags().StringP("class", "c", "", "Name of character class")
-	initCmd.Flags().StringP("name", "n", "", "Name of character")
+	initCmd.Flags().StringP("class", "c", "", "name of character class")
+	initCmd.Flags().StringP("name", "n", "", "name of character")
 	initCmd.MarkFlagRequired("class")
 	initCmd.MarkFlagRequired("name")
 
-	equipCmd.Flags().StringP("primary", "p", "", "Equip primary weapon or shield")
-	equipCmd.Flags().StringP("secondary", "s", "", "Equip secondary weapon or shield")
+	equipCmd.Flags().StringP("primary", "p", "", "equip primary weapon or shield")
+	equipCmd.Flags().StringP("secondary", "s", "", "equip secondary weapon or shield")
 
-	unequipCmd.Flags().BoolP("primary", "p", false, "Equip primary weapon or shield")
-	unequipCmd.Flags().BoolP("secondary", "s", false, "Equip secondary weapon or shield")
+	unequipCmd.Flags().BoolP("primary", "p", false, "equip primary weapon or shield")
+	unequipCmd.Flags().BoolP("secondary", "s", false, "equip secondary weapon or shield")
 
-	getCmd.Flags().StringP("path", "p", "", "Get config or markdown path")
-	getCmd.Flags().BoolP("tokens", "t", false, "Get class tokens")
-	getCmd.Flags().BoolP("character-names", "c", false, "Get character names")
+	getCmd.Flags().StringP("path", "p", "", "get config or markdown path")
+	getCmd.Flags().BoolP("tokens", "t", false, "get class tokens")
+	getCmd.Flags().BoolP("character-names", "n", false, "get character names")
 
-	deleteCmd.Flags().StringP("name", "n", "", "Name of character to delete")
+	deleteCmd.Flags().StringP("name", "n", "", "name of character to delete")
 	deleteCmd.MarkFlagRequired("name")
 
-	updateCmd.Flags().StringP("default-character-name", "d", "", "Name of character to make default")
+	updateCmd.Flags().StringP("default-character-name", "d", "", "name of character to make default")
 
-	importCmd.Flags().BoolP("class", "c", false, "Import Class file (default: Character)")
-	importCmd.Flags().StringP("file", "f", "", "Relative path to json file")
-	importCmd.Flags().StringP("character-name", "n", "", "Name of character, only used when importing Class data")
+	importCmd.Flags().StringP("class-type", "c", "", "class type for class file import (default: character)")
+	importCmd.Flags().StringP("file", "f", "", "relative path to json file")
+	importCmd.Flags().StringP("character-name", "n", "", "name of character, only used when importing Class data")
 	importCmd.MarkFlagRequired("file")
 	importCmd.MarkFlagFilename("file")
-	importCmd.MarkFlagsRequiredTogether("class", "character-name")
+	importCmd.MarkFlagsRequiredTogether("class-type", "character-name")
 
-	exportCmd.Flags().BoolP("class", "c", false, "Export Class data (will otherwise default to Character data)")
-	exportCmd.Flags().StringP("name", "n", "", "Name of Character to export data for")
-	exportCmd.Flags().StringP("file", "f", "", "Name of output file")
+	exportCmd.Flags().StringP("class-type", "c", "", "class type for class file exports (default: character)")
+	exportCmd.Flags().StringP("name", "n", "", "name of character to export data for")
+	exportCmd.Flags().StringP("file", "f", "", "name of output file")
 	exportCmd.MarkFlagRequired("name")
 	exportCmd.MarkFlagRequired("file")
 
@@ -819,4 +849,5 @@ func init() {
 	classCmd.Flags().StringP("favored-enemy", "v", "", "name of favored to assign")
 	classCmd.Flags().StringP("oath-spell", "o", "", "name of oath spell to add")
 	classCmd.Flags().BoolP("remove", "r", false, "remove instead of add one of these things")
+	classCmd.Flags().StringP("class-type", "c", "", "class type to modify (only required for multi-class)")
 }

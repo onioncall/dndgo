@@ -127,12 +127,20 @@ func (m *Model) addWeapon() error {
 		return fmt.Errorf("Weapon proficient value must be boolean")
 	}
 
-	normalRange, err := strconv.Atoi(m.inputs[normalRangeInput].Value())
+	normalRangeValue := m.inputs[normalRangeInput].Value()
+	if normalRangeValue == "" {
+		normalRangeValue = "0"
+	}
+	normalRange, err := strconv.Atoi(normalRangeValue)
 	if err != nil {
 		return fmt.Errorf("Invalid normal range, must be an integer")
 	}
 
-	longRange, err := strconv.Atoi(m.inputs[longRangeInput].Value())
+	longRangeValue := m.inputs[longRangeInput].Value()
+	if longRangeValue == "" {
+		longRangeValue = "0"
+	}
+	longRange, err := strconv.Atoi(longRangeValue)
 	if err != nil {
 		return fmt.Errorf("Invalid long range, must be an integer")
 	}

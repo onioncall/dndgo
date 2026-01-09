@@ -6,7 +6,7 @@ import (
 	"github.com/onioncall/dndgo/character-management/shared"
 )
 
-func TestCharacterCalculateAbilitiesFromBase(t *testing.T) {
+func TestCharacterCalculateAbilitiesFromAdjusted(t *testing.T) {
 	tests := []struct {
 		name      string
 		character *Character
@@ -17,15 +17,15 @@ func TestCharacterCalculateAbilitiesFromBase(t *testing.T) {
 			character: &Character{
 				Level: 3,
 				Abilities: []shared.Ability{
-					{Name: "Strength", AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},
-					{Name: "Dexterity", AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
-					{Name: "Constitution", AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},
+					{Name: "Strength", AbilityModifier: 0, Adjusted: 14, SavingThrowsProficient: true},
+					{Name: "Dexterity", AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
+					{Name: "Constitution", AbilityModifier: 0, Adjusted: 15, SavingThrowsProficient: true},
 				},
 			},
 			expected: []shared.Ability{
-				{Name: "Strength", AbilityModifier: 2, Base: 14, SavingThrowsProficient: true},
-				{Name: "Dexterity", AbilityModifier: 1, Base: 12, SavingThrowsProficient: false},
-				{Name: "Constitution", AbilityModifier: 2, Base: 15, SavingThrowsProficient: true},
+				{Name: "Strength", AbilityModifier: 2, Adjusted: 14, SavingThrowsProficient: true},
+				{Name: "Dexterity", AbilityModifier: 1, Adjusted: 12, SavingThrowsProficient: false},
+				{Name: "Constitution", AbilityModifier: 2, Adjusted: 15, SavingThrowsProficient: true},
 			},
 		},
 	}
@@ -44,7 +44,7 @@ func TestCharacterCalculateAbilitiesFromBase(t *testing.T) {
 	}
 }
 
-func TestCharacterCalculateSkillModifierFromBase(t *testing.T) {
+func TestCharacterCalculateSkillModifierFromAdjusted(t *testing.T) {
 	tests := []struct {
 		name      string
 		character *Character
@@ -59,10 +59,10 @@ func TestCharacterCalculateSkillModifierFromBase(t *testing.T) {
 					{Name: "deception", SkillModifier: 0, Proficient: false, Ability: "charisma"},
 				},
 				Abilities: []shared.Ability{
-					{Name: "Strength", AbilityModifier: 2, Base: 14, SavingThrowsProficient: true},
-					{Name: "Dexterity", AbilityModifier: 1, Base: 12, SavingThrowsProficient: false},
-					{Name: "Constitution", AbilityModifier: 2, Base: 15, SavingThrowsProficient: true},
-					{Name: "Charisma", AbilityModifier: 0, Base: 10, SavingThrowsProficient: true},
+					{Name: "Strength", AbilityModifier: 2, Adjusted: 14, SavingThrowsProficient: true},
+					{Name: "Dexterity", AbilityModifier: 1, Adjusted: 12, SavingThrowsProficient: false},
+					{Name: "Constitution", AbilityModifier: 2, Adjusted: 15, SavingThrowsProficient: true},
+					{Name: "Charisma", AbilityModifier: 0, Adjusted: 10, SavingThrowsProficient: true},
 				},
 			},
 			expected: []shared.Skill{
@@ -151,24 +151,24 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			character: &Character{
 				Level: 4,
 				Abilities: []shared.Ability{
-					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
-					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+					{Name: "Strength", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Dexterity", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Constitution", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Intelligence", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Wisdom", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Charisma", Adjusted: 10, SavingThrowsProficient: false},
 				},
 				AbilityScoreImprovement: []shared.AbilityScoreImprovementItem{
 					{Ability: "Dexterity", Bonus: 2},
 				},
 			},
 			expected: []shared.Ability{
-				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
-				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-				{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+				{Name: "Strength", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Dexterity", Adjusted: 12, SavingThrowsProficient: false},
+				{Name: "Constitution", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Intelligence", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Wisdom", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Charisma", Adjusted: 10, SavingThrowsProficient: false},
 			},
 		},
 		{
@@ -176,12 +176,12 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			character: &Character{
 				Level: 4,
 				Abilities: []shared.Ability{
-					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
-					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+					{Name: "Strength", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Dexterity", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Constitution", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Intelligence", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Wisdom", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Charisma", Adjusted: 10, SavingThrowsProficient: false},
 				},
 				AbilityScoreImprovement: []shared.AbilityScoreImprovementItem{
 					{Ability: "Dexterity", Bonus: 1},
@@ -189,12 +189,12 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 				},
 			},
 			expected: []shared.Ability{
-				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-				{Name: "Dexterity", Base: 11, SavingThrowsProficient: false},
-				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-				{Name: "Charisma", Base: 11, SavingThrowsProficient: false},
+				{Name: "Strength", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Dexterity", Adjusted: 11, SavingThrowsProficient: false},
+				{Name: "Constitution", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Intelligence", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Wisdom", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Charisma", Adjusted: 11, SavingThrowsProficient: false},
 			},
 		},
 		{
@@ -202,12 +202,12 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			character: &Character{
 				Level: 4,
 				Abilities: []shared.Ability{
-					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
-					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+					{Name: "Strength", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Dexterity", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Constitution", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Intelligence", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Wisdom", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Charisma", Adjusted: 10, SavingThrowsProficient: false},
 				},
 				AbilityScoreImprovement: []shared.AbilityScoreImprovementItem{
 					{Ability: "Dexterity", Bonus: 2},
@@ -215,12 +215,12 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 				},
 			},
 			expected: []shared.Ability{
-				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
-				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-				{Name: "Charisma", Base: 12, SavingThrowsProficient: false},
+				{Name: "Strength", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Dexterity", Adjusted: 12, SavingThrowsProficient: false},
+				{Name: "Constitution", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Intelligence", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Wisdom", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Charisma", Adjusted: 12, SavingThrowsProficient: false},
 			},
 		},
 		{
@@ -228,12 +228,12 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			character: &Character{
 				Level: 8,
 				Abilities: []shared.Ability{
-					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-					{Name: "Dexterity", Base: 10, SavingThrowsProficient: false},
-					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+					{Name: "Strength", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Dexterity", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Constitution", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Intelligence", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Wisdom", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Charisma", Adjusted: 10, SavingThrowsProficient: false},
 				},
 				AbilityScoreImprovement: []shared.AbilityScoreImprovementItem{
 					{Ability: "Dexterity", Bonus: 2},
@@ -242,12 +242,12 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 				},
 			},
 			expected: []shared.Ability{
-				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-				{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
-				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-				{Name: "Wisdom", Base: 11, SavingThrowsProficient: false},
-				{Name: "Charisma", Base: 11, SavingThrowsProficient: false},
+				{Name: "Strength", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Dexterity", Adjusted: 12, SavingThrowsProficient: false},
+				{Name: "Constitution", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Intelligence", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Wisdom", Adjusted: 11, SavingThrowsProficient: false},
+				{Name: "Charisma", Adjusted: 11, SavingThrowsProficient: false},
 			},
 		},
 		{
@@ -255,12 +255,12 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			character: &Character{
 				Level: 20,
 				Abilities: []shared.Ability{
-					{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-					{Name: "Dexterity", Base: 12, SavingThrowsProficient: false},
-					{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-					{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-					{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-					{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+					{Name: "Strength", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Dexterity", Adjusted: 12, SavingThrowsProficient: false},
+					{Name: "Constitution", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Intelligence", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Wisdom", Adjusted: 10, SavingThrowsProficient: false},
+					{Name: "Charisma", Adjusted: 10, SavingThrowsProficient: false},
 				},
 				AbilityScoreImprovement: []shared.AbilityScoreImprovementItem{
 					{Ability: "Dexterity", Bonus: 2},
@@ -271,12 +271,12 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 				},
 			},
 			expected: []shared.Ability{
-				{Name: "Strength", Base: 10, SavingThrowsProficient: false},
-				{Name: "Dexterity", Base: 20, SavingThrowsProficient: false},
-				{Name: "Constitution", Base: 10, SavingThrowsProficient: false},
-				{Name: "Intelligence", Base: 10, SavingThrowsProficient: false},
-				{Name: "Wisdom", Base: 10, SavingThrowsProficient: false},
-				{Name: "Charisma", Base: 10, SavingThrowsProficient: false},
+				{Name: "Strength", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Dexterity", Adjusted: 20, SavingThrowsProficient: false},
+				{Name: "Constitution", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Intelligence", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Wisdom", Adjusted: 10, SavingThrowsProficient: false},
+				{Name: "Charisma", Adjusted: 10, SavingThrowsProficient: false},
 			},
 		},
 	}
@@ -288,8 +288,8 @@ func TestCharacterCalculateAbilityScoreImprovement(t *testing.T) {
 			for i, e := range tt.expected {
 				result := tt.character.Abilities[i]
 
-				if e.Base != result.Base {
-					t.Errorf("Ability Base %s- Expected: %d, Result: %d", e.Name, e.Base, result.Base)
+				if e.Adjusted != result.Adjusted {
+					t.Errorf("Ability Adjusted %s- Expected: %d, Result: %d", e.Name, e.Adjusted, result.Adjusted)
 				}
 			}
 		})
@@ -579,9 +579,9 @@ func TestCharacterRecover(t *testing.T) {
 		{
 			name: "Recover Health, Spell Slots, Class Detail Slots",
 			character: &Character{
-				HPCurrent: 0,
-				HPMax:     16,
-				ClassName: "character",
+				HPCurrent:  0,
+				HPMax:      16,
+				ClassTypes: []string{shared.ClassBard},
 				SpellSlots: []shared.SpellSlot{
 					{Level: 1, Maximum: 4, Available: 1},
 					{Level: 2, Maximum: 2, Available: 0},

@@ -41,8 +41,8 @@ func (m *Monk) ExecutePreCalculateMethods(c *models.Character) {
 	m.executeDiamondSoul(c)
 }
 
-func (m *Monk) CalculateHitDice(level int) string {
-	return fmt.Sprintf("%dd8", level)
+func (m *Monk) CalculateHitDice() string {
+	return fmt.Sprintf("%dd8", m.Level)
 }
 
 func (m *Monk) executeUnarmoredDefense(c *models.Character) {
@@ -55,7 +55,7 @@ func (m *Monk) executeUnarmoredDefense(c *models.Character) {
 }
 
 func (m *Monk) executeUnarmoredMovement(c *models.Character) {
-	if c.WornEquipment.Armor.Name != "" || c.Level < 2 {
+	if c.WornEquipment.Armor.Name != "" || m.Level < 2 {
 		return
 	}
 
@@ -109,8 +109,10 @@ func (m *Monk) executeDiamondSoul(c *models.Character) {
 	}
 }
 
-func (m *Monk) ClassDetails(level int) string {
+func (m *Monk) ClassDetails() string {
 	var s string
+
+	s += fmt.Sprintf("Level: %d\n", m.Level)
 
 	martialArts := fmt.Sprintf("*Martial Arts*: %s\n\n", m.MartialArts)
 	s += martialArts
@@ -131,8 +133,11 @@ func (m *Monk) ClassDetails(level int) string {
 // CLI
 
 func (m *Monk) UseClassTokens(tokenName string, quantity int) {
-	// We only really need slot name for classes that have multiple slots
-	// since monk only has ki points, we won't check the slot name value
+	if tokenName != "" && tokenName != kiPointsToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, m.ClassType))
+		return
+	}
+
 	if m.ClassToken.Available <= 0 {
 		logger.Info("No Ki Points Available")
 		return
@@ -142,8 +147,11 @@ func (m *Monk) UseClassTokens(tokenName string, quantity int) {
 }
 
 func (m *Monk) RecoverClassTokens(tokenName string, quantity int) {
-	// We only really need slot name for classes that have multiple slots
-	// since monk only has ki points, we won't check the slot name value
+	if tokenName != "" && tokenName != kiPointsToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, m.ClassType))
+		return
+	}
+
 	m.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover

@@ -37,8 +37,8 @@ func (w *Warlock) ExecutePostCalculateMethods(c *models.Character) {
 	w.executeEldritchInvocations(c)
 }
 
-func (w *Warlock) CalculateHitDice(level int) string {
-	return fmt.Sprintf("%dd8", level)
+func (w *Warlock) CalculateHitDice() string {
+	return fmt.Sprintf("%dd8", w.Level)
 }
 
 func (w *Warlock) executeSpellCastingAbility(c *models.Character) {
@@ -81,10 +81,12 @@ func applyArmorOfShadows(c *models.Character) bool {
 	return true
 }
 
-func (w *Warlock) ClassDetails(level int) string {
+func (w *Warlock) ClassDetails() string {
 	var s string
 
-	if len(w.Invocations) > 0 && level > 3 {
+	s += fmt.Sprintf("Level: %d\n", w.Level)
+
+	if len(w.Invocations) > 0 && w.Level > 3 {
 		s += "Invocation:\n\n"
 		for _, invocation := range w.Invocations {
 			s += fmt.Sprintf("%s\n", invocation)

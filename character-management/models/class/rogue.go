@@ -26,8 +26,8 @@ func LoadRogue(data []byte) (*Rogue, error) {
 	return &ranger, nil
 }
 
-func (r *Rogue) CalculateHitDice(level int) string {
-	return fmt.Sprintf("%dd8", level)
+func (r *Rogue) CalculateHitDice() string {
+	return fmt.Sprintf("%dd8", r.Level)
 }
 
 func (r *Rogue) ExecutePostCalculateMethods(c *models.Character) {
@@ -73,8 +73,10 @@ func (r *Rogue) executeSneakAttack(c *models.Character) {
 	}
 }
 
-func (r *Rogue) ClassDetails(level int) string {
+func (r *Rogue) ClassDetails() string {
 	var s string
+
+	s += fmt.Sprintf("Level: %d\n", r.Level)
 
 	if len(r.ExpertiseSkills) > 0 {
 		expertiseHeader := fmt.Sprintf("Expertise:\n")

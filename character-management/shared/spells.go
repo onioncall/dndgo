@@ -7,9 +7,9 @@ type SpellSlot struct {
 }
 
 type CharacterSpell struct {
-	SlotLevel  int    `json:"slot-level"`
-	IsRitual   bool   `json:"ritual"`
-	Name       string `json:"name"`
+	SlotLevel  int    `json:"slot-level" clover:"slot-level"`
+	IsRitual   bool   `json:"ritual" clover:"ritual"`
+	Name       string `json:"name" clover:"name"`
 	IsPrepared bool   `json:"-"`
 }
 

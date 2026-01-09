@@ -1,0 +1,215 @@
+{
+    "id": "5eedcac7-1ca1-4a71-8439-be5e9b985053",
+    "default": true,
+    "path": "",
+    "class-types": [
+        "Barbarian",
+        "Bard"
+    ],
+    "validation-disabled": false,
+    "name": "Multi",
+    "race": "",
+    "background": "",
+    "feats": [],
+    "languages": [
+        ""
+    ],
+    "hp-current": 0,
+    "hp-max": 0,
+    "hp-temp": 0,
+    "speed": 0,
+    "abilities": [
+        {
+            "name": "strength",
+            "base": 0,
+            "saving-throws-proficient": false
+        },
+        {
+            "name": "dexterity",
+            "base": 0,
+            "saving-throws-proficient": false
+        },
+        {
+            "name": "constitution",
+            "base": 0,
+            "saving-throws-proficient": false
+        },
+        {
+            "name": "intelligence",
+            "base": 0,
+            "saving-throws-proficient": false
+        },
+        {
+            "name": "wisdom",
+            "base": 0,
+            "saving-throws-proficient": false
+        },
+        {
+            "name": "charisma",
+            "base": 18,
+            "saving-throws-proficient": false
+        }
+    ],
+    "skills": [
+        {
+            "ability": "Strength",
+            "name": "Athletics",
+            "proficient": false
+        },
+        {
+            "ability": "Dexterity",
+            "name": "Acrobatics",
+            "proficient": false
+        },
+        {
+            "ability": "Dexterity",
+            "name": "Sleight of Hand",
+            "proficient": false
+        },
+        {
+            "ability": "Dexterity",
+            "name": "Stealth",
+            "proficient": false
+        },
+        {
+            "ability": "Intelligence",
+            "name": "Arcana",
+            "proficient": false
+        },
+        {
+            "ability": "Intelligence",
+            "name": "History",
+            "proficient": false
+        },
+        {
+            "ability": "Intelligence",
+            "name": "Investigation",
+            "proficient": false
+        },
+        {
+            "ability": "Intelligence",
+            "name": "Nature",
+            "proficient": false
+        },
+        {
+            "ability": "Intelligence",
+            "name": "Religion",
+            "proficient": false
+        },
+        {
+            "ability": "Wisdom",
+            "name": "Animal Handling",
+            "proficient": false
+        },
+        {
+            "ability": "Wisdom",
+            "name": "Insight",
+            "proficient": false
+        },
+        {
+            "ability": "Wisdom",
+            "name": "Medicine",
+            "proficient": false
+        },
+        {
+            "ability": "Wisdom",
+            "name": "Perception",
+            "proficient": false
+        },
+        {
+            "ability": "Wisdom",
+            "name": "Survival",
+            "proficient": false
+        },
+        {
+            "ability": "Charisma",
+            "name": "Deception",
+            "proficient": false
+        },
+        {
+            "ability": "Charisma",
+            "name": "Intimidation",
+            "proficient": false
+        },
+        {
+            "ability": "Charisma",
+            "name": "Performance",
+            "proficient": false
+        },
+        {
+            "ability": "Charisma",
+            "name": "Persuasion",
+            "proficient": false
+        }
+    ],
+    "spell-slots": [
+        {
+            "level": 1,
+            "maximum": 3,
+            "available": 3
+        },
+        {
+            "level": 2,
+            "maximum": 0,
+            "available": 0
+        },
+        {
+            "level": 3,
+            "maximum": 0,
+            "available": 0
+        },
+        {
+            "level": 4,
+            "maximum": 0,
+            "available": 0
+        },
+        {
+            "level": 5,
+            "maximum": 0,
+            "available": 0
+        },
+        {
+            "level": 6,
+            "maximum": 0,
+            "available": 0
+        },
+        {
+            "level": 7,
+            "maximum": 0,
+            "available": 0
+        },
+        {
+            "level": 8,
+            "maximum": 0,
+            "available": 0
+        },
+        {
+            "level": 9,
+            "maximum": 0,
+            "available": 0
+        }
+    ],
+    "spells": [],
+    "weapons": [],
+    "primary-equipped": "",
+    "secondary-equipped": "",
+    "worn-equipment": {
+        "head": "",
+        "amulet": "",
+        "cloak": "",
+        "armor": {
+            "name": "",
+            "proficient": false,
+            "class": 0,
+            "type": ""
+        },
+        "hands-arms": "",
+        "ring": "",
+        "ring2": "",
+        "belt": "",
+        "boots": "",
+        "shield": ""
+    },
+    "backpack": [],
+    "ability-score-improvement": []
+}

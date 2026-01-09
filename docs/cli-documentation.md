@@ -76,7 +76,7 @@ You can use the CLI to directly make changes to the characters state (like healt
 
 **Use Flags**
 -  -b, --backpack string       Use item from backpack
--  -c, --class-tokens string   Use class-tokens by token name (default "any")
+-  -t, --class-tokens string   Use class-tokens by token name (default "any")
 -  -q, --quantity int          Modify quantity of something
 -  -s, --spell-slots int       Use spell-slot by level
 
@@ -96,7 +96,7 @@ You can use the CLI to directly make changes to the characters state (like healt
 
 **Recover Flags**
 -  -a, --all                   Recover all health, slots, and tokens
--  -c, --class-tokens string   Recover class-tokens by token name (default "all"), if no quantity is specified, a full class token recovery is assumed
+-  -t, --class-tokens string   Recover class-tokens by token name (default "all"), if no quantity is specified, a full class token recovery is assumed
 -  -p, --hitpoints int         Recover hitpoints
 -  -q, --quantity int          Recover the quantity of something
 -  -s, --spell-slots int       Recover spell-slot by level, if no quantity is specified, a full spell slot recovery is assumed for that level
