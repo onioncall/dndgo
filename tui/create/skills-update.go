@@ -32,8 +32,13 @@ func (m Model) UpdateSkillsPage(msg tea.Msg) (Model, tea.Cmd) {
 				m.nextButtonFocused = false
 				m.viewportOffset = 0
 
-				m.currentPage = spellsPage
-				m.inputs = spellInputs()
+				if hasSpellClass(m.character.ClassTypes) {
+					m.currentPage = spellsPage
+					m.inputs = spellInputs()
+				} else {
+					m.currentPage = weaponsPage
+					m.inputs = weaponInputs()
+				}
 
 				return m, nil
 			} else if m.backButtonFocused {

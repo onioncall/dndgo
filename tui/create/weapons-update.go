@@ -62,8 +62,14 @@ func (m Model) UpdateWeaponsPage(msg tea.Msg) (Model, tea.Cmd) {
 				m.nextButtonFocused = false
 				m.viewportOffset = 0
 
-				m.currentPage = spellsPage
-				m.inputs = spellInputs()
+				if hasSpellClass(m.character.ClassTypes) {
+					m.currentPage = spellsPage
+					m.inputs = spellInputs()
+				} else {
+					m.currentPage = skillsPage
+					m.inputs = skillsInputs()
+					m.populateSavedSkillInputs()
+				}
 
 				return m, nil
 			}
@@ -103,12 +109,6 @@ func (m Model) UpdateWeaponsPage(msg tea.Msg) (Model, tea.Cmd) {
 
 func (m *Model) addWeapon() error {
 	weaponName := m.inputs[weaponNameInput].Value()
-	for _, weapon := range m.character.Weapons {
-		if weaponName == weapon.Name {
-			return fmt.Errorf("Weapon already exists in weapon list")
-		}
-	}
-
 	proficientValue := m.inputs[proficientWeaponInput].Value()
 	if proficientValue == "" {
 		proficientValue = "false"
