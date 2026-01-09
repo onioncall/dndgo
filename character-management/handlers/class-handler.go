@@ -181,6 +181,7 @@ func ImportClassJson(classJson []byte, characterName string, classType string) e
 	for _, class := range classes {
 		if strings.EqualFold(class.GetClassType(), classType) || len(classes) == 1 {
 			ec = class
+			break
 		}
 	}
 
@@ -213,10 +214,17 @@ func ExportClassJson(characterName string, classType string) ([]byte, error) {
 	}
 
 	var classToExport models.Class
+	classMatchFound := false
 	for _, class := range classes {
 		if strings.EqualFold(class.GetClassType(), classType) || len(classes) == 1 {
 			classToExport = class
+			classMatchFound = true
+			break
 		}
+	}
+
+	if !classMatchFound {
+		return nil, fmt.Errorf("Class '%s' is not found for character '%s'", classType, characterName)
 	}
 
 	j, err := json.MarshalIndent(classToExport, "", "    ")

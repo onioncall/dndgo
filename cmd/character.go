@@ -582,13 +582,18 @@ var (
 			if classType != "" {
 				classType = strings.ToLower(classType)
 				entity = "Class"
-				handlers.ImportClassJson(bytes, characterName, classType)
+				err = handlers.ImportClassJson(bytes, characterName, classType)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("Failed to import class")
+					return
+				}
 			} else {
 				entity = "Character"
 				err = handlers.ImportCharacterJson(bytes)
 				if err != nil {
 					logger.Error(err)
-					logger.PrintError("Failed to import character character")
+					logger.PrintError("Failed to import character")
 					return
 				}
 			}
@@ -614,9 +619,19 @@ var (
 			if classType != "" {
 				entity = "Class"
 				data, err = handlers.ExportClassJson(name, classType)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("Failed to export class file")
+					return
+				}
 			} else {
 				entity = "Character"
 				data, err = handlers.ExportCharacterJson(name)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("Failed to export character file")
+					return
+				}
 			}
 
 			err = os.WriteFile(filePath, data, 0o644)
