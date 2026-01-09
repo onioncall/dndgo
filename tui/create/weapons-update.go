@@ -148,6 +148,7 @@ func (m *Model) addWeapon() error {
 	weapon := shared.Weapon{
 		Name:       weaponName,
 		Proficient: proficient,
+		Damage:     m.inputs[damageInput].Value(),
 		Ranged:     ranged,
 		Range: shared.WeaponRange{
 			NormalRange: normalRange,
