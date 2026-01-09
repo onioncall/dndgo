@@ -63,7 +63,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "tab":
 			m.selectedTabIndex = (m.selectedTabIndex + 1) % len(m.tabs)
 			// Skip spell tab if we're not rendering it
-			if m.character.SpellSaveDC == 0 && m.selectedTabIndex == spellTab {
+			if m.character.SpellSaveDC == 0 && m.selectedTabIndex == spellTab || m.selectedTabIndex == notesTab {
 				m.selectedTabIndex++
 			}
 
@@ -71,7 +71,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "shift+tab":
 			m.selectedTabIndex = (m.selectedTabIndex - 1 + len(m.tabs)) % len(m.tabs)
 			// Skip spell tab if we're not rendering it
-			if m.character.SpellSaveDC == 0 && m.selectedTabIndex == spellTab {
+			if m.character.SpellSaveDC == 0 && m.selectedTabIndex == spellTab || m.selectedTabIndex == notesTab {
 				m.selectedTabIndex--
 			}
 
