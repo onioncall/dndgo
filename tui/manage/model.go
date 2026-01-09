@@ -22,6 +22,7 @@ type Model struct {
 	cmdVisible         bool
 	character          *models.Character
 	contentInitialized bool
+	currentClass       string
 	err                error
 
 	basicInfoTab info.BasicInfoModel
@@ -67,6 +68,7 @@ const (
 	unequipCmd      = "unequip"
 	addItemCmd      = "add-item"
 	removeItemCmd   = "remove-item"
+	updateClassCmd  = "update-class"
 
 	// Class
 	useClassTokenCmd     = "use-token"
@@ -86,7 +88,10 @@ func NewModel() Model {
 		}
 	}
 
-	logger.Info("Loaded and handled character")
+	defaultClass := ""
+	if character != nil && len(character.ClassTypes) > 0 {
+		defaultClass = character.ClassTypes[0]
+	}
 
 	input := textinput.New()
 	input.Focus()
@@ -109,6 +114,7 @@ func NewModel() Model {
 		tabs:             tabs,
 		cmdInput:         input,
 		cmdVisible:       false,
+		currentClass:     defaultClass,
 		basicInfoTab:     basicInfoTab,
 		spellsTab:        spellsTab,
 		equipmentTab:     equipmentTab,

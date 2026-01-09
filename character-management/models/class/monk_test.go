@@ -108,14 +108,19 @@ func TestMonkExecuteUnarmoredDefense(t *testing.T) {
 func TestMonkExecuteUnarmoredMovement(t *testing.T) {
 	tests := []struct {
 		name      string
+		monk      Monk
 		character *models.Character
 		expected  int
 	}{
 		{
 			name: "Armor equiped, early return",
+			monk: Monk{
+				BaseClass: models.BaseClass{
+					Level: 3,
+				},
+			},
 			character: &models.Character{
 				Speed: 0,
-				Level: 3,
 				WornEquipment: shared.WornEquipment{
 					Armor: shared.Armor{
 						Name: "Leather Armor",
@@ -126,9 +131,13 @@ func TestMonkExecuteUnarmoredMovement(t *testing.T) {
 		},
 		{
 			name: "No armor, valid",
+			monk: Monk{
+				BaseClass: models.BaseClass{
+					Level: 3,
+				},
+			},
 			character: &models.Character{
 				Speed: 16,
-				Level: 3,
 				WornEquipment: shared.WornEquipment{
 					Armor: shared.Armor{
 						Name: "",
@@ -141,9 +150,7 @@ func TestMonkExecuteUnarmoredMovement(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			monk := &Monk{}
-
-			monk.executeUnarmoredMovement(tt.character)
+			tt.monk.executeUnarmoredMovement(tt.character)
 			result := tt.character.Speed
 
 			if tt.expected != result {
@@ -248,7 +255,6 @@ func TestMonkExecuteKiPoints(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			tt.monk.executeKiPoints(tt.character)
 
 			maxPointResult := tt.monk.ClassToken.Maximum
@@ -319,21 +325,21 @@ func TestMonkExecuteDiamond(t *testing.T) {
 			character: &models.Character{
 				Level: 10,
 				Abilities: []shared.Ability{
-					{Name: shared.AbilityStrength, AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},
-					{Name: shared.AbilityDexterity, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
-					{Name: shared.AbilityConstitution, AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},
-					{Name: shared.AbilityWisdom, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
-					{Name: shared.AbilityIntelligence, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
-					{Name: shared.AbilityCharisma, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
+					{Name: shared.AbilityStrength, AbilityModifier: 0, Adjusted: 14, SavingThrowsProficient: true},
+					{Name: shared.AbilityDexterity, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
+					{Name: shared.AbilityConstitution, AbilityModifier: 0, Adjusted: 15, SavingThrowsProficient: true},
+					{Name: shared.AbilityWisdom, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
+					{Name: shared.AbilityIntelligence, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
+					{Name: shared.AbilityCharisma, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
 				},
 			},
 			expected: []shared.Ability{
-				{Name: shared.AbilityStrength, AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},
-				{Name: shared.AbilityDexterity, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
-				{Name: shared.AbilityConstitution, AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},
-				{Name: shared.AbilityWisdom, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
-				{Name: shared.AbilityIntelligence, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
-				{Name: shared.AbilityCharisma, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
+				{Name: shared.AbilityStrength, AbilityModifier: 0, Adjusted: 14, SavingThrowsProficient: true},
+				{Name: shared.AbilityDexterity, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
+				{Name: shared.AbilityConstitution, AbilityModifier: 0, Adjusted: 15, SavingThrowsProficient: true},
+				{Name: shared.AbilityWisdom, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
+				{Name: shared.AbilityIntelligence, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
+				{Name: shared.AbilityCharisma, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
 			},
 		},
 		{
@@ -341,21 +347,21 @@ func TestMonkExecuteDiamond(t *testing.T) {
 			character: &models.Character{
 				Level: 14,
 				Abilities: []shared.Ability{
-					{Name: shared.AbilityStrength, AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},
-					{Name: shared.AbilityDexterity, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
-					{Name: shared.AbilityConstitution, AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},
-					{Name: shared.AbilityWisdom, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
-					{Name: shared.AbilityIntelligence, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
-					{Name: shared.AbilityCharisma, AbilityModifier: 0, Base: 12, SavingThrowsProficient: false},
+					{Name: shared.AbilityStrength, AbilityModifier: 0, Adjusted: 14, SavingThrowsProficient: true},
+					{Name: shared.AbilityDexterity, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
+					{Name: shared.AbilityConstitution, AbilityModifier: 0, Adjusted: 15, SavingThrowsProficient: true},
+					{Name: shared.AbilityWisdom, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
+					{Name: shared.AbilityIntelligence, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
+					{Name: shared.AbilityCharisma, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: false},
 				},
 			},
 			expected: []shared.Ability{
-				{Name: shared.AbilityStrength, AbilityModifier: 0, Base: 14, SavingThrowsProficient: true},
-				{Name: shared.AbilityDexterity, AbilityModifier: 0, Base: 12, SavingThrowsProficient: true},
-				{Name: shared.AbilityConstitution, AbilityModifier: 0, Base: 15, SavingThrowsProficient: true},
-				{Name: shared.AbilityWisdom, AbilityModifier: 0, Base: 12, SavingThrowsProficient: true},
-				{Name: shared.AbilityIntelligence, AbilityModifier: 0, Base: 12, SavingThrowsProficient: true},
-				{Name: shared.AbilityCharisma, AbilityModifier: 0, Base: 12, SavingThrowsProficient: true},
+				{Name: shared.AbilityStrength, AbilityModifier: 0, Adjusted: 14, SavingThrowsProficient: true},
+				{Name: shared.AbilityDexterity, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: true},
+				{Name: shared.AbilityConstitution, AbilityModifier: 0, Adjusted: 15, SavingThrowsProficient: true},
+				{Name: shared.AbilityWisdom, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: true},
+				{Name: shared.AbilityIntelligence, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: true},
+				{Name: shared.AbilityCharisma, AbilityModifier: 0, Adjusted: 12, SavingThrowsProficient: true},
 			},
 		},
 	}

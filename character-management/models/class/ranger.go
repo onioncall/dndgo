@@ -38,8 +38,8 @@ func (r *Ranger) ExecutePostCalculateMethods(c *models.Character) {
 	r.executeFightingStyle(c)
 }
 
-func (r *Ranger) CalculateHitDice(level int) string {
-	return fmt.Sprintf("%dd10", level)
+func (r *Ranger) CalculateHitDice() string {
+	return fmt.Sprintf("%dd10", r.Level)
 }
 
 func (r *Ranger) PostCalculateSpellAttackMod(c *models.Character) {
@@ -49,9 +49,9 @@ func (r *Ranger) PostCalculateSpellAttackMod(c *models.Character) {
 	executeSpellAttackMod(c, wisMod)
 }
 
-func (r *Ranger) ClassDetails(level int) string {
+func (r *Ranger) ClassDetails() string {
 	var s string
-	if r.FightingStyleFeature.Name != "" && level >= 2 {
+	if r.FightingStyleFeature.Name != "" && r.Level >= 2 {
 		appliedText := "Requirements for fighting style not met."
 		if r.FightingStyleFeature.IsApplied {
 			appliedText = "Requirements for this fighting style are met, and any bonuses to armor or weapons have been applied to your character."

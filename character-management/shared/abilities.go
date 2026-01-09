@@ -5,7 +5,7 @@ type Ability struct {
 	Base                   int    `json:"base"`
 	Adjusted               int    `json:"-"`
 	AbilityModifier        int    `json:"-"`
-	SavingThrowsProficient bool   `json:"saving-throws-proficient"`
+	SavingThrowsProficient bool   `json:"saving-throws-proficient" clover:"saving-throws-proficient"`
 }
 
 type AbilityScoreImprovementItem struct {

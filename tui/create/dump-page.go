@@ -22,7 +22,7 @@ func (m Model) DumpView() string {
 	allLines = append(allLines, "Basic Info")
 	allLines = append(allLines, fmt.Sprintf("Name: %v", m.character.Name))
 	allLines = append(allLines, fmt.Sprintf("Level: %v", m.character.Level))
-	allLines = append(allLines, fmt.Sprintf("Class: %v", m.character.ClassName))
+	allLines = append(allLines, fmt.Sprintf("Class: %v", m.character.ClassTypes))
 	allLines = append(allLines, fmt.Sprintf("Race: %v", m.character.Race))
 	allLines = append(allLines, fmt.Sprintf("Background: %v", m.character.Background))
 	allLines = append(allLines, fmt.Sprintf("Languages: %v", strings.Join(m.character.Languages, ", ")))

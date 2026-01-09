@@ -2,12 +2,10 @@ package create
 
 import (
 	"fmt"
-	"slices"
 	"strconv"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/onioncall/dndgo/character-management/shared"
 	tui "github.com/onioncall/dndgo/tui/shared"
 )
 
@@ -34,9 +32,8 @@ func (m Model) UpdateBasicInfoPage(msg tea.Msg) (Model, tea.Cmd) {
 				m.nextButtonFocused = false
 				m.viewportOffset = 0
 
-				m.currentPage = abilitiesPage
-				m.inputs = abilitiesInputs()
-				m.populateSavedAbilitiesInputs()
+				m.currentPage = classPage
+				m.inputs = classInputs()
 
 				return m, nil
 			} else if m.backButtonFocused {
@@ -88,15 +85,6 @@ func (m *Model) saveBasicInfo() error {
 		}
 	}
 
-	levelValue := m.inputs[levelInput].Value()
-	if levelValue == "" {
-		levelValue = "0"
-	}
-	level, err := strconv.Atoi(levelValue)
-	if err != nil {
-		return fmt.Errorf("Invalid level, must be an integer")
-	}
-
 	hpValue := m.inputs[hpInput].Value()
 	if hpValue == "" {
 		hpValue = "0"
@@ -115,35 +103,10 @@ func (m *Model) saveBasicInfo() error {
 		return fmt.Errorf("Invalid speed, must be an integer")
 	}
 
-	className := m.inputs[classInput].Value()
-
-	validClasses := []string{
-		shared.ClassBarbarian,
-		shared.ClassBard,
-		shared.ClassCleric,
-		shared.ClassDruid,
-		shared.ClassFighter,
-		shared.ClassMonk,
-		shared.ClassPaladin,
-		shared.ClassRanger,
-		shared.ClassRogue,
-		shared.ClassSorcerer,
-		shared.ClassWarlock,
-		shared.ClassWizard,
-	}
-
-	isValid := slices.Contains(validClasses, strings.ToLower(className))
-
-	if !isValid {
-		return fmt.Errorf("Invalid class name")
-	}
-
 	m.character.Name = m.inputs[nameInput].Value()
-	m.character.Level = level
-	m.character.ClassName = className
 	m.character.Race = m.inputs[raceInput].Value()
 	m.character.Background = m.inputs[backgroundInput].Value()
-	m.character.Languages = strings.Split(m.inputs[languagesInput].Value(), ",")
+	m.character.Languages = strings.Split(m.inputs[languagesInput].Value(), ", ")
 	m.character.HPCurrent = hp
 	m.character.HPMax = hp
 	m.character.Speed = speed
@@ -158,16 +121,13 @@ func (m *Model) populateBasicInfoInputs() {
 		return
 	}
 
-	levelStr := strconv.Itoa(m.character.Level)
 	hpStr := strconv.Itoa(m.character.HPMax)
 	speedStr := strconv.Itoa(m.character.Speed)
 
 	m.inputs[nameInput].SetValue(m.character.Name)
-	m.inputs[levelInput].SetValue(levelStr)
-	m.inputs[classInput].SetValue(m.character.ClassName)
 	m.inputs[raceInput].SetValue(m.character.Race)
 	m.inputs[backgroundInput].SetValue(m.character.Background)
-	m.inputs[languagesInput].SetValue(strings.Join(m.character.Languages, ","))
+	m.inputs[languagesInput].SetValue(strings.Join(m.character.Languages, ", "))
 	m.inputs[hpInput].SetValue(hpStr)
 	m.inputs[speedInput].SetValue(speedStr)
 }

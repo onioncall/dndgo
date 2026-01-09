@@ -55,7 +55,7 @@ AC: %d
 Hit Dice: %s
 Ability Score Improvement:
 %s`,
-		character.ClassName, character.Level, character.Race, character.Proficiency,
+		strings.Join(character.ClassTypes, ", "), character.Level, character.Race, character.Proficiency,
 		character.Speed, character.PassivePerception, character.PassiveInsight,
 		character.AC, character.HitDice, asi)
 

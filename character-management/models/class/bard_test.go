@@ -167,7 +167,7 @@ func TestBardUseClassSlots(t *testing.T) {
 	}{
 		{
 			name:      "One use, single slot",
-			tokenName: "bardic inspiration",
+			tokenName: "bardic-inspiration",
 			character: &models.Character{},
 			bard: &Bard{
 				ClassToken: shared.NamedToken{
@@ -207,7 +207,7 @@ func TestBardRecoverClassSlots(t *testing.T) {
 	}{
 		{
 			name:      "Recover by 1",
-			tokenName: "bardic inspiration",
+			tokenName: "bardic-inspiration",
 			recover:   1,
 			bard: &Bard{
 				ClassToken: shared.NamedToken{
@@ -222,7 +222,7 @@ func TestBardRecoverClassSlots(t *testing.T) {
 		},
 		{
 			name:      "Full recover",
-			tokenName: "bardic inspiration",
+			tokenName: "bardic-inspiration",
 			recover:   0,
 			bard: &Bard{
 				ClassToken: shared.NamedToken{

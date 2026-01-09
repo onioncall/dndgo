@@ -5,24 +5,25 @@ import (
 )
 
 type BaseClass struct {
-	SubClass    string `json:"sub-class" clover:"sub-class"`
-	CharacterID string `json:"character-id" clover:"character-id"`
-	ClassName   string `json:"class-name" clover:"class-name"`
-	// This will be used when we implement multiclassing
+	SubClass      string         `json:"sub-class" clover:"sub-class"`
+	CharacterID   string         `json:"character-id" clover:"character-id"`
+	ClassType     string         `json:"class-type" clover:"class-type"`
 	Level         int            `json:"level" clover:"level"`
 	OtherFeatures []ClassFeature `json:"other-features" clover:"other-features"`
 }
 
 type Class interface {
-	CalculateHitDice(level int) string
-	ClassDetails(level int) string
-	GetClassFeatures(level int) string
+	CalculateHitDice() string
+	ClassDetails() string
+	GetClassFeatures() string
 	SetSubClass(subClass string)
-	GetSubClass(level int) string
+	GetClassType() string
+	GetClassLevel() int
+	SetClassLevel(int)
+	GetSubClass() string
 	GetCharacterId() string
 	SetCharacterId(id string)
-	GetClassName() string
-	SetClassName(name string)
+	SetClassType(name string)
 }
 
 type PostCalculator interface {
@@ -47,6 +48,11 @@ type PreparedSpellClass interface {
 	AddPreparedSpell(spell string) error
 	RemovePreparedSpell(spell string) error
 	GetPreparedSpells() []string
+}
+
+type SpellCasterClass interface {
+	UseSpellSlot(level int) error
+	RecoverSpellSlots(level int, quantity int)
 }
 
 type OathSpellClass interface {
@@ -77,19 +83,23 @@ func (c *BaseClass) SetCharacterId(id string) {
 	c.CharacterID = id
 }
 
-func (c *BaseClass) GetClassName() string {
-	return c.ClassName
+func (c *BaseClass) GetClassType() string {
+	return c.ClassType
 }
 
-func (c *BaseClass) SetClassName(name string) {
-	c.ClassName = name
+func (c *BaseClass) GetClassLevel() int {
+	return c.Level
 }
 
-func (c *BaseClass) GetSubClass(level int) string {
-	if level <= 2 {
-		return "Too early, you need to level up!"
-	}
+func (c *BaseClass) SetClassLevel(level int) {
+	c.Level += level
+}
 
+func (c *BaseClass) SetClassType(name string) {
+	c.ClassType = name
+}
+
+func (c *BaseClass) GetSubClass() string {
 	return c.SubClass
 }
 
@@ -97,11 +107,11 @@ func (c *BaseClass) SetSubClass(subClass string) {
 	c.SubClass = subClass
 }
 
-func (c *BaseClass) GetClassFeatures(level int) string {
+func (c *BaseClass) GetClassFeatures() string {
 	var s string
 	if len(c.OtherFeatures) > 0 {
 		for _, feature := range c.OtherFeatures {
-			if feature.Level > level {
+			if feature.Level > c.Level {
 				continue
 			}
 

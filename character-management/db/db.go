@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/onioncall/dndgo/character-management/models"
@@ -264,11 +265,13 @@ func (r Repository) InsertClass(class models.Class) error {
 	return nil
 }
 
-// GetClass retrieves a class from the db based on the ID of the corresponding character
+// GetClass retrieves a class from the db based on the ID of the corresponding character, and the class type
 // The result will be unmarshaled into `obj`
-func (r Repository) GetClass(chid string, obj models.Class) error {
+func (r Repository) GetClass(chid string, obj models.Class, classType string) error {
 	doc, err := r.db.FindFirst(
-		cquery.NewQuery(classCollection).Where(cquery.Field("character-id").Eq(chid)),
+		cquery.NewQuery(classCollection).
+			Where(cquery.Field("character-id").Eq(chid).
+				And(cquery.Field("class-type").Eq(strings.ToLower(classType)))),
 	)
 	if err != nil {
 		return fmt.Errorf("Failed to retrieve class from db: %w", err)
@@ -280,6 +283,29 @@ func (r Repository) GetClass(chid string, obj models.Class) error {
 
 	if err = doc.Unmarshal(obj); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// Retrieves all classes from the db based on the ID of the corresponding character
+// The result will be unmarshaled into `objs`
+func (r Repository) GetClassesByCharacterId(chid string, objs []models.Class) error {
+	docs, err := r.db.FindAll(
+		cquery.NewQuery(classCollection).Where(cquery.Field("character-id").Eq(chid)),
+	)
+	if err != nil {
+		return fmt.Errorf("Failed to retrieve class from db: %w", err)
+	}
+
+	if docs == nil {
+		return nil
+	}
+
+	for i, doc := range docs {
+		if err = doc.Unmarshal(objs[i]); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -298,12 +324,38 @@ func (r Repository) SyncClass(class models.Class) error {
 		return fmt.Errorf("Failed to unmarshal class to generic map:\n%w", err)
 	}
 
-	if err = r.db.Update(cquery.NewQuery(classCollection).Where(cquery.Field("character-id").Eq(class.GetCharacterId())), updates); err != nil {
-		return fmt.Errorf("Failed to update class doc:\n%w", err)
+	if err = r.db.Update(cquery.NewQuery(classCollection).
+		Where(cquery.Field("character-id").Eq(class.GetCharacterId()).
+			And(cquery.Field("class-type").Eq(strings.ToLower(class.GetClassType())))), updates); err != nil {
+		return fmt.Errorf("failed to update class doc:\n%w", err)
 	}
 
 	return nil
 }
+
+// // SyncClasses updates all class docs based on class.CharacterID
+// func (r Repository) SyncClasses(classes []models.Class) error {
+// 	for _, class := range classes {
+// 		bytes, err := json.Marshal(class)
+// 		if err != nil {
+// 			return fmt.Errorf("Failed to marshal class:\n%w", err)
+// 		}
+//
+// 		updates := make(map[string]any)
+// 		err = json.Unmarshal(bytes, &updates)
+// 		if err != nil {
+// 			return fmt.Errorf("Failed to unmarshal class to generic map:\n%w", err)
+// 		}
+//
+// 		if err = r.db.Update(cquery.NewQuery(classCollection).
+// 		Where(cquery.Field("character-id").Eq(class.GetCharacterId()).
+// 		And(cquery.Field("class-type").Eq(class.GetClassType()))), updates); err != nil {
+// 			return fmt.Errorf("Failed to update class doc:\n%w", err)
+// 		}
+// 	}
+//
+// 	return nil
+// }
 
 func (r Repository) createCollection(collection string) error {
 	exist, err := r.db.HasCollection(collection)

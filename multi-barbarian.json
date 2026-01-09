@@ -1,0 +1,69 @@
+{
+    "sub-class": "Something Else",
+    "character-id": "5eedcac7-1ca1-4a71-8439-be5e9b985053",
+    "class-type": "barbarian",
+    "level": 1,
+    "other-features": [
+        {
+            "name": "Rage",
+            "level": 1,
+            "details": "In battle, you fight with primal ferocity. On your turn, you can enter a rage as a bonus action. While raging, you gain the following benefits if you aren't wearing heavy armor:\n - You have advantage on Strength checks and Strength saving throws.\n - When you make a melee weapon attack using Strength, you gain a bonus to the damage roll that increases as you gain levels as a barbarian, as shown in the Rage Damage column of the Barbarian table.\n - You have resistance to bludgeoning, piercing, and slashing damage.\nIf you are able to cast spells, you can't cast them or concentrate on them while raging.\n\nYour rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action.\nOnce you have raged the number of times shown for your barbarian level in the Rages column of the Barbarian table, you must finish a long rest before you can rage again.\n"
+        },
+        {
+            "name": "Danger Sense",
+            "level": 2,
+            "details": "An uncanny sense of when things nearby aren't as they should be, you have an edge when you dodge away from danger. You have advantage on Dexterity saving throws against effects that you can see, such as traps and spells. To gain this benefit, you can't be blinded, deafened, or incapacitated.\n"
+        },
+        {
+            "name": "Reckless Attack",
+            "level": 2,
+            "details": "Throw aside all concern for defense to attack with fierce desperation. When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls using Strength during this turn, but attack rolls against you have advantage until your next turn.\n"
+        },
+        {
+            "name": "Extra Attack",
+            "level": 5,
+            "details": "You can attack twice, instead of once, whenever you take the Attack action on your turn.\n"
+        },
+        {
+            "name": "Fast Movement",
+            "level": 5,
+            "details": "Starting at 5th level, your speed increases by 10 feet while you aren't wearing heavy armor."
+        },
+        {
+            "name": "Feral Instinct",
+            "level": 7,
+            "details": "Your instincts are so honed that you have advantage on initiative rolls. Additionally, if you are surprised at the beginning of combat and aren't incapacitated, you can act normally on your first turn, but only if you enter your rage before doing anything else on that turn."
+        },
+        {
+            "name": "Instinctive Pounce",
+            "level": 7,
+            "details": "As part of the bonus action you take to enter your rage, you can move up to half your speed."
+        },
+        {
+            "name": "Brutal Critical",
+            "level": 9,
+            "details": "You can roll one additional weapon damage die when determining the extra damage for a critical hit with a melee attack. This increases to two additional dice at 13th level and three additional dice at 17th level."
+        },
+        {
+            "name": "Relentless Rage",
+            "level": 11,
+            "details": "Your rage can keep you fighting despite grievous wounds. If you drop to 0 hit points while you're raging and don't die outright, you can make a DC 10 Constitution saving throw. If you succeed, you drop to 1 hit point instead. Each time you use this feature after the first, the DC increases by 5. When you finish a short or long rest, the DC resets to 10."
+        },
+        {
+            "name": "Persistent Rage",
+            "level": 15,
+            "details": "Your rage is so fierce that it ends early only if you fall unconscious or if you choose to end it."
+        },
+        {
+            "name": "Indomitable Might",
+            "level": 18,
+            "details": "If your total for a Strength check is less than your Strength score, you can use that score in place of the total."
+        }
+    ],
+    "expertise": null,
+    "class-token": {
+        "name": "rage",
+        "available": 2,
+        "level": 1
+    }
+}

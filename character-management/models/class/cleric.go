@@ -28,8 +28,8 @@ func LoadCleric(data []byte) (*Cleric, error) {
 	return &cleric, nil
 }
 
-func (cl *Cleric) CalculateHitDice(level int) string {
-	return fmt.Sprintf("%dd8", level)
+func (cl *Cleric) CalculateHitDice() string {
+	return fmt.Sprintf("%dd8", cl.Level)
 }
 
 func (cl *Cleric) ExecutePostCalculateMethods(c *models.Character) {
@@ -125,9 +125,9 @@ func (cl *Cleric) executePreparedSpells(c *models.Character) {
 	executePreparedSpellsShared(c, cl.PreparedSpells)
 }
 
-func (cl *Cleric) ClassDetails(level int) string {
+func (cl *Cleric) ClassDetails() string {
 	var s string
-	s += formatTokens(cl.ClassToken, channelDivinityToken, level)
+	s += formatTokens(cl.ClassToken, channelDivinityToken, cl.Level)
 
 	return s
 }
@@ -135,8 +135,11 @@ func (cl *Cleric) ClassDetails(level int) string {
 // CLI
 
 func (cl *Cleric) UseClassTokens(tokenName string, quantity int) {
-	// We only really need slot name for classes that have multiple slots
-	// since bard only has channel divinity, we won't check the slot name value
+	if tokenName != "" && tokenName != channelDivinityToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, cl.ClassType))
+		return
+	}
+
 	if cl.ClassToken.Available <= 0 {
 		logger.Info("Channel Divinity had no uses left")
 		return
@@ -146,8 +149,11 @@ func (cl *Cleric) UseClassTokens(tokenName string, quantity int) {
 }
 
 func (cl *Cleric) RecoverClassTokens(tokenName string, quantity int) {
-	// We only really need slot name for classes that have multiple slots
-	// since bard only has channel divinity, we won't check the slot name value
+	if tokenName != "" && tokenName != channelDivinityToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, cl.ClassType))
+		return
+	}
+
 	cl.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover

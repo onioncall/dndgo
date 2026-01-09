@@ -39,8 +39,8 @@ func (b *Bard) ExecutePostCalculateMethods(c *models.Character) {
 	b.executeBardicInspiration(c)
 }
 
-func (b *Bard) CalculateHitDice(level int) string {
-	return fmt.Sprintf("%dd8", level)
+func (b *Bard) CalculateHitDice() string {
+	return fmt.Sprintf("%dd8", b.Level)
 }
 
 func (b *Bard) executeSpellCastingAbility(c *models.Character) {
@@ -61,25 +61,25 @@ func (b *Bard) executeBardicInspiration(c *models.Character) {
 	b.ClassToken.Maximum = c.GetMod(shared.AbilityCharisma)
 }
 
-// At level 3, bards can pick two skills they are proficient in, and double the proficiency.
-// They select two more at level 10
+// At b.Level 3, bards can pick two skills they are proficient in, and double the proficiency.
+// They select two more at b.Level 10
 func (b *Bard) executeExpertise(c *models.Character) {
 	if c.Level < 3 {
 		return
 	}
 
 	if c.Level < 10 && len(b.ExpertiseSkills) > 2 {
-		logger.Warn("Only two expertise skills should be configured for your class level")
+		logger.Warn("Only two expertise skills should be configured for your class b.Level")
 	}
 
 	if c.Level >= 10 && len(b.ExpertiseSkills) > 4 {
-		logger.Warn("Only four expertise skills should be configured for your class level")
+		logger.Warn("Only four expertise skills should be configured for your class b.Level")
 	}
 
 	executeExpertiseShared(c, b.ExpertiseSkills)
 }
 
-// At level 2, bards can add half their proficiency bonus (rounded down) to any ability check
+// At b.Level 2, bards can add half their proficiency bonus (rounded down) to any ability check
 // that doesn't already use their proficiency bonus.
 func (b *Bard) executeJackOfAllTrades(c *models.Character) {
 	if c.Level < 2 {
@@ -93,11 +93,11 @@ func (b *Bard) executeJackOfAllTrades(c *models.Character) {
 	}
 }
 
-func (b *Bard) ClassDetails(level int) string {
+func (b *Bard) ClassDetails() string {
 	var s string
-	s += formatTokens(b.ClassToken, bardicInspirationToken, level) + "\n"
+	s += formatTokens(b.ClassToken, bardicInspirationToken, b.Level) + "\n"
 
-	if len(b.ExpertiseSkills) > 0 && level >= 3 {
+	if len(b.ExpertiseSkills) > 0 && b.Level >= 3 {
 		expertiseHeader := fmt.Sprintf("Expertise:\n")
 		s += expertiseHeader
 
@@ -115,8 +115,11 @@ func (b *Bard) ClassDetails(level int) string {
 // CLI
 
 func (b *Bard) UseClassTokens(tokenName string, quantity int) {
-	// We only really need slot name for classes that have multiple slots
-	// since bard only has bardic inspiration, we won't check the slot name value
+	if tokenName != "" && tokenName != bardicInspirationToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, b.ClassType))
+		return
+	}
+
 	if b.ClassToken.Available <= 0 {
 		logger.Info("Bardic Inpsiration had no uses left")
 		return
@@ -126,8 +129,11 @@ func (b *Bard) UseClassTokens(tokenName string, quantity int) {
 }
 
 func (b *Bard) RecoverClassTokens(tokenName string, quantity int) {
-	// We only really need slot name for classes that have multiple slots
-	// since bard only has bardic inspiration, we won't check the slot name value
+	if tokenName != "" && tokenName != bardicInspirationToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, b.ClassType))
+		return
+	}
+
 	b.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover

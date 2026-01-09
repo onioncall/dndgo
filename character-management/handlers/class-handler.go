@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/onioncall/dndgo/character-management/db"
@@ -10,7 +11,6 @@ import (
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/models/class"
 	"github.com/onioncall/dndgo/character-management/shared"
-	"github.com/onioncall/dndgo/logger"
 )
 
 var ClassFileMap = map[string]string{
@@ -31,18 +31,45 @@ var ClassFileMap = map[string]string{
 // Consider refactor to use an actual custom error
 var noClassNameError = fmt.Errorf("No class name provided in class data")
 
-func LoadClass(characterId string, className string) (models.Class, error) {
-	c, err := newClassInst(className)
+func LoadClass(characterId string, classType string) (models.Class, error) {
+	c, err := newClassInst(classType)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to load class type: %w", err)
 	}
 
-	err = db.Repo.GetClass(characterId, c)
+	err = db.Repo.GetClass(characterId, c, classType)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to retrieve class from db: %w", err)
 	}
 
 	return c, nil
+}
+
+func LoadClassesByCharacterId(characterId string, classTypes []string) ([]models.Class, error) {
+	classInstances := []models.Class{}
+	classTypesLower := make([]string, len(classTypes)) // doing this to avoid mutating casing of original slice
+	for _, classType := range classTypes {
+		classTypesLower = append(classTypesLower, strings.ToLower(classType))
+		c, err := newClassInst(classType)
+		if err != nil {
+			return nil, fmt.Errorf("Failed to load class type: %w", err)
+		}
+
+		classInstances = append(classInstances, c)
+	}
+
+	err := db.Repo.GetClassesByCharacterId(characterId, classInstances)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to retrieve class from db: %w", err)
+	}
+
+	for _, class := range classInstances {
+		if !slices.Contains(classTypesLower, strings.ToLower(class.GetClassType())) {
+			return nil, fmt.Errorf("Class '%s' does not match defined classes by character.", class.GetClassType())
+		}
+	}
+
+	return classInstances, nil
 }
 
 func LoadClassTemplate(classType string) (models.Class, error) {
@@ -70,11 +97,17 @@ func SaveClass(c models.Class) error {
 
 func loadClassInst(classData []byte) (models.Class, error) {
 	var baseClass models.BaseClass
+
 	if err := json.Unmarshal(classData, &baseClass); err != nil {
 		return nil, fmt.Errorf("Failed to unmarshal class data to base struct: %w", err)
 	}
 
-	return loadClassInstFromType(baseClass.GetClassName(), classData)
+	class, err := loadClassInstFromType(baseClass.GetClassType(), classData)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to load class instance from type:\n%w", err)
+	}
+
+	return class, nil
 }
 
 func newClassInst(classType string) (models.Class, error) {
@@ -118,12 +151,12 @@ func loadClassInstFromType(classType string, classData []byte) (models.Class, er
 		return nil, fmt.Errorf("Unsupported class type '%s'", classType)
 	}
 
-	c.SetClassName(classType)
+	c.SetClassType(classType)
 
 	return c, err
 }
 
-func ImportClassJson(classJson []byte, characterName string) error {
+func ImportClassJson(classJson []byte, characterName string, classType string) error {
 	ch, err := db.Repo.GetCharacterByName(characterName)
 	if err != nil {
 		return fmt.Errorf("Failed to retrieve character with name '%v': %w", characterName, err)
@@ -131,30 +164,24 @@ func ImportClassJson(classJson []byte, characterName string) error {
 
 	c, err := loadClassInst(classJson)
 	if err != nil {
-		// If json is missing class-name, use class name from character as fallback.
-		// When multiclassing is introduced, this will no longer be an option.
-		if err == noClassNameError {
-			c, err = loadClassInstFromType(ch.ClassName, classJson)
-			if err != nil {
-				return fmt.Errorf("failed to load class: %w", err)
-			}
-		} else {
-			return err
-		}
+		return fmt.Errorf("Failed to load class instance from json:\n%w", err)
 	}
 
 	if c.GetCharacterId() != "" && c.GetCharacterId() != ch.ID {
-		logger.Warnf("character-id provided in json '%v' does not match ID of character '%v', this value will not be included in the import", c.GetCharacterId(), characterName)
+		return fmt.Errorf("Character ID (%s) for character name '%s' does not match character ID in class (%s).",
+			ch.ID, characterName, c.GetCharacterId())
 	}
-	c.SetCharacterId(ch.ID)
 
-	ec, err := newClassInst(c.GetClassName())
+	classes, err := LoadClassesByCharacterId(ch.ID, ch.ClassTypes)
 	if err != nil {
-		return fmt.Errorf("Failed to load existing class data: %w", err)
+		return fmt.Errorf("Failed to load class for character '%v': %w", characterName, err)
 	}
-	err = db.Repo.GetClass(c.GetCharacterId(), ec)
-	if err != nil {
-		return fmt.Errorf("Failed to retrieve existing class data: %w", err)
+
+	var ec models.Class
+	for _, class := range classes {
+		if strings.EqualFold(class.GetClassType(), classType) || len(classes) == 1 {
+			ec = class
+		}
 	}
 
 	if ec.GetCharacterId() == "" {
@@ -162,9 +189,8 @@ func ImportClassJson(classJson []byte, characterName string) error {
 			return fmt.Errorf("Failed to create class: %w", err)
 		}
 	} else {
-
-		if ec.GetClassName() != c.GetClassName() {
-			return fmt.Errorf("Class switching not supported (%v -> %v)", c.GetClassName(), ec.GetClassName())
+		if ec.GetClassType() != c.GetClassType() {
+			return fmt.Errorf("Class switching not supported (%v -> %v)", c.GetClassType(), ec.GetClassType())
 		}
 
 		if err := db.Repo.SyncClass(c); err != nil {
@@ -175,18 +201,25 @@ func ImportClassJson(classJson []byte, characterName string) error {
 	return nil
 }
 
-func ExportClassJson(characterName string) ([]byte, error) {
+func ExportClassJson(characterName string, classType string) ([]byte, error) {
 	ch, err := db.Repo.GetCharacterByName(characterName)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to locate character with name '%v': %w", characterName, err)
 	}
 
-	c, err := LoadClass(ch.ID, ch.ClassName)
+	classes, err := LoadClassesByCharacterId(ch.ID, ch.ClassTypes)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to locate class for character '%v': %w", characterName, err)
 	}
 
-	j, err := json.MarshalIndent(c, "", "    ")
+	var classToExport models.Class
+	for _, class := range classes {
+		if strings.EqualFold(class.GetClassType(), classType) || len(classes) == 1 {
+			classToExport = class
+		}
+	}
+
+	j, err := json.MarshalIndent(classToExport, "", "    ")
 	if err != nil {
 		return nil, fmt.Errorf("Failed to marshal class for character '%v': %w", characterName, err)
 	}

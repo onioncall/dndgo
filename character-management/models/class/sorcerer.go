@@ -31,8 +31,8 @@ func (s *Sorcerer) ExecutePostCalculateMethods(c *models.Character) {
 	s.executeSorceryPoints(c)
 }
 
-func (s *Sorcerer) CalculateHitDice(level int) string {
-	return fmt.Sprintf("%dd6", level)
+func (s *Sorcerer) CalculateHitDice() string {
+	return fmt.Sprintf("%dd6", s.Level)
 }
 
 func (s *Sorcerer) executeSpellCastingAbility(c *models.Character) {
@@ -47,14 +47,14 @@ func (s *Sorcerer) executeSorceryPoints(c *models.Character) {
 	s.ClassToken.Maximum += c.Level
 }
 
-func (s *Sorcerer) ClassDetails(level int) string {
+func (s *Sorcerer) ClassDetails() string {
 	var str string
 
-	if level >= 2 && s.ClassToken.Name == sorceryPointsToken {
+	if s.Level >= 2 && s.ClassToken.Name == sorceryPointsToken {
 		str += fmt.Sprintf("*Sorcery Points*: %d/%d\n\n", s.ClassToken.Available, s.ClassToken.Maximum)
 	}
 
-	if len(s.MetaMagicSpells) > 0 && level >= 3 {
+	if len(s.MetaMagicSpells) > 0 && s.Level >= 3 {
 		mmHeader := fmt.Sprintf("Meta Magic Spells:\n")
 		str += mmHeader
 
@@ -73,8 +73,11 @@ func (s *Sorcerer) ClassDetails(level int) string {
 // CLI
 
 func (s *Sorcerer) UseClassTokens(tokenName string, quantity int) {
-	// We only really need slot name for classes that have multiple slots
-	// since sorcerer only has sorcery points, we won't check the slot name value
+	if tokenName != "" && tokenName != sorceryPointsToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, s.ClassType))
+		return
+	}
+
 	if s.ClassToken.Available <= 0 {
 		logger.Info("There were no sorcery points left")
 		return
@@ -84,8 +87,11 @@ func (s *Sorcerer) UseClassTokens(tokenName string, quantity int) {
 }
 
 func (s *Sorcerer) RecoverClassTokens(tokenName string, quantity int) {
-	// We only really need slot name for classes that have multiple slots
-	// since sorcerer only has sorcery points, we won't check the slot name value
+	if tokenName != "" && tokenName != sorceryPointsToken {
+		logger.Info(fmt.Sprintf("Invalid token name '%s' for class '%s'", tokenName, s.ClassType))
+		return
+	}
+
 	s.ClassToken.Available += quantity
 
 	// if no quantity is provided, or the new value exceeds the max we will perform a full recover

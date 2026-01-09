@@ -23,8 +23,6 @@ func (m Model) BasicInfoPageView() string {
 
 	labels := []string{
 		"Character Name",
-		"Level",
-		"Character Class",
 		"Race",
 		"Background",
 		"Languages",
@@ -37,7 +35,7 @@ func (m Model) BasicInfoPageView() string {
 	formContent += strings.Repeat("\n", 2)
 	headerStyle := secondaryStyle.Width(41).Align(lipgloss.Center)
 	formContent += headerStyle.Render("Create Character:") + "\n\n"
-	
+
 	for i := startIdx; i < endIdx; i++ {
 		formContent += fmt.Sprintf("%s\n%s\n",
 			primaryStyle.Width(41).Render(labels[i]),

@@ -134,14 +134,23 @@ func (m *Model) addSpell() error {
 }
 
 func (m *Model) configureSpellSlots() {
-	level := m.character.Level
-	class := strings.ToLower(m.character.ClassName)
+	hasSpellClass := false
+	for _, class := range m.character.ClassTypes {
+		class = strings.ToLower(class)
 
-	// These classes don't support spells, no need to do any of this
-	if class == shared.ClassBarbarian ||
-		class == shared.ClassFighter ||
-		class == shared.ClassMonk ||
-		class == shared.ClassRogue {
+		// These classes don't support spells, no need to do any of this if no classes are in the following
+		if class == shared.ClassBarbarian ||
+			class == shared.ClassFighter ||
+			class == shared.ClassMonk ||
+			class == shared.ClassRogue {
+			continue
+		}
+
+		hasSpellClass = true
+		break
+	}
+
+	if !hasSpellClass {
 		return
 	}
 
@@ -225,12 +234,18 @@ func (m *Model) configureSpellSlots() {
 	}
 
 	slotMap := make(map[int]int)
-	if classTable, ok := spellSlotTable[class]; ok {
-		if levelSlots, ok := classTable[level]; ok {
-			slotMap = levelSlots
+	for className, classLevel := range m.classMap {
+		if classTable, ok := spellSlotTable[strings.ToLower(className)]; ok {
+			if levelSlots, ok := classTable[classLevel]; ok {
+				// Sum the slots at each spell level
+				for slotLevel, numSlots := range levelSlots {
+					slotMap[slotLevel] += numSlots
+				}
+			}
 		}
 	}
 
+	m.character.SpellSlots = []shared.SpellSlot{}
 	for i := 1; i <= 9; i++ {
 		slot := shared.SpellSlot{
 			Level:     i,

@@ -44,9 +44,8 @@ func (m Model) UpdateAbilitiesPage(msg tea.Msg) (Model, tea.Cmd) {
 				m.nextButtonFocused = false
 				m.viewportOffset = 0
 
-				m.currentPage = basicInfoPage
-				m.inputs = basicInfoInputs()
-				m.populateBasicInfoInputs()
+				m.currentPage = classPage
+				m.inputs = classInputs()
 
 				return m, nil
 			}

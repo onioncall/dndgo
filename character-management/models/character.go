@@ -12,10 +12,10 @@ type Character struct {
 	ID                      string                               `json:"id" clover:"id"`
 	Default                 bool                                 `json:"default" clover:"default"`
 	Path                    string                               `json:"path" clover:"path"`
+	ClassTypes              []string                             `json:"class-types" clover:"class-types"`
 	ValidationDisabled      bool                                 `json:"validation-disabled" clover:"validation-disabled"`
 	Name                    string                               `json:"name" clover:"name"`
-	Level                   int                                  `json:"level" clover:"level"`
-	ClassName               string                               `json:"class-name" clover:"class-name"`
+	Level                   int                                  `json:"-" clover:"-"`
 	Race                    string                               `json:"race" clover:"race"`
 	Background              string                               `json:"background" clover:"background"`
 	Feats                   []GenericItem                        `json:"feats" clover:"feats"`
@@ -24,8 +24,6 @@ type Character struct {
 	PassivePerception       int                                  `json:"-" clover:"-"`
 	PassiveInsight          int                                  `json:"-" clover:"-"`
 	AC                      int                                  `json:"-" clover:"-"`
-	SpellSaveDC             int                                  `json:"-" clover:"-"`
-	SpellAttackMod          int                                  `json:"-" clover:"-"`
 	HPCurrent               int                                  `json:"hp-current" clover:"hp-current"`
 	HPMax                   int                                  `json:"hp-max" clover:"hp-max"`
 	HPTemp                  int                                  `json:"hp-temp" clover:"hp-temp"`
@@ -33,15 +31,17 @@ type Character struct {
 	HitDice                 string                               `json:"-" clover:"-"`
 	Abilities               []shared.Ability                     `json:"abilities" clover:"abilities"`
 	Skills                  []shared.Skill                       `json:"skills" clover:"skills"`
-	Spells                  []shared.CharacterSpell              `json:"spells" clover:"spells"`
 	SpellSlots              []shared.SpellSlot                   `json:"spell-slots" clover:"spell-slots"`
+	SpellSaveDC             int                                  `json:"-" clover:"-"`
+	SpellAttackMod          int                                  `json:"-" clover:"-"`
+	Spells                  []shared.CharacterSpell              `json:"spells" clover:"spells"`
 	Weapons                 []shared.Weapon                      `json:"weapons" clover:"weapons"`
 	PrimaryEquipped         string                               `json:"primary-equipped" clover:"primary-equipped"`
 	SecondaryEquipped       string                               `json:"secondary-equipped" clover:"secondary-equipped"`
 	WornEquipment           shared.WornEquipment                 `json:"worn-equipment" clover:"worn-equipment"`
 	Backpack                []shared.BackpackItem                `json:"backpack" clover:"backpack"`
 	AbilityScoreImprovement []shared.AbilityScoreImprovementItem `json:"ability-score-improvement" clover:"ability-score-improvement"`
-	Class                   Class                                `json:"-" clover:"-"`
+	Classes                 []Class                              `json:"-" clover:"-"`
 }
 
 type GenericItem struct {
@@ -56,7 +56,9 @@ var (
 
 // Load Character Details
 
+// Derive character stats from the character/class data
 func (c *Character) CalculateCharacterStats() {
+	c.calculateCharacterLevel()
 	c.calculateProficiencyBonusByLevel()
 	c.calculateAbilityScoreImprovement()
 	c.calculateAbilitiesFromBase()
@@ -67,9 +69,16 @@ func (c *Character) CalculateCharacterStats() {
 	c.calculatePreparedSpells()
 }
 
+func (c *Character) calculateCharacterLevel() {
+	for _, class := range c.Classes {
+		c.Level += class.GetClassLevel()
+	}
+}
+
 func (c *Character) calculateAbilitiesFromBase() {
 	for i, a := range c.Abilities {
-		c.Abilities[i].AbilityModifier = (a.Base - 10) / 2
+		c.Abilities[i].Adjusted += a.Base
+		c.Abilities[i].AbilityModifier = (c.Abilities[i].Adjusted - 10) / 2
 	}
 }
 
@@ -121,8 +130,8 @@ func (c *Character) calculateAbilityScoreImprovement() {
 	for _, item := range c.AbilityScoreImprovement {
 		for i := range c.Abilities {
 			if strings.EqualFold(c.Abilities[i].Name, item.Ability) {
-				c.Abilities[i].Base += item.Bonus
-				c.Abilities[i].Base = min(20, c.Abilities[i].Base)
+				c.Abilities[i].Adjusted += item.Bonus
+				c.Abilities[i].Adjusted = min(20, c.Abilities[i].Adjusted)
 				break
 			}
 		}
@@ -221,16 +230,18 @@ func (c *Character) calculatePreparedSpells() {
 	// We could make this more efficient, but since users generally have <20 spells we're going
 	// to favor the gained readability here.
 	for i, s := range c.Spells {
-		if psClass, ok := c.Class.(PreparedSpellClass); ok {
-			for _, ps := range psClass.GetPreparedSpells() {
-				if strings.EqualFold(s.Name, ps) {
-					c.Spells[i].IsPrepared = true
-					break
+		for _, class := range c.Classes {
+			if psClass, ok := class.(PreparedSpellClass); ok {
+				for _, ps := range psClass.GetPreparedSpells() {
+					if strings.EqualFold(s.Name, ps) {
+						c.Spells[i].IsPrepared = true
+						break
+					}
 				}
+			} else if s.IsRitual {
+				c.Spells[i].IsPrepared = true
+				break
 			}
-		} else if s.IsRitual {
-			c.Spells[i].IsPrepared = true
-			break
 		}
 	}
 }
@@ -322,25 +333,27 @@ func (c *Character) BuildCharacter() string {
 	}
 	builder.WriteString(nl)
 
-	if c.Class != nil {
+	for _, class := range c.Classes {
 		builder.WriteString("Class Details\n")
 		builder.WriteString("---\n")
 
-		subClass := c.Class.GetSubClass(c.Level)
-		if subClass != "" {
-			builder.WriteString(fmt.Sprintf("Sub-Class: %s\n\n", subClass))
-		}
+		if c.Classes != nil {
+			subClass := class.GetSubClass()
+			if subClass != "" {
+				builder.WriteString(fmt.Sprintf("Sub-Class: %s\n\n", subClass))
+			}
 
-		details := c.Class.ClassDetails(c.Level)
-		if details != "" {
-			builder.WriteString(details + "\n")
-		}
+			details := class.ClassDetails()
+			if details != "" {
+				builder.WriteString(details + "\n")
+			}
 
-		classFeatures := c.Class.GetClassFeatures(c.Level)
-		if classFeatures != "" {
-			builder.WriteString(classFeatures + "\n")
+			classFeatures := class.GetClassFeatures()
+			if classFeatures != "" {
+				builder.WriteString(classFeatures + "\n")
+			}
+			builder.WriteString(nl)
 		}
-		builder.WriteString(nl)
 	}
 
 	result := builder.String()
@@ -357,7 +370,7 @@ func (c *Character) BuildHeader() []string {
 
 func (c *Character) BuildCharacterInfo() []string {
 	levelLine := fmt.Sprintf("Level: %d\n", c.Level)
-	classLine := fmt.Sprintf("Class: %s\n", c.ClassName)
+	classLine := fmt.Sprintf("Class: %s\n", c.ClassTypes)
 	raceLine := fmt.Sprintf("Race: %s\n", c.Race)
 	backgroundLine := fmt.Sprintf("Background: %s\n", c.Background)
 
@@ -808,10 +821,16 @@ func (c *Character) AddTempHp(tempHP int) {
 	c.HPTemp += tempHP
 }
 
-func (c *Character) AddSubClass(subClass string) {
-	if c.Class != nil {
-		c.Class.SetSubClass(subClass)
+// Adds sub class for a provided class, if character only has one class a classType is not required
+func (c *Character) AddSubClass(classType string, subClass string) error {
+	for i, class := range c.Classes {
+		if strings.EqualFold(classType, class.GetClassType()) || len(c.Classes) == 1 {
+			c.Classes[i].SetSubClass(subClass)
+			return nil
+		}
 	}
+
+	return fmt.Errorf("Class '%s' not found for default character", classType)
 }
 
 // Adds an ability score to an existing item if found, or creates a new record with the bonus quantity
@@ -924,29 +943,51 @@ func (c *Character) Recover() {
 		c.SpellSlots[i].Available = c.SpellSlots[i].Maximum
 	}
 
-	if c.Class == nil {
+	if c.Classes == nil {
 		return
 	}
 
-	c.RecoverClassTokens("", 0)
+	// We don't need to handle this error because not all characters have classes with tokens
+	c.RecoverClassTokens("", "", 0)
 }
 
-func (c *Character) UseClassTokens(name string, quantity int) {
-	if tokenClass, ok := c.Class.(TokenClass); ok {
-		tokenClass.UseClassTokens(name, quantity)
-	}
-}
-
-func (c *Character) RecoverClassTokens(name string, quantity int) {
-	c.CalculateCharacterStats()
-
-	if tokenClass, ok := c.Class.(TokenClass); ok {
-		if postCalculater, ok := c.Class.(PostCalculator); ok {
-			postCalculater.ExecutePostCalculateMethods(c)
+// Uses class tokens by tokenName, and class type. No token name is required if the class only has one token. If a character only has one class, a class name is not required
+func (c *Character) UseClassTokens(tokenName string, classType string, quantity int) error {
+	for i, class := range c.Classes {
+		if !strings.EqualFold(classType, class.GetClassType()) && len(c.Classes) > 1 {
+			continue
 		}
 
-		tokenClass.RecoverClassTokens("", quantity)
+		if tokenClass, ok := c.Classes[i].(TokenClass); ok {
+			tokenClass.UseClassTokens(tokenName, quantity)
+		}
 	}
+
+	return fmt.Errorf("No classes for character '%s' implement tokens", c.Name)
+}
+
+// Recovers class tokens by token name, and class type.
+// If token name is not provided, we will perform a full token recovery of all tokens for a given class.
+// If class type is not provided, we will perform a full token recovery for all classes
+func (c *Character) RecoverClassTokens(tokenName string, classType string, quantity int) error {
+	c.CalculateCharacterStats()
+
+	for i, class := range c.Classes {
+		if !strings.EqualFold(classType, class.GetClassType()) && len(c.Classes) > 1 {
+			continue
+		}
+
+		if tokenClass, ok := c.Classes[i].(TokenClass); ok {
+			if postCalculater, ok := c.Classes[i].(PostCalculator); ok {
+				postCalculater.ExecutePostCalculateMethods(c)
+			}
+
+			tokenClass.RecoverClassTokens("", quantity)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("No classes for character '%s' implement tokens", c.Name)
 }
 
 func (c *Character) Equip(isPrimary bool, name string) error {
@@ -999,122 +1040,208 @@ func (c *Character) Unequip(isPrimary bool) {
 	}
 }
 
-func (c *Character) AddExpertiseSkill(skill string) error {
-	if expClass, ok := c.Class.(ExpertiseClass); ok {
-		err := expClass.AddExpertiseSkill(skill)
-		if err != nil {
-			return fmt.Errorf("Failed to add Expertise Skill '%s':\n%w", skill, err)
+// Adds expertise skill to specified class type, if character only has one class a classType is not required
+func (c *Character) AddExpertiseSkill(skill string, classType string) error {
+	for i, class := range c.Classes {
+		if !strings.EqualFold(classType, class.GetClassType()) && len(c.Classes) > 1 {
+			continue
 		}
-	} else {
-		return fmt.Errorf("Class '%s' is not one that implements expertise", c.ClassName)
+
+		if expClass, ok := c.Classes[i].(ExpertiseClass); ok {
+			err := expClass.AddExpertiseSkill(skill)
+			if err != nil {
+				return fmt.Errorf("Failed to add Expertise Skill '%s':\n%w", skill, err)
+			}
+		} else {
+			return fmt.Errorf("Class '%s' is not one that implements expertise", c.ClassTypes)
+		}
+
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("No classes for character '%s' implement expertise", c.Name)
 }
 
-func (c *Character) AddPreparedSpell(spell string) error {
-	if psClass, ok := c.Class.(PreparedSpellClass); ok {
-		spellIdx := c.getSpellIdx(spell)
-		if spellIdx == -1 {
-			return fmt.Errorf("Character does not have spell '%s' in their spell list", spell)
+// Adds prepared spell to specified class type, if character only has one class a classType is not required
+func (c *Character) AddPreparedSpell(spell string, classType string) error {
+	for i, class := range c.Classes {
+		if !strings.EqualFold(classType, class.GetClassType()) && len(c.Classes) > 1 {
+			continue
 		}
 
-		err := psClass.AddPreparedSpell(spell)
-		if err != nil {
-			return fmt.Errorf("Failed to add prepared spell '%s:\n%w'", spell, err)
+		if psClass, ok := c.Classes[i].(PreparedSpellClass); ok {
+			spellIdx := c.getSpellIdx(spell)
+			if spellIdx == -1 {
+				return fmt.Errorf("Character does not have spell '%s' in their spell list", spell)
+			}
+
+			err := psClass.AddPreparedSpell(spell)
+			if err != nil {
+				return fmt.Errorf("Failed to add prepared spell '%s:\n%w'", spell, err)
+			}
+
+			c.Spells[spellIdx].IsPrepared = true
+		} else {
+			return fmt.Errorf("Class '%s' is not one that implements prepared spells", c.ClassTypes)
 		}
 
-		c.Spells[spellIdx].IsPrepared = true
-	} else {
-		return fmt.Errorf("Class '%s' is not one that implements prepared spells", c.ClassName)
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("No classes for character '%s' implement prepared spells", c.Name)
 }
 
-func (c *Character) RemovePreparedSpell(spell string) error {
-	if psClass, ok := c.Class.(PreparedSpellClass); ok {
-		spellIdx := c.getSpellIdx(spell)
-		if spellIdx == -1 {
-			return fmt.Errorf("Character does not have spell '%s' in their spell list", spell)
+// Removes prepared spell to specified class type, if character only has one class a classType is not required
+func (c *Character) RemovePreparedSpell(spell string, classType string) error {
+	for i, class := range c.Classes {
+		if !strings.EqualFold(classType, class.GetClassType()) && len(c.Classes) > 1 {
+			continue
 		}
 
-		err := psClass.RemovePreparedSpell(spell)
-		if err != nil {
-			return fmt.Errorf("Failed to remove prepared spell '%s:\n%w'", spell, err)
+		if psClass, ok := c.Classes[i].(PreparedSpellClass); ok {
+			spellIdx := c.getSpellIdx(spell)
+			if spellIdx == -1 {
+				return fmt.Errorf("Character does not have spell '%s' in their spell list", spell)
+			}
+
+			err := psClass.RemovePreparedSpell(spell)
+			if err != nil {
+				return fmt.Errorf("Failed to remove prepared spell '%s:\n%w'", spell, err)
+			}
+
+			c.Spells[spellIdx].IsPrepared = false
+		} else {
+			return fmt.Errorf("Class '%s' is not one that implements prepared spells", c.ClassTypes)
 		}
 
-		c.Spells[spellIdx].IsPrepared = false
-	} else {
-		return fmt.Errorf("Class '%s' is not one that implements prepared spells", c.ClassName)
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("No classes for character '%s' implement prepared spells", c.Name)
 }
 
-func (c *Character) ModifyFightingStyle(fightingStyle string) error {
-	if fsClass, ok := c.Class.(FightingStyleClass); ok {
-		err := fsClass.ModifyFightingStyle(fightingStyle)
-		if err != nil {
-			return fmt.Errorf("Failed to update fighting style to '%s':\n%w", fightingStyle, err)
+// Modifies fighting style for specified class type, if character only has one class a classType is not required
+func (c *Character) ModifyFightingStyle(fightingStyle string, classType string) error {
+	for i, class := range c.Classes {
+		if !strings.EqualFold(classType, class.GetClassType()) && len(c.Classes) > 1 {
+			continue
 		}
-	} else {
-		return fmt.Errorf("Class '%s' is not one that implements fighting style", c.ClassName)
+
+		if fsClass, ok := c.Classes[i].(FightingStyleClass); ok {
+			err := fsClass.ModifyFightingStyle(fightingStyle)
+			if err != nil {
+				return fmt.Errorf("Failed to update fighting style to '%s':\n%w", fightingStyle, err)
+			}
+		} else {
+			return fmt.Errorf("Class '%s' is not one that implements fighting style", c.ClassTypes)
+		}
+
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("No classes for character '%s' implement fighting style", c.Name)
 }
 
-func (c *Character) AddOathSpell(spell string) error {
-	if osClass, ok := c.Class.(OathSpellClass); ok {
-		err := osClass.AddOathSpell(spell)
-		if err != nil {
-			return fmt.Errorf("Failed to add oath spell '%s':\n%w", spell, err)
+// Add oath spell to specified class type, if character only has one class a classType is not required
+func (c *Character) AddOathSpell(spell string, classType string) error {
+	for i, class := range c.Classes {
+		if !strings.EqualFold(classType, class.GetClassType()) && len(c.Classes) > 1 {
+			continue
 		}
-	} else {
-		return fmt.Errorf("Class '%s' is not one that implements oath spells", c.ClassName)
+
+		if osClass, ok := c.Classes[i].(OathSpellClass); ok {
+			err := osClass.AddOathSpell(spell)
+			if err != nil {
+				return fmt.Errorf("Failed to add oath spell '%s':\n%w", spell, err)
+			}
+		} else {
+			return fmt.Errorf("Class '%s' is not one that implements oath spells", c.ClassTypes)
+		}
+
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("No classes for character '%s' implement oath spells", c.Name)
 }
 
-func (c *Character) RemoveOathSpell(spell string) error {
-	if osClass, ok := c.Class.(OathSpellClass); ok {
-		err := osClass.RemoveOathSpell(spell)
-		if err != nil {
-			return fmt.Errorf("Failed to remove oath spell '%s':\n%w", spell, err)
+// Remove oath spell to specified class type, if character only has one class a classType is not required
+func (c *Character) RemoveOathSpell(spell string, classType string) error {
+	for i, class := range c.Classes {
+		if !strings.EqualFold(classType, class.GetClassType()) && len(c.Classes) > 1 {
+			continue
 		}
-	} else {
-		return fmt.Errorf("Class '%s' is not one that implements oath spells", c.ClassName)
+
+		if osClass, ok := c.Classes[i].(OathSpellClass); ok {
+			err := osClass.RemoveOathSpell(spell)
+			if err != nil {
+				return fmt.Errorf("Failed to remove oath spell '%s':\n%w", spell, err)
+			}
+		} else {
+			return fmt.Errorf("Class '%s' is not one that implements oath spells", c.ClassTypes)
+		}
+
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("No classes for character '%s' implement oath spells", c.Name)
 }
 
-func (c *Character) AddFavoredEnemy(favoredEnemy string) error {
-	if feClass, ok := c.Class.(FavoredEnemyClass); ok {
-		err := feClass.AddFavoredEnemy(favoredEnemy)
-		if err != nil {
-			return fmt.Errorf("Failed to add favored enemy '%s':\n%w", favoredEnemy, err)
+// Add favored enemy from specified class type, if character only has one class a classType is not required
+func (c *Character) AddFavoredEnemy(favoredEnemy string, classType string) error {
+	for i, class := range c.Classes {
+		if !strings.EqualFold(classType, class.GetClassType()) && len(c.Classes) > 1 {
+			continue
 		}
-	} else {
-		return fmt.Errorf("Class '%s' is not one that implements favored enemy", c.ClassName)
+
+		if feClass, ok := c.Classes[i].(FavoredEnemyClass); ok {
+			err := feClass.AddFavoredEnemy(favoredEnemy)
+			if err != nil {
+				return fmt.Errorf("Failed to add favored enemy '%s':\n%w", favoredEnemy, err)
+			}
+		} else {
+			return fmt.Errorf("Class '%s' is not one that implements favored enemy", c.ClassTypes)
+		}
+
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("No classes for character '%s' implement favored enemy", c.Name)
 }
 
-func (c *Character) RemoveFavoredEnemy(favoredEnemy string) error {
-	if feClass, ok := c.Class.(FavoredEnemyClass); ok {
-		err := feClass.RemoveFavoredEnemy(favoredEnemy)
-		if err != nil {
-			return fmt.Errorf("Failed to remove favored enemy '%s':\n%w", favoredEnemy, err)
+// Remove favored enemy from specified class type, if character only has one class a classType is not required
+func (c *Character) RemoveFavoredEnemy(favoredEnemy string, classType string) error {
+	for i, class := range c.Classes {
+		if !strings.EqualFold(classType, class.GetClassType()) && len(c.Classes) > 1 {
+			continue
 		}
-	} else {
-		return fmt.Errorf("Class '%s' is not one that implements favored enemy", c.ClassName)
+
+		if feClass, ok := c.Classes[i].(FavoredEnemyClass); ok {
+			err := feClass.RemoveFavoredEnemy(favoredEnemy)
+			if err != nil {
+				return fmt.Errorf("Failed to remove favored enemy '%s':\n%w", favoredEnemy, err)
+			}
+		} else {
+			return fmt.Errorf("Class '%s' is not one that implements favored enemy", c.ClassTypes)
+		}
+
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("No classes for character '%s' implement favored enemy", c.Name)
+}
+
+func (c *Character) GetTokenNames() map[string][]string {
+	tokenMap := make(map[string][]string)
+	for i, class := range c.Classes {
+		if tokenClass, ok := c.Classes[i].(TokenClass); ok {
+			tokens := tokenClass.GetTokens()
+			tokenMap[class.GetClassType()] = tokens
+		} else {
+			tokenMap[class.GetClassType()] = []string{"No tokens to implement"}
+		}
+	}
+
+	return tokenMap
 }
 
 func (c *Character) SetLevel(level int) {
