@@ -1,10 +1,10 @@
 package shared
 
 type Skill struct {
-	Ability       string `json:"ability"`
-	Name          string `json:"name"`
-	SkillModifier int    `json:"-"`
-	Proficient    bool   `json:"proficient"`
+	Ability       string `json:"ability" clover:"ability"`
+	Name          string `json:"name" clover:"name"`
+	SkillModifier int    `json:"-" clover:"-"`
+	Proficient    bool   `json:"proficient" clover:"proficient"`
 }
 
 var Skills = []string{
