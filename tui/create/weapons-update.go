@@ -103,12 +103,6 @@ func (m Model) UpdateWeaponsPage(msg tea.Msg) (Model, tea.Cmd) {
 
 func (m *Model) addWeapon() error {
 	weaponName := m.inputs[weaponNameInput].Value()
-	for _, weapon := range m.character.Weapons {
-		if weaponName == weapon.Name {
-			return fmt.Errorf("Weapon already exists in weapon list")
-		}
-	}
-
 	proficientValue := m.inputs[proficientWeaponInput].Value()
 	if proficientValue == "" {
 		proficientValue = "false"
