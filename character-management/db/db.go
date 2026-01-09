@@ -333,30 +333,6 @@ func (r Repository) SyncClass(class models.Class) error {
 	return nil
 }
 
-// // SyncClasses updates all class docs based on class.CharacterID
-// func (r Repository) SyncClasses(classes []models.Class) error {
-// 	for _, class := range classes {
-// 		bytes, err := json.Marshal(class)
-// 		if err != nil {
-// 			return fmt.Errorf("Failed to marshal class:\n%w", err)
-// 		}
-//
-// 		updates := make(map[string]any)
-// 		err = json.Unmarshal(bytes, &updates)
-// 		if err != nil {
-// 			return fmt.Errorf("Failed to unmarshal class to generic map:\n%w", err)
-// 		}
-//
-// 		if err = r.db.Update(cquery.NewQuery(classCollection).
-// 		Where(cquery.Field("character-id").Eq(class.GetCharacterId()).
-// 		And(cquery.Field("class-type").Eq(class.GetClassType()))), updates); err != nil {
-// 			return fmt.Errorf("Failed to update class doc:\n%w", err)
-// 		}
-// 	}
-//
-// 	return nil
-// }
-
 func (r Repository) createCollection(collection string) error {
 	exist, err := r.db.HasCollection(collection)
 	if err != nil {
