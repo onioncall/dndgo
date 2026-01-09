@@ -50,6 +50,8 @@ func (s *Sorcerer) executeSorceryPoints(c *models.Character) {
 func (s *Sorcerer) ClassDetails() string {
 	var str string
 
+	str += fmt.Sprintf("Level: %d\n", s.Level)
+
 	if s.Level >= 2 && s.ClassToken.Name == sorceryPointsToken {
 		str += fmt.Sprintf("*Sorcery Points*: %d/%d\n\n", s.ClassToken.Available, s.ClassToken.Maximum)
 	}

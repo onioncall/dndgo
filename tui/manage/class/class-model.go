@@ -42,11 +42,13 @@ func GetClassDetails(currentClass string, c models.Character) string {
 	classDetails := ""
 
 	if len(c.ClassTypes) > 1 {
-		classDetails += fmt.Sprintf("Current Class: %s\n", currentClass)
+		classDetails += fmt.Sprintf("Current Class: %s\n\n", currentClass)
 	}
 
-	for _, class := range c.Classes {
+	for i, class := range c.Classes {
+		classDetails += fmt.Sprintf("%s Details\n", c.ClassTypes[i])
 		classDetails += class.ClassDetails()
+		classDetails += "\n\n"
 	}
 
 	return classDetails

@@ -95,6 +95,7 @@ func (b *Bard) executeJackOfAllTrades(c *models.Character) {
 
 func (b *Bard) ClassDetails() string {
 	var s string
+	s += fmt.Sprintf("Level: %d\n", b.Level)
 	s += formatTokens(b.ClassToken, bardicInspirationToken, b.Level) + "\n"
 
 	if len(b.ExpertiseSkills) > 0 && b.Level >= 3 {

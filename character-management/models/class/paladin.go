@@ -143,6 +143,8 @@ func (p *Paladin) executeOathSpells(c *models.Character) {
 func (p *Paladin) ClassDetails() string {
 	var s string
 
+	s += fmt.Sprintf("Level: %d\n", p.Level)
+
 	for _, token := range p.ClassTokens {
 		if token.Maximum == 0 || p.Level < token.Level {
 			continue

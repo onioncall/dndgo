@@ -127,6 +127,7 @@ func (cl *Cleric) executePreparedSpells(c *models.Character) {
 
 func (cl *Cleric) ClassDetails() string {
 	var s string
+	s += fmt.Sprintf("Level: %d\n", cl.Level)
 	s += formatTokens(cl.ClassToken, channelDivinityToken, cl.Level)
 
 	return s

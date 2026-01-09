@@ -76,6 +76,8 @@ func (r *Rogue) executeSneakAttack(c *models.Character) {
 func (r *Rogue) ClassDetails() string {
 	var s string
 
+	s += fmt.Sprintf("Level: %d\n", r.Level)
+
 	if len(r.ExpertiseSkills) > 0 {
 		expertiseHeader := fmt.Sprintf("Expertise:\n")
 		s += expertiseHeader

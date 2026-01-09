@@ -128,6 +128,7 @@ func (b *Barbarian) ClassDetails() string {
 	var s string
 
 	rageSlots := formatTokens(b.ClassToken, rageToken, b.Level)
+	s += fmt.Sprintf("Level: %d\n", b.Level)
 	rageLine := fmt.Sprintf("**Rage**: %s - Damage: +%d\n", rageSlots, b.RageDamage)
 	s += rageLine
 

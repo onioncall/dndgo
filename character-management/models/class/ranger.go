@@ -51,6 +51,9 @@ func (r *Ranger) PostCalculateSpellAttackMod(c *models.Character) {
 
 func (r *Ranger) ClassDetails() string {
 	var s string
+
+	s += fmt.Sprintf("Level: %d\n", r.Level)
+
 	if r.FightingStyleFeature.Name != "" && r.Level >= 2 {
 		appliedText := "Requirements for fighting style not met."
 		if r.FightingStyleFeature.IsApplied {

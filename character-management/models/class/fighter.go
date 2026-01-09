@@ -87,6 +87,8 @@ func (f *Fighter) executeFightingStyle(c *models.Character) {
 func (f *Fighter) ClassDetails() string {
 	var s string
 
+	s += fmt.Sprintf("Level: %d\n", f.Level)
+
 	for _, token := range f.ClassTokens {
 		tokenHeader := ""
 

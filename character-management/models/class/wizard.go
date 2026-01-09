@@ -75,6 +75,8 @@ func (w *Wizard) executeSignatureSpellValidation(c *models.Character) {
 func (w *Wizard) ClassDetails() string {
 	var s string
 
+	s += fmt.Sprintf("Level: %d\n", w.Level)
+
 	if w.Level >= 20 {
 		s += fmt.Sprintf("Signature Spells:\n")
 		for _, spell := range w.SignatureSpells {

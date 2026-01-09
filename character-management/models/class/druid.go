@@ -128,6 +128,7 @@ func (d *Druid) executeArchDruid(c *models.Character) {
 
 func (d *Druid) ClassDetails() string {
 	var s string
+	s += fmt.Sprintf("Level: %d\n", d.Level)
 	s += formatTokens(d.ClassToken, wildShapeToken, d.Level)
 
 	return s

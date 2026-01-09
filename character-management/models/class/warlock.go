@@ -84,6 +84,8 @@ func applyArmorOfShadows(c *models.Character) bool {
 func (w *Warlock) ClassDetails() string {
 	var s string
 
+	s += fmt.Sprintf("Level: %d\n", w.Level)
+
 	if len(w.Invocations) > 0 && w.Level > 3 {
 		s += "Invocation:\n\n"
 		for _, invocation := range w.Invocations {

@@ -112,6 +112,8 @@ func (m *Monk) executeDiamondSoul(c *models.Character) {
 func (m *Monk) ClassDetails() string {
 	var s string
 
+	s += fmt.Sprintf("Level: %d\n", m.Level)
+
 	martialArts := fmt.Sprintf("*Martial Arts*: %s\n\n", m.MartialArts)
 	s += martialArts
 
