@@ -51,9 +51,7 @@ func (b *Bard) executeSpellCastingAbility(c *models.Character) {
 }
 
 func (b *Bard) executeBardicInspiration(c *models.Character) {
-	if b.ClassToken.Name == "" {
-		return
-	} else if b.ClassToken.Name != bardicInspirationToken {
+	if b.ClassToken.Name != bardicInspirationToken {
 		logger.Info("Invalid Class Token Name")
 		return
 	}

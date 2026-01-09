@@ -36,6 +36,10 @@ func HandleCharacter(c *models.Character) error {
 		}
 	}
 
+	return nil
+}
+
+func BuildCharacterMarkdown(c models.Character) error {
 	res := c.BuildCharacter()
 	err := SaveCharacterMarkdown(res, c.Path)
 	if err != nil {

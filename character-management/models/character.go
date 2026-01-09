@@ -60,6 +60,7 @@ var (
 func (c *Character) CalculateCharacterStats() {
 	c.calculateCharacterLevel()
 	c.calculateProficiencyBonusByLevel()
+	c.calculateAdjustedAbilities()
 	c.calculateAbilityScoreImprovement()
 	c.calculateAbilitiesFromBase()
 	c.calculateSkillModifierFromBase()
@@ -76,9 +77,14 @@ func (c *Character) calculateCharacterLevel() {
 }
 
 func (c *Character) calculateAbilitiesFromBase() {
-	for i, a := range c.Abilities {
-		c.Abilities[i].Adjusted += a.Base
+	for i := range c.Abilities {
 		c.Abilities[i].AbilityModifier = (c.Abilities[i].Adjusted - 10) / 2
+	}
+}
+
+func (c *Character) calculateAdjustedAbilities() {
+	for i, a := range c.Abilities {
+		c.Abilities[i].Adjusted = a.Base
 	}
 }
 
@@ -970,18 +976,12 @@ func (c *Character) UseClassTokens(tokenName string, classType string, quantity 
 // If token name is not provided, we will perform a full token recovery of all tokens for a given class.
 // If class type is not provided, we will perform a full token recovery for all classes
 func (c *Character) RecoverClassTokens(tokenName string, classType string, quantity int) error {
-	c.CalculateCharacterStats()
-
 	for i, class := range c.Classes {
 		if !strings.EqualFold(classType, class.GetClassType()) && len(c.Classes) > 1 {
 			continue
 		}
 
 		if tokenClass, ok := c.Classes[i].(TokenClass); ok {
-			if postCalculater, ok := c.Classes[i].(PostCalculator); ok {
-				postCalculater.ExecutePostCalculateMethods(c)
-			}
-
 			tokenClass.RecoverClassTokens("", quantity)
 			return nil
 		}
