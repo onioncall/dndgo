@@ -107,6 +107,11 @@ func (m *Model) addClass() error {
 	}
 
 	classType := m.inputs[classTypeInput].Value()
+	for _, existingClass := range m.character.ClassTypes {
+		if strings.EqualFold(existingClass, classType) {
+			return fmt.Errorf("Class has already been added for character")
+		}
+	}
 
 	validClasses := []string{
 		shared.ClassBarbarian,

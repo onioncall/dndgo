@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/character-management/shared"
 	"github.com/onioncall/dndgo/logger"
 )
 
@@ -189,4 +190,17 @@ func getScrollIndicators(startIndex int, endIndex int, totalItems int, visibleIt
 	}
 	scrollIndicators = strings.TrimSpace(scrollIndicators) + "\n"
 	return scrollIndicators
+}
+
+func hasSpellClass(classTypes []string) bool {
+	for _, classType := range classTypes {
+		switch strings.ToLower(classType) {
+		case shared.ClassBarbarian, shared.ClassFighter, shared.ClassMonk, shared.ClassRogue:
+			continue
+		default:
+			return true
+		}
+	}
+
+	return false
 }
