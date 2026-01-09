@@ -112,7 +112,6 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.cmdInput.SetValue("")
 				m.cmdVisible = false
 				handlers.SaveCharacter(m.character)
-				handlers.HandleCharacter(m.character)
 			}
 
 			return m, nil

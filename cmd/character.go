@@ -11,6 +11,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var buildMd bool
+
 var (
 	characterCmd = &cobra.Command{
 		Use:     "character",
@@ -39,6 +41,13 @@ var (
 			if err != nil {
 				logger.Error(err)
 				logger.PrintError("Failed to load character data")
+				return
+			}
+
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.Error(err)
+				logger.PrintError("Failed to handle character")
 				return
 			}
 
@@ -105,11 +114,13 @@ var (
 				}
 			}
 
-			err = handlers.HandleCharacter(c)
-			if err != nil {
-				logger.Error(err)
-				logger.PrintError("Failed to process character")
-				return
+			if buildMd {
+				err = handlers.BuildCharacterMarkdown(*c)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("failed to generate markdown file")
+					return
+				}
 			}
 
 			logger.PrintSuccess("Character Update Successful")
@@ -233,6 +244,13 @@ var (
 				return
 			}
 
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.Error(err)
+				logger.PrintError("Failed to process character")
+				return
+			}
+
 			if hp > 0 {
 				c.DamageCharacter(hp)
 			} else if u > 0 {
@@ -246,11 +264,13 @@ var (
 				return
 			}
 
-			err = handlers.HandleCharacter(c)
-			if err != nil {
-				logger.Error(err)
-				logger.PrintError("Failed to process character")
-				return
+			if buildMd {
+				err = handlers.BuildCharacterMarkdown(*c)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("failed to generate markdown file")
+					return
+				}
 			}
 
 			logger.PrintSuccess("Character Update Successful")
@@ -285,6 +305,15 @@ var (
 				return
 			}
 
+			if buildMd {
+				err = handlers.BuildCharacterMarkdown(*c)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("failed to generate markdown file")
+					return
+				}
+			}
+
 			logger.PrintSuccess("Character Update Successful")
 		},
 	}
@@ -303,6 +332,13 @@ var (
 			if err != nil {
 				logger.Error(err)
 				logger.PrintError("Failed to save character data")
+				return
+			}
+
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.Error(err)
+				logger.PrintError("Failed to process character")
 				return
 			}
 
@@ -339,11 +375,13 @@ var (
 				}
 			}
 
-			err = handlers.HandleCharacter(c)
-			if err != nil {
-				logger.Error(err)
-				logger.PrintError("Failed to process character")
-				return
+			if buildMd {
+				err = handlers.BuildCharacterMarkdown(*c)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("failed to generate markdown file")
+					return
+				}
 			}
 
 			logger.PrintSuccess("Character Update Successful")
@@ -365,6 +403,13 @@ var (
 			if err != nil {
 				logger.Error(err)
 				logger.PrintError("Failed to save character data")
+				return
+			}
+
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.Error(err)
+				logger.PrintError("Failed to process character")
 				return
 			}
 
@@ -394,11 +439,13 @@ var (
 				}
 			}
 
-			err = handlers.HandleCharacter(c)
-			if err != nil {
-				logger.Error(err)
-				logger.PrintError("Failed to process character")
-				return
+			if buildMd {
+				err = handlers.BuildCharacterMarkdown(*c)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("failed to generate markdown file")
+					return
+				}
 			}
 
 			logger.PrintSuccess("Character Update Successful")
@@ -444,6 +491,13 @@ var (
 				return
 			}
 
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.Error(err)
+				logger.PrintError("Failed to process character")
+				return
+			}
+
 			if p != "" {
 				err = c.Equip(true, p)
 				if err != nil {
@@ -462,11 +516,13 @@ var (
 				return
 			}
 
-			err = handlers.HandleCharacter(c)
-			if err != nil {
-				logger.Error(err)
-				logger.PrintError("Failed to process character")
-				return
+			if buildMd {
+				err = handlers.BuildCharacterMarkdown(*c)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("failed to generate markdown file")
+					return
+				}
 			}
 
 			logger.PrintSuccess("Character Update Successful")
@@ -487,6 +543,13 @@ var (
 				return
 			}
 
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.Error(err)
+				logger.PrintError("Failed to process character")
+				return
+			}
+
 			if p == true {
 				c.Unequip(true)
 			}
@@ -501,11 +564,13 @@ var (
 				return
 			}
 
-			err = handlers.HandleCharacter(c)
-			if err != nil {
-				logger.Error(err)
-				logger.PrintError("Failed to process character")
-				return
+			if buildMd {
+				err = handlers.BuildCharacterMarkdown(*c)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("failed to generate markdown file")
+					return
+				}
 			}
 
 			logger.PrintError("Character Update Successful")
@@ -524,6 +589,13 @@ var (
 			if err != nil {
 				logger.Error(err)
 				logger.PrintError("Failed to load character data")
+				return
+			}
+
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.Error(err)
+				logger.PrintError("Failed to process character")
 				return
 			}
 
@@ -549,11 +621,13 @@ var (
 				return
 			}
 
-			err = handlers.HandleCharacter(c)
-			if err != nil {
-				logger.Error(err)
-				logger.PrintError("Failed to process character")
-				return
+			if buildMd {
+				err = handlers.BuildCharacterMarkdown(*c)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("failed to generate markdown file")
+					return
+				}
 			}
 
 			logger.PrintSuccess("Character Update Successful")
@@ -664,6 +738,13 @@ var (
 				return
 			}
 
+			err = handlers.HandleCharacter(c)
+			if err != nil {
+				logger.Error(err)
+				logger.PrintError("Failed to process character")
+				return
+			}
+
 			if e != "" {
 				if r {
 					logger.PrintError("-> removing expertise skill is not implemented yet")
@@ -747,11 +828,13 @@ var (
 				}
 			}
 
-			err = handlers.HandleCharacter(c)
-			if err != nil {
-				logger.Error(err)
-				logger.PrintError("Failed to process character")
-				return
+			if buildMd {
+				err = handlers.BuildCharacterMarkdown(*c)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("failed to generate markdown file")
+					return
+				}
 			}
 
 			logger.PrintSuccess("Character Update Successful")
@@ -774,6 +857,8 @@ func init() {
 		importCmd,
 		exportCmd,
 		classCmd)
+
+	characterCmd.Flags().BoolVar(&buildMd, "build-md", false, "generate markdown file")
 
 	addCmd.Flags().StringP("ability-improvement", "a", "", "Ability Score Improvement item name, (use -q to specify a quantity)")
 	addCmd.Flags().StringP("equipment", "e", "", "Kind of quipment to add 'armor, ring, etc'")
