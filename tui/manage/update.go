@@ -172,6 +172,9 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 	case recoverCmd:
 		m.err = execRecoverCmd(inputAfterCmd, m.character)
 		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
+		m.classTab.DetailViewport.SetContent(class.GetClassDetails(m.currentClass, *m.character))
+		sWidth := m.spellsTab.SpellSlotsViewport.Width
+		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(*m.character, sWidth))
 	case addTempCmd:
 		temp, err := strconv.Atoi(inputAfterCmd)
 		m.err = err

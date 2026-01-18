@@ -200,8 +200,12 @@ var (
 					return
 				}
 
-				for _, name := range names {
-					fmt.Println(name)
+				for sn, name := range names {
+					nmLine := name
+					if sn != "" {
+						nmLine += fmt.Sprintf(" (%s)", sn)
+					}
+					fmt.Println(nmLine)
 				}
 			}
 		},
@@ -282,11 +286,25 @@ var (
 		Short: "Update character attributes",
 		Run: func(cmd *cobra.Command, args []string) {
 			d, _ := cmd.Flags().GetString("default-character-name")
+			n, _ := cmd.Flags().GetString("name")
+			sn, _ := cmd.Flags().GetString("short-name")
+
 			if d != "" {
 				err := handlers.SetDefaultCharacter(d)
 				if err != nil {
 					logger.Error(err)
 					logger.PrintError("Failed to update default character")
+					return
+				}
+			} else if sn != "" {
+				if n == "" {
+					logger.PrintError("Name flag (-n) is required when setting short name")
+				}
+
+				err := handlers.SetCharacterShortName(n, sn)
+				if err != nil {
+					logger.Error(err)
+					logger.PrintError("Failed to update character short name")
 					return
 				}
 			}
@@ -911,6 +929,8 @@ func init() {
 	deleteCmd.MarkFlagRequired("name")
 
 	updateCmd.Flags().StringP("default-character-name", "d", "", "name of character to make default")
+	updateCmd.Flags().StringP("short-name", "s", "", "short name of character to update")
+	updateCmd.Flags().StringP("name", "n", "", "full name of character")
 
 	importCmd.Flags().StringP("class-type", "c", "", "class type for class file import (default: character)")
 	importCmd.Flags().StringP("file", "f", "", "relative path to json file")

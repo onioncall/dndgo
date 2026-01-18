@@ -15,6 +15,7 @@ type Character struct {
 	ClassTypes              []string                             `json:"class-types" clover:"class-types"`
 	ValidationDisabled      bool                                 `json:"validation-disabled" clover:"validation-disabled"`
 	Name                    string                               `json:"name" clover:"name"`
+	ShortName               string                               `json:"short-name" clover:"short-name"`
 	Level                   int                                  `json:"-" clover:"-"`
 	Race                    string                               `json:"race" clover:"race"`
 	Background              string                               `json:"background" clover:"background"`
