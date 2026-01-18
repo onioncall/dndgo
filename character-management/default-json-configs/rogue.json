@@ -6,7 +6,7 @@
     {
       "name": "Sneak Attack",
       "level": 1,
-      "details": "You know how to strike subtly and exploit a foe's distraction. Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack if you have advantage on the attack roll. The attack must use a finesse or a ranged weapon. You don't need advantage on the attack roll if another enemy of the target is within 5 feet of it, that enemy isn't incapacitated, and you don't have disadvantage on the attack roll. The amount of the extra damage increases as you gain levels in this class:\n- lvl 1: 1d6, lvl 3: 2d6\n- lvl 5: 3d6, lvl 7: 4d6\n- lvl 9: 5d6, lvl 11: 6d6\n- lvl 13: 7d6, lvl 15: 8d6\n- lvl 17: 9d6, lvl 19: 10d6\n"
+      "details": "You know how to strike subtly and exploit a foe's distraction. Once per turn, you can deal an extra (n)d6 damage to one creature you hit with an attack if you have advantage on the attack roll. The attack must use a finesse or a ranged weapon. You don't need advantage on the attack roll if another enemy of the target is within 5 feet of it, that enemy isn't incapacitated, and you don't have disadvantage on the attack roll. The amount of the extra damage increases as you gain levels in this class.\n"
     },
     {
       "name": "Thieves Cant",
