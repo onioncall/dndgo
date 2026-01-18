@@ -10,6 +10,7 @@ type (
 
 const (
 	nameInput = iota
+	shortNameInput
 	raceInput
 	backgroundInput
 	languagesInput
@@ -18,7 +19,7 @@ const (
 )
 
 func basicInfoInputs() []textinput.Model {
-	var inputs []textinput.Model = make([]textinput.Model, 6)
+	var inputs []textinput.Model = make([]textinput.Model, 7)
 
 	inputs[nameInput] = textinput.New()
 	inputs[nameInput].Placeholder = "Nim the Bold"
@@ -27,6 +28,13 @@ func basicInfoInputs() []textinput.Model {
 	inputs[nameInput].Prompt = ""
 	inputs[nameInput].TextStyle = tertiaryStyle
 	inputs[nameInput].Cursor.Style = tertiaryStyle
+
+	inputs[shortNameInput] = textinput.New()
+	inputs[shortNameInput].Placeholder = "nim"
+	inputs[shortNameInput].Width = 40
+	inputs[shortNameInput].Prompt = ""
+	inputs[shortNameInput].TextStyle = tertiaryStyle
+	inputs[shortNameInput].Cursor.Style = tertiaryStyle
 
 	inputs[raceInput] = textinput.New()
 	inputs[raceInput].Placeholder = "Dragonborn"

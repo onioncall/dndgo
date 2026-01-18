@@ -104,6 +104,7 @@ func (m *Model) saveBasicInfo() error {
 	}
 
 	m.character.Name = m.inputs[nameInput].Value()
+	m.character.ShortName = m.inputs[shortNameInput].Value()
 	m.character.Race = m.inputs[raceInput].Value()
 	m.character.Background = m.inputs[backgroundInput].Value()
 	m.character.Languages = strings.Split(m.inputs[languagesInput].Value(), ", ")
@@ -125,6 +126,7 @@ func (m *Model) populateBasicInfoInputs() {
 	speedStr := strconv.Itoa(m.character.Speed)
 
 	m.inputs[nameInput].SetValue(m.character.Name)
+	m.inputs[shortNameInput].SetValue(m.character.ShortName)
 	m.inputs[raceInput].SetValue(m.character.Race)
 	m.inputs[backgroundInput].SetValue(m.character.Background)
 	m.inputs[languagesInput].SetValue(strings.Join(m.character.Languages, ", "))

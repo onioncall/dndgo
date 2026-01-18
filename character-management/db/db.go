@@ -142,7 +142,7 @@ func (r Repository) GetCharacterById(id string) (*models.Character, error) {
 // GetCharacterByName gets the character with the provided name
 func (r Repository) GetCharacterByName(name string) (*models.Character, error) {
 	doc, err := r.db.FindFirst(
-		cquery.NewQuery(characterCollection).Where(cquery.Field("name").Eq(name)),
+		cquery.NewQuery(characterCollection).Where(cquery.Field("short-name").Eq(name).Or(cquery.Field("name").Eq(name))),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to retrieve character from db:\n%w", err)
@@ -190,13 +190,13 @@ func (r Repository) GetDefaultCharacters() ([]models.Character, error) {
 }
 
 // Get all character names
-func (r Repository) GetCharacterNames() ([]string, error) {
+func (r Repository) GetCharacterNames() (map[string]string, error) {
 	docs, err := r.db.FindAll(cquery.NewQuery(characterCollection))
 	if err != nil {
 		return nil, fmt.Errorf("Failed to retrieve characters from db:\n%w", err)
 	}
 
-	result := []string{}
+	result := make(map[string]string)
 
 	for _, doc := range docs {
 		character := models.Character{}
@@ -204,7 +204,7 @@ func (r Repository) GetCharacterNames() ([]string, error) {
 			return nil, fmt.Errorf("Failed to unmarshal db record into character struct:\n%w", err)
 		}
 
-		result = append(result, character.Name)
+		result[character.ShortName] = character.Name
 	}
 
 	return result, nil

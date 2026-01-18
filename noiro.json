@@ -1,0 +1,245 @@
+{
+    "id": "3e1ee0ce-81d4-425c-98a4-ebe88804c2c2",
+    "default": true,
+    "path": "",
+    "class-types": [
+        "Rogue"
+    ],
+    "validation-disabled": false,
+    "name": "Raphael Voltaire",
+    "short-name": "Rafa",
+    "race": "Half-Elf",
+    "background": "",
+    "feats": [],
+    "languages": [
+        "Common",
+        "Elvish",
+        "Dwarvish"
+    ],
+    "hp-current": 16,
+    "hp-max": 24,
+    "hp-temp": 0,
+    "speed": 30,
+    "abilities": [
+        {
+            "name": "strength",
+            "base": 10,
+            "saving-throws-proficient": false
+        },
+        {
+            "name": "dexterity",
+            "base": 16,
+            "saving-throws-proficient": true
+        },
+        {
+            "name": "constitution",
+            "base": 12,
+            "saving-throws-proficient": false
+        },
+        {
+            "name": "intelligence",
+            "base": 12,
+            "saving-throws-proficient": true
+        },
+        {
+            "name": "wisdom",
+            "base": 10,
+            "saving-throws-proficient": false
+        },
+        {
+            "name": "charisma",
+            "base": 16,
+            "saving-throws-proficient": false
+        }
+    ],
+    "skills": [
+        {
+            "ability": "Strength",
+            "name": "Athletics",
+            "proficient": false
+        },
+        {
+            "ability": "Dexterity",
+            "name": "Acrobatics",
+            "proficient": true
+        },
+        {
+            "ability": "Dexterity",
+            "name": "Sleight of Hand",
+            "proficient": false
+        },
+        {
+            "ability": "Dexterity",
+            "name": "Stealth",
+            "proficient": true
+        },
+        {
+            "ability": "Intelligence",
+            "name": "Arcana",
+            "proficient": false
+        },
+        {
+            "ability": "Intelligence",
+            "name": "History",
+            "proficient": false
+        },
+        {
+            "ability": "Intelligence",
+            "name": "Investigation",
+            "proficient": false
+        },
+        {
+            "ability": "Intelligence",
+            "name": "Nature",
+            "proficient": false
+        },
+        {
+            "ability": "Intelligence",
+            "name": "Religion",
+            "proficient": false
+        },
+        {
+            "ability": "Wisdom",
+            "name": "Animal Handling",
+            "proficient": false
+        },
+        {
+            "ability": "Wisdom",
+            "name": "Insight",
+            "proficient": false
+        },
+        {
+            "ability": "Wisdom",
+            "name": "Medicine",
+            "proficient": false
+        },
+        {
+            "ability": "Wisdom",
+            "name": "Perception",
+            "proficient": false
+        },
+        {
+            "ability": "Wisdom",
+            "name": "Survival",
+            "proficient": false
+        },
+        {
+            "ability": "Charisma",
+            "name": "Deception",
+            "proficient": true
+        },
+        {
+            "ability": "Charisma",
+            "name": "Intimidation",
+            "proficient": false
+        },
+        {
+            "ability": "Charisma",
+            "name": "Performance",
+            "proficient": false
+        },
+        {
+            "ability": "Charisma",
+            "name": "Persuasion",
+            "proficient": true
+        }
+    ],
+    "spell-slots": [],
+    "spells": [],
+    "weapons": [
+        {
+            "name": "Rapier",
+            "custom-bonus": 0,
+            "proficient": true,
+            "damage": "1d8",
+            "ranged": false,
+            "range": {
+                "normal-range": 0,
+                "long-range": 0
+            },
+            "type": "Piercing",
+            "properties": [
+                "Finesse",
+                "Light"
+            ]
+        },
+        {
+            "name": "Shortbow",
+            "custom-bonus": 0,
+            "proficient": true,
+            "damage": "1d6",
+            "ranged": true,
+            "range": {
+                "normal-range": 0,
+                "long-range": 0
+            },
+            "type": "Piercing",
+            "properties": [
+                "Ammunition",
+                "Two-Handed"
+            ]
+        },
+        {
+            "name": "Dagger",
+            "custom-bonus": 0,
+            "proficient": true,
+            "damage": "1d4",
+            "ranged": false,
+            "range": {
+                "normal-range": 0,
+                "long-range": 0
+            },
+            "type": "Piercing",
+            "properties": [
+                "Finesse",
+                "Light"
+            ]
+        },
+        {
+            "name": "Dagger",
+            "custom-bonus": 0,
+            "proficient": true,
+            "damage": "1d4",
+            "ranged": false,
+            "range": {
+                "normal-range": 0,
+                "long-range": 0
+            },
+            "type": "Piercing",
+            "properties": [
+                "Finesse",
+                "Light"
+            ]
+        }
+    ],
+    "primary-equipped": "rapier",
+    "secondary-equipped": "dagger",
+    "worn-equipment": {
+        "head": "",
+        "amulet": "",
+        "cloak": "",
+        "armor": {
+            "name": "Leather Armor",
+            "proficient": true,
+            "class": 11,
+            "type": "Light"
+        },
+        "hands-arms": "",
+        "ring": "",
+        "ring2": "",
+        "belt": "",
+        "boots": "",
+        "shield": ""
+    },
+    "backpack": [
+        {
+            "name": "Thieves' Tools",
+            "quantity": 1
+        },
+        {
+            "name": "Burglars' Pack",
+            "quantity": 1
+        }
+    ],
+    "ability-score-improvement": []
+}

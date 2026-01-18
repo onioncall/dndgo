@@ -43,7 +43,7 @@ type Model struct {
 	err               error
 	width             int
 	height            int
-	existingNames     []string
+	existingNames     map[string]string
 	addButtonFocused  bool
 	nextButtonFocused bool
 	backButtonFocused bool

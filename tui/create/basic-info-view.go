@@ -23,6 +23,7 @@ func (m Model) BasicInfoPageView() string {
 
 	labels := []string{
 		"Character Name",
+		"Short Name (optional)",
 		"Race",
 		"Background",
 		"Languages",

@@ -87,7 +87,7 @@ func GetConfigPath() (string, error) {
 }
 
 func CreateCharacter(c *models.Character) error {
-	isUnique, err := IsUniqueCharacterName(c.Name)
+	isUnique, err := IsUniqueCharacterShortName(c.Name)
 	if err != nil {
 		return fmt.Errorf("Failed to create character, unable to determine name uniqueness")
 	} else if !isUnique {
@@ -163,6 +163,31 @@ func SetDefaultCharacter(name string) error {
 	return nil
 }
 
+// Sets shortname for a given character. Shortnames must be unique as they are used to get character specific info.
+func SetCharacterShortName(characterName string, shortName string) error {
+	// Getting character first because we don't want to clear the existing default until we know
+	// that this one exists
+	character, err := db.Repo.GetCharacterByName(characterName)
+	if err != nil {
+		return fmt.Errorf("Failed to get character with name '%s':\n%w", characterName, err)
+	}
+
+	isUniqueShortName, err := IsUniqueCharacterShortName(shortName)
+	if err != nil {
+		return fmt.Errorf("Failed to set short name, unable to determine name uniqueness")
+	} else if !isUniqueShortName {
+		return fmt.Errorf("Character short name '%s' is not unique", shortName)
+	}
+
+	character.ShortName = shortName
+	err = db.Repo.SyncCharacter(*character)
+	if err != nil {
+		return fmt.Errorf("Failed to update character '%s' short name to '%s':\n%w", characterName, shortName, err)
+	}
+
+	return nil
+}
+
 func SaveCharacter(c *models.Character) error {
 	return db.Repo.SyncCharacter(*c)
 }
@@ -200,7 +225,7 @@ func LoadCharacter() (*models.Character, error) {
 	return character, nil
 }
 
-func GetCharacterNames() ([]string, error) {
+func GetCharacterNames() (map[string]string, error) {
 	return db.Repo.GetCharacterNames()
 }
 
@@ -270,7 +295,7 @@ func ImportCharacterJson(characterJson []byte) error {
 	}
 
 	if ch.ID == "" {
-		isUnique, err := IsUniqueCharacterName(ch.Name)
+		isUnique, err := IsUniqueCharacterShortName(ch.Name)
 		if err != nil {
 			return fmt.Errorf("Failed to create character, unable to determine name uniqueness")
 		} else if !isUnique {
@@ -320,14 +345,15 @@ func ExportCharacterJson(characterName string) ([]byte, error) {
 	return data, nil
 }
 
-func IsUniqueCharacterName(name string) (bool, error) {
+func IsUniqueCharacterShortName(name string) (bool, error) {
 	names, err := GetCharacterNames()
 	if err != nil {
 		return false, fmt.Errorf("Failed to get list of existing character names:\n%w", err)
 	}
 
-	for _, en := range names {
-		if strings.EqualFold(name, en) {
+	for sn := range names {
+		// Since getting the name is case sensitive, we don't need to do a case insensitive check here
+		if name == sn {
 			return false, nil
 		}
 	}
