@@ -31,9 +31,9 @@ func NewEquipmentModel() EquipmentModel {
 
 func GetBackpackContent(character models.Character, width int) string {
 	backpackContent := "Backpack\n"
-	width = width - (widthPadding * 2) //padding on both sides
+	width = width - (widthPadding * 2) // padding on both sides
 	backpackContent += fmt.Sprintf("%s\n", strings.Repeat("─", width))
-	maxLength := 8 //length of header
+	maxLength := 8 // length of header
 
 	var contentWithoutSpacers []string
 	for _, item := range character.Backpack {
@@ -93,7 +93,7 @@ func GetWeaponsContent(character models.Character, width int) string {
 	// handling primary and secondary when both are the same weapon name
 
 	width = width - (widthPadding * 2)
-	maxNameLength := 4
+	maxNameLength := 6
 	maxTypeLength := 4
 	maxPropertiesLength := 10
 
@@ -110,8 +110,8 @@ func GetWeaponsContent(character models.Character, width int) string {
 		maxPropertiesLength = max(maxPropertiesLength, utf8.RuneCountInString(strings.Join(w.Properties, ", ")))
 	}
 
-	weaponsHeader := fmt.Sprintf("Name%s - Bonus - Damage - Normal/Long - Type%s - Properties%s\n",
-		strings.Repeat(" ", maxNameLength-4),
+	weaponsHeader := fmt.Sprintf("Weapon%s - To Hit - Damage - Normal/Long - Type%s - Properties%s\n",
+		strings.Repeat(" ", maxNameLength-6),
 		strings.Repeat(" ", maxTypeLength-4),
 		strings.Repeat("\u00A0", maxPropertiesLength-10))
 
@@ -120,11 +120,23 @@ func GetWeaponsContent(character models.Character, width int) string {
 
 	for _, w := range character.Weapons {
 		normalLongStr := fmt.Sprintf("%d/%d", w.Range.NormalRange, w.Range.LongRange)
-		bonusStr := fmt.Sprintf(" %d", w.Bonus)
+		bonusStr := ""
+		if w.Proficient {
+			bonusStr = fmt.Sprintf("%d", w.Bonus+character.Proficiency)
+		} else {
+			bonusStr = fmt.Sprintf("%d", w.Bonus)
+		}
 		if w.Bonus >= 0 {
 			bonusStr = fmt.Sprintf("%s%s", "+", bonusStr)
 		}
 		propertiesStr := strings.Join(w.Properties, ", ")
+
+		damageStr := w.Damage
+		if w.Bonus >= 0 {
+			damageStr += fmt.Sprintf(" +%d", w.Bonus)
+		} else {
+			damageStr += fmt.Sprintf(" %d", w.Bonus)
+		}
 
 		nameStr := w.Name
 		if strings.ToLower(character.PrimaryEquipped) == strings.ToLower(w.Name) {
@@ -135,7 +147,7 @@ func GetWeaponsContent(character models.Character, width int) string {
 
 		nameLen := utf8.RuneCountInString(nameStr)
 		bonusLen := utf8.RuneCountInString(bonusStr)
-		damageLen := utf8.RuneCountInString(w.Damage)
+		damageLen := utf8.RuneCountInString(damageStr)
 		rangeLen := utf8.RuneCountInString(normalLongStr)
 		typeLen := utf8.RuneCountInString(w.Type)
 		propertiesLen := utf8.RuneCountInString(propertiesStr)
@@ -145,7 +157,7 @@ func GetWeaponsContent(character models.Character, width int) string {
 		// error if the row is longer than the header. Since we already set the header to the max length of the
 		// string, the spacer is 0. If it's longer than the header title, we add the appropriate spacer
 		nameSpacer := strings.Repeat(" ", maxNameLength-min(nameLen, maxNameLength))
-		bonusSpacer := strings.Repeat(" ", 5-min(bonusLen, 5))
+		bonusSpacer := strings.Repeat(" ", 6-min(bonusLen, 6))
 		damageSpacer := strings.Repeat(" ", 6-min(damageLen, 6))
 		rangeSpacer := strings.Repeat(" ", 11-min(rangeLen, 11))
 		typeSpacer := strings.Repeat(" ", maxTypeLength-min(typeLen, maxTypeLength))
@@ -156,7 +168,7 @@ func GetWeaponsContent(character models.Character, width int) string {
 			nameSpacer,
 			bonusStr,
 			bonusSpacer,
-			w.Damage,
+			damageStr,
 			damageSpacer,
 			normalLongStr,
 			rangeSpacer,
