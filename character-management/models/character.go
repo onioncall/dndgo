@@ -224,10 +224,6 @@ func (c *Character) calculateWeaponBonus() {
 			}
 		}
 
-		if weapon.Proficient {
-			c.Weapons[i].Bonus += c.Proficiency
-		}
-
 		// Since custom weapons are sometimes a thing, we'll allow the user to specify a custom bonus
 		c.Weapons[i].Bonus += weapon.CustomBonus
 	}

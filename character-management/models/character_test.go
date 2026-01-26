@@ -409,7 +409,7 @@ func TestCharacterCalculateWeaponBonus(t *testing.T) {
 				},
 			},
 			expected: []shared.Weapon{
-				{Name: "Rapier", Bonus: 4, Proficient: true, Properties: []string{shared.WeaponPropertyFinesse}},
+				{Name: "Rapier", Bonus: 2, Proficient: true, Properties: []string{shared.WeaponPropertyFinesse}},
 			},
 		},
 		{
@@ -441,7 +441,7 @@ func TestCharacterCalculateWeaponBonus(t *testing.T) {
 				},
 			},
 			expected: []shared.Weapon{
-				{Name: "Rapier", Bonus: 5, Proficient: true, Properties: []string{shared.WeaponPropertyFinesse}},
+				{Name: "Rapier", Bonus: 3, Proficient: true, Properties: []string{shared.WeaponPropertyFinesse}},
 			},
 		},
 		{
@@ -457,7 +457,7 @@ func TestCharacterCalculateWeaponBonus(t *testing.T) {
 				},
 			},
 			expected: []shared.Weapon{
-				{Name: "Sling", Bonus: 4, Proficient: true, Ranged: true},
+				{Name: "Sling", Bonus: 2, Proficient: true, Ranged: true},
 			},
 		},
 		{
@@ -473,7 +473,7 @@ func TestCharacterCalculateWeaponBonus(t *testing.T) {
 				},
 			},
 			expected: []shared.Weapon{
-				{Name: "Club", Bonus: 4, Proficient: true, Ranged: false},
+				{Name: "Club", Bonus: 2, Proficient: true, Ranged: false},
 			},
 		},
 	}
