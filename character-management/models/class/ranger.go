@@ -35,6 +35,7 @@ func LoadRanger(data []byte) (*Ranger, error) {
 }
 
 func (r *Ranger) ExecutePostCalculateMethods(c *models.Character) {
+	r.executeSpellCastingAbility(c)
 	r.executeFightingStyle(c)
 }
 
@@ -42,7 +43,7 @@ func (r *Ranger) CalculateHitDice() string {
 	return fmt.Sprintf("%dd10", r.Level)
 }
 
-func (r *Ranger) PostCalculateSpellAttackMod(c *models.Character) {
+func (r *Ranger) executeSpellCastingAbility(c *models.Character) {
 	wisMod := c.GetMod(shared.AbilityWisdom)
 
 	executeSpellSaveDC(c, wisMod)
