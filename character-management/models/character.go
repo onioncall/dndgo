@@ -162,7 +162,7 @@ func (c *Character) calculateProficiencyBonusByLevel() {
 func (c *Character) calculateAC() {
 	c.AC = c.WornEquipment.Armor.Class
 
-	switch c.WornEquipment.Armor.Type {
+	switch strings.ToLower(c.WornEquipment.Armor.Type) {
 	case shared.LightArmor:
 		c.AC += c.GetMod(shared.AbilityDexterity)
 	case shared.MediumArmor:
@@ -170,7 +170,7 @@ func (c *Character) calculateAC() {
 	case shared.HeavyArmor:
 		// this just uses the armor class which we've already accounted for
 	case "":
-		c.AC += 10 + c.GetMod(shared.AbilityDexterity)
+		c.AC = 10 + c.GetMod(shared.AbilityDexterity)
 	}
 
 	if c.WornEquipment.Shield != "" {

@@ -62,7 +62,7 @@ func (m Model) View() string {
 
 	outerBorderMargin := 2
 	bottomBoxHeight := 0
-	if m.cmdVisible || m.err != nil {
+	if m.visibleCmd != cmdInactive || m.err != nil {
 		bottomBoxHeight = 3
 	}
 
@@ -103,7 +103,7 @@ func (m Model) View() string {
 		return lipgloss.JoinVertical(lipgloss.Left, container, errorBox)
 	}
 
-	if m.cmdVisible {
+	if m.visibleCmd != cmdInactive {
 		cmdBox := m.renderCmdBox()
 		return lipgloss.JoinVertical(lipgloss.Left, container, cmdBox)
 	}
@@ -197,7 +197,15 @@ func (m Model) renderCmdBox() string {
 		BorderForeground(lightBlue).
 		Foreground(cream).
 		Width(40)
-	searchBox := searchStyle.Render(m.cmdInput.View())
+
+	searchBox := ""
+
+	if value, exists := m.keyBindings[m.visibleCmd]; exists {
+		searchBox = searchStyle.Render(value.input.View())
+	} else {
+		searchBox = searchStyle.Render(m.keyBindings[paletteKeybinding].input.View())
+	}
+
 	return lipgloss.NewStyle().
 		Width(m.width).
 		Align(lipgloss.Center).

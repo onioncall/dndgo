@@ -34,15 +34,19 @@ Character Management is the central feature of this application. To Navigate,
 Commands available to basic info 
 
 - *damage (int, damage amount)* example, `damage 3` removes three hp from your character, if your character has temp hp, that is removed first
+    - Available with shortcut ctrl+d. Enter damage to remove from your characts current HP
 - *recover (optional int, recover amount)* 
     - example: `recover 3` recovers three hp for your character.
+    - Available with shortcut ctrl+r. Enter health to add from your characts current HP
     - details: if no argument is specified, we perform the equivilent of a long rest on your character.
+        - Long rest is available with shortcut ctrl+l. Enter "yes" or "y" to long rest, anything else to... not do that.
 - *temp (int, temp hp amount)* example, `temp 5` adds five temporary hp
 
 ### Spells
 Commands available to spells
 
 - *use-slot (int, level)* example, `use-slot 1` uses a single level one spell slot
+    - Available with shortcut ctrl+s. Enter slot level you want to use, and it will reduce it by one
 - *recover-slot (int, level)* example, `recover-slot 1` recovers a single level one spell slot
 
 ### Equipment
@@ -69,8 +73,8 @@ Commands available to class
 - *use-token (optional string, token name)/(optional int, quantity)*
     - example:  `use-token` or `use-token /2` or `use-token divine-sense` or `use-token divine-sense/2`
     - details: if you don't specify a quantity, only one is used. A token name is only required if there are multiple tokens available to that class, otherwise any (or an empty) string will do
+    - Available through shortcut ctrl+t. Enter token name for current class, or just enter if there is only one token for your current class and it will reduce the slot by 1.
 
 - *recover-token (optional string, token name)/(optional int, quantity)*
     - example:  `recover-token` or `recover-token /2` or `recover-token divine-sense` or `recover-token divine-sense/2`
     - details: if you don't specify a quantity, a full token recovery is performed. A token name is only required if there are multiple tokens available to that class, otherwise any (or an empty) string will do
-
