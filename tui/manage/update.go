@@ -52,7 +52,16 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			}
 			return m, tea.Quit
 		case "esc":
-			if m.character != nil {
+			if m.visibleCmd != cmdInactive || m.err != nil {
+				if value, exists := m.keyBindings[m.visibleCmd]; exists {
+					value.input.Blur()
+				}
+
+				m.err = nil
+				m.visibleCmd = cmdInactive
+
+				return m, nil
+			} else if m.character != nil {
 				handlers.SaveCharacter(m.character)
 
 				for i := range m.character.Classes {
@@ -76,74 +85,46 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			}
 
 			return m, nil
-		case "ctrl+s":
-			// Clearing error as a part of this process
-			m.err = nil
-			m.cmdVisible = !m.cmdVisible
-			m.cmdInput.Focus()
-
-			if m.character != nil {
-				innerWidth, availableHeight := m.getInnerDimensions()
-				switch m.selectedTabIndex {
-				case basicInfoTab:
-					m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, *m.character)
-				case spellTab:
-					m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, *m.character)
-				case equipmentTab:
-					m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
-				case classTab:
-					m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, m.currentClass, *m.character)
-				case notesTab:
-					m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
-				case helpTab:
-					m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
-				}
-			}
-
-			return m, nil
 		case "enter":
 			if m.character == nil {
 				return m, nil
 			}
 
-			if m.cmdVisible {
-				searchInput := m.cmdInput.Value()
-				m, m.selectedTabIndex, searchInput = m.executeUserCmd(searchInput, m.selectedTabIndex)
-				m.cmdInput.SetValue("")
-				m.cmdVisible = false
+			if value, exists := m.keyBindings[m.visibleCmd]; exists {
+				value.input.Blur()
+				m = value.cmdFunc(m)
+				value.input.SetValue("")
+				m.visibleCmd = cmdInactive
+				m = updateAllTabSize(m)
 				handlers.SaveCharacter(m.character)
 			}
 
 			return m, nil
+		default:
+			// Loop through shortcuts and set the visible field to one if found
+			for key, value := range m.keyBindings {
+				if msg.String() == value.shortcut {
+					m.visibleCmd = key
+					value.input.Focus()
+					m = updateAllTabSize(m)
+					return m, nil
+				}
+			}
 		}
 	}
 
-	var cmd tea.Cmd
-	if m.cmdVisible {
-		m.cmdInput, cmd = m.cmdInput.Update(msg)
-		cmds = append(cmds, cmd)
-		m.cmdInput.Focus()
-	} else {
-		m.cmdInput.Blur()
-		if m.character != nil {
-			switch m.selectedTabIndex {
-			case basicInfoTab:
-				m.basicInfoTab, cmd = m.basicInfoTab.Update(msg)
-				cmds = append(cmds, cmd)
-			case spellTab:
-				m.spellsTab, cmd = m.spellsTab.Update(msg)
-				cmds = append(cmds, cmd)
-			case equipmentTab:
-				m.equipmentTab, cmd = m.equipmentTab.Update(msg)
-				cmds = append(cmds, cmd)
-			case classTab:
-				m.classTab, cmd = m.classTab.Update(msg)
-			case notesTab:
-				m.notesTab, cmd = m.notesTab.Update(msg)
-			case helpTab:
-				m.helpTab, cmd = m.helpTab.Update(msg)
-			}
+	if m.visibleCmd != cmdInactive {
+		if value, exists := m.keyBindings[m.visibleCmd]; exists {
+			value.input.Focus()
+			updated, cmd := value.input.Update(msg)
+			*value.input = updated
+			cmds = append(cmds, cmd)
 		}
+	} else {
+		for _, value := range m.keyBindings {
+			value.input.Blur()
+		}
+		m, cmds = updateAllTabContents(m, msg)
 	}
 
 	return m, tea.Batch(cmds...)
@@ -409,4 +390,112 @@ func execAddEquipmentCmd(input string, character *models.Character) error {
 	}
 
 	return fmt.Errorf("Equipment type '%s', not found", inputEquipmentType)
+}
+
+// KeyBind Functions
+
+func ExecPaletteKeyBinding(m Model) Model {
+	keyBinding := m.keyBindings[paletteKeybinding]
+	inputValue := keyBinding.input.Value()
+
+	m, m.selectedTabIndex, inputValue = m.executeUserCmd(inputValue, m.selectedTabIndex)
+	return m
+}
+
+func ExecDamageKeyBinding(m Model) Model {
+	dmg, err := strconv.Atoi(m.keyBindings[damageKeybinding].input.Value())
+	m.err = err
+	m.character.DamageCharacter(int(dmg))
+	m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
+
+	return m
+}
+
+func ExecRecoverKeyBinding(m Model) Model {
+	health, err := strconv.Atoi(m.keyBindings[recoverHpKeybinding].input.Value())
+	m.err = err
+	m.character.HealCharacter(int(health))
+	m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
+
+	return m
+}
+
+func ExecLongRestKeyBinding(m Model) Model {
+	confirmLongRest := m.keyBindings[longRestKeybinding].input.Value()
+	if confirmLongRest == "yes" || confirmLongRest == "y" {
+
+		m.character.Recover()
+		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
+		m.classTab.DetailViewport.SetContent(class.GetClassDetails(m.currentClass, *m.character))
+		sWidth := m.spellsTab.SpellSlotsViewport.Width
+		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(*m.character, sWidth))
+	}
+
+	return m
+}
+
+func ExecUseSpellKeyBinding(m Model) Model {
+	level, err := strconv.Atoi(m.keyBindings[useSpellKeybinding].input.Value())
+	m.err = err
+	m.character.UseSpellSlot(int(level))
+	sWidth := m.spellsTab.SpellSlotsViewport.Width
+	m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(*m.character, sWidth))
+
+	return m
+}
+
+func ExecUseClassTokenKeyBinding(m Model) Model {
+	tokenName := m.keyBindings[useClassTokenKeybinding].input.Value()
+	m.character.UseClassTokens(tokenName, m.currentClass, 1)
+	m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
+
+	return m
+}
+
+func updateAllTabSize(m Model) Model {
+	if m.character != nil {
+		innerWidth, availableHeight := m.getInnerDimensions()
+		switch m.selectedTabIndex {
+		case basicInfoTab:
+			m.basicInfoTab = m.basicInfoTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		case spellTab:
+			m.spellsTab = m.spellsTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		case equipmentTab:
+			m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		case classTab:
+			m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, m.currentClass, *m.character)
+		case notesTab:
+			m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		case helpTab:
+			m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
+		}
+	}
+
+	return m
+}
+
+func updateAllTabContents(m Model, msg tea.Msg) (Model, []tea.Cmd) {
+	var cmd tea.Cmd
+	var cmds []tea.Cmd
+
+	if m.character != nil {
+		switch m.selectedTabIndex {
+		case basicInfoTab:
+			m.basicInfoTab, cmd = m.basicInfoTab.Update(msg)
+			cmds = append(cmds, cmd)
+		case spellTab:
+			m.spellsTab, cmd = m.spellsTab.Update(msg)
+			cmds = append(cmds, cmd)
+		case equipmentTab:
+			m.equipmentTab, cmd = m.equipmentTab.Update(msg)
+			cmds = append(cmds, cmd)
+		case classTab:
+			m.classTab, cmd = m.classTab.Update(msg)
+		case notesTab:
+			m.notesTab, cmd = m.notesTab.Update(msg)
+		case helpTab:
+			m.helpTab, cmd = m.helpTab.Update(msg)
+		}
+	}
+	return m, cmds
 }

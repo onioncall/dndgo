@@ -18,8 +18,6 @@ type Model struct {
 	height             int
 	selectedTabIndex   int
 	tabs               []string
-	cmdInput           textinput.Model
-	cmdVisible         bool
 	character          *models.Character
 	contentInitialized bool
 	currentClass       string
@@ -31,6 +29,15 @@ type Model struct {
 	classTab     class.ClassModel
 	notesTab     notes.NotesModel
 	helpTab      help.HelpModel
+
+	keyBindings map[int]keyBinding
+	visibleCmd  int
+}
+
+type keyBinding struct {
+	shortcut string
+	cmdFunc  func(Model) Model
+	input    *textinput.Model
 }
 
 // Tab constants
@@ -42,6 +49,21 @@ const (
 	notesTab
 	helpTab
 )
+
+const (
+	paletteKeybinding = iota
+	damageKeybinding
+	recoverHpKeybinding
+	longRestKeybinding
+	useSpellKeybinding
+	recoverSpellSlotKeybinding
+	removeItemKeybinding
+	addItemKeybinding
+	useClassTokenKeybinding
+	recoverClassTokenKeybinding
+)
+
+const cmdInactive = 99
 
 // Tab Commands
 const (
@@ -93,10 +115,56 @@ func NewModel() Model {
 		defaultClass = character.ClassTypes[0]
 	}
 
-	input := textinput.New()
-	input.Focus()
-	input.Placeholder = "Cmd..."
-	input.Width = 38
+	paletteInput := textinput.New()
+	paletteInput.Focus()
+	paletteInput.Placeholder = "enter command..."
+	paletteInput.Prompt = " cmd> "
+	paletteInput.Width = 38
+
+	damageInput := textinput.New()
+	damageInput.Focus()
+	damageInput.Placeholder = "hit points to reduce..."
+	damageInput.Prompt = " damage> "
+	damageInput.Width = 38
+
+	recoverHpInput := textinput.New()
+	recoverHpInput.Focus()
+	recoverHpInput.Placeholder = "hit points to recover..."
+	recoverHpInput.Prompt = " recover hp> "
+	recoverHpInput.Width = 38
+
+	longRestInput := textinput.New()
+	longRestInput.Focus()
+	longRestInput.Placeholder = "yes or no"
+	longRestInput.Prompt = " long rest?> "
+	longRestInput.Width = 38
+
+	useSpellInput := textinput.New()
+	useSpellInput.Focus()
+	useSpellInput.Placeholder = "level of slot to use..."
+	useSpellInput.Prompt = " cast spell> "
+	useSpellInput.Width = 38
+
+	useTokenInput := textinput.New()
+	useTokenInput.Focus()
+	useTokenInput.Placeholder = "class token to use..."
+	useTokenInput.Prompt = " use token> "
+	useTokenInput.Width = 38
+
+	keyBindings := make(map[int]keyBinding)
+
+	keyBindings[paletteKeybinding] = keyBinding{"ctrl+p", ExecPaletteKeyBinding, &paletteInput}
+	keyBindings[damageKeybinding] = keyBinding{"ctrl+d", ExecDamageKeyBinding, &damageInput}
+	keyBindings[recoverHpKeybinding] = keyBinding{"ctrl+r", ExecRecoverKeyBinding, &recoverHpInput}
+	keyBindings[longRestKeybinding] = keyBinding{"ctrl+l", ExecLongRestKeyBinding, &longRestInput}
+	keyBindings[useSpellKeybinding] = keyBinding{"ctrl+s", ExecUseSpellKeyBinding, &useSpellInput}
+	keyBindings[useClassTokenKeybinding] = keyBinding{"ctrl+t", ExecUseClassTokenKeyBinding, &useTokenInput}
+
+	// Currently can't get shift+char to work, so holding off on implementing the following until I do
+	// keyBindings[recoverSpellSlotKeybinding] = "ctrl+S"
+	// keyBindings[removeItemKeybinding] = "ctrl+i"
+	// keyBindings[addItemKeybinding] = "ctrl+I"
+	// keyBindings[recoverClassTokenKeybinding] = "ctrl+T"
 
 	tabs := []string{"Basic Info", "Spells", "Equipment", "Class", "Notes", "Help"}
 
@@ -112,8 +180,6 @@ func NewModel() Model {
 		height:           0,
 		selectedTabIndex: 0,
 		tabs:             tabs,
-		cmdInput:         input,
-		cmdVisible:       false,
 		currentClass:     defaultClass,
 		basicInfoTab:     basicInfoTab,
 		spellsTab:        spellsTab,
@@ -122,13 +188,15 @@ func NewModel() Model {
 		notesTab:         notesTab,
 		helpTab:          helpTab,
 		character:        character,
+		keyBindings:      keyBindings,
+		visibleCmd:       cmdInactive,
 	}
 }
 
 func (m Model) getInnerDimensions() (width, height int) {
 	outerBorderMargin := 2
 	bottomBoxHeight := 0
-	if m.cmdVisible || m.err != nil {
+	if m.visibleCmd != 99 || m.err != nil {
 		bottomBoxHeight = 3
 	}
 
