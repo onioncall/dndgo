@@ -200,10 +200,39 @@ func (m Model) renderCmdBox() string {
 
 	searchBox := ""
 
-	if value, exists := m.keyBindings[m.visibleCmd]; exists {
+	// Palette has special autocomplete logic that needs to be handled separately
+	if value, exists := m.keyBindings[m.visibleCmd]; exists && m.visibleCmd != paletteKeybinding {
 		searchBox = searchStyle.Render(value.input.View())
 	} else {
-		searchBox = searchStyle.Render(m.keyBindings[paletteKeybinding].input.View())
+		inputValue := m.keyBindings[paletteKeybinding].input.Value()
+		prompt := m.keyBindings[paletteKeybinding].input.Prompt
+		cursorStyle := lipgloss.NewStyle().Background(cream)
+		combined := prompt
+
+		if inputValue != "" {
+			cursorPos := m.keyBindings[paletteKeybinding].input.Position()
+			before := inputValue[:cursorPos]
+			after := inputValue[cursorPos:]
+
+			autocompleteStyle := lipgloss.NewStyle().Foreground(darkGray)
+			creamStyle := lipgloss.NewStyle().Foreground(cream)
+
+			combined += before + cursorStyle.Render(" ") + creamStyle.Render(after)
+			// in order for the cursor to be "over" the first suggestion character, we just won't actually render it
+			renderedSuggestion := m.autoSuggestion
+
+			if len(m.autoSuggestion) > 0 {
+				renderedSuggestion = m.autoSuggestion[1:]
+			}
+
+			combined += autocompleteStyle.Render(renderedSuggestion)
+		} else {
+			combined += cursorStyle.Render(" ")
+			placeholderStyle := lipgloss.NewStyle().Foreground(darkGray)
+			combined += placeholderStyle.Render(m.keyBindings[paletteKeybinding].input.Placeholder)
+		}
+
+		searchBox = searchStyle.Render(combined)
 	}
 
 	return lipgloss.NewStyle().
