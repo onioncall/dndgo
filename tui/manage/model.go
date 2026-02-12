@@ -32,6 +32,9 @@ type Model struct {
 
 	keyBindings map[int]keyBinding
 	visibleCmd  int
+
+	commands       []string
+	autoSuggestion string
 }
 
 type keyBinding struct {
@@ -166,6 +169,23 @@ func NewModel() Model {
 	// keyBindings[addItemKeybinding] = "ctrl+I"
 	// keyBindings[recoverClassTokenKeybinding] = "ctrl+T"
 
+	commands := []string{
+		addEquipmentCmd,
+		addItemCmd,
+		damageCmd,
+		equipCmd,
+		recoverCmd,
+		recoverSlotCmd,
+		recoverClassTokenCmd,
+		removeItemCmd,
+		renameCmd,
+		addTempCmd,
+		unequipCmd,
+		updateClassCmd,
+		useSlotCmd,
+		useClassTokenCmd,
+	}
+
 	tabs := []string{"Basic Info", "Spells", "Equipment", "Class", "Notes", "Help"}
 
 	basicInfoTab := info.NewBasicInfoModel()
@@ -190,6 +210,8 @@ func NewModel() Model {
 		character:        character,
 		keyBindings:      keyBindings,
 		visibleCmd:       cmdInactive,
+		commands:         commands,
+		autoSuggestion:   "",
 	}
 }
 

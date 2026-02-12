@@ -22,6 +22,7 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var cmds []tea.Cmd
+	tabMsg := false
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -70,6 +71,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			}
 			return m, func() tea.Msg { return tui.NavigateMsg{Page: tui.MenuPage} }
 		case "tab":
+			if m.visibleCmd == paletteKeybinding {
+				tabMsg = true
+				break
+			}
+
 			m.selectedTabIndex = (m.selectedTabIndex + 1) % len(m.tabs)
 			// Skip spell tab if we're not rendering it
 			if m.character.SpellSaveDC == 0 && m.selectedTabIndex == spellTab || m.selectedTabIndex == notesTab {
@@ -115,7 +121,26 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 	if m.visibleCmd != cmdInactive {
 		if value, exists := m.keyBindings[m.visibleCmd]; exists {
-			value.input.Focus()
+			if m.visibleCmd == paletteKeybinding {
+				cmdInput := value.input.Value()
+				suggestionFound := false
+				for _, command := range m.commands {
+					if strings.HasPrefix(command, cmdInput) {
+						suggestionFound = true
+						m.autoSuggestion = strings.TrimPrefix(command, cmdInput)
+						break
+					}
+				}
+
+				if !suggestionFound {
+					m.autoSuggestion = ""
+				} else if tabMsg {
+					value.input.SetValue(value.input.Value() + m.autoSuggestion)
+					value.input.CursorEnd()
+					m.autoSuggestion = ""
+				}
+			}
+
 			updated, cmd := value.input.Update(msg)
 			*value.input = updated
 			cmds = append(cmds, cmd)
