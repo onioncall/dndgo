@@ -9,6 +9,7 @@ import (
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/character-management/shared"
+	"github.com/onioncall/dndgo/logger"
 	"github.com/onioncall/dndgo/tui/manage/class"
 	"github.com/onioncall/dndgo/tui/manage/equipment"
 	"github.com/onioncall/dndgo/tui/manage/info"
@@ -107,6 +108,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 			return m, nil
 		default:
+			if m.visibleCmd != 99 {
+				break
+			}
 			// Loop through shortcuts and set the visible field to one if found
 			for key, value := range m.keyBindings {
 				if msg.String() == value.shortcut {
@@ -179,8 +183,10 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		m.err = execRecoverCmd(inputAfterCmd, m.character)
 		m.basicInfoTab.HealthViewport.SetContent(info.GetHealthContent(*m.character))
 		m.classTab.DetailViewport.SetContent(class.GetClassDetails(m.currentClass, *m.character))
-		sWidth := m.spellsTab.SpellSlotsViewport.Width
-		m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(*m.character, sWidth))
+		if m.character.SpellSaveDC > 0 {
+			sWidth := m.spellsTab.SpellSlotsViewport.Width
+			m.spellsTab.SpellSlotsViewport.SetContent(spells.GetSpellSlotContent(*m.character, sWidth))
+		}
 	case addTempCmd:
 		temp, err := strconv.Atoi(inputAfterCmd)
 		m.err = err
@@ -310,6 +316,7 @@ func execRecoverCmd(input string, character *models.Character) error {
 	if input == "all" {
 		character.Recover()
 	} else {
+		logger.Info("Tsting")
 		health, err := strconv.Atoi(input)
 		if err != nil {
 			return err
@@ -424,6 +431,25 @@ func ExecPaletteKeyBinding(m Model) Model {
 	inputValue := keyBinding.input.Value()
 
 	m, m.selectedTabIndex, inputValue = m.executeUserCmd(inputValue, m.selectedTabIndex)
+	return m
+}
+
+func ExecNavKeyBinding(m Model) Model {
+	switch strings.ToLower(m.keyBindings[navKeyBinding].input.Value()) {
+	case "b":
+		m.selectedTabIndex = basicInfoTab
+	case "s":
+		m.selectedTabIndex = spellTab
+	case "e":
+		m.selectedTabIndex = equipmentTab
+	case "c":
+		m.selectedTabIndex = classTab
+	case "h", "help":
+		m.selectedTabIndex = helpTab
+	default:
+		m.err = fmt.Errorf("tab '%s' not found", m.keyBindings[navKeyBinding].input.Value())
+	}
+
 	return m
 }
 

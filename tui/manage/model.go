@@ -55,6 +55,7 @@ const (
 
 const (
 	paletteKeybinding = iota
+	navKeyBinding
 	damageKeybinding
 	recoverHpKeybinding
 	longRestKeybinding
@@ -71,11 +72,11 @@ const cmdInactive = 99
 // Tab Commands
 const (
 	// Navigation
-	basicInfoCmd = "/b"
-	spellCmd     = "/s"
-	equipmentCmd = "/e"
-	classCmd     = "/c"
-	helpCmd      = "/h"
+	basicInfoCmd = "b"
+	spellCmd     = "s"
+	equipmentCmd = "e"
+	classCmd     = "c"
+	helpCmd      = "h"
 
 	// Basic Info
 	damageCmd  = "damage"
@@ -154,14 +155,21 @@ func NewModel() Model {
 	useTokenInput.Prompt = " use token> "
 	useTokenInput.Width = 38
 
+	navInput := textinput.New()
+	navInput.Focus()
+	navInput.Placeholder = "b, s, e, c, h"
+	navInput.Prompt = " nav> /"
+	navInput.Width = 38
+
 	keyBindings := make(map[int]keyBinding)
 
-	keyBindings[paletteKeybinding] = keyBinding{"ctrl+p", ExecPaletteKeyBinding, &paletteInput}
+	keyBindings[paletteKeybinding] = keyBinding{" ", ExecPaletteKeyBinding, &paletteInput}
 	keyBindings[damageKeybinding] = keyBinding{"ctrl+d", ExecDamageKeyBinding, &damageInput}
 	keyBindings[recoverHpKeybinding] = keyBinding{"ctrl+r", ExecRecoverKeyBinding, &recoverHpInput}
 	keyBindings[longRestKeybinding] = keyBinding{"ctrl+l", ExecLongRestKeyBinding, &longRestInput}
 	keyBindings[useSpellKeybinding] = keyBinding{"ctrl+s", ExecUseSpellKeyBinding, &useSpellInput}
 	keyBindings[useClassTokenKeybinding] = keyBinding{"ctrl+t", ExecUseClassTokenKeyBinding, &useTokenInput}
+	keyBindings[navKeyBinding] = keyBinding{"/", ExecNavKeyBinding, &navInput}
 
 	// Currently can't get shift+char to work, so holding off on implementing the following until I do
 	// keyBindings[recoverSpellSlotKeybinding] = "ctrl+S"
@@ -170,20 +178,25 @@ func NewModel() Model {
 	// keyBindings[recoverClassTokenKeybinding] = "ctrl+T"
 
 	commands := []string{
-		addEquipmentCmd,
 		addItemCmd,
+		addTempCmd,
 		damageCmd,
+		removeItemCmd,
 		equipCmd,
-		recoverCmd,
 		recoverSlotCmd,
 		recoverClassTokenCmd,
-		removeItemCmd,
-		renameCmd,
-		addTempCmd,
-		unequipCmd,
+		recoverCmd,
+		addEquipmentCmd,
 		updateClassCmd,
+		unequipCmd,
 		useSlotCmd,
 		useClassTokenCmd,
+		renameCmd,
+		basicInfoCmd,
+		spellCmd,
+		equipmentCmd,
+		classCmd,
+		helpCmd,
 	}
 
 	tabs := []string{"Basic Info", "Spells", "Equipment", "Class", "Notes", "Help"}
