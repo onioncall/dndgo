@@ -33,9 +33,8 @@ type Model struct {
 	keyBindings map[int]keyBinding
 	visibleCmd  int
 
-	commands         []string
-	autoSuggestion   string
-	cachedSuggestion string
+	commands       []string
+	autoSuggestion string
 }
 
 type keyBinding struct {
