@@ -107,6 +107,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 			return m, nil
 		default:
+			if m.visibleCmd != 99 {
+				break
+			}
 			// Loop through shortcuts and set the visible field to one if found
 			for key, value := range m.keyBindings {
 				if msg.String() == value.shortcut {
@@ -424,6 +427,25 @@ func ExecPaletteKeyBinding(m Model) Model {
 	inputValue := keyBinding.input.Value()
 
 	m, m.selectedTabIndex, inputValue = m.executeUserCmd(inputValue, m.selectedTabIndex)
+	return m
+}
+
+func ExecNavKeyBinding(m Model) Model {
+	switch strings.ToLower(m.keyBindings[navKeyBinding].input.Value()) {
+	case "b":
+		m.selectedTabIndex = basicInfoTab
+	case "s":
+		m.selectedTabIndex = spellTab
+	case "e":
+		m.selectedTabIndex = equipmentTab
+	case "c":
+		m.selectedTabIndex = classTab
+	case "h", "help":
+		m.selectedTabIndex = helpTab
+	default:
+		m.err = fmt.Errorf("tab '%s' not found", m.keyBindings[navKeyBinding].input.Value())
+	}
+
 	return m
 }
 
