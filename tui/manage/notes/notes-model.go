@@ -6,8 +6,10 @@ import (
 )
 
 type NotesModel struct {
-	TitleViewPort viewport.Model
-	NoteViewPort  viewport.Model
+	ViewPorts         []string
+	ActiveViewPortIdx int
+	TitleViewPort     viewport.Model
+	NoteViewPort      viewport.Model
 }
 
 func NewNotesModel() NotesModel {
@@ -18,8 +20,10 @@ func NewNotesModel() NotesModel {
 	noteViewPort.SetContent("Note contents are under construction")
 
 	return NotesModel{
-		TitleViewPort: titleViewPort,
-		NoteViewPort:  noteViewPort,
+		ViewPorts:         []string{"title", "notes"},
+		ActiveViewPortIdx: 0,
+		TitleViewPort:     titleViewPort,
+		NoteViewPort:      noteViewPort,
 	}
 }
 

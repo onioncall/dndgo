@@ -15,6 +15,13 @@ func (m NotesModel) Update(msg tea.Msg) (NotesModel, tea.Cmd) {
 	case tea.KeyMsg:
 		var cmd tea.Cmd
 
+		switch msg.String() {
+		case "h", "left":
+			m.ActiveViewPortIdx = (m.ActiveViewPortIdx - 1 + len(m.ViewPorts)) % len(m.ViewPorts)
+		case "l", "right":
+			m.ActiveViewPortIdx = (m.ActiveViewPortIdx + 1) % len(m.ViewPorts)
+		}
+
 		m.TitleViewPort, cmd = m.TitleViewPort.Update(msg)
 		cmds = append(cmds, cmd)
 

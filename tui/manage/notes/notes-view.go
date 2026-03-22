@@ -1,6 +1,8 @@
 package notes
 
 import (
+	"fmt"
+
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -24,8 +26,6 @@ func (m NotesModel) View(innerWidth, availableHeight int) string {
 		Height(availableHeight - 2).
 		Align(lipgloss.Center)
 
-	titleVp := titleVpStyle.Render(m.TitleViewPort.View())
-
 	col2Width := (innerWidth * 2) / 3
 
 	// Column 2 Viewports
@@ -38,7 +38,23 @@ func (m NotesModel) View(innerWidth, availableHeight int) string {
 		Height(availableHeight - 2).
 		Align(lipgloss.Center)
 
+	switch m.ViewPorts[m.ActiveViewPortIdx] {
+	case "title":
+		titleVpStyle = showViewportAsFocused(titleVpStyle)
+	case "notes":
+		notesVpStyle = showViewportAsFocused(notesVpStyle)
+	default:
+		panic(fmt.Sprintf("no view port set, %v, %v", m.ActiveViewPortIdx, m.ViewPorts[m.ActiveViewPortIdx]))
+	}
+
+	titleVp := titleVpStyle.Render(m.TitleViewPort.View())
 	notesVp := notesVpStyle.Render(m.NoteViewPort.View())
 
 	return lipgloss.JoinHorizontal(lipgloss.Top, titleVp, notesVp)
+}
+
+func showViewportAsFocused(focusedVpStyle lipgloss.Style) lipgloss.Style {
+	return focusedVpStyle.
+		Border(lipgloss.ThickBorder()).
+		BorderForeground(lipgloss.Color("#7DF9FF"))
 }

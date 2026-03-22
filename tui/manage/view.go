@@ -156,7 +156,7 @@ func (m Model) renderTabRow(innerWidth int) string {
 	for i, t := range m.tabs {
 		if i == m.selectedTabIndex {
 			rendered = append(rendered, activeTab.Render(t))
-		} else if m.character.SpellSaveDC == 0 && i == spellTab || i == notesTab {
+		} else if m.character.SpellSaveDC == 0 && i == spellTab {
 			rendered = append(rendered, inactiveTab.Render(t))
 		} else {
 			rendered = append(rendered, tab.Render(t))
