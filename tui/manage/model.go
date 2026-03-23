@@ -205,7 +205,7 @@ func NewModel() Model {
 	spellsTab := spells.NewSpellsModel()
 	equipmentTab := equipment.NewEquipmentModel()
 	classTab := class.NewClassModel()
-	notesTab := notes.NewNotesModel()
+	notesTab := notes.NewNotesModel(character)
 	helpTab := help.NewHelpModel()
 
 	return Model{

@@ -10,24 +10,23 @@ func (m NotesModel) Init() tea.Cmd {
 
 func (m NotesModel) Update(msg tea.Msg) (NotesModel, tea.Cmd) {
 	var cmds []tea.Cmd
+	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		var cmd tea.Cmd
 
 		switch msg.String() {
 		case "h", "left":
-			m.ActiveViewPortIdx = (m.ActiveViewPortIdx - 1 + len(m.ViewPorts)) % len(m.ViewPorts)
+			m.ActivePaneIdx = (m.ActivePaneIdx - 1 + len(m.Panes)) % len(m.Panes)
 		case "l", "right":
-			m.ActiveViewPortIdx = (m.ActiveViewPortIdx + 1) % len(m.ViewPorts)
+			m.ActivePaneIdx = (m.ActivePaneIdx + 1) % len(m.Panes)
 		}
-
-		m.TitleViewPort, cmd = m.TitleViewPort.Update(msg)
-		cmds = append(cmds, cmd)
-
-		m.NoteViewPort, cmd = m.NoteViewPort.Update(msg)
-		cmds = append(cmds, cmd)
 	}
+	m.TitlePane, cmd = m.TitlePane.Update(msg)
+	cmds = append(cmds, cmd)
+
+	m.ContentPane, cmd = m.ContentPane.Update(msg)
+	cmds = append(cmds, cmd)
 
 	return m, tea.Batch(cmds...)
 }

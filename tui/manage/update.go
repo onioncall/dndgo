@@ -13,6 +13,8 @@ import (
 	"github.com/onioncall/dndgo/tui/manage/class"
 	"github.com/onioncall/dndgo/tui/manage/equipment"
 	"github.com/onioncall/dndgo/tui/manage/info"
+	"github.com/onioncall/dndgo/tui/manage/notes/content"
+	"github.com/onioncall/dndgo/tui/manage/notes/titles"
 	"github.com/onioncall/dndgo/tui/manage/spells"
 	tui "github.com/onioncall/dndgo/tui/shared"
 )
@@ -121,6 +123,38 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				}
 			}
 		}
+	case titles.NoteSelectedMsg:
+		// Consider adding the note event handlers to notes module
+		// This would require notes to keep track of current character/data
+		selTitle := m.notesTab.GetSelectedNoteTitle()
+		found := false
+		for _, note := range m.character.Notes {
+			if note.Title == selTitle {
+				m.notesTab.UpdateNoteContent(note.Content)
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			// TODO log or crash
+		}
+	case content.NoteUpdatedMsg:
+		selTitle := m.notesTab.GetSelectedNoteTitle()
+		found := false
+		for _, note := range m.character.Notes {
+			if note.Title == selTitle {
+				note.Content = m.notesTab.ContentPane.GetContent()
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			// TODO log or crash
+		}
+
+		handlers.SaveCharacter(m.character)
 	}
 
 	if m.visibleCmd != cmdInactive {

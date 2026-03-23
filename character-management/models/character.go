@@ -42,6 +42,7 @@ type Character struct {
 	WornEquipment           shared.WornEquipment                 `json:"worn-equipment" clover:"worn-equipment"`
 	Backpack                []shared.BackpackItem                `json:"backpack" clover:"backpack"`
 	AbilityScoreImprovement []shared.AbilityScoreImprovementItem `json:"ability-score-improvement" clover:"ability-score-improvement"`
+	Notes                   []Note                               `json:"notes" clover:"notes"`
 	Classes                 []Class                              `json:"-" clover:"-"`
 }
 

@@ -3,16 +3,18 @@ package notes
 import (
 	"github.com/charmbracelet/bubbles/viewport"
 	"github.com/onioncall/dndgo/character-management/models"
+	"github.com/onioncall/dndgo/tui/manage/notes/content"
+	"github.com/onioncall/dndgo/tui/manage/notes/titles"
 )
 
 type NotesModel struct {
-	ViewPorts         []string
-	ActiveViewPortIdx int
-	TitleViewPort     viewport.Model
-	NoteViewPort      viewport.Model
+	Panes         []string
+	ActivePaneIdx int
+	TitlePane     titles.NoteTitlesModel
+	ContentPane   content.NoteContentModel
 }
 
-func NewNotesModel() NotesModel {
+func NewNotesModel(character *models.Character) NotesModel {
 	titleViewPort := viewport.New(0, 0)
 	titleViewPort.SetContent("Note titles are under construction")
 
@@ -20,10 +22,10 @@ func NewNotesModel() NotesModel {
 	noteViewPort.SetContent("Note contents are under construction")
 
 	return NotesModel{
-		ViewPorts:         []string{"title", "notes"},
-		ActiveViewPortIdx: 0,
-		TitleViewPort:     titleViewPort,
-		NoteViewPort:      noteViewPort,
+		Panes:         []string{"titles", "content"},
+		ActivePaneIdx: 0,
+		TitlePane:     titles.NewNoteTitlesModel(character.Notes),
+		ContentPane:   content.NewNoteContentModel(&character.Notes[0]),
 	}
 }
 
@@ -36,10 +38,20 @@ func (m NotesModel) UpdateSize(innerWidth, availableHeight int, character models
 	noteInnerWidth := col2Width - 2
 	noteInnerHeight := availableHeight - 2
 
-	m.TitleViewPort.Width = titleInnerWidth
-	m.TitleViewPort.Height = titleInnerHeight
-	m.NoteViewPort.Width = noteInnerWidth
-	m.NoteViewPort.Height = noteInnerHeight
+	m.TitlePane.UpdateSize(titleInnerWidth, titleInnerHeight)
+	m.ContentPane.UpdateSize(noteInnerWidth, noteInnerHeight)
 
 	return m
+}
+
+func (m NotesModel) GetSelectedNoteTitle() string {
+	if note, ok := m.TitlePane.TitlesList.SelectedItem().(titles.NoteTitleItem); ok {
+		return note.Title
+	}
+
+	return ""
+}
+
+func (m NotesModel) UpdateNoteContent(content string) {
+	m.ContentPane.SetContent(content)
 }
