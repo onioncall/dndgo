@@ -43,8 +43,8 @@ func (m NotesModel) UpdateSize(innerWidth, availableHeight int, character models
 	noteInnerWidth := col2Width - 2
 	noteInnerHeight := availableHeight - 2
 
-	m.TitlePane.UpdateSize(titleInnerWidth, titleInnerHeight)
-	m.ContentPane.UpdateSize(noteInnerWidth, noteInnerHeight)
+	m.TitlePane = m.TitlePane.UpdateSize(titleInnerWidth, titleInnerHeight)
+	m.ContentPane = m.ContentPane.UpdateSize(noteInnerWidth, noteInnerHeight)
 
 	return m
 }
@@ -53,14 +53,15 @@ func (m NotesModel) GetSelectedNoteTitle() string {
 	if note, ok := m.TitlePane.TitlesList.SelectedItem().(titles.NoteTitleItem); ok {
 		return note.Title
 	}
-
 	return ""
 }
 
-func (m NotesModel) UpdateNoteContent(content string) {
-	m.ContentPane.SetContent(content)
+func (m NotesModel) UpdateNoteContent(content string) NotesModel {
+	m.ContentPane = m.ContentPane.SetContent(content)
+	return m
 }
 
-func (m NotesModel) SetNotesList(notes []models.Note) {
-	m.TitlePane.SetTitlesList(notes)
+func (m NotesModel) SetNotesList(notes []models.Note) NotesModel {
+	m.TitlePane = m.TitlePane.SetTitlesList(notes)
+	return m
 }

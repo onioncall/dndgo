@@ -19,22 +19,24 @@ func (i NoteTitleItem) FilterValue() string { return i.Title }
 
 func NewNoteTitlesModel(notes []models.Note) NoteTitlesModel {
 	var m NoteTitlesModel
-	m.SetTitlesList(notes)
+	m = m.SetTitlesList(notes)
 	return m
 }
 
-func (m NoteTitlesModel) UpdateSize(width, height int) {
+func (m NoteTitlesModel) UpdateSize(width, height int) NoteTitlesModel {
 	m.width = width
 	m.height = height
 	m.TitlesList.SetWidth(width)
 	m.TitlesList.SetHeight(height)
+	return m
 }
 
-func (m NoteTitlesModel) SetTitlesList(notes []models.Note) {
+func (m NoteTitlesModel) SetTitlesList(notes []models.Note) NoteTitlesModel {
 	var items []list.Item
 	for _, v := range notes {
 		items = append(items, NoteTitleItem{Title: v.Title})
 	}
 
 	m.TitlesList = list.New(items, list.NewDefaultDelegate(), m.width, m.height)
+	return m
 }

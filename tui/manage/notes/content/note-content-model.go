@@ -28,16 +28,18 @@ func NewNoteContentModel(note *models.Note) NoteContentModel {
 	}
 }
 
-func (m NoteContentModel) UpdateSize(width, height int) {
+func (m NoteContentModel) UpdateSize(width, height int) NoteContentModel {
 	m.ContentViewPort.Width = width
 	m.ContentViewPort.Height = height
 	m.ContentTextArea.SetWidth(width)
 	m.ContentTextArea.SetHeight(height)
+	return m
 }
 
-func (m NoteContentModel) SetContent(content string) {
+func (m NoteContentModel) SetContent(content string) NoteContentModel {
 	m.ContentViewPort.SetContent(content)
 	m.ContentTextArea.SetValue(content)
+	return m
 }
 
 func (m NoteContentModel) GetContent() string {

@@ -130,7 +130,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		found := false
 		for _, note := range m.character.Notes {
 			if note.Title == selTitle {
-				m.notesTab.UpdateNoteContent(note.Content)
+				m.notesTab = m.notesTab.UpdateNoteContent(note.Content)
 				found = true
 				break
 			}
@@ -178,7 +178,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		cmds = append(cmds, func() tea.Msg { return msgs.CharacterNotesUpdatedMsg{} })
 
 	case msgs.CharacterNotesUpdatedMsg:
-		m.notesTab.SetNotesList(m.character.Notes)
+		m.notesTab = m.notesTab.SetNotesList(m.character.Notes)
 
 	case msgs.SetCurrentTabMsg:
 		m.selectedTabIndex = msg.Index
