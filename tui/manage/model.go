@@ -256,6 +256,6 @@ func (m Model) getInnerDimensions() (width, height int) {
 	return innerWidth, availableHeight
 }
 
-func (m Model) queueTeaCmd(msg any) {
+func (m *Model) queueTeaCmd(msg any) {
 	m.teaCmdBuf = append(m.teaCmdBuf, func() tea.Msg { return msg })
 }

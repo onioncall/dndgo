@@ -317,7 +317,7 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		m.classTab.DetailViewport.SetContent(class.GetClassDetails(m.currentClass, *m.character))
 	case addNoteCmd:
 		m.queueTeaCmd(msgs.SetCurrentTabMsg{Index: notesTab})
-		m.queueTeaCmd(msgs.AddNoteMsg{})
+		m.queueTeaCmd(msgs.AddNoteMsg{Title: inputAfterCmd})
 	case editNoteCmd:
 		m.queueTeaCmd(msgs.SetCurrentTabMsg{Index: notesTab})
 		m.queueTeaCmd(msgs.EditNoteMsg{})
