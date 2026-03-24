@@ -32,6 +32,10 @@ Available Commands:
   • use-token <(optional) name>/<(optional) qty>     - Use class token (default 1)
   • recover-token <(optional) name>/<(optional) qty> - Remove item from backpack (default full)
 
+  • add-note <title> - Add a new Note in the Notes tab
+  • edit-note        - Edit the currently selected Note in the Notes tab
+  • delete-note      - Delete the currently selected Note in the Notes tab
+
   * Optional Values
     ◦ Default behavior for adding, using, or removing an unspecified quantity is to use value of 1
     ◦ Default behavior for recovering an unspecified quantity is a full recovery of that stat

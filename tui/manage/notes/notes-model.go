@@ -21,11 +21,16 @@ func NewNotesModel(character *models.Character) NotesModel {
 	noteViewPort := viewport.New(0, 0)
 	noteViewPort.SetContent("Note contents are under construction")
 
+	var selectedNote *models.Note
+	if len(character.Notes) != 0 {
+		selectedNote = &character.Notes[0]
+	}
+
 	return NotesModel{
 		Panes:         []string{"titles", "content"},
 		ActivePaneIdx: 0,
 		TitlePane:     titles.NewNoteTitlesModel(character.Notes),
-		ContentPane:   content.NewNoteContentModel(&character.Notes[0]),
+		ContentPane:   content.NewNoteContentModel(selectedNote),
 	}
 }
 
@@ -54,4 +59,8 @@ func (m NotesModel) GetSelectedNoteTitle() string {
 
 func (m NotesModel) UpdateNoteContent(content string) {
 	m.ContentPane.SetContent(content)
+}
+
+func (m NotesModel) SetNotesList(notes []models.Note) {
+	m.TitlePane.SetTitlesList(notes)
 }

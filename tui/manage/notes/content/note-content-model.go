@@ -14,9 +14,13 @@ type NoteContentModel struct {
 
 func NewNoteContentModel(note *models.Note) NoteContentModel {
 	vp := viewport.New(0, 0)
-	vp.SetContent(note.Content)
 	ta := textarea.New()
-	ta.SetValue(note.Content)
+
+	if note != nil {
+		vp.SetContent(note.Content)
+		ta.SetValue(note.Content)
+	}
+
 	return NoteContentModel{
 		ContentViewPort: viewport.New(0, 0),
 		ContentTextArea: textarea.New(),

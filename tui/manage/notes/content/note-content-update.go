@@ -1,8 +1,9 @@
 package content
 
-import tea "github.com/charmbracelet/bubbletea"
-
-type NoteUpdatedMsg struct{}
+import (
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/onioncall/dndgo/tui/manage/msgs"
+)
 
 func (m NoteContentModel) Update(msg tea.Msg) (NoteContentModel, tea.Cmd) {
 	var cmd tea.Cmd
@@ -14,9 +15,11 @@ func (m NoteContentModel) Update(msg tea.Msg) (NoteContentModel, tea.Cmd) {
 		case "shift+enter":
 			if m.IsEditing {
 				m.IsEditing = false
-				cmds = append(cmds, func() tea.Msg { return NoteUpdatedMsg{} })
+				cmds = append(cmds, func() tea.Msg { return msgs.NoteUpdatedMsg{} })
 			}
 		}
+	case msgs.AddNoteMsg, msgs.EditNoteMsg:
+		m.IsEditing = true
 	}
 
 	m.ContentTextArea, cmd = m.ContentTextArea.Update(msg)

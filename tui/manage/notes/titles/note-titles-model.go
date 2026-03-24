@@ -7,6 +7,8 @@ import (
 
 type NoteTitlesModel struct {
 	TitlesList list.Model
+	width      int
+	height     int
 }
 
 type NoteTitleItem struct {
@@ -16,17 +18,23 @@ type NoteTitleItem struct {
 func (i NoteTitleItem) FilterValue() string { return i.Title }
 
 func NewNoteTitlesModel(notes []models.Note) NoteTitlesModel {
+	var m NoteTitlesModel
+	m.SetTitlesList(notes)
+	return m
+}
+
+func (m NoteTitlesModel) UpdateSize(width, height int) {
+	m.width = width
+	m.height = height
+	m.TitlesList.SetWidth(width)
+	m.TitlesList.SetHeight(height)
+}
+
+func (m NoteTitlesModel) SetTitlesList(notes []models.Note) {
 	var items []list.Item
 	for _, v := range notes {
 		items = append(items, NoteTitleItem{Title: v.Title})
 	}
 
-	return NoteTitlesModel{
-		TitlesList: list.New(items, list.NewDefaultDelegate(), 0, 0),
-	}
-}
-
-func (m NoteTitlesModel) UpdateSize(width, height int) {
-	m.TitlesList.SetWidth(width)
-	m.TitlesList.SetHeight(height)
+	m.TitlesList = list.New(items, list.NewDefaultDelegate(), m.width, m.height)
 }

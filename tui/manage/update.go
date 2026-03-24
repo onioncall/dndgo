@@ -13,8 +13,7 @@ import (
 	"github.com/onioncall/dndgo/tui/manage/class"
 	"github.com/onioncall/dndgo/tui/manage/equipment"
 	"github.com/onioncall/dndgo/tui/manage/info"
-	"github.com/onioncall/dndgo/tui/manage/notes/content"
-	"github.com/onioncall/dndgo/tui/manage/notes/titles"
+	"github.com/onioncall/dndgo/tui/manage/msgs"
 	"github.com/onioncall/dndgo/tui/manage/spells"
 	tui "github.com/onioncall/dndgo/tui/shared"
 )
@@ -25,6 +24,7 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var cmds []tea.Cmd
+	m.teaCmdBuf = make([]tea.Cmd, 0)
 	tabMsg := false
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
@@ -123,7 +123,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				}
 			}
 		}
-	case titles.NoteSelectedMsg:
+	case msgs.NoteSelectedMsg:
 		// Consider adding the note event handlers to notes module
 		// This would require notes to keep track of current character/data
 		selTitle := m.notesTab.GetSelectedNoteTitle()
@@ -139,7 +139,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		if !found {
 			// TODO log or crash
 		}
-	case content.NoteUpdatedMsg:
+	case msgs.NoteUpdatedMsg:
 		selTitle := m.notesTab.GetSelectedNoteTitle()
 		found := false
 		for _, note := range m.character.Notes {
@@ -155,6 +155,33 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		}
 
 		handlers.SaveCharacter(m.character)
+
+	case msgs.AddNoteMsg:
+		m.character.Notes = append(m.character.Notes, models.Note{
+			Title: msg.Title,
+		})
+		handlers.SaveCharacter(m.character)
+
+		cmds = append(cmds, func() tea.Msg { return msgs.CharacterNotesUpdatedMsg{} })
+
+	case msgs.DeleteNoteMsg:
+		filteredNotes := make([]models.Note, 0)
+		selTitle := m.notesTab.GetSelectedNoteTitle()
+		for _, v := range m.character.Notes {
+			if v.Title != selTitle {
+				filteredNotes = append(filteredNotes, v)
+			}
+		}
+		m.character.Notes = filteredNotes
+		handlers.SaveCharacter(m.character)
+
+		cmds = append(cmds, func() tea.Msg { return msgs.CharacterNotesUpdatedMsg{} })
+
+	case msgs.CharacterNotesUpdatedMsg:
+		m.notesTab.SetNotesList(m.character.Notes)
+
+	case msgs.SetCurrentTabMsg:
+		m.selectedTabIndex = msg.Index
 	}
 
 	if m.visibleCmd != cmdInactive {
@@ -190,6 +217,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m, cmds = updateAllTabContents(m, msg)
 	}
 
+	cmds = append(cmds, m.teaCmdBuf...)
 	return m, tea.Batch(cmds...)
 }
 
@@ -287,6 +315,18 @@ func (m Model) executeUserCmd(cmdInput string, currentTab int) (Model, int, stri
 		m.err = err
 		m.currentClass = classType
 		m.classTab.DetailViewport.SetContent(class.GetClassDetails(m.currentClass, *m.character))
+	case addNoteCmd:
+		m.queueTeaCmd(msgs.SetCurrentTabMsg{Index: notesTab})
+		m.queueTeaCmd(msgs.AddNoteMsg{})
+	case editNoteCmd:
+		m.queueTeaCmd(msgs.SetCurrentTabMsg{Index: notesTab})
+		m.queueTeaCmd(msgs.EditNoteMsg{})
+	case deleteNoteCmd:
+		if m.selectedTabIndex != notesTab {
+			m.err = fmt.Errorf("Must be on notes tab to delete the selected note")
+		} else {
+			m.queueTeaCmd(msgs.DeleteNoteMsg{})
+		}
 	default:
 		m.err = fmt.Errorf("%s command not found", cmd)
 	}
