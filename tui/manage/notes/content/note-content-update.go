@@ -16,7 +16,7 @@ func (m NoteContentModel) Update(msg tea.Msg) (NoteContentModel, tea.Cmd) {
 			if m.IsEditing {
 				m.IsEditing = false
 				m.ContentTextArea.Blur()
-				m.SetContent(m.ContentTextArea.Value())
+				m = m.SetContent(m.ContentTextArea.Value())
 				cmds = append(cmds, func() tea.Msg { return msgs.NoteUpdatedMsg{} })
 			}
 		case "esc":

@@ -66,6 +66,10 @@ func (m NoteTitlesModel) SetTitlesList(notes []models.Note) NoteTitlesModel {
 		items = append(items, NoteTitleItem{NoteTitle: v.Title})
 	}
 
-	m.TitlesList = list.New(items, list.NewDefaultDelegate(), m.width, m.height)
+	if m.TitlesList.Items() == nil {
+		m.TitlesList = list.New(items, list.NewDefaultDelegate(), m.width, m.height)
+	} else {
+		m.TitlesList.SetItems(items)
+	}
 	return m
 }
