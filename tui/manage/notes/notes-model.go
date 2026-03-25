@@ -8,11 +8,15 @@ import (
 )
 
 type NotesModel struct {
-	Panes         []string
-	ActivePaneIdx int
-	TitlePane     titles.NoteTitlesModel
-	ContentPane   content.NoteContentModel
+	ActivePane  int
+	TitlePane   titles.NoteTitlesModel
+	ContentPane content.NoteContentModel
 }
+
+const (
+	titlesPane int = iota
+	contentPane
+)
 
 func NewNotesModel(character *models.Character) NotesModel {
 	titleViewPort := viewport.New(0, 0)
@@ -27,10 +31,9 @@ func NewNotesModel(character *models.Character) NotesModel {
 	}
 
 	return NotesModel{
-		Panes:         []string{"titles", "content"},
-		ActivePaneIdx: 0,
-		TitlePane:     titles.NewNoteTitlesModel(character.Notes),
-		ContentPane:   content.NewNoteContentModel(selectedNote),
+		ActivePane:  0,
+		TitlePane:   titles.NewNoteTitlesModel(character.Notes),
+		ContentPane: content.NewNoteContentModel(selectedNote),
 	}
 }
 
@@ -51,7 +54,7 @@ func (m NotesModel) UpdateSize(innerWidth, availableHeight int, character models
 
 func (m NotesModel) GetSelectedNoteTitle() string {
 	if note, ok := m.TitlePane.TitlesList.SelectedItem().(titles.NoteTitleItem); ok {
-		return note.Title
+		return note.NoteTitle
 	}
 	return ""
 }
@@ -64,4 +67,8 @@ func (m NotesModel) UpdateNoteContent(content string) NotesModel {
 func (m NotesModel) SetNotesList(notes []models.Note) NotesModel {
 	m.TitlePane = m.TitlePane.SetTitlesList(notes)
 	return m
+}
+
+func (m NotesModel) IsEditing() bool {
+	return m.ContentPane.IsEditing
 }

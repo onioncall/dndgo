@@ -35,10 +35,10 @@ func (m NotesModel) View(innerWidth, availableHeight int) string {
 		Height(availableHeight - 2).
 		Align(lipgloss.Center)
 
-	switch m.Panes[m.ActivePaneIdx] {
-	case "titles":
+	switch m.ActivePane {
+	case titlesPane:
 		titlePaneStyle = showPaneAsFocused(titlePaneStyle)
-	case "content":
+	case contentPane:
 		contentPaneStyle = showPaneAsFocused(contentPaneStyle)
 	}
 

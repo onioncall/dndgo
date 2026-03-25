@@ -45,6 +45,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 		return m, nil
 	case tea.KeyMsg:
+		if m.selectedTabIndex == notesTab && m.notesTab.IsEditing() && msg.String() != "ctrl+c" {
+			// Sorry babe the KeyMsg handlers stay off during Editing
+			break
+		}
+
 		switch msg.String() {
 		case "ctrl+c":
 			if m.character != nil {
@@ -108,7 +113,6 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				handlers.SaveCharacter(m.character)
 			}
 
-			return m, nil
 		default:
 			if m.visibleCmd != 99 {
 				break
@@ -214,7 +218,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		for _, value := range m.keyBindings {
 			value.input.Blur()
 		}
-		m, cmds = updateAllTabContents(m, msg)
+		var tabCmds []tea.Cmd
+		m, tabCmds = updateAllTabContents(m, msg)
+		cmds = append(cmds, tabCmds...)
 	}
 
 	cmds = append(cmds, m.teaCmdBuf...)
@@ -616,10 +622,13 @@ func updateAllTabContents(m Model, msg tea.Msg) (Model, []tea.Cmd) {
 			cmds = append(cmds, cmd)
 		case classTab:
 			m.classTab, cmd = m.classTab.Update(msg)
+			cmds = append(cmds, cmd)
 		case notesTab:
 			m.notesTab, cmd = m.notesTab.Update(msg)
+			cmds = append(cmds, cmd)
 		case helpTab:
 			m.helpTab, cmd = m.helpTab.Update(msg)
+			cmds = append(cmds, cmd)
 		}
 	}
 	return m, cmds

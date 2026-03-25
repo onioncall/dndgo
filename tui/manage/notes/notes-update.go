@@ -2,6 +2,7 @@ package notes
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/onioncall/dndgo/tui/manage/msgs"
 )
 
 func (m NotesModel) Init() tea.Cmd {
@@ -11,22 +12,49 @@ func (m NotesModel) Init() tea.Cmd {
 func (m NotesModel) Update(msg tea.Msg) (NotesModel, tea.Cmd) {
 	var cmds []tea.Cmd
 	var cmd tea.Cmd
+	var noteJustAdded bool
 
 	switch msg := msg.(type) {
+	case msgs.AddNoteMsg, msgs.EditNoteMsg:
+		noteJustAdded = true
+		m.ActivePane = contentPane
+
 	case tea.KeyMsg:
+		if m.ContentPane.IsEditing {
+			// editing mode is for typing keys
+			// so like do not handle key inputs
+			break
+		}
 
 		switch msg.String() {
 		case "h", "left":
-			m.ActivePaneIdx = (m.ActivePaneIdx - 1 + len(m.Panes)) % len(m.Panes)
+			if m.ActivePane == contentPane {
+				m.ActivePane = titlesPane
+				// No updates propegate downwards during focus shift
+				return m, nil
+			}
 		case "l", "right":
-			m.ActivePaneIdx = (m.ActivePaneIdx + 1) % len(m.Panes)
+			if m.ActivePane == titlesPane {
+				m.ActivePane = contentPane
+				// No updates propegate downwards during focus shift
+				return m, nil
+			}
 		}
 	}
-	m.TitlePane, cmd = m.TitlePane.Update(msg)
-	cmds = append(cmds, cmd)
 
+	// TitlePane only updates when in focus
+	if m.ActivePane == titlesPane || noteJustAdded {
+		m.TitlePane, cmd = m.TitlePane.Update(msg)
+		if cmd != nil {
+			cmds = append(cmds, cmd)
+		}
+	}
+
+	// ContentPane always updates while notes tab is in view
 	m.ContentPane, cmd = m.ContentPane.Update(msg)
-	cmds = append(cmds, cmd)
+	if cmd != nil {
+		cmds = append(cmds, cmd)
+	}
 
 	return m, tea.Batch(cmds...)
 }

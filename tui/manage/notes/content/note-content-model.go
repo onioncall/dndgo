@@ -10,6 +10,7 @@ type NoteContentModel struct {
 	ContentViewPort viewport.Model
 	ContentTextArea textarea.Model
 	IsEditing       bool
+	text            string
 }
 
 func NewNoteContentModel(note *models.Note) NoteContentModel {
@@ -25,6 +26,7 @@ func NewNoteContentModel(note *models.Note) NoteContentModel {
 		ContentViewPort: viewport.New(0, 0),
 		ContentTextArea: textarea.New(),
 		IsEditing:       false,
+		text:            note.Content,
 	}
 }
 
@@ -39,9 +41,10 @@ func (m NoteContentModel) UpdateSize(width, height int) NoteContentModel {
 func (m NoteContentModel) SetContent(content string) NoteContentModel {
 	m.ContentViewPort.SetContent(content)
 	m.ContentTextArea.SetValue(content)
+	m.text = content
 	return m
 }
 
 func (m NoteContentModel) GetContent() string {
-	return m.ContentTextArea.Value()
+	return m.text
 }

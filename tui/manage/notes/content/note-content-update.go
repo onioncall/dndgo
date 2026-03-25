@@ -12,14 +12,23 @@ func (m NoteContentModel) Update(msg tea.Msg) (NoteContentModel, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "shift+enter":
+		case "tab":
 			if m.IsEditing {
 				m.IsEditing = false
+				m.ContentTextArea.Blur()
+				m.SetContent(m.ContentTextArea.Value())
 				cmds = append(cmds, func() tea.Msg { return msgs.NoteUpdatedMsg{} })
+			}
+		case "esc":
+			if m.IsEditing {
+				m.IsEditing = false
+				m.ContentTextArea.Blur()
+				m.ContentTextArea.SetValue(m.text)
 			}
 		}
 	case msgs.AddNoteMsg, msgs.EditNoteMsg:
 		m.IsEditing = true
+		m.ContentTextArea.Focus()
 	}
 
 	m.ContentTextArea, cmd = m.ContentTextArea.Update(msg)
