@@ -39,7 +39,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			}
 			m.equipmentTab = m.equipmentTab.UpdateSize(innerWidth, availableHeight, *m.character)
 			m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, m.currentClass, *m.character)
-			m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
+			m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight)
 			m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
 		}
 
@@ -146,9 +146,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case msgs.NoteUpdatedMsg:
 		selTitle := m.notesTab.GetSelectedNoteTitle()
 		found := false
-		for _, note := range m.character.Notes {
-			if note.Title == selTitle {
-				note.Content = m.notesTab.ContentPane.GetContent()
+		for i := range m.character.Notes {
+			if m.character.Notes[i].Title == selTitle {
+				m.character.Notes[i].Content = m.notesTab.ContentPane.GetContent()
 				found = true
 				break
 			}
@@ -596,7 +596,7 @@ func updateAllTabSize(m Model) Model {
 		case classTab:
 			m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, m.currentClass, *m.character)
 		case notesTab:
-			m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight, *m.character)
+			m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight)
 		case helpTab:
 			m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)
 		}

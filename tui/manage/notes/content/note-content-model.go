@@ -10,8 +10,13 @@ type NoteContentModel struct {
 	ContentViewPort viewport.Model
 	ContentTextArea textarea.Model
 	IsEditing       bool
+	focused         bool
 	text            string
+	width           int
+	height          int
 }
+
+const hintHeight int = 1
 
 func NewNoteContentModel(note *models.Note) NoteContentModel {
 	vp := viewport.New(0, 0)
@@ -31,10 +36,18 @@ func NewNoteContentModel(note *models.Note) NoteContentModel {
 }
 
 func (m NoteContentModel) UpdateSize(width, height int) NoteContentModel {
+	m.width = width
+	m.height = height
 	m.ContentViewPort.Width = width
-	m.ContentViewPort.Height = height
 	m.ContentTextArea.SetWidth(width)
-	m.ContentTextArea.SetHeight(height)
+	if m.focused {
+		m.ContentViewPort.Height = height - hintHeight - 1
+		m.ContentTextArea.SetHeight(height - hintHeight)
+	} else {
+		m.ContentViewPort.Height = height
+		m.ContentTextArea.SetHeight(height)
+	}
+
 	return m
 }
 
@@ -47,4 +60,8 @@ func (m NoteContentModel) SetContent(content string) NoteContentModel {
 
 func (m NoteContentModel) GetContent() string {
 	return m.text
+}
+
+func (m *NoteContentModel) SetFocused(focused bool) {
+	m.focused = focused
 }

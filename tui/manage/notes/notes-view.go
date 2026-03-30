@@ -5,10 +5,9 @@ import (
 )
 
 const (
-	orange    = lipgloss.Color("#FFA500")
-	lightBlue = lipgloss.Color("#5DC9E2")
-	cream     = lipgloss.Color("#F9F6F0")
-	darkGray  = lipgloss.Color("#767676")
+	brightBlue = lipgloss.Color("#7DF9FF")
+	lightBlue  = lipgloss.Color("#5DC9E2")
+	cream      = lipgloss.Color("#F9F6F0")
 )
 
 func (m NotesModel) View(innerWidth, availableHeight int) string {
@@ -19,10 +18,9 @@ func (m NotesModel) View(innerWidth, availableHeight int) string {
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(lightBlue).
 		Foreground(cream).
-		Padding(0, 4).
-		Width(col1Width - 2).
-		Height(availableHeight - 2).
-		Align(lipgloss.Center)
+		Padding(0, (padding * 2)).
+		Width(col1Width - padding).
+		Height(availableHeight - padding)
 
 	// Right side
 	col2Width := (innerWidth * 2) / 3
@@ -30,10 +28,9 @@ func (m NotesModel) View(innerWidth, availableHeight int) string {
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(lightBlue).
 		Foreground(cream).
-		Padding(0, 2).
-		Width(col2Width - 2).
-		Height(availableHeight - 2).
-		Align(lipgloss.Center)
+		Padding(0, padding).
+		Width(col2Width - padding).
+		Height(availableHeight - padding)
 
 	switch m.ActivePane {
 	case titlesPane:
@@ -51,5 +48,5 @@ func (m NotesModel) View(innerWidth, availableHeight int) string {
 func showPaneAsFocused(focusedVpStyle lipgloss.Style) lipgloss.Style {
 	return focusedVpStyle.
 		Border(lipgloss.ThickBorder()).
-		BorderForeground(lipgloss.Color("#7DF9FF"))
+		BorderForeground(brightBlue)
 }

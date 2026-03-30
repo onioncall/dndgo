@@ -7,15 +7,24 @@ import (
 	"github.com/onioncall/dndgo/tui/manage/notes/titles"
 )
 
+type paneEnum int
+
 type NotesModel struct {
-	ActivePane  int
+	ActivePane  paneEnum
 	TitlePane   titles.NoteTitlesModel
 	ContentPane content.NoteContentModel
+	width       int
+	height      int
 }
 
 const (
-	titlesPane int = iota
+	titlesPane paneEnum = iota
 	contentPane
+)
+
+const (
+	border  int = 2
+	padding int = 2
 )
 
 func NewNotesModel(character *models.Character) NotesModel {
@@ -30,21 +39,27 @@ func NewNotesModel(character *models.Character) NotesModel {
 		selectedNote = &character.Notes[0]
 	}
 
-	return NotesModel{
+	model := NotesModel{
 		ActivePane:  0,
 		TitlePane:   titles.NewNoteTitlesModel(character.Notes),
 		ContentPane: content.NewNoteContentModel(selectedNote),
 	}
+	model.SetFocus(model.ActivePane)
+
+	return model
 }
 
-func (m NotesModel) UpdateSize(innerWidth, availableHeight int, character models.Character) NotesModel {
+func (m NotesModel) UpdateSize(innerWidth, availableHeight int) NotesModel {
+	m.width = innerWidth
+	m.height = availableHeight
+
 	col1Width := (innerWidth * 1) / 3
 	col2Width := (innerWidth * 2) / 3
 
-	titleInnerWidth := col1Width - 2
-	titleInnerHeight := availableHeight - 2
-	noteInnerWidth := col2Width - 2
-	noteInnerHeight := availableHeight - 2
+	titleInnerWidth := col1Width - padding
+	titleInnerHeight := availableHeight - padding
+	noteInnerWidth := col2Width - padding - (2 * border)
+	noteInnerHeight := availableHeight - padding
 
 	m.TitlePane = m.TitlePane.UpdateSize(titleInnerWidth, titleInnerHeight)
 	m.ContentPane = m.ContentPane.UpdateSize(noteInnerWidth, noteInnerHeight)

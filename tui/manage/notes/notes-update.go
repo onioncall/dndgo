@@ -9,6 +9,19 @@ func (m NotesModel) Init() tea.Cmd {
 	return nil
 }
 
+func (m NotesModel) SetFocus(pane paneEnum) NotesModel {
+	m.ActivePane = pane
+	if pane == titlesPane {
+		m.TitlePane.SetFocused(true)
+		m.ContentPane.SetFocused(false)
+	}
+	if pane == contentPane {
+		m.TitlePane.SetFocused(false)
+		m.ContentPane.SetFocused(true)
+	}
+	return m.UpdateSize(m.width, m.height)
+}
+
 func (m NotesModel) Update(msg tea.Msg) (NotesModel, tea.Cmd) {
 	var cmds []tea.Cmd
 	var cmd tea.Cmd
@@ -17,7 +30,10 @@ func (m NotesModel) Update(msg tea.Msg) (NotesModel, tea.Cmd) {
 	switch msg := msg.(type) {
 	case msgs.AddNoteMsg, msgs.EditNoteMsg:
 		noteJustAdded = true
-		m.ActivePane = contentPane
+		m = m.SetFocus(contentPane)
+
+	case msgs.NoteUpdatedMsg:
+		m = m.SetFocus(titlesPane)
 
 	case tea.KeyMsg:
 		if m.ContentPane.IsEditing {
@@ -29,20 +45,17 @@ func (m NotesModel) Update(msg tea.Msg) (NotesModel, tea.Cmd) {
 		switch msg.String() {
 		case "h", "left":
 			if m.ActivePane == contentPane {
-				m.ActivePane = titlesPane
-				// No updates propegate downwards during focus shift
-				return m, nil
+				m = m.SetFocus(titlesPane)
 			}
 		case "l", "right":
 			if m.ActivePane == titlesPane {
-				m.ActivePane = contentPane
-				// No updates propegate downwards during focus shift
-				return m, nil
+				m = m.SetFocus(contentPane)
 			}
 		}
 	}
 
 	// TitlePane only updates when in focus
+	// Or if we just added a new note and are immediately opening for editing
 	if m.ActivePane == titlesPane || noteJustAdded {
 		m.TitlePane, cmd = m.TitlePane.Update(msg)
 		if cmd != nil {

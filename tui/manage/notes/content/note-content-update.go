@@ -25,6 +25,12 @@ func (m NoteContentModel) Update(msg tea.Msg) (NoteContentModel, tea.Cmd) {
 				m.ContentTextArea.Blur()
 				m.ContentTextArea.SetValue(m.text)
 			}
+		case "enter":
+			if !m.IsEditing {
+				m.IsEditing = true
+				m.ContentTextArea.Focus()
+				m.ContentTextArea.SetValue(m.text)
+			}
 		}
 	case msgs.AddNoteMsg, msgs.EditNoteMsg:
 		m.IsEditing = true

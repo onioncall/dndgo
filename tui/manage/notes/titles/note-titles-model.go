@@ -9,6 +9,7 @@ import (
 
 type NoteTitlesModel struct {
 	TitlesList list.Model
+	focused    bool
 	width      int
 	height     int
 }
@@ -18,6 +19,8 @@ type NoteTitleItem struct {
 	NotePreview string
 	paneWidth   int
 }
+
+const hintHeight int = 1
 
 func (i NoteTitleItem) FilterValue() string { return i.NoteTitle }
 func (i NoteTitleItem) Title() string       { return i.NoteTitle }
@@ -37,6 +40,7 @@ func (i NoteTitleItem) Description() string {
 func NewNoteTitlesModel(notes []models.Note) NoteTitlesModel {
 	var m NoteTitlesModel
 	m = m.SetTitlesList(notes)
+	m.TitlesList.SetShowHelp(false)
 	return m
 }
 
@@ -44,7 +48,11 @@ func (m NoteTitlesModel) UpdateSize(width, height int) NoteTitlesModel {
 	m.width = width
 	m.height = height
 	m.TitlesList.SetWidth(width)
-	m.TitlesList.SetHeight(height)
+	if m.focused {
+		m.TitlesList.SetHeight(height - hintHeight)
+	} else {
+		m.TitlesList.SetHeight(height)
+	}
 
 	newItems := []list.Item{}
 	for _, v := range m.TitlesList.Items() {
@@ -72,4 +80,8 @@ func (m NoteTitlesModel) SetTitlesList(notes []models.Note) NoteTitlesModel {
 		m.TitlesList.SetItems(items)
 	}
 	return m
+}
+
+func (m *NoteTitlesModel) SetFocused(focused bool) {
+	m.focused = focused
 }
