@@ -2,6 +2,7 @@ package manage
 
 import (
 	"github.com/charmbracelet/bubbles/textinput"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/onioncall/dndgo/character-management/handlers"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/logger"
@@ -35,6 +36,8 @@ type Model struct {
 
 	commands       []string
 	autoSuggestion string
+
+	teaCmdBuf []tea.Cmd
 }
 
 type keyBinding struct {
@@ -99,6 +102,11 @@ const (
 	// Class
 	useClassTokenCmd     = "use-token"
 	recoverClassTokenCmd = "recover-token"
+
+	// Notes
+	addNoteCmd    = "add-note"
+	editNoteCmd   = "edit-note"
+	deleteNoteCmd = "delete-note"
 )
 
 func NewModel() Model {
@@ -197,6 +205,9 @@ func NewModel() Model {
 		equipmentCmd,
 		classCmd,
 		helpCmd,
+		addNoteCmd,
+		editNoteCmd,
+		deleteNoteCmd,
 	}
 
 	tabs := []string{"Basic Info", "Spells", "Equipment", "Class", "Notes", "Help"}
@@ -205,8 +216,11 @@ func NewModel() Model {
 	spellsTab := spells.NewSpellsModel()
 	equipmentTab := equipment.NewEquipmentModel()
 	classTab := class.NewClassModel()
-	notesTab := notes.NewNotesModel()
 	helpTab := help.NewHelpModel()
+	notesTab := notes.NewNotesModel()
+	if character != nil {
+		notesTab = notesTab.Init(character)
+	}
 
 	return Model{
 		width:            0,
@@ -246,4 +260,8 @@ func (m Model) getInnerDimensions() (width, height int) {
 	availableHeight := innerHeight - tabHeight
 
 	return innerWidth, availableHeight
+}
+
+func (m *Model) queueTeaCmd(msg any) {
+	m.teaCmdBuf = append(m.teaCmdBuf, func() tea.Msg { return msg })
 }
