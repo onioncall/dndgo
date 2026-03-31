@@ -205,6 +205,9 @@ func NewModel() Model {
 		equipmentCmd,
 		classCmd,
 		helpCmd,
+		addNoteCmd,
+		editNoteCmd,
+		deleteNoteCmd,
 	}
 
 	tabs := []string{"Basic Info", "Spells", "Equipment", "Class", "Notes", "Help"}
