@@ -13,7 +13,9 @@ func (m NoteTitlesModel) Update(msg tea.Msg) (NoteTitlesModel, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			cmds = append(cmds, func() tea.Msg { return msgs.EditNoteMsg{} })
+			if !m.NoNotes() {
+				cmds = append(cmds, func() tea.Msg { return msgs.EditNoteMsg{} })
+			}
 		case "j", "k", "down", "up":
 			cmds = append(cmds, func() tea.Msg { return msgs.NoteSelectedMsg{} })
 		}

@@ -5,10 +5,6 @@ import (
 	"github.com/onioncall/dndgo/tui/manage/msgs"
 )
 
-func (m NotesModel) Init() tea.Cmd {
-	return nil
-}
-
 func (m NotesModel) SetFocus(pane paneEnum) NotesModel {
 	m.ActivePane = pane
 	if pane == titlesPane {
@@ -64,9 +60,12 @@ func (m NotesModel) Update(msg tea.Msg) (NotesModel, tea.Cmd) {
 	}
 
 	// ContentPane always updates while notes tab is in view
-	m.ContentPane, cmd = m.ContentPane.Update(msg)
-	if cmd != nil {
-		cmds = append(cmds, cmd)
+	// Only skip if there are no notes added yet
+	if !m.TitlePane.NoNotes() {
+		m.ContentPane, cmd = m.ContentPane.Update(msg)
+		if cmd != nil {
+			cmds = append(cmds, cmd)
+		}
 	}
 
 	return m, tea.Batch(cmds...)

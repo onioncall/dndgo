@@ -1,7 +1,6 @@
 package notes
 
 import (
-	"github.com/charmbracelet/bubbles/viewport"
 	"github.com/onioncall/dndgo/character-management/models"
 	"github.com/onioncall/dndgo/tui/manage/notes/content"
 	"github.com/onioncall/dndgo/tui/manage/notes/titles"
@@ -13,6 +12,7 @@ type NotesModel struct {
 	ActivePane  paneEnum
 	TitlePane   titles.NoteTitlesModel
 	ContentPane content.NoteContentModel
+	Initialized bool
 	width       int
 	height      int
 }
@@ -27,29 +27,29 @@ const (
 	padding int = 2
 )
 
-func NewNotesModel(character *models.Character) NotesModel {
-	titleViewPort := viewport.New(0, 0)
-	titleViewPort.SetContent("Note titles are under construction")
-
-	noteViewPort := viewport.New(0, 0)
-	noteViewPort.SetContent("Note contents are under construction")
-
+func NewNotesModel() NotesModel {
+	return NotesModel{}
+}
+func (m NotesModel) Init(character *models.Character) NotesModel {
 	var selectedNote *models.Note
 	if len(character.Notes) != 0 {
 		selectedNote = &character.Notes[0]
 	}
 
-	model := NotesModel{
-		ActivePane:  0,
-		TitlePane:   titles.NewNoteTitlesModel(character.Notes),
-		ContentPane: content.NewNoteContentModel(selectedNote),
-	}
-	model.SetFocus(model.ActivePane)
+	m.TitlePane = titles.NewNoteTitlesModel(character.Notes)
+	m.ContentPane = content.NewNoteContentModel(selectedNote)
+	m.ActivePane = 0
+	m.SetFocus(m.ActivePane)
 
-	return model
+	m.Initialized = true
+
+	return m
 }
 
 func (m NotesModel) UpdateSize(innerWidth, availableHeight int) NotesModel {
+	if !m.Initialized {
+		return m
+	}
 	m.width = innerWidth
 	m.height = availableHeight
 
@@ -68,6 +68,11 @@ func (m NotesModel) UpdateSize(innerWidth, availableHeight int) NotesModel {
 }
 
 func (m NotesModel) GetSelectedNoteTitle() string {
+	// Safety check: ensure the list is properly initialized with items
+	if m.TitlePane.TitlesList.Items() == nil || len(m.TitlePane.TitlesList.Items()) == 0 {
+		return ""
+	}
+
 	if note, ok := m.TitlePane.TitlesList.SelectedItem().(titles.NoteTitleItem); ok {
 		return note.NoteTitle
 	}

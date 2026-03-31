@@ -596,6 +596,9 @@ func updateAllTabSize(m Model) Model {
 		case classTab:
 			m.classTab = m.classTab.UpdateSize(innerWidth, availableHeight, m.currentClass, *m.character)
 		case notesTab:
+			if !m.notesTab.Initialized {
+				m.notesTab = m.notesTab.Init(m.character)
+			}
 			m.notesTab = m.notesTab.UpdateSize(innerWidth, availableHeight)
 		case helpTab:
 			m.helpTab = m.helpTab.UpdateSize(innerWidth, availableHeight, *m.character)

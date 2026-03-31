@@ -22,16 +22,18 @@ func NewNoteContentModel(note *models.Note) NoteContentModel {
 	vp := viewport.New(0, 0)
 	ta := textarea.New()
 
+	initContent := ""
 	if note != nil {
-		vp.SetContent(note.Content)
-		ta.SetValue(note.Content)
+		initContent = note.Content
 	}
+	vp.SetContent(initContent)
+	ta.SetValue(initContent)
 
 	return NoteContentModel{
 		ContentViewPort: viewport.New(0, 0),
 		ContentTextArea: textarea.New(),
 		IsEditing:       false,
-		text:            note.Content,
+		text:            initContent,
 	}
 }
 

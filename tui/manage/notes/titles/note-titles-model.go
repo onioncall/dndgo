@@ -64,17 +64,27 @@ func (m NoteTitlesModel) UpdateSize(width, height int) NoteTitlesModel {
 		})
 	}
 	m.TitlesList.SetItems(newItems)
-
 	return m
 }
 
 func (m NoteTitlesModel) SetTitlesList(notes []models.Note) NoteTitlesModel {
+	previewMaxLen := 255
 	var items []list.Item
+
 	for _, v := range notes {
-		items = append(items, NoteTitleItem{NoteTitle: v.Title})
+		var preview string
+		if len(v.Content) > previewMaxLen {
+			preview = v.Content[0:255]
+		} else {
+			preview = v.Content
+		}
+		items = append(items, NoteTitleItem{
+			NoteTitle:   v.Title,
+			NotePreview: preview,
+		})
 	}
 
-	if m.TitlesList.Items() == nil {
+	if m.TitlesList.Items() == nil || len(m.TitlesList.Items()) == 0 {
 		m.TitlesList = list.New(items, list.NewDefaultDelegate(), m.width, m.height)
 	} else {
 		m.TitlesList.SetItems(items)
@@ -84,4 +94,8 @@ func (m NoteTitlesModel) SetTitlesList(notes []models.Note) NoteTitlesModel {
 
 func (m *NoteTitlesModel) SetFocused(focused bool) {
 	m.focused = focused
+}
+
+func (m NoteTitlesModel) NoNotes() bool {
+	return m.TitlesList.Items() == nil || len(m.TitlesList.Items()) == 0
 }

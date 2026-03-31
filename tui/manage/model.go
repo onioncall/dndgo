@@ -213,8 +213,11 @@ func NewModel() Model {
 	spellsTab := spells.NewSpellsModel()
 	equipmentTab := equipment.NewEquipmentModel()
 	classTab := class.NewClassModel()
-	notesTab := notes.NewNotesModel(character)
 	helpTab := help.NewHelpModel()
+	notesTab := notes.NewNotesModel()
+	if character != nil {
+		notesTab = notesTab.Init(character)
+	}
 
 	return Model{
 		width:            0,
